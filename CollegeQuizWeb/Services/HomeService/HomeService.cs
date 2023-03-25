@@ -1,3 +1,5 @@
+using CollegeQuizWeb.Dto;
+
 namespace CollegeQuizWeb.Services.HomeService;
 
 public class HomeService : IHomeService
@@ -9,9 +11,11 @@ public class HomeService : IHomeService
         _logger = logger;
     }
 
-    public string GetString()
+    public DataDto GetString()
     {
+        DataDto dataDto = new DataDto();
+        dataDto.Test = "kocham disa"; 
         _logger.LogInformation("Siema eniu");
-        return "kocham disa";
+        return dataDto;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CollegeQuizWeb.Dto;
 using Microsoft.AspNetCore.Mvc;
 using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
@@ -16,9 +17,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        string test = _homeService.GetString();
-        ViewBag.KochamDisa = test;
-        return View();
+        DataDto dataDto = _homeService.GetString();
+        return View(dataDto);
     }
 
     public IActionResult Privacy()

@@ -1,6 +1,8 @@
+using CollegeQuizWeb.Dto;
+
 namespace CollegeQuizWeb.Services.HomeService;
 
 public interface IHomeService
 {
-    String GetString();
+    DataDto GetString();
 }
