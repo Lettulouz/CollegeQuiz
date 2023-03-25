@@ -1,20 +1,23 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using CollegeQuizWeb.Models;
+using CollegeQuizWeb.Services.HomeService;
 
 namespace CollegeQuizWeb.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
+    private readonly IHomeService _homeService;
+    
+    public HomeController(IHomeService homeService)
+    { 
+        _homeService = homeService;
     }
 
     public IActionResult Index()
     {
+        string test = _homeService.GetString();
+        ViewBag.KochamDisa = test;
         return View();
     }
 
