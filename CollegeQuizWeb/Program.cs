@@ -1,8 +1,13 @@
+using CollegeQuizWeb.Config;
+using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Services.HomeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+ConfigLoader.InsertEnvProperties(builder.Configuration);
+ApplicationDbContext.AddDatabaseConfiguration(builder.Services, builder.Configuration);
 
 ////////// tutaj wstrzykiwanie serwisów ////////////////////////////////////////////////////////////////////////////////
 

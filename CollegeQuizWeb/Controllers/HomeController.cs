@@ -15,9 +15,9 @@ public class HomeController : Controller
         _homeService = homeService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        DataDto dataDto = _homeService.GetString();
+        DataDto dataDto = await _homeService.GetString();
         return View(dataDto);
     }
 

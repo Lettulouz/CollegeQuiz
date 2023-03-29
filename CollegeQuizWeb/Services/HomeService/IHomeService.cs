@@ -4,5 +4,5 @@ namespace CollegeQuizWeb.Services.HomeService;
 
 public interface IHomeService
 {
-    DataDto GetString();
+    Task<DataDto> GetString();
 }
