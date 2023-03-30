@@ -13,6 +13,8 @@ ApplicationDbContext.AddDatabaseConfiguration(builder.Services, builder.Configur
 
 builder.Services.AddScoped<IHomeService, HomeService>();
 
+// serwisy kontrolerów API
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var app = builder.Build();

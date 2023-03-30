@@ -1,17 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.DbConfig;
 
 public class ApplicationDbContext : DbContext
 {
-    ///////////////////// mappers /////////////////////
+    ///////////////////// mappers //////////////////////////////////////////////////////////////////////////////////////
     
     public DbSet<TestEntity> Tests { get; set; }
     
-    ///////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
@@ -66,6 +74,5 @@ public class ApplicationDbContext : DbContext
                     opt.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(5), null);
                 }
         ));
-        service.AddScoped<ApplicationDbSeeder>();
     }
 }

@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace CollegeQuizWeb.DbConfig;
 
 public class ApplicationDbSeeder
