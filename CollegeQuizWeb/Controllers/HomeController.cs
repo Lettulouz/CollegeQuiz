@@ -14,7 +14,7 @@ public class HomeController : Controller
     { 
         _homeService = homeService;
     }
-
+    
     public async Task<IActionResult> Index()
     {
         DataDto dataDto = await _homeService.GetString();
@@ -31,4 +31,28 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="integerVal"></param>
+    /// <param name="stringVal"></param>
+    /// <param name="doubleVal"></param>
+    /// <returns>Wartość wyjściowa</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public string TestMethod(int integerVal, string stringVal, double doubleVal)
+    {
+        string testVal = "";
+        try
+        {
+            testVal = integerVal.ToString() + stringVal + doubleVal.ToString();
+        }
+        catch
+        {
+            throw new ArgumentException("Upps coś poszło nie tak");
+        }
+
+        return testVal;
+    }
+    
 }
