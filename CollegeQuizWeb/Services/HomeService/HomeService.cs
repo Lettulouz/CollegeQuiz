@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Smtp;
+using CollegeQuizWeb.SmtpViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.Services.HomeService;
@@ -29,17 +31,17 @@ public class HomeService : IHomeService
         //await _context.AddAsync(testEntity);
         //await _context.SaveChangesAsync();
 
-        //TestAbstractSmtpViewModel viewModel = new TestAbstractSmtpViewModel()
-        //{
-        //    Name = "Wprowadzona nazwa"
-        //};
-        //UserEmailOptions<TestAbstractSmtpViewModel> options = new UserEmailOptions<TestAbstractSmtpViewModel>()
-        //{
-        //    TemplateName = TemplateName.TEST_TEMPLATE,
-        //    ToEmails = new List<string>() { "example@gmail.com" },
-        //    Subject = "To jest przykładowy temat",
-        //    DataModel = viewModel
-        //};
+        TestSmtpViewModel viewModel = new TestSmtpViewModel()
+        {
+            Name = "Wprowadzona nazwa"
+        };
+        UserEmailOptions<TestSmtpViewModel> options = new UserEmailOptions<TestSmtpViewModel>()
+        {
+            TemplateName = TemplateName.TEST_TEMPLATE,
+            ToEmails = new List<string>() { "example@gmail.com" },
+            Subject = "To jest przykładowy temat",
+            DataModel = viewModel
+        };
         //await _smtpService.SendEmailMessage(options);
         
         dataDto.Test = "kocham disa"; 
