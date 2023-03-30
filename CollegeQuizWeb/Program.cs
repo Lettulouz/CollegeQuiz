@@ -1,6 +1,10 @@
+using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
-using CollegeQuizWeb.Services.HomeService;
+using CollegeQuizWeb.Smtp;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,10 @@ ApplicationDbContext.AddDatabaseConfiguration(builder.Services, builder.Configur
 
 ////////// tutaj wstrzykiwanie serwisów ////////////////////////////////////////////////////////////////////////////////
 
+builder.Services.AddScoped<ApplicationDbSeeder>();
+builder.Services.AddScoped<ISmtpService, SmtpService>();
+
+// serwisy kontrolerów MVC
 builder.Services.AddScoped<IHomeService, HomeService>();
 
 // serwisy kontrolerów API
