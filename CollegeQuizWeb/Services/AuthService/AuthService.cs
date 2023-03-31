@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
+using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
 using Microsoft.Extensions.Logging;
 
@@ -19,8 +20,33 @@ public class AuthService : IAuthService
         _smtpService = smtpService;
     }
 
-    public async Task Register()
+    public async Task<DataDto> Register(UserEntity obj)
     {
-        // Example service method
+        UserEntity test = obj;
+       /* test.FirstName = "Jacek";
+        test.LastName = "Placek";
+        test.Password = "Haselko123*";
+        test.Email = "jakistamemail@wp.pl";
+        test.RulesAccept = true;
+        test.TeamID = 1;
+        test.Username = "uzytkownik";
+*/
+      
+       await _context.AddAsync(test);
+       await _context.SaveChangesAsync();
+           //TempData["success"] = "Kategoria utworzona pomyślnie";
+
+           //return RedirectToAction("Index", "Category");
+       
+        await _context.AddAsync(test);
+        await _context.SaveChangesAsync();
+        // _context.Add(new UserEntity());
+
+        //TestEntity testEntity = new TestEntity();
+        //testEntity.Name = "Siema eniu tu doby mudzin z afryka";
+
+        //await _context.AddAsync(testEntity);
+        //await _context.SaveChangesAsync();
+        return new DataDto();
     }
 }

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
+using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.HomeService;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,26 @@ public class AuthController : Controller
         _authService = authService;
     }
     
-    public IActionResult Register()
+    public async Task<IActionResult> Index()
     {
         return View();
+    }
+    
+    public async Task<IActionResult> Register()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register(UserEntity obj)
+    {
+        if (ModelState.IsValid)
+        {
+            _authService.Register(obj);
+            return RedirectToAction("Privacy", "Home");
+        }
+
+        return View(obj);
     }
 }
