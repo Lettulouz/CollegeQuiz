@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Registration Page";
+}
+
+<div class="container mt-5 mb-1">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="col-12 col-md-6 mb-5">
+            <div class="card px-5 py-5 h-100" id="form1">
+                <form method="post" id="registerForm" action="">
+                    <div class="form-data" id="registerFields">
+                        <label id="mainName"> Rejestracja </label>
+                        <div class="forms-inputs mb-4">
+                            <span id="nameSpan">Imię</span>
+                            <input type="text" name="name" id="name" autocomplete="on" required maxlength="25">
+                            <i id="blinkingName" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
+                            <label id="errorName"></label>
+                        </div>
+
+                        <div class="forms-inputs mb-4">
+                            <span id="surnameSpan">Nazwisko</span>
+                            <input type="text" name="surname" id="surname" required>
+
+                            <i id="blinkingSurname" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
+                            <label id="errorSurname"></label>
+                        </div>
+
+                        <div class="forms-inputs mb-4">
+                            <span id="loginSpan">Login</span>
+                            <input type="text" name="login" id="login" required>
+
+                            <i id="blinkingLogin" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
+                            <label id="errorLogin"></label>
+                        </div>
+
+                        <div class="forms-inputs mb-4">
+                            <span id="passwordSpan">Hasło</span>
+                            <input type="password" name="password" id="password" required>
+
+                            <i id="blinkingPassword" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
+                            <label id="errorPassword"></label>
+                        </div>
+
+                        <div class="forms-inputs mb-4">
+                            <span id="emailSpan">Email</span>
+                            <input type="text" name="email" id="email" required maxlength="50">
+
+                            <i id="blinkingEmail" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
+                            <label id="errorEmail"></label>
+                        </div>
+
+                        <div class="mb-3">
+                            <button class="btn btn-dark w-100" name="registerSubmit" type="submit">Rejestracja</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-light w-100" onclick="moveToLogin()">Mam już konto</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
