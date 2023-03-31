@@ -1,6 +1,7 @@
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Smtp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ builder.Services.AddScoped<ISmtpService, SmtpService>();
 
 // serwisy kontrolerów MVC
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // serwisy kontrolerów API
 
