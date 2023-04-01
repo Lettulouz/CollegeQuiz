@@ -25,6 +25,10 @@ public class UserEntity : AbstractAuditableEntity
     [Required]
     [Column("password")]
     public string Password { get; set; }
+    [Column("account_status")]
+    [DefaultValue(1)]
+    [Range(1,3)]
+    public short AccountStatus { get; set; }
     [Column("team_id")]
     public int TeamID { get; set; }
     [Required]
