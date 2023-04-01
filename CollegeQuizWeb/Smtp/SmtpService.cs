@@ -51,6 +51,8 @@ public class SmtpService : ISmtpService
             };
             Email.DefaultSender = new SmtpSender(smtpClient);
             Email.DefaultRenderer = new LiquidRenderer(Options.Create(options));
+
+            userEmailOptions.DataModel.CurrentYear = DateTime.Now.Year.ToString();
             userEmailOptions.DataModel.CurrentDate = DateTime.Now.ToString(CultureInfo.DefaultThreadCurrentCulture);
                     
             string templatePath = string.Format(TEMPLATE_PATH, userEmailOptions.TemplateName + TEMPLATE_SUFFIX);
@@ -58,12 +60,12 @@ public class SmtpService : ISmtpService
 
             List<Address> addresses = new List<Address>();
             foreach (string user in userEmailOptions.ToEmails) addresses.Add(new Address(user));
-        
+            
             IFluentEmail fluentEmail = Email
                 .From(ConfigLoader.SmtpSender, ConfigLoader.SmtpName)
                 .ReplyTo(ConfigLoader.SmtpLoopback, ConfigLoader.SmtpName)
                 .To(addresses)
-                .Subject(userEmailOptions.Subject)
+                .Subject($"Quizazu | {userEmailOptions.Subject}")
                 .UsingTemplate(templateRawContent, userEmailOptions.DataModel);
         
             SendResponse sendResponse = await fluentEmail.SendAsync();

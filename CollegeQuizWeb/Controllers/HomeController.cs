@@ -17,16 +17,9 @@ public class HomeController : Controller
         _homeService = homeService;
     }
     
-    public async Task<IActionResult> Index()
-    {
-        DataDto dataDto = await _homeService.GetString();
-        return View(dataDto);
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+    public IActionResult Index() => View();
+    
+    public IActionResult Privacy() => View();
     
     public  IActionResult Regulation()
     {
