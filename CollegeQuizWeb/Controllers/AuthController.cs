@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto.ChangePassword;
-using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Utils;
@@ -31,13 +30,22 @@ public class AuthController : Controller
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(UserEntity obj)
+    public async Task<IActionResult> Register(RegisterDto obj)
     {
+        if (await _authService.EmailExistsInDb(obj.Email))
+        {
+            ModelState.AddModelError("Email", Lang.EmailAlreadyExistsError);
+        }
+        if (await _authService.UsernameExistsInDb(obj.Username))
+        {
+            ModelState.AddModelError("Username", Lang.UsernameAlreadyExistsError);
+        }
         if (ModelState.IsValid)
         {
             await _authService.Register(obj);
             return RedirectToAction("Privacy", "Home");
         }
+        
         return View(obj);
     }
 

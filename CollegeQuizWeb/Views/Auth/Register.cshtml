@@ -1,53 +1,51 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model CollegeQuizWeb.Entities.UserEntity
+@model CollegeQuizWeb.Dto.RegisterDto
 @{
     ViewData["Title"] = "Registration Page";
 }
 
 <div class="container mt-5 mb-1">
     <div class="row d-flex justify-content-center mt-5">
-        <div class="col-12 col-md-6 mb-5">
+        <div class="col-12 col-md-9 col-lg-6 mb-5">
             <div class="card px-5 py-5 h-100" id="form1">
-                <form method="post" asp-action="Register">
+                <form method="post" asp-controller="Auth" asp-action="Register">
                     <div class="form-data" id="registerFields">
                         <label id="mainName">Rejestracja</label>
                         <div class="forms-inputs mb-4">
-                            <span id="nameSpan">Imię</span>
-                            <input type="text" name="first_name" asp-for="FirstName" autocomplete="on">
-                            <i id="blinkingName" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
-                            <span asp-validation-for="FirstName"></span>
+                            <label>Imię</label>
+                            <input type="text" asp-for="FirstName" autocomplete="on">
+                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="FirstName"></span>
                         </div>
 
                         <div class="forms-inputs mb-4">
-                            <span id="surnameSpan">Nazwisko</span>
-                            <input type="text" name="surname" asp-for="LastName">
+                            <label>Nazwisko</label>
+                            <input type="text" asp-for="LastName">
+                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="LastName"></span>
+                        </div>
 
-                            <i id="blinkingSurname" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
-                            <span asp-validation-for="LastName"></span>
+                         <div class="forms-inputs mb-4">
+                            <label id="username">Login</label>
+                            <input type="text" asp-for="Username">
+                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Username"></span>
                         </div>
 
                         <div class="forms-inputs mb-4">
-                            <span id="loginSpan">Login</span>
-                            <input type="text" name="login" asp-for="Username">
-
-                            <i id="blinkingLogin" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
-                            <span asp-validation-for="Username"></span>
+                            <label id="password">Hasło</label>
+                            <input type="password" asp-for="Password">
+                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Password"></span>
                         </div>
 
                         <div class="forms-inputs mb-4">
-                            <span id="passwordSpan">Hasło</span>
-                            <input type="password" name="password" asp-for="Password">
-
-                            <i id="blinkingPassword" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
-                            <span asp-validation-for="Password"></span>
+                            <label id="email">Email</label>
+                            <input type="email" asp-for="Email">
+                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Email"></span>
                         </div>
-
-                        <div class="forms-inputs mb-4">
-                            <span id="emailSpan">Email</span>
-                            <input type="text" name="email" asp-for="Email">
-
-                            <i id="blinkingEmail" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
-                            <span asp-validation-for="Email"></span>
+                        
+                        <div class="forms-check mb-4 custom-control custom-checkbox">
+                            <input class="form-check-input" type="checkbox" value="" asp-for="RulesAccept">
+                            <label class="form-check-label mx-1" asp-for="RulesAccept">
+                                Akceptuję regulamin strony oraz politykę prywatności.
+                            </label>
                         </div>
 
                         <div class="mb-3">

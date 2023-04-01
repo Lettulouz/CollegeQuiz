@@ -32,7 +32,7 @@ input:-webkit-autofill {
     position: relative;
 }
 
-.forms-inputs span {
+.forms-inputs label {
     position: absolute;
     top: -18px;
     left: 10px;
@@ -112,7 +112,17 @@ input:-webkit-autofill {
     font-weight: bolder;
 }
 
-#errorPassword, #errorEmailOrLogin, #errorLogin, #errorName, #errorEmail, #errorSurname {
-    font-size: small;
-    color: rgb(255, 0, 0);
+.errorTextColor {
+    color: indianred;
+}
+
+.form-check-input:checked[type=checkbox] {
+    background-color: rgb(72, 72, 72);
+    border: rgb(72, 72, 72);
+    box-shadow: none;
+}
+
+.form-check-input[type=checkbox] {
+    box-shadow: none;
+    border-color: rgb(72, 72, 72);;
 }

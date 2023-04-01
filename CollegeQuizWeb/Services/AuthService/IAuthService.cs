@@ -6,5 +6,7 @@ namespace CollegeQuizWeb.Services.AuthService;
 
 public interface IAuthService
 {
-    Task <DataDto> Register(UserEntity obj);
+    Task <RegisterDto> Register(RegisterDto obj);
+    Task<bool> EmailExistsInDb(string email);
+    Task<bool> UsernameExistsInDb(string username);
 }
