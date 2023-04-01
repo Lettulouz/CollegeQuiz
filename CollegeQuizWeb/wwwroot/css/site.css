@@ -116,3 +116,13 @@ input:-webkit-autofill {
     color: indianred;
 }
 
+.form-check-input:checked[type=checkbox] {
+    background-color: rgb(72, 72, 72);
+    border: rgb(72, 72, 72);
+    box-shadow: none;
+}
+
+.form-check-input[type=checkbox] {
+    box-shadow: none;
+    border-color: rgb(72, 72, 72);;
+}
