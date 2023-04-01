@@ -1,3 +1,4 @@
+using System;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
@@ -6,11 +7,14 @@ using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Smtp;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(25));
 builder.Services.AddControllersWithViews();
 
 ConfigLoader.InsertEnvProperties(builder.Configuration);
@@ -42,6 +46,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();
