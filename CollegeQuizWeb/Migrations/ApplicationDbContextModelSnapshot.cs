@@ -19,7 +19,7 @@ namespace CollegeQuizWeb.Migrations
                 .HasAnnotation("ProductVersion", "6.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("CollegeQuizWeb.Entities.TestEntity", b =>
+            modelBuilder.Entity("CollegeQuizWeb.Entities.OtaTokenEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,18 +30,33 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Name")
+                    b.Property<DateTime>("ExpiredAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expired_at");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("name");
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("token");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
                     b.HasKey("Id");
 
-                    b.ToTable("test_entity");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ota_tokens");
                 });
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
@@ -75,8 +90,7 @@ namespace CollegeQuizWeb.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("varchar(25)")
+                        .HasColumnType("longtext")
                         .HasColumnName("password");
 
                     b.Property<bool>("RulesAccept")
@@ -100,6 +114,17 @@ namespace CollegeQuizWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.OtaTokenEntity", b =>
+                {
+                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserEntity");
                 });
 #pragma warning restore 612, 618
         }
