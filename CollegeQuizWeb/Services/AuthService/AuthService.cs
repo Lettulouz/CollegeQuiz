@@ -1,8 +1,10 @@
+using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.Services.AuthService;
@@ -20,33 +22,36 @@ public class AuthService : IAuthService
         _smtpService = smtpService;
     }
 
-    public async Task<DataDto> Register(UserEntity obj)
+    public async Task<RegisterDto> Register(RegisterDto obj)
     {
-        UserEntity test = obj;
-       /* test.FirstName = "Jacek";
-        test.LastName = "Placek";
-        test.Password = "Haselko123*";
-        test.Email = "jakistamemail@wp.pl";
-        test.RulesAccept = true;
-        test.TeamID = 1;
-        test.Username = "uzytkownik";
-*/
-      
-       await _context.AddAsync(test);
-       await _context.SaveChangesAsync();
-           //TempData["success"] = "Kategoria utworzona pomyślnie";
-
-           //return RedirectToAction("Index", "Category");
-       
-        await _context.AddAsync(test);
+        RegisterDto test = obj;
+        
+        UserEntity test1 = new();
+        test1.FirstName = test.FirstName;
+        test1.LastName = test.LastName;
+        test1.Username = test.Username;
+        test1.Password = test.Password;
+        test1.Email = test.Email;
+        test1.TeamID = test.TeamID;
+        test1.RulesAccept = test.RulesAccept;
+        
+        await _context.AddAsync(test1);
         await _context.SaveChangesAsync();
-        // _context.Add(new UserEntity());
+       
+        return test;
+    }
 
-        //TestEntity testEntity = new TestEntity();
-        //testEntity.Name = "Siema eniu tu doby mudzin z afryka";
-
-        //await _context.AddAsync(testEntity);
-        //await _context.SaveChangesAsync();
-        return new DataDto();
+    public async Task<bool> EmailExistsInDb(string email)
+    {
+        if (await _context.Users.FirstOrDefaultAsync(o => o.Email.Equals(email)) == null)
+            return false;
+        return true;
+    }
+    
+    public async Task<bool> UsernameExistsInDb(string username)
+    {
+        if (await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(username)) == null)
+            return false;
+        return true;
     }
 }

@@ -32,7 +32,7 @@ input:-webkit-autofill {
     position: relative;
 }
 
-.forms-inputs span {
+.forms-inputs label {
     position: absolute;
     top: -18px;
     left: 10px;
@@ -112,7 +112,7 @@ input:-webkit-autofill {
     font-weight: bolder;
 }
 
-#errorPassword, #errorEmailOrLogin, #errorLogin, #errorName, #errorEmail, #errorSurname {
-    font-size: small;
-    color: rgb(255, 0, 0);
+.errorTextColor {
+    color: indianred;
 }
+
