@@ -1,9 +1,11 @@
 using System.Linq;
 using System.Threading.Tasks;
+using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
+using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,6 +26,25 @@ public class AuthService : IAuthService
         _context = context;
         _smtpService = smtpService;
         _passwordHasher = passwordHasher;
+    }
+
+    public async Task Login(LoginDtoPayload obj)
+    {
+        AuthController controller = obj.ControllerReference;
+        
+        var arek = await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(obj.Dto.LoginOrEmail)
+                                                                 || o.Email.Equals(obj.Dto.LoginOrEmail));
+        if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
+            PasswordVerificationResult.Success)
+            {
+                controller.Response.Redirect("/home");
+            }
+        else
+        {
+            controller.ModelState.AddModelError("Password", Lang.INVALID_PASSWORD);
+        }
+
+            
     }
 
     public async Task<RegisterDto> Register(RegisterDto obj)

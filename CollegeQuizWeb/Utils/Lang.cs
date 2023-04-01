@@ -37,4 +37,6 @@ public static class Lang
 
     public const string EMAIL_ALREADY_EXIST = "Podany email już istnieje.";
     public const string USERNAME_ALREADY_EXIST = "Podany login już istnieje.";
+    
+    public const string INVALID_PASSWORD = "Podane dane są nieprawidłowe.";
 }

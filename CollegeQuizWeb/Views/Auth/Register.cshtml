@@ -42,10 +42,10 @@
                         </div>
                         
                         <div class="forms-check mb-4 custom-control custom-checkbox">
-                            <input class="form-check-input" type="checkbox" value="" asp-for="RulesAccept">
+                            <input class="form-check-input" type="checkbox" value="" asp-for="RulesAccept" required>
                             <label class="form-check-label d-inline" asp-for="RulesAccept">
-                                Akceptuję @Html.ActionLink("regulamin strony", "Regulation", 
-                                              "Home", null) oraz politykę prywatności.
+                                Akceptuję <a asp-action="Regulation" asp-controller="Home">regulamin strony</a>
+                                oraz politykę prywatności.
                             </label>
                         </div>
 

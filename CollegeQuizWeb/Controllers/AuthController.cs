@@ -26,9 +26,30 @@ public class AuthController : Controller
         string? changePassMessage = HttpContext.Session.GetString(SessionKey.CHANGE_PASSWORD_LOGIN_REDIRECT);
         HttpContext.Session.Remove(SessionKey.CHANGE_PASSWORD_LOGIN_REDIRECT);
         ViewBag.ChangePassMessage = changePassMessage!;
+        
+        
         return View();
     }
-    
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+
+    public async Task<IActionResult> Login(LoginDto obj)
+    {
+
+        var payloadDto = new LoginDtoPayload(this) { Dto = obj };
+        
+        if (ModelState.IsValid)
+        {
+            await _authService.Login(payloadDto);
+           // return RedirectToAction("Privacy", "Home");
+        }
+        
+
+        
+        return View(obj);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterDto obj)
