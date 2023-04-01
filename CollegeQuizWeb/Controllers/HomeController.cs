@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using CollegeQuizWeb.Dto;
 using Microsoft.AspNetCore.Mvc;
 using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
@@ -17,16 +15,8 @@ public class HomeController : Controller
         _homeService = homeService;
     }
     
-    public async Task<IActionResult> Index()
-    {
-        DataDto dataDto = await _homeService.GetString();
-        return View(dataDto);
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+    public IActionResult Index() => View();
+    public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

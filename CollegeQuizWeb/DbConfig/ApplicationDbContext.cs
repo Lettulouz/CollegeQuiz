@@ -17,16 +17,15 @@ public class ApplicationDbContext : DbContext
 {
     ///////////////////// mappers //////////////////////////////////////////////////////////////////////////////////////
     
-    public DbSet<TestEntity> Tests { get; set; }
     public DbSet<UserEntity> Users { get; set; }
-    
+    public DbSet<OtaTokenEntity> OtaTokens { get; set; }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // db connection configuration
         optionsBuilder
             .UseMySql(
                 ConfigLoader.DbConnectionString,
@@ -46,7 +45,6 @@ public class ApplicationDbContext : DbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // save created_at and updated_at fields
         DateTime d = DateTime.Now;
         
         IEnumerable<EntityEntry> entitiesWithPrimaryKey = ChangeTracker.Entries()

@@ -32,10 +32,9 @@ public class AuthController : Controller
     {
         if (ModelState.IsValid)
         {
-            _authService.Register(obj);
+            await _authService.Register(obj);
             return RedirectToAction("Privacy", "Home");
         }
-
         return View(obj);
     }
 }
