@@ -25,6 +25,7 @@ public static class Lang
     
     public const string PASSWORD_IS_REQUIRED_ERROR = "Pole Hasło jest wymagane.";
     public const string PASSWORD_TO_SHORT_ERROR = "Podano za krótkie hasło";
+    public const string PASSWORD_TO_LONG_ERROR = "Podano za długie hasło";
     public const string PASSWORD_REGEX_ERROR =
         "Hasło powinno zawierać co najmniej jedną dużą literę, jedną małą literę, " +
         "jedną cyfrę oraz jeden znak specjalny";
@@ -33,4 +34,7 @@ public static class Lang
     public const string USERNAME_OR_EMAIL_INVALID_CHARS = "Pole email/nazwa użytkownika zawiera niedozwolone znaki";
     public const string PASSWORD_REQUIRED = "Pole hasła jest wymagane";
     public const string PASSWORDS_NOT_MATCH = "Podane hasła nie są takie same";
+
+    public const string EMAIL_ALREADY_EXIST = "Podany email już istnieje.";
+    public const string USERNAME_ALREADY_EXIST = "Podany login już istnieje.";
 }
