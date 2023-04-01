@@ -1,0 +1,29 @@
+@model CollegeQuizWeb.Entities.UserEntity
+@{
+    ViewData["Title"] = "Logowanie";
+}
+
+<div class="container mt-5 mb-1">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="col-12 col-md-6 mb-5">
+            <div class="card px-5 py-5 h-100" id="form1">
+                @if (ViewBag.ChangePassMessage != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @ViewBag.ChangePassMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <form method="post" asp-action="Login">
+                    <div class="form-data" id="registerFields">
+                        <label id="mainName">Logowanie</label>
+                        @* tutaj formularz elo benc *@
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a asp-action="AttemptChangePassword" asp-controller="Auth">Zapomniałem hasła</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
