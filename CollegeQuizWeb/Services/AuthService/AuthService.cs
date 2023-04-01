@@ -4,6 +4,7 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -13,13 +14,16 @@ public class AuthService : IAuthService
 {
     private readonly ILogger<AuthService> _logger;
     private readonly ApplicationDbContext _context;
+    private readonly IPasswordHasher<UserEntity> _passwordHasher;
     private readonly ISmtpService _smtpService;
 
-    public AuthService(ILogger<AuthService> logger, ApplicationDbContext context, ISmtpService smtpService)
+    public AuthService(ILogger<AuthService> logger, ApplicationDbContext context, ISmtpService smtpService,
+        IPasswordHasher<UserEntity> passwordHasher)
     {
         _logger = logger;
         _context = context;
         _smtpService = smtpService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<RegisterDto> Register(RegisterDto obj)
@@ -30,7 +34,7 @@ public class AuthService : IAuthService
         test1.FirstName = test.FirstName;
         test1.LastName = test.LastName;
         test1.Username = test.Username;
-        test1.Password = test.Password;
+        test1.Password = _passwordHasher.HashPassword(test1, test.Password);
         test1.Email = test.Email;
         test1.TeamID = test.TeamID;
         test1.RulesAccept = test.RulesAccept;
