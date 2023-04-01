@@ -6,7 +6,7 @@
 
 <div class="container mt-5 mb-1">
     <div class="row d-flex justify-content-center mt-5">
-        <div class="col-12 col-md-9 col-lg-6 mb-5">
+        <div class="col-12 col-sm-11 col-md-8 col-lg-6 mb-5">
             <div class="card px-5 py-5 h-100" id="form1">
                 <form method="post" asp-controller="Auth" asp-action="Register">
                     <div class="form-data" id="registerFields">
@@ -42,10 +42,10 @@
                         </div>
                         
                         <div class="forms-check mb-4 custom-control custom-checkbox">
-                            <input class="form-check-input" type="checkbox" value="" asp-for="RulesAccept">
-                            <label class="form-check-label mx-1" asp-for="RulesAccept">
-                                Akceptuję regulamin strony oraz politykę prywatności.
-                            </label>
+                                <input class="form-check-input" type="checkbox" value="" asp-for="RulesAccept">
+                                <label class="form-check-label d-inline" asp-for="RulesAccept">
+                                    Akceptuję regulamin strony oraz politykę prywatności.
+                                </label>
                         </div>
 
                         <div class="mb-3">
