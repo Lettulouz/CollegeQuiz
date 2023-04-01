@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230401164730_RemoveTestingEntity")]
+    partial class RemoveTestingEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,32 +68,32 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<short>("AccountStatus")
-                        .HasColumnType("smallint")
-                        .HasColumnName("account_status");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(254)
+                        .HasColumnType("varchar(254)")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(35)
+                        .HasColumnType("varchar(35)")
                         .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(35)
+                        .HasColumnType("varchar(35)")
                         .HasColumnName("last_name");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)")
                         .HasColumnName("password");
 
                     b.Property<bool>("RulesAccept")
@@ -108,7 +110,8 @@ namespace CollegeQuizWeb.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)")
                         .HasColumnName("username");
 
                     b.HasKey("Id");

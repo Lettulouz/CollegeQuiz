@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230401150731_AddOtaTokenEntity")]
+    partial class AddOtaTokenEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +61,31 @@ namespace CollegeQuizWeb.Migrations
                     b.ToTable("ota_tokens");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.TestEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("test_entity");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -66,32 +93,32 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<short>("AccountStatus")
-                        .HasColumnType("smallint")
-                        .HasColumnName("account_status");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(254)
+                        .HasColumnType("varchar(254)")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(35)
+                        .HasColumnType("varchar(35)")
                         .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(35)
+                        .HasColumnType("varchar(35)")
                         .HasColumnName("last_name");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)")
                         .HasColumnName("password");
 
                     b.Property<bool>("RulesAccept")
@@ -108,7 +135,8 @@ namespace CollegeQuizWeb.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)")
                         .HasColumnName("username");
 
                     b.HasKey("Id");
