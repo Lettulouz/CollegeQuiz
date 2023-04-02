@@ -52,22 +52,11 @@ public class AuthController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(RegisterDto obj)
+    public async Task<IActionResult> Register(RegisterDto registerDto)
     {
-        if (await _authService.EmailExistsInDb(obj.Email))
-        {
-            ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
-        }
-        if (await _authService.UsernameExistsInDb(obj.Username))
-        {
-            ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
-        }
-        if (ModelState.IsValid)
-        {
-            await _authService.Register(obj);
-            return RedirectToAction("Privacy", "Home");
-        }
-        return View(obj);
+        var payloadDto = new RegisterDtoPayload(this) {Dto = registerDto};
+        await _authService.Register(payloadDto);
+        return View(payloadDto.Dto);
     }
 
     [HttpPost]
