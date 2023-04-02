@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -5,6 +7,7 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
+using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -47,23 +50,73 @@ public class AuthService : IAuthService
             
     }
 
-    public async Task<RegisterDto> Register(RegisterDto obj)
+    public async Task Register(RegisterDtoPayload obj)
     {
-        RegisterDto test = obj;
+        int tokenLife = 2880;
         
-        UserEntity test1 = new();
-        test1.FirstName = test.FirstName;
-        test1.LastName = test.LastName;
-        test1.Username = test.Username;
-        test1.Password = _passwordHasher.HashPassword(test1, test.Password);
-        test1.Email = test.Email;
-        test1.TeamID = test.TeamID;
-        test1.RulesAccept = test.RulesAccept;
+        AuthController controller = obj.ControllerReference;
+
+        UserEntity userEntity = new();
+        userEntity.FirstName = obj.Dto.FirstName;
+        userEntity.LastName = obj.Dto.LastName;
+        userEntity.Username = obj.Dto.Username;
+        userEntity.Password = obj.Dto.Password == null ? "" : _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
+        userEntity.Email = obj.Dto.Email;
+        userEntity.TeamID = obj.Dto.TeamID;
+        userEntity.RulesAccept = obj.Dto.RulesAccept;
         
-        await _context.AddAsync(test1);
-        await _context.SaveChangesAsync();
-       
-        return test;
+        
+        if (await EmailExistsInDb(obj.Dto.Email))
+        {
+            controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
+        }
+        if (await UsernameExistsInDb(obj.Dto.Username))
+        {
+            controller.ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
+        }
+        if (obj.Dto.RulesAccept.Equals(false))
+        {
+            controller.ModelState.AddModelError("RulesAccept", Lang.RULES_ACCEPT);
+        }
+
+        if (controller.ModelState.IsValid)
+        {
+            string generatedToken;
+            bool isExactTheSame = false;
+            do
+            {
+                generatedToken = Utilities.GenerateOtaToken();
+                var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
+                if (token != null) isExactTheSame = true;
+            } while (isExactTheSame);
+            
+            var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
+                controller.Request.Host.Port ?? -1);
+            if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
+            
+            await _context.AddAsync(userEntity);
+            await _context.SaveChangesAsync();
+            ConfirmAccountSmtpViewModel emailViewModel = new()
+            {
+                FullName = $"{userEntity.FirstName} {userEntity.LastName}",
+                TokenValidTime = tokenLife,
+                ConfirmAccountLink = $"{uriBuilder.Uri.AbsoluteUri}Auth/ConfirmAccount?token={generatedToken}",
+            };
+            UserEmailOptions<ConfirmAccountSmtpViewModel> options = new()
+            {
+                TemplateName = TemplateName.CHANGE_PASSWORD,
+                ToEmails = new List<string>() { userEntity.Email },
+                Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+                DataModel = emailViewModel
+            };
+            if (!await _smtpService.SendEmailMessage(options))
+            {
+                controller.ViewBag.Type = "alert-danger";
+                controller.ViewBag.AlertMessage = 
+                    $"Nieudane wysłanie wiadomości email na adres {userEntity.Email}. Spróbuj ponownie później.";
+            }
+            controller.Response.Redirect("/Home");
+        }
     }
 
     public async Task<bool> EmailExistsInDb(string email)
