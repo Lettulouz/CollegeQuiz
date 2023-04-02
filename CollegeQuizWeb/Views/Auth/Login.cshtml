@@ -1,3 +1,4 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CollegeQuizWeb.Dto.LoginDto
 @{
     ViewData["Title"] = "Logowanie";
@@ -14,8 +15,15 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
+                @if (ViewBag.ActivateAccount != null)
+                {
+                    <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+                        @ViewBag.ActivateAccount
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
                 <form method="post" asp-action="Login">
-                    <div class="form-data" id="registerFields">
+                    <div class="form-data mt-3" id="registerFields">
                         <label id="mainName">Logowanie</label>
                         <div class="forms-inputs mb-4">
                             <label id="username">Login lub E-mail</label>

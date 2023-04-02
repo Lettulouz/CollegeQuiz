@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.Dto;
 
 namespace CollegeQuizWeb.Services.AuthService;
@@ -9,4 +10,5 @@ public interface IAuthService
     Task Login(LoginDtoPayload obj);
     Task<bool> EmailExistsInDb(string email);
     Task<bool> UsernameExistsInDb(string username);
+    Task Activate(string token, AuthController controller);
 }

@@ -9,6 +9,7 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
 using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -61,6 +62,40 @@ public class AuthService : IAuthService
         }
 
             
+    }
+    
+    public async Task Activate(string token, AuthController controller)
+    {
+        DateTime now = DateTime.Now;
+        string responseMessage, viewBagType;
+        
+        var tokenEntity = await _context.OtaTokens
+            .FirstOrDefaultAsync(t => t.Token.Equals(token) && now < t.ExpiredAt && !t.IsUsed);
+        if (tokenEntity == null)
+        {
+            _logger.LogError("Attempt to proceed request with non existing or invalid token. Token: {}", token);
+            viewBagType = "alert-danger";
+            responseMessage = "Podany link nie istnieje, wygasł bądź został już wykorzystany.";
+            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
+            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE, viewBagType);
+            controller.Response.Redirect("Login");
+        }
+        else
+        {
+            tokenEntity.IsUsed = true;
+            long chosenUserId = tokenEntity.UserId;
+            var userEntity = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id.Equals(chosenUserId));
+            userEntity.IsAccountActivated = true;
+            _context.Update(tokenEntity);
+            _context.Update(userEntity);
+            await _context.SaveChangesAsync();
+            viewBagType= "alert-success";
+            responseMessage = "Pomyślnie aktywowano nowe konto. Możesz teraz się zalogować.";
+            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
+            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE, viewBagType);
+            controller.Response.Redirect("Login");
+        }
     }
 
     public async Task Register(RegisterDtoPayload obj)

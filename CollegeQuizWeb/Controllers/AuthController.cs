@@ -27,13 +27,23 @@ public class AuthController : Controller
         HttpContext.Session.Remove(SessionKey.CHANGE_PASSWORD_LOGIN_REDIRECT);
         ViewBag.ChangePassMessage = changePassMessage!;
         
-        
+        string? activateMessage = HttpContext.Session.GetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT);
+        string? activateViewBagType = HttpContext.Session.GetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE);
+        ViewBag.ActivateAccount = activateMessage!;
+        ViewBag.Type = activateViewBagType!;
+        HttpContext.Session.Remove(SessionKey.ACTIVATE_ACCOUNT_REDIRECT);
+        HttpContext.Session.Remove(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE);
         return View();
+    }
+
+    [HttpGet]
+    public async Task ConfirmAccount([FromQuery(Name = "token")] string token)
+    {
+        await _authService.Activate(token, this);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-
     public async Task<IActionResult> Login(LoginDto obj)
     {
 
