@@ -74,6 +74,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
+                    b.Property<DateTime>("CurrentStatusExpirationDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("current_status_expiration_date");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -83,6 +87,10 @@ namespace CollegeQuizWeb.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("first_name");
+
+                    b.Property<bool>("IsAccountActivated")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_account_activated");
 
                     b.Property<string>("LastName")
                         .IsRequired()

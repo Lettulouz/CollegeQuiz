@@ -52,8 +52,8 @@ public class AuthService : IAuthService
 
     public async Task Register(RegisterDtoPayload obj)
     {
-        int tokenLife = 2880;
-        
+        int tokenLife = 48; // in hours
+
         AuthController controller = obj.ControllerReference;
 
         UserEntity userEntity = new();
@@ -98,7 +98,6 @@ public class AuthService : IAuthService
                 UserEntity = userEntity,
             };
             await _context.AddAsync(otaToken);
-            await _context.SaveChangesAsync();
             
             var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
                 controller.Request.Host.Port ?? -1);
@@ -114,7 +113,7 @@ public class AuthService : IAuthService
             };
             UserEmailOptions<ConfirmAccountSmtpViewModel> options = new()
             {
-                TemplateName = TemplateName.CHANGE_PASSWORD,
+                TemplateName = TemplateName.CONFIRM_ACCOUNT_CREATE,
                 ToEmails = new List<string>() { userEntity.Email },
                 Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
                 DataModel = emailViewModel

@@ -39,6 +39,8 @@ public class RegisterDto
     
     [Required]
     public bool RulesAccept { get; set; }
+    
+    public bool IsAccountActivated { get; set; }
 }
 
 public class RegisterDtoPayload : AbstractControllerPayloader<AuthController>
