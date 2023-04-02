@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,10 +34,17 @@ public class UserEntity : AbstractAuditableEntity
     [Range(1,3)]
     public short AccountStatus { get; set; }
     
+    [Column("current_status_expiration_date")]
+    public DateTime CurrentStatusExpirationDate { get; set; }
+    
     [Column("team_id")]
     public int TeamID { get; set; }
     
     [Required]
     [Column("rules_accept")]
     public bool RulesAccept { get; set; }
+    
+    [DefaultValue(0)]
+    [Column("is_account_activated")]
+    public bool IsAccountActivated { get; set; }
 }

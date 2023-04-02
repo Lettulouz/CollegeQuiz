@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.Utils;
 
 namespace CollegeQuizWeb.Dto;
@@ -38,4 +39,14 @@ public class RegisterDto
     
     [Required]
     public bool RulesAccept { get; set; }
+    
+    public bool IsAccountActivated { get; set; }
+}
+
+public class RegisterDtoPayload : AbstractControllerPayloader<AuthController>
+{
+    public RegisterDto Dto { get; set; }
+    
+    public RegisterDtoPayload(AuthController controllerReference)
+        : base(controllerReference) { }
 }

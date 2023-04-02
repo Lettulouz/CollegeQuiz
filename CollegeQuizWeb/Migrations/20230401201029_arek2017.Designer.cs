@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230401201029_arek2017")]
+    partial class arek2017
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,10 +76,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
-                    b.Property<DateTime>("CurrentStatusExpirationDate")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("current_status_expiration_date");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -87,10 +85,6 @@ namespace CollegeQuizWeb.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("first_name");
-
-                    b.Property<bool>("IsAccountActivated")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_account_activated");
 
                     b.Property<string>("LastName")
                         .IsRequired()
