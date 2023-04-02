@@ -40,7 +40,7 @@ public class AuthService : IAuthService
 
         if (arek!=null)
         {
-            if (arek.IsAccountActivated == 0)
+            if (!arek.IsAccountActivated)
             {
                 controller.ModelState.AddModelError("Password", Lang.UNACTIVATED_ACCOUNT);
             }
