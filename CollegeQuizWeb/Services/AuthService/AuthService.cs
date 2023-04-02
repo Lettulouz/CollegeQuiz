@@ -64,8 +64,8 @@ public class AuthService : IAuthService
         userEntity.Email = obj.Dto.Email;
         userEntity.TeamID = obj.Dto.TeamID;
         userEntity.RulesAccept = obj.Dto.RulesAccept;
-        
-        
+
+
         if (await EmailExistsInDb(obj.Dto.Email))
         {
             controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
@@ -89,6 +89,16 @@ public class AuthService : IAuthService
                 var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
                 if (token != null) isExactTheSame = true;
             } while (isExactTheSame);
+            
+            OtaTokenEntity otaToken = new OtaTokenEntity()
+            {
+                Token = generatedToken,
+                ExpiredAt = DateTime.Now.AddMinutes(tokenLife),
+                IsUsed = false,
+                UserEntity = userEntity,
+            };
+            await _context.AddAsync(otaToken);
+            await _context.SaveChangesAsync();
             
             var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
                 controller.Request.Host.Port ?? -1);
