@@ -39,4 +39,8 @@ public class UserEntity : AbstractAuditableEntity
     [Required]
     [Column("rules_accept")]
     public bool RulesAccept { get; set; }
+    
+    [Required]
+    [Column("is_account_activated")]
+    public int IsAccountActivated { get; set; }
 }
