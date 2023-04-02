@@ -52,7 +52,9 @@ a.navbar-brand {
     border-bottom: 2px solid #aee5d4;
     border-top: 2px solid #aee5d4;
 }
-
+.navbar-collapse{
+    z-index: 10 !important;
+}
 /*
 *Stylowanie stopki
  */
