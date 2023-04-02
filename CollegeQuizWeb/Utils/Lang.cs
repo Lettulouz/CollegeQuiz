@@ -41,4 +41,5 @@ public static class Lang
     public const string RULES_ACCEPT = "*Należy zaakceptować regulamin oraz politykę prywatności.";
     
     public const string INVALID_PASSWORD = "*Podane dane są nieprawidłowe.";
+    public const string UNACTIVATED_ACCOUNT = "*Należy najpierw aktywować konto. Wiadomość została wysłana na twój adres e-mail";
 }

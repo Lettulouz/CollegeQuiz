@@ -37,11 +37,24 @@ public class AuthService : IAuthService
         
         var arek = await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(obj.Dto.LoginOrEmail)
                                                                  || o.Email.Equals(obj.Dto.LoginOrEmail));
-        if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
-            PasswordVerificationResult.Success)
+
+        if (arek!=null)
+        {
+            if (!arek.IsAccountActivated)
+            {
+                controller.ModelState.AddModelError("Password", Lang.UNACTIVATED_ACCOUNT);
+            }
+
+            if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
+                PasswordVerificationResult.Success)
             {
                 controller.Response.Redirect("/home");
             }
+            else
+            {
+                controller.ModelState.AddModelError("Password", Lang.INVALID_PASSWORD);
+            }
+        }
         else
         {
             controller.ModelState.AddModelError("Password", Lang.INVALID_PASSWORD);
