@@ -10,29 +10,33 @@
 </head>
 <body>
 <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm " >
+        <nav class="navbar navbar-expand-lg navbar-toggleable-sm list-border" >
         <div class="container-fluid">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QUIZAZU</a>
             <button class="navbar-toggler navbar-light" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <div class="navbar-collapse collapse d-xxl-inline-flex justify-content-between list-border">
                 <ul class="navbar-nav flex-grow-1 justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link " asp-area="" asp-controller="Home" asp-action="Index">STRONA GŁÓWNA</a>
+                        <a class="nav-link p-3" asp-area="" asp-controller="" asp-action="Index">STRONA GŁÓWNA</a>
                     </li>
+                     <hr class="dropdown-divider m-0">
+                     <li class="nav-item">
+                         <a class="nav-link p-3" asp-area="" asp-controller="" >STWÓRZ QUIZ</a>
+                     </li>
+                      <hr class="dropdown-divider m-0">
+                     <li class="nav-item">
+                         <a class="nav-link p-3" asp-area="" asp-controller="" >DOŁĄCZ</a>
+                     </li>
+                      <hr class="dropdown-divider m-0">
+                     <li class="nav-item">
+                         <a class="nav-link p-3" asp-area="" asp-controller="Auth" asp-action="Login">ZALOGUJ</a>
+                     </li>
+                      <hr class="dropdown-divider m-0">
                     <li class="nav-item">
-                         <a class="nav-link " asp-area="" asp-controller="Home" >STWÓRZ QUIZ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " asp-area="" asp-controller="Home" >DOŁĄCZ</a>
-                    </li>
-                    <li class="nav-item">
-                         <a class="nav-link " asp-area="" asp-controller="Auth" asp-action="Login">ZALOGUJ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " asp-area="" asp-controller="Auth" asp-action="Register">REJESTRACJA</a>
+                        <a class="nav-link p-3 list-border" asp-area="" asp-controller="Auth" asp-action="Register">REJESTRACJA</a>
                     </li>
                 </ul>
             </div>
@@ -45,7 +49,7 @@
     </main>
 </div>
 
-<footer class="footer ">
+<footer class="footer">
     <div class="container-fluid text-center">
         &copy; 2023 - QUIZAZU - <a asp-area="" asp-controller="Home" asp-action="Regulation">Privacy</a>
     </div>

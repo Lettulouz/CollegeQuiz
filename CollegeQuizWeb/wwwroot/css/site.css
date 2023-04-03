@@ -29,6 +29,10 @@ body {
     border-bottom-color: #aee5d4;
 }
 
+.list-border {
+    border-radius: 0px 0px 25px 25px;
+}
+
 a.navbar-brand {
     white-space: normal;
     text-align: center;
@@ -42,19 +46,40 @@ a.navbar-brand {
 .nav-link {
     color: #f9fef8;
     background-color: #63c4ab;
-    margin-left: 15px;
     font-size: large;
     border-bottom: 2px solid #63c4ab;
     border-top: 2px solid #63c4ab;
 }
-.nav-link:hover {
-    color: #f9fef8;
-    border-bottom: 2px solid #aee5d4;
-    border-top: 2px solid #aee5d4;
+
+@media screen and (min-width: 992px) {
+    .nav-link:hover {
+        color: #f9fef8;
+        border-bottom: 2px solid #aee5d4;
+        border-top: 2px solid #aee5d4;
+        border-radius: 25px 25px 25px 25px;
+    }
 }
-.navbar-collapse{
+
+@media screen and (min-width: 992px) {
+    .nav-link:not(:hover) {
+        border-radius: 25px 25px 25px 25px;
+    }
+}
+
+.nav-link:focus, .nav-link:hover {
+    color: #19452e;
+}
+
+.navbar-collapse {
     z-index: 10 !important;
 }
+
+.dropdown-divider {
+    border-color: #19452e !important;
+    background-color: #19452e !important;
+    opacity: 1;
+}
+
 /*
 *Stylowanie stopki
  */
@@ -64,8 +89,11 @@ a.navbar-brand {
     width: 100%;
     white-space: nowrap;
     line-height: 60px;
-    background-color: #aee5d4;
-    color: #f9fef8;
+    background-color: #D9FFF4;
+    border-top-width: 5px;
+    border-top-style: solid;
+    border-top-color: #7CE3C8;
+    color: #19452e;
 }
 
 /*
@@ -82,8 +110,9 @@ Stylowanie treści strony głównej
     color: #f9fef8;
     font-size: x-large;
     margin-top: 40px;
-   /* background-size: cover;*/
+    /* background-size: cover;*/
 }
+
 .click-me:hover {
     background-color: #4dce96;
     color: #f9fef8;
@@ -123,11 +152,17 @@ input:-webkit-autofill {
     font-size: 15px
 }
 
+.card {
+    background-color: #f7fef5;
+    border: 2px solid #63c4ab;
+}
+
 .forms-inputs input {
     padding: 0px 0px 0px 15px;
     height: 50px;
     border: 2px solid rgb(238, 238, 238);
     width: 100%;
+    border-radius: 15px 25px 25px 25px;
 }
 
 .forms-inputs input:focus {
@@ -136,8 +171,26 @@ input:-webkit-autofill {
     border: 2px solid #000
 }
 
-.btn {
-    height: 50px
+.btn-color-one {
+    height: 50px;
+    color: #19452e;
+    background-color: #63c4ab;
+    border: none;
+}
+
+.btn-color-one:hover {
+    background-color: #64B7A2;
+}
+
+.btn-color-two:hover {
+    background-color: #C9EAE1;
+}
+
+.btn-color-two {
+    height: 50px;
+    color: #19452e;
+    background-color: #D9FFF4;
+    border: none;
 }
 
 .success-data {
@@ -179,10 +232,11 @@ input:-webkit-autofill {
     position: absolute;
     top: -23px;
     left: 25px;
-    background-color: rgb(255, 255, 255);
+    background-color: #f7fef5;
     padding: 5px 10px;
     font-size: 20px;
     font-weight: bolder;
+    border-radius: 15px 25px 25px 25px;
 }
 
 .errorTextColor {
