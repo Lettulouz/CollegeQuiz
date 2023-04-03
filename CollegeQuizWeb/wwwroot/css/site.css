@@ -109,8 +109,7 @@ Stylowanie treści strony głównej
     background-color: #128e58;
     color: #f9fef8;
     font-size: x-large;
-    margin-top: 40px;
-    /* background-size: cover;*/
+    width: 300px;
 }
 
 .click-me:hover {
