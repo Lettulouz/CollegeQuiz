@@ -6,6 +6,7 @@ using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -33,8 +34,7 @@ public class AuthController : Controller
         ViewBag.Type = activateViewBagType!;
         HttpContext.Session.Remove(SessionKey.ACTIVATE_ACCOUNT_REDIRECT);
         HttpContext.Session.Remove(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE);
-        
-        
+
         return View();
     }
 

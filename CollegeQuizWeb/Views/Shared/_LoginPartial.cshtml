@@ -1,7 +1,6 @@
 ﻿@using CollegeQuizWeb.Dto
 @using CollegeQuizWeb.Utils
 @using Microsoft.AspNetCore.Http
-@model CollegeQuizWeb.Dto.LoginDto
 
 
 <ul class="navbar-nav flex-grow-1 justify-content-end">
@@ -31,14 +30,15 @@
     }
     else
     {
+        <hr class="dropdown-divider m-0">
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle p-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle p-3 list-border" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 @Context.Session.GetString(SessionKey.IS_USER_LOGGED) <i class="bi bi-person"></i>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul class="dropdown-menu dropdown-menu-end rouded-options">
 
-                <li>
-                    <a class="dropdown-item mt-1" asp-area="" asp-controller="Auth" asp-action="Logout">
+                <li list-border>
+                    <a class="dropdown-item mt-1 " asp-area="" asp-controller="Auth" asp-action="Logout">
                         <i class="bi bi-box-arrow-left" ></i> Wyloguj
                     </a>
                 </li>

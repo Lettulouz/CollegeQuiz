@@ -37,6 +37,10 @@ body {
     border-radius: 0px 0px 25px 25px;
 }
 
+.rouded-options{
+    border-radius: 25px;
+}
+
 a.navbar-brand {
     white-space: normal;
     text-align: center;
