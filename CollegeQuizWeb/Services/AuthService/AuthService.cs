@@ -49,6 +49,7 @@ public class AuthService : IAuthService
             if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
                 PasswordVerificationResult.Success)
             {
+                controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, arek.Username);
                 controller.Response.Redirect("/home");
             }
             else

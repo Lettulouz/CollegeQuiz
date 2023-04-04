@@ -33,6 +33,8 @@ public class AuthController : Controller
         ViewBag.Type = activateViewBagType!;
         HttpContext.Session.Remove(SessionKey.ACTIVATE_ACCOUNT_REDIRECT);
         HttpContext.Session.Remove(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE);
+        
+        
         return View();
     }
 
@@ -52,7 +54,8 @@ public class AuthController : Controller
         if (ModelState.IsValid)
         {
             await _authService.Login(payloadDto);
-           // return RedirectToAction("Privacy", "Home");
+            string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+            // return RedirectToAction("Privacy", "Home");
         }
         
 
