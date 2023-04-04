@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/CollegeQuizWeb.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css"/>
 </head>
 <body>
 <header>
@@ -18,27 +19,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-xxl-inline-flex justify-content-between list-border">
-                <ul class="navbar-nav flex-grow-1 justify-content-end">
-                    <li class="nav-item">
-                        <a class="nav-link p-3" asp-area="" asp-controller="" asp-action="Index">STRONA GŁÓWNA</a>
-                    </li>
-                     <hr class="dropdown-divider m-0">
-                     <li class="nav-item">
-                         <a class="nav-link p-3" asp-area="" asp-controller="" >STWÓRZ QUIZ</a>
-                     </li>
-                      <hr class="dropdown-divider m-0">
-                     <li class="nav-item">
-                         <a class="nav-link p-3" asp-area="" asp-controller="" >DOŁĄCZ</a>
-                     </li>
-                      <hr class="dropdown-divider m-0">
-                     <li class="nav-item">
-                         <a class="nav-link p-3" asp-area="" asp-controller="Auth" asp-action="Login">ZALOGUJ</a>
-                     </li>
-                      <hr class="dropdown-divider m-0">
-                    <li class="nav-item">
-                        <a class="nav-link p-3 list-border" asp-area="" asp-controller="Auth" asp-action="Register">REJESTRACJA</a>
-                    </li>
-                </ul>
+                <partial name="_LoginPartial" />
             </div>
         </div>
     </nav>
