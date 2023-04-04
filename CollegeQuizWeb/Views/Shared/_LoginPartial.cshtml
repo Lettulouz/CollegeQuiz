@@ -17,7 +17,7 @@
         <a class="nav-link p-3" asp-area="" asp-controller="" >DOŁĄCZ</a>
     </li>
     
-    @if(Context.Session.GetString(SessionKey.IS_USER_LOGGED)==null || false)
+    @if(Context.Session.GetString(SessionKey.IS_USER_LOGGED)==null)
     {
         <hr class="dropdown-divider m-0">
         <li class="nav-item">
@@ -38,8 +38,8 @@
             <ul class="dropdown-menu dropdown-menu-end">
 
                 <li>
-                    <a class="dropdown-item mt-1">
-                        <i class="bi bi-box-arrow-left"></i> Wyloguj
+                    <a class="dropdown-item mt-1" asp-area="" asp-controller="Auth" asp-action="Logout">
+                        <i class="bi bi-box-arrow-left" ></i> Wyloguj
                     </a>
                 </li>
             </ul>

@@ -58,8 +58,6 @@ public class AuthController : Controller
             // return RedirectToAction("Privacy", "Home");
         }
         
-
-        
         return View(obj);
     }
 
@@ -99,4 +97,11 @@ public class AuthController : Controller
     
     [HttpGet] public IActionResult Register() => View();
     [HttpGet] public IActionResult AttemptChangePassword() => View();
+
+    [HttpGet]
+    public async Task<IActionResult> Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index", "Home");
+    }
 }

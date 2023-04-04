@@ -77,9 +77,6 @@ public class AuthService : IAuthService
             _logger.LogError("Attempt to proceed request with non existing or invalid token. Token: {}", token);
             viewBagType = "alert-danger";
             responseMessage = "Podany link nie istnieje, wygasł bądź został już wykorzystany.";
-            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
-            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE, viewBagType);
-            controller.Response.Redirect("Login");
         }
         else
         {
@@ -93,10 +90,10 @@ public class AuthService : IAuthService
             await _context.SaveChangesAsync();
             viewBagType= "alert-success";
             responseMessage = "Pomyślnie aktywowano nowe konto. Możesz teraz się zalogować.";
-            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
-            controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE, viewBagType);
-            controller.Response.Redirect("Login");
         }
+        controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
+        controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE, viewBagType);
+        controller.Response.Redirect("Login");
     }
 
     public async Task Register(RegisterDtoPayload obj)
