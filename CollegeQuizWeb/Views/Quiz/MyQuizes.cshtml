@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Moje quizy";
+}
+
+<div>chuj z tymi quizami</div>
+
+@if (ViewBag.Alert != null)
+{
+    <div class="alert @ViewBag.Alert.Type alert-dismissible fade show" role="alert">
+        @Html.Raw(ViewBag.Alert.Content)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@foreach (var quiz in ViewBag.Quizes)
+{
+    <a class="btn-color-two w-100" asp-action="QuizPage" asp-controller="Quiz" asp-route-id="@quiz.Id">
+        @quiz.Name
+    </a>
+}
+
+<a class="btn-color-two w-100" asp-action="AddQuiz" asp-controller="Quiz">Dodaj nowy quiz</a>

@@ -1,43 +1,62 @@
 using System.Threading.Tasks;
-using CollegeQuizWeb.DbConfig;
-using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Dto.Quiz;
+using CollegeQuizWeb.Services.QuizService;
+using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeQuizWeb.Controllers;
 
 public class QuizController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IQuizService _service;
 
-    public QuizController(ApplicationDbContext context)
+    public QuizController(IQuizService service)
     {
-        _context = context;
+        _service = service;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> MyQuizes()
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        
+        ViewBag.Alert = Utilities.getSessionPropertyAndRemove(HttpContext, SessionKey.MY_QUIZES_ALERT)!;
+        ViewBag.Quizes = await _service.GetMyQuizes(loggedUsername);
+        
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> QuizPage([FromRoute(Name = "id")] long id)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+
+        ViewBag.QuizData = await _service.GetQuizDetails(loggedUsername, id, this);
+        
+        return View();
+    }
+
+    [HttpGet]
     public IActionResult AddQuiz()
     {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        
         return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddQuiz(QuizEntity question, QuestionEntity answer1, QuestionEntity answer2, QuestionEntity answer3, QuestionEntity answer4)
+    public async Task<IActionResult> AddQuiz(AddQuizDto dto)
     {
-        if (ModelState.IsValid)
-        {
-            _context.Add(question);
-            await _context.SaveChangesAsync();
-
-            answer1.Id = question.Id;
-            answer2.Id = question.Id;
-            answer3.Id = question.Id;
-            answer4.Id = question.Id;
-
-            _context.AddRange(answer1, answer2, answer3, answer4);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(AddQuiz));
-        }
-        return View(question);
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        
+        AddQuizDtoPayloader payloader = new AddQuizDtoPayloader(this) { Dto = dto };
+        await _service.CreateNewQuiz(loggedUsername, payloader);
+        return View(dto);
     }
 }

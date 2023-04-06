@@ -1,0 +1,8 @@
+@{
+    ViewData["Title"] = $"Quiz {ViewBag.QuizData.Name}";
+}
+
+<a class="btn-color-two w-100" asp-action="MyQuizes" asp-controller="Quiz">powrót do quizów</a>
+<h2>@ViewBag.QuizData.Name</h2>
+
+strona ze szczegółami quizu i możliwością dodawnia pytań

@@ -4,18 +4,20 @@ using CollegeQuizWeb.DbConfig;
 
 namespace CollegeQuizWeb.Entities;
 
-[Table("quiz_name")]
+[Table("quizes")]
 public class QuizEntity : AbstractAuditableEntity
 {
     [Required]
-    [Column("id")]
-    public int id { get; set; }
+    [Column("name")]
+    public string Name { get; set; }
     
     [Required]
-    [Column("quizName")]
-    public string QuizName { get; set; }
+    [Column("is_public")]
+    public bool IsPublic { get; set; }
     
-    [Required]
-    [Column("quiz_owner")]
-    public string Quiz_owner { get; set; }
+    [ForeignKey(nameof(UserEntity))]
+    [Column("user_id")]
+    public long UserId { get; set; }
+    
+    public virtual UserEntity UserEntity { get; set; }
 }

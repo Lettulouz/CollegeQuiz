@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CollegeQuizWeb.Dto.Quiz.AddQuizDto
 @{
     ViewData["Title"] = "Stwórz swój quiz";
 }
@@ -7,43 +8,31 @@
     <div class="row d-flex justify-content-center mt-5">
         <div class="col-12 col-md-6 mb-5">
             <div class="card px-5 py-5 h-100" id="form1">
-
-
-
-                <form method="post" asp-action="AddQuiz">
-                    <div class="form-data" id="registerFields">
-                            <label id="mainName">Stwórz własny quiz</label>
-                        <div class="forms-inputs mb-4">
-                            <label>Pytanie</label>
-                            <input type="text" class="form-control" @*name="QuestionText" value="@Model.Equals(QuestionEntity)"*@/>
-                            @*<span asp-validation-for="Question" class="text-mx-2 mt-1 errorTextColor"></span>*@
-
-                        </div>
-                        <div class="forms-inputs mb-4">
-                            <label>Odpowiedzi</label>
-                            <div class="form-forms-inputs mb-4">
-                                <input type="text" class="form-control" @*name="QuizAnswers[0].AnswerText" value="@Model.QuizAnswers[0].AnswerText"*@/>
-                                @*<span asp-validation-for="QuizAnswers[0].AnswerText" class="text-danger"></span>*@
-                            </div>
-                            <div class="forms-inputs mb-4">
-                                <input type="text" class="form-control" @*name="QuizAnswers[1].AnswerText" value="@Model.QuizAnswers[1].AnswerText"*@/>
-                                @*<span asp-validation-for="QuizAnswers[1].AnswerText" class="text-danger"></span>*@
-                            </div>
-                            <div class="forms-inputs mb-4">
-                                <input type="text" class="form-control" @*name="QuizAnswers[2].AnswerText" value="@Model.QuizAnswers[2].AnswerText"*@/>
-                                @*<span asp-validation-for="QuizAnswers[2].AnswerText" class="text-danger"></span>*@
-                            </div>
-                            <div class="forms-inputs mb-4">
-                                <input type="text" class="form-control" @*name="QuizAnswers[3].AnswerText" value="@Model.QuizAnswers[3].AnswerText"*@/>
-                                @*<span asp-validation-for="QuizAnswers[3].AnswerText" class="text-danger"></span>*@
-                            </div>
-                        </div>
-                        <div class="forms-inputs mb-4">
-                            <input type="submit" value="Dodaj" class="btn-color-one"/>
-                        </div>
+                @if (ViewBag.Alert != null)
+                {
+                    <div class="alert @ViewBag.Alert.Type alert-dismissible fade show" role="alert">
+                        @Html.Raw(ViewBag.Alert.Content)
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <form method="post" asp-controller="Quiz" asp-action="AddQuiz">
+                    <label id="mainName">Dodaj nowy quiz</label>
+                    <div class="forms-inputs mb-4">
+                        <label>Nazwa quizu</label>
+                        <input type="text" asp-for="QuizName">
+                        <span class="mx-2 mt-1 errorTextColor" asp-validation-for="QuizName"></span>
+                    </div>
+                    <div class="forms-check mb-4 custom-control custom-checkbox">
+                        <input class="form-check-input" type="checkbox" value="true" asp-for="IsPrivate">
+                        <label class="form-check-label d-inline" asp-for="IsPrivate">
+                            Chcę, aby ten quiz był prywatny
+                        </label>
+                        <span class="mx-2 mt-1 d-flex errorTextColor" asp-validation-for="IsPrivate"></span>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn-color-one w-100" name="registerSubmit" type="submit">Dodaj nowy quiz</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>

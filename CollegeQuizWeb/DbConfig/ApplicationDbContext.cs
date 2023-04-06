@@ -19,6 +19,9 @@ public class ApplicationDbContext : DbContext
     
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<OtaTokenEntity> OtaTokens { get; set; }
+    public DbSet<AnswerEntity> Answers { get; set; }
+    public DbSet<QuestionEntity> Questions { get; set; }
+    public DbSet<QuizEntity> Quizes { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
