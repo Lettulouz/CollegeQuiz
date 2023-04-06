@@ -46,15 +46,18 @@ public class AuthService : IAuthService
                 controller.ModelState.AddModelError("Password", Lang.UNACTIVATED_ACCOUNT);
             }
 
-            if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
-                PasswordVerificationResult.Success)
+            if (controller.ModelState.IsValid)
             {
-                controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, arek.Username);
-                controller.Response.Redirect("/home");
-            }
-            else
-            {
-                controller.ModelState.AddModelError("Password", Lang.INVALID_PASSWORD);
+                if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
+                    PasswordVerificationResult.Success)
+                {
+                    controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, arek.Username);
+                    controller.Response.Redirect("/home");
+                }
+                else
+                {
+                    controller.ModelState.AddModelError("Password", Lang.INVALID_PASSWORD);
+                }
             }
         }
         else

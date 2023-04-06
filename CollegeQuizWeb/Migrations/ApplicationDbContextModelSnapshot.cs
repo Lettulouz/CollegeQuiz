@@ -54,6 +54,44 @@ namespace CollegeQuizWeb.Migrations
                     b.ToTable("answers");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.CouponEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpiringAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expiring_at");
+
+                    b.Property<int>("ExtensionTime")
+                        .HasColumnType("int")
+                        .HasColumnName("extension_time");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_used");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("token");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("coupons");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.OtaTokenEntity", b =>
                 {
                     b.Property<long>("Id")
