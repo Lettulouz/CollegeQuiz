@@ -28,4 +28,8 @@
       <Folder Include="Migrations" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Quiz\AddQuiz.cshtml" />
+    </ItemGroup>
+
 </Project>
