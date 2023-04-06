@@ -37,7 +37,7 @@ body {
     border-radius: 0px 0px 25px 25px;
 }
 
-.rouded-options{
+.rouded-options {
     border-radius: 25px;
 }
 
@@ -164,6 +164,23 @@ input:-webkit-autofill {
     border: 2px solid #63c4ab;
 }
 
+.card-add {
+    background-color: #63c4ab;
+}
+
+@media screen and (max-width: 576px) {
+    .card-resize {
+        min-width: 450px;
+        min-height: 120px;
+    }
+}
+
+.button-card {
+    width: 40px;
+    height: 40px;
+    align-content: end;
+}
+
 .forms-inputs input {
     padding: 0px 0px 0px 15px;
     height: 50px;
@@ -233,6 +250,13 @@ input:-webkit-autofill {
 
 .btn-dark:hover {
     background-color: rgb(0, 0, 0) !important;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #19452e;
 }
 
 #mainName {
