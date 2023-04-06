@@ -8,8 +8,8 @@ namespace CollegeQuizWeb.Entities;
 public class AnswerEntity : AbstractAuditableEntity
 {
     [Required]
-    [Column("quiz_id")]
-    public string quiz_id { get; set; }
+    [Column("id")]
+    public int id { get; set; }
     
     [Required]
     [Column("answer")]
