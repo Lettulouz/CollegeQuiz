@@ -35,11 +35,11 @@ public class AuthService : IAuthService
     public async Task Login(LoginDtoPayload obj)
     {
         AuthController controller = obj.ControllerReference;
-        
+
         var arek = await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(obj.Dto.LoginOrEmail)
                                                                  || o.Email.Equals(obj.Dto.LoginOrEmail));
 
-        if (arek!=null)
+        if (arek != null)
         {
             if (!arek.IsAccountActivated)
             {
@@ -61,15 +61,13 @@ public class AuthService : IAuthService
         {
             controller.ModelState.AddModelError("Password", Lang.INVALID_PASSWORD);
         }
-
-            
     }
-    
+
     public async Task Activate(string token, AuthController controller)
     {
         DateTime now = DateTime.Now;
         string responseMessage, viewBagType;
-        
+
         var tokenEntity = await _context.OtaTokens
             .FirstOrDefaultAsync(t => t.Token.Equals(token) && now < t.ExpiredAt && !t.IsUsed);
         if (tokenEntity == null)
@@ -88,9 +86,10 @@ public class AuthService : IAuthService
             _context.Update(tokenEntity);
             _context.Update(userEntity);
             await _context.SaveChangesAsync();
-            viewBagType= "alert-success";
+            viewBagType = "alert-success";
             responseMessage = "Pomyślnie aktywowano nowe konto. Możesz teraz się zalogować.";
         }
+
         controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
         controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_VIEWBAG_TYPE, viewBagType);
         controller.Response.Redirect("Login");
@@ -106,7 +105,8 @@ public class AuthService : IAuthService
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
-        userEntity.Password = obj.Dto.Password == null ? "" : _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
+        userEntity.Password =
+            obj.Dto.Password == null ? "" : _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
         userEntity.Email = obj.Dto.Email;
         userEntity.TeamID = obj.Dto.TeamID;
         userEntity.RulesAccept = obj.Dto.RulesAccept;
@@ -116,62 +116,64 @@ public class AuthService : IAuthService
         {
             controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
         }
+
         if (await UsernameExistsInDb(obj.Dto.Username))
         {
             controller.ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
         }
+
         if (obj.Dto.RulesAccept.Equals(false))
         {
             controller.ModelState.AddModelError("RulesAccept", Lang.RULES_ACCEPT);
         }
 
-        if (controller.ModelState.IsValid)
+        if (!controller.ModelState.IsValid) return;
+
+        string generatedToken;
+        bool isExactTheSame = false;
+        do
         {
-            string generatedToken;
-            bool isExactTheSame = false;
-            do
-            {
-                generatedToken = Utilities.GenerateOtaToken();
-                var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
-                if (token != null) isExactTheSame = true;
-            } while (isExactTheSame);
-            
-            OtaTokenEntity otaToken = new OtaTokenEntity()
-            {
-                Token = generatedToken,
-                ExpiredAt = DateTime.Now.AddMinutes(tokenLife),
-                IsUsed = false,
-                UserEntity = userEntity,
-            };
-            await _context.AddAsync(otaToken);
-            
-            var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
-                controller.Request.Host.Port ?? -1);
-            if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
-            
-            await _context.AddAsync(userEntity);
-            await _context.SaveChangesAsync();
-            ConfirmAccountSmtpViewModel emailViewModel = new()
-            {
-                FullName = $"{userEntity.FirstName} {userEntity.LastName}",
-                TokenValidTime = tokenLife,
-                ConfirmAccountLink = $"{uriBuilder.Uri.AbsoluteUri}Auth/ConfirmAccount?token={generatedToken}",
-            };
-            UserEmailOptions<ConfirmAccountSmtpViewModel> options = new()
-            {
-                TemplateName = TemplateName.CONFIRM_ACCOUNT_CREATE,
-                ToEmails = new List<string>() { userEntity.Email },
-                Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
-                DataModel = emailViewModel
-            };
-            if (!await _smtpService.SendEmailMessage(options))
-            {
-                controller.ViewBag.Type = "alert-danger";
-                controller.ViewBag.AlertMessage = 
-                    $"Nieudane wysłanie wiadomości email na adres {userEntity.Email}. Spróbuj ponownie później.";
-            }
-            controller.Response.Redirect("/Home");
+            generatedToken = Utilities.GenerateOtaToken();
+            var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
+            if (token != null) isExactTheSame = true;
+        } while (isExactTheSame);
+
+        OtaTokenEntity otaToken = new OtaTokenEntity()
+        {
+            Token = generatedToken,
+            ExpiredAt = DateTime.Now.AddMinutes(tokenLife),
+            IsUsed = false,
+            UserEntity = userEntity,
+        };
+        await _context.AddAsync(otaToken);
+
+        var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
+            controller.Request.Host.Port ?? -1);
+        if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
+
+        await _context.AddAsync(userEntity);
+        await _context.SaveChangesAsync();
+        ConfirmAccountSmtpViewModel emailViewModel = new()
+        {
+            FullName = $"{userEntity.FirstName} {userEntity.LastName}",
+            TokenValidTime = tokenLife,
+            ConfirmAccountLink = $"{uriBuilder.Uri.AbsoluteUri}Auth/ConfirmAccount?token={generatedToken}",
+        };
+        UserEmailOptions<ConfirmAccountSmtpViewModel> options = new()
+        {
+            TemplateName = TemplateName.CONFIRM_ACCOUNT_CREATE,
+            ToEmails = new List<string>() { userEntity.Email },
+            Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            DataModel = emailViewModel
+        };
+        if (!await _smtpService.SendEmailMessage(options))
+        {
+            controller.ViewBag.Type = "alert-danger";
+            controller.ViewBag.AlertMessage =
+                $"Nieudane wysłanie wiadomości email na adres {userEntity.Email}. Spróbuj ponownie później.";
         }
+
+        controller.Response.Redirect("/Home");
     }
 
     public async Task<bool> EmailExistsInDb(string email)
@@ -180,7 +182,7 @@ public class AuthService : IAuthService
             return false;
         return true;
     }
-    
+
     public async Task<bool> UsernameExistsInDb(string username)
     {
         if (await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(username)) == null)
