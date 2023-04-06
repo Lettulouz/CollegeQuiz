@@ -6,6 +6,7 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Services.QuizService;
+using CollegeQuizWeb.Services.UserService;
 using CollegeQuizWeb.Smtp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // serwisy kontrolerów API
 
