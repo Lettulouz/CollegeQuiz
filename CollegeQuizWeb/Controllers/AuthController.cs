@@ -102,6 +102,8 @@ public class AuthController : Controller
     public async Task<IActionResult> Logout()
     {
         HttpContext.Session.Clear();
+        string logout = "logout";
+        HttpContext.Session.SetString(SessionKey.USER_LOGOUT, logout);
         return RedirectToAction("Index", "Home");
     }
 }
