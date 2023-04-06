@@ -19,7 +19,7 @@ body {
     background-image: url(../home_graphic.svg);
     background-size: 55%;
     background-repeat: no-repeat;
-    background-position: left 0px bottom 65px;
+    background-position: left 0 bottom 65px;
 }
 
 /*
@@ -34,7 +34,7 @@ body {
 }
 
 .list-border {
-    border-radius: 0px 0px 25px 25px;
+    border-radius: 0 0 25px 25px;
 }
 
 .rouded-options{
@@ -130,7 +130,7 @@ Stylowanie treści strony głównej
  * Stylowanie interfejsu autoryzacji użytkownika
 */
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #fbfbfb inset;
+    -webkit-box-shadow: 0 0 0 1000px #fbfbfb inset;
 }
 
 .bg-custom-4 {
@@ -165,7 +165,7 @@ input:-webkit-autofill {
 }
 
 .forms-inputs input {
-    padding: 0px 0px 0px 15px;
+    padding: 0 0 0 15px;
     height: 50px;
     border: 2px solid rgb(238, 238, 238);
     width: 100%;
