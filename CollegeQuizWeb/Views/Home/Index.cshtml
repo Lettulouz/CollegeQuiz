@@ -1,9 +1,32 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CollegeQuizWeb.Dto.LoginDto
+@{
     ViewData["Title"] = "Home Page";
+}
+
+@if (ViewBag.Logout != null)
+{
+
+    <div class="modal fade" id="logout-modal" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Pomyślne wylogowanie</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body fw-normal">
+                    Nastąpiło pomyślne wylogowywanie z systemu. Możesz zamknąć okno.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-color-one" data-bs-dismiss="modal">Zamknij okno</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 <div class="text-center">
     <p class="h1 mx-auto">STWÓRZ SWÓJ PIERWSZY QUIZ!</p>
-    <a class="btn click-me mx-auto mt-5" asp-area="" asp-controller="Home"  role="button">TUTAJ!</a>
+    <a class="btn click-me mx-auto mt-5" asp-action="AddQuiz" asp-controller="Quiz" role="button">TUTAJ!</a>
 </div>
 

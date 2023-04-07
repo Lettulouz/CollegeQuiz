@@ -1,0 +1,39 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CollegeQuizWeb.Dto.Quiz.AddQuizDto
+@{
+    ViewData["Title"] = "Stwórz swój quiz";
+}
+
+<div class="container mt-5 mb-1">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="col-12 col-md-6 mb-5">
+            <div class="card px-5 py-5 h-100" id="form1">
+                @if (ViewBag.Alert != null)
+                {
+                    <div class="alert @ViewBag.Alert.Type alert-dismissible fade show" role="alert">
+                        @Html.Raw(ViewBag.Alert.Content)
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <form method="post" asp-controller="Quiz" asp-action="AddQuiz">
+                    <label id="mainName">Dodaj nowy quiz</label>
+                    <div class="forms-inputs mb-4">
+                        <label>Nazwa quizu</label>
+                        <input type="text" asp-for="QuizName">
+                        <span class="mx-2 mt-1 errorTextColor" asp-validation-for="QuizName"></span>
+                    </div>
+                    <div class="forms-check mb-4 custom-control custom-checkbox">
+                        <input class="form-check-input" type="checkbox" value="true" asp-for="IsPrivate">
+                        <label class="form-check-label d-inline" asp-for="IsPrivate">
+                            Chcę, aby ten quiz był prywatny
+                        </label>
+                        <span class="mx-2 mt-1 d-flex errorTextColor" asp-validation-for="IsPrivate"></span>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn-color-one w-100" name="registerSubmit" type="submit">Dodaj nowy quiz</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

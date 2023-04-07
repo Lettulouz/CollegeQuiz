@@ -1,5 +1,8 @@
 using System;
 using System.Text;
+using System.Text.Json;
+using CollegeQuizWeb.Dto;
+using Microsoft.AspNetCore.Http;
 
 namespace CollegeQuizWeb.Utils;
 
@@ -16,5 +19,14 @@ public static class Utilities
             stringBuilder.Append(CHARACTERS[RANDOM.Next(CHARACTERS.Length)]);
         }
         return stringBuilder.ToString();
+    }
+
+    public static AlertDto? getSessionPropertyAndRemove(HttpContext context, string key)
+    {
+        string? jsonStringProperty = context.Session.GetString(key);
+        if (jsonStringProperty == null) return null;
+        context.Session.Remove(key);
+        AlertDto? alertDto = JsonSerializer.Deserialize<AlertDto>(jsonStringProperty);
+        return alertDto;
     }
 }

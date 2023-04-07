@@ -1,5 +1,4 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@using CollegeQuizWeb.Dto
 @model CollegeQuizWeb.Dto.RegisterDto
 @{
     ViewData["Title"] = "Registration Page";
@@ -55,9 +54,8 @@
                             <button class="btn-color-one w-100" name="registerSubmit" type="submit">Rejestracja</button>
                         </div>
                         <div>
-                            <button class="btn-color-two w-100" onclick="moveToLogin()">Mam już konto</button>
+                            <a class="btn-color-two w-100" asp-action="Login" asp-controller="Auth">Mam już konto</a>
                         </div>
-
                     </div>
                 </form>
             </div>

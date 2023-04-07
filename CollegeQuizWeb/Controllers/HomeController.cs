@@ -5,6 +5,8 @@ using CollegeQuizWeb.Dto;
 using Microsoft.AspNetCore.Mvc;
 using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
+using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Http;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -16,9 +18,15 @@ public class HomeController : Controller
     { 
         _homeService = homeService;
     }
-    
-    public IActionResult Index() => View();
-    
+
+    public IActionResult Index()
+    {
+        string? logouUser = HttpContext.Session.GetString(SessionKey.USER_LOGOUT);
+        ViewBag.Logout = logouUser!;
+        HttpContext.Session.Remove(SessionKey.USER_LOGOUT);
+        return View();
+    }
+
     public IActionResult Privacy() => View();
     
     public  IActionResult Regulation()

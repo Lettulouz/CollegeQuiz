@@ -8,15 +8,16 @@ namespace CollegeQuizWeb.Entities;
 public class AnswerEntity : AbstractAuditableEntity
 {
     [Required]
+    [Column("name")]
+    public string Name { get; set; }
+    
+    [Required]
+    [Column("is_good")]
+    public bool IsGood { get; set; }
+    
+    [ForeignKey(nameof(QuestionEntity))]
     [Column("quiz_id")]
-    public string quiz_id { get; set; }
+    public long QuestionId { get; set; }
     
-    [Required]
-    [Column("answer")]
-    public string Option { get; set; }
-    
-    [Required]
-    [Column("isTrue")]
-    public bool Is_true { get; set; }
-    
+    public virtual QuestionEntity QuestionEntity { get; set; }
 }

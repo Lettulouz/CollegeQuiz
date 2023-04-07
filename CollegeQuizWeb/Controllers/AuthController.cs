@@ -6,7 +6,6 @@ using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -99,9 +98,11 @@ public class AuthController : Controller
     [HttpGet] public IActionResult AttemptChangePassword() => View();
 
     [HttpGet]
-    public async Task<IActionResult> Logout()
+    public IActionResult Logout()
     {
         HttpContext.Session.Clear();
+        string logout = "logout";
+        HttpContext.Session.SetString(SessionKey.USER_LOGOUT, logout);
         return RedirectToAction("Index", "Home");
     }
 }

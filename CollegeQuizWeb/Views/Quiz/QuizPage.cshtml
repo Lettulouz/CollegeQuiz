@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = $"Quiz {ViewBag.QuizData.Name}";
+}
+
+<a class="btn-color-two w-100" asp-action="MyQuizes" asp-controller="Quiz">powrót do quizów</a>
+<h2>@ViewBag.QuizData.Name</h2>
+
+strona ze szczegółami quizu i możliwością dodawnia pytań
+
+@* Stuff do reacta, renderowanie dodawania pytań i zmiany nazwy quizu *@
+<div id="addQuizQuestionsRoot"></div>
+
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
+<script type="module" src="@Url.Content("~/js/react/AddQuizQuestionsComponent.jsx")"></script>
+@* Stuff do reacta, renderowanie dodawania pytań i zmiany nazwy quizu *@
+
+<script lang="js">
+    window.onbeforeunload = function() {
+        return "Czy na pewno chcesz przeładować stronę? Zapisane dane zostaną bezpowrotnie utracone!";
+    };
+</script>
