@@ -6,48 +6,55 @@
 }
 <h1 class="text-muted px-2">Dodawanie kuponów</h1> 
     <hr class="divider mt-0">
-
-    <div class="container" style="max-width:960px;">
-        <form method="post" asp-controller="Admin" asp-action="AddCoupon">
-            <div class="row">
-                <div class="col-4">
-                    <div class="form-floating ">
-                        <input class="form-control" asp-for="Amount">
-                        <label>Ilość kuponów</label>
-                    </div>    
-                    <span asp-validation-for="Amount" class="mx-2 mt-1 errorTextColor"></span>
-                </div>
-                <div class="col-4">
-                    <div class="form-floating">
-                        <input class="form-control" asp-for="ExpiringAt">
-                        <label>Ważne do</label>
-                    </div>    
-                    <span asp-validation-for="ExpiringAt" class="mx-2 mt-1 errorTextColor"></span>
-                </div>
-                <div class="col-4">
-                    <div class="form-floating">
-                        <input class="form-control" asp-for="ExtensionTime">
-                        <label>Ważne do</label>
-                    </div>    
-                    <span asp-validation-for="ExtensionTime" class="mx-2 mt-1 errorTextColor"></span>
-                </div>
+    
+<div class="container" style="max-width:960px;">
+    @if (ViewBag.GeneratedCouponsMessage != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @Html.Raw(ViewBag.GeneratedCouponsMessage)
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <div class="row">
+        }
+    <form method="post" asp-controller="Admin" asp-action="AddCoupon">
+        <div class="row">
+            <div class="col-4">
+                <div class="form-floating ">
+                    <input class="form-control" asp-for="Amount">
+                    <label>Ilość kuponów</label>
+                </div>
+                <span asp-validation-for="Amount" class="mx-2 mt-1 errorTextColor"></span>
+            </div>
+            <div class="col-4">
                 <div class="form-floating">
-                    <select class="form-select" asp-for="TypeOfSubscription">
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                    </select>
-                    <label for="couponType" class="ms-1">Rodzaj kuponu</label>
+                    <input class="form-control" asp-for="ExpiringAt">
+                    <label>Ważne do</label>
                 </div>
-                <span asp-validation-for="TypeOfSubscription" class="mx-2 mt-1 errorTextColor"></span>
+                <span asp-validation-for="ExpiringAt" class="mx-2 mt-1 errorTextColor"></span>
             </div>
-            <div class="row p-2">
-                <button class="btn btn-lg btn-primary w-100" name="couponSubmit" type="submit">Dodaj</button>
+            <div class="col-4">
+                <div class="form-floating">
+                    <input class="form-control" asp-for="ExtensionTime">
+                    <label>Ważne do</label>
+                </div>
+                <span asp-validation-for="ExtensionTime" class="mx-2 mt-1 errorTextColor"></span>
             </div>
-            
-        </form>
-    </div>
+        </div>
+        <div class="row">
+            <div class="form-floating">
+                <select class="form-select" asp-for="TypeOfSubscription">
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                </select>
+                <label for="couponType" class="ms-1">Rodzaj kuponu</label>
+            </div>
+            <span asp-validation-for="TypeOfSubscription" class="mx-2 mt-1 errorTextColor"></span>
+        </div>
+        <div class="row p-2">
+            <button class="btn btn-lg btn-primary w-100" name="couponSubmit" type="submit">Dodaj</button>
+        </div>
+
+    </form>
+</div>
 
 
 
