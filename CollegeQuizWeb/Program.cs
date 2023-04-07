@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CollegeQuizWeb.API.Services.Quiz;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
@@ -49,6 +50,7 @@ builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // serwisy kontrolerów API
+builder.Services.AddScoped<IQuizAPIService, QuizAPIService>();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
