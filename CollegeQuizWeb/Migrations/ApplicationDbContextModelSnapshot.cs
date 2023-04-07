@@ -83,6 +83,9 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("varchar(20)")
                         .HasColumnName("token");
 
+                    b.Property<int>("TypeOfSubscription")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");

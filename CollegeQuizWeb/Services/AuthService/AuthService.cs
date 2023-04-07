@@ -36,22 +36,22 @@ public class AuthService : IAuthService
     {
         AuthController controller = obj.ControllerReference;
 
-        var arek = await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(obj.Dto.LoginOrEmail)
+        var userEntity = await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(obj.Dto.LoginOrEmail)
                                                                  || o.Email.Equals(obj.Dto.LoginOrEmail));
 
-        if (arek != null)
+        if (userEntity != null)
         {
-            if (!arek.IsAccountActivated)
+            if (!userEntity.IsAccountActivated)
             {
                 controller.ModelState.AddModelError("Password", Lang.UNACTIVATED_ACCOUNT);
             }
 
             if (controller.ModelState.IsValid)
             {
-                if (_passwordHasher.VerifyHashedPassword(arek, arek.Password, obj.Dto.Password) ==
+                if (_passwordHasher.VerifyHashedPassword(userEntity, userEntity.Password, obj.Dto.Password) ==
                     PasswordVerificationResult.Success)
                 {
-                    controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, arek.Username);
+                    controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, userEntity.Username);
                     controller.Response.Redirect("/home");
                 }
                 else

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.ChangePassword;
+using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +34,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> UsersList()
     {
-
         ViewBag.users = await _adminService.GetUsers();
         return View();
     }
@@ -42,5 +42,14 @@ public class AdminController : Controller
     public async Task<IActionResult> AddCoupon()
     {
         return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddCoupon(CouponDto couponDto)
+    {
+        var payloadDto = new CouponDtoPayload(this) {Dto = couponDto};
+        await _adminService.CreateCoupons(payloadDto);
+        return View(payloadDto.Dto);
     }
 }
