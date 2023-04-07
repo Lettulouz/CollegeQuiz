@@ -4,6 +4,7 @@ using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Services.QuizService;
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntit
 // serwisy kontrolerów MVC
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IUserService, UserService>();
