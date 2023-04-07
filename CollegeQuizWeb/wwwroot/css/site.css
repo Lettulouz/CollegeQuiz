@@ -284,3 +284,11 @@ input:-webkit-autofill {
     box-shadow: none;
     border-color: rgb(72, 72, 72);;
 }
+
+.top-context-item{
+    border-radius: 9px 9px 0 0;
+}
+
+.bottom-context-item{
+    border-radius: 0 0 13px 13px;
+}
