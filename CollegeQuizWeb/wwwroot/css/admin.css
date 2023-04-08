@@ -92,9 +92,12 @@
 
 .user-card{
     border-radius: 7px;
-    border-width: 0.125rem;
+    border-width: 1px;
     border-style:solid;
     min-height: 50px;
+    display:inline-block;
+    box-sizing: border-box;
+
 }
 
 .user-car-header{

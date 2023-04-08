@@ -8,6 +8,10 @@ namespace CollegeQuizWeb.Entities;
 public class QuestionEntity : AbstractAuditableEntity
 {
     [Required]
+    [Column("index")]
+    public int Index { get; set; }
+    
+    [Required]
     [Column("name")]
     public string Name { get; set; }
     

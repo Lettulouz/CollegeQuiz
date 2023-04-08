@@ -10,4 +10,5 @@ public interface IQuizService
     Task CreateNewQuiz(string loggedUsername, AddQuizDtoPayloader dtoPayloader);
     Task<List<MyQuizDto>> GetMyQuizes(string userLogin);
     Task<QuizDetailsDto> GetQuizDetails(string userLogin, long quizId, QuizController controller);
+    Task CreateQuizCode(QuizController controller, long quizId);
 }

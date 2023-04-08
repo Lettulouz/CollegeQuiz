@@ -53,7 +53,6 @@ public class AuthController : Controller
         if (ModelState.IsValid)
         {
             await _authService.Login(payloadDto);
-            string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
             // return RedirectToAction("Privacy", "Home");
         }
         
