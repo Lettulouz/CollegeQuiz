@@ -9,4 +9,6 @@ public class SessionKey
     public const string USER_LOGOUT = "USER_LOGOUT+SESS";
     public const string MY_QUIZES_ALERT = "MY_QUIZES_ALERT+SESS";
     public const string USER_NOT_EXIST = "USER_NOT_EXIST+SESS";
+    public const string USER_REMOVED = "USER_REMOVED+SESS";
+    public const string USER_SUSPENDED = "USER_SUSPENDED+SESS";
 }

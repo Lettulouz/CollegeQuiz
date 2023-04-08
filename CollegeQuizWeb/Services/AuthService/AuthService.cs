@@ -51,8 +51,15 @@ public class AuthService : IAuthService
                 if (_passwordHasher.VerifyHashedPassword(userEntity, userEntity.Password, obj.Dto.Password) ==
                     PasswordVerificationResult.Success)
                 {
-                    controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, userEntity.Username);
-                    controller.Response.Redirect("/home");
+                    if (userEntity.AccountStatus == -1)
+                    {
+                        controller.ModelState.AddModelError("Password", Lang.ACCOUNT_SUSPENDED);
+                    }
+                    else
+                    {
+                        controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, userEntity.Username);
+                        controller.Response.Redirect("/home");
+                    }
                 }
                 else
                 {

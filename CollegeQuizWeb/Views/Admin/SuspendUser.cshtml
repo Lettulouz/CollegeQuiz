@@ -1,0 +1,49 @@
+@model CollegeQuizWeb.Dto.Admin.SuspendUserDto
+
+@{
+    Layout= "_AdminLayout";
+    ViewData["Title"] = "Zawieś użytkownika";
+}
+<h1 class="text-muted px-2">Zawieś użytkownika</h1> 
+    <hr class="divider mt-0">
+
+<div class="container" style="max-width:960px;">
+
+    <form method="post" asp-controller="Admin" asp-action="SuspendUser">
+        <div class="row mb-0">
+            <div class="col-12 ">
+                <input type="hidden" id="Id" asp-for="Id" value=" @(ViewContext.RouteData.Values["Id"])">
+                <div class="form-floating">
+                    <input class="form-control" id="ExpiringAt" asp-for="SuspendedTo">
+                    <label>Ważne do</label>
+                </div>
+                <span asp-validation-for="SuspendedTo" class="mx-2 mt-1 errorTextColor"></span>
+            </div>
+            
+             <div class="forms-check mb-4 custom-control custom-checkbox">
+                <input class="form-check-input" type="checkbox" value="true" asp-for="Perm">
+                <label class="form-check-label d-inline" asp-for="Perm">
+                    Zawieś permamentnie
+                </label>
+                <span class="mx-2 mt-1 d-flex errorTextColor" asp-validation-for="Perm"></span>
+            </div>
+            
+        </div>
+        <div class="row p-2">
+            <button class="btn btn-lg btn-primary w-100" name="suspendSubmit" type="submit">Zawieś</button>
+        </div>
+
+    </form>
+</div>
+
+
+
+<script>
+    document.getElementById('users_collapse').classList.add('show');
+        document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+        document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
+        document.getElementById('users_list').setAttribute( 'style', 'color:white !important' );
+
+    //ExpiringAt.min = new Date().toISOString().split(".")[0];
+
+</script>

@@ -65,6 +65,12 @@ public static class Lang
         "aktywujących subskypcję typu <strong>{2}</strong> na <strong>{3}</strong> dni.</br>";
     
     public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
+    public const string USER_DELETED = "*Wybrany użytkownik został usunięty.";
+    public const string BAN_ERROR = "*Należy zawiesić użytkownika permanentnie lub wybrać datę wygaśnięcia bana.";
+
+    public const string ACCOUNT_SUSPENDED = "*Twoje konto zostało zawieszone";
     
-    
+    public const string USER_SUSPENDED = "*Wybrany użytkownik został zawieszony";
+
+
 }
