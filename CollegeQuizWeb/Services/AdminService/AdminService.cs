@@ -98,5 +98,10 @@ public class AdminService : IAdminService
         
 
     }
+    public async Task<List<CouponEntity>> GetCoupons()
+    {
+        return await _context.Coupons.ToListAsync();
+    }
 
+    
 }

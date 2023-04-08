@@ -13,4 +13,6 @@ public interface IAdminService
 
     Task UserInfo(long id, AdminController controller);
     Task CreateCoupons(CouponDtoPayload obj);
+    
+    Task<List<CouponEntity>> GetCoupons();
 }

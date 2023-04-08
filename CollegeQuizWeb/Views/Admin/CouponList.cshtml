@@ -1,0 +1,41 @@
+@model CollegeQuizWeb.Dto.User.CouponDto
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Lista kuponów";
+}
+
+<h1 class="text-muted px-2">Lista Kuponów</h1> 
+<div class="container-fluid">
+@if (ViewBag.coupons != null)
+{
+    
+    <table class="table text-center">
+        <thead>
+        <tr>
+            <th>Poziom subskrypcji</th>
+            <th>Data i godzina wygaśnięcia</th>
+            <th >Ilość dni przedłużenia</th>
+            <th>Kupon</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var coupon in ViewBag.coupons)
+            {
+                <tr class='tabrow'>
+                    <td>@coupon.TypeOfSubscription</td>
+                    <td>@coupon.ExpiringAt</td>
+                    <td>@coupon.ExtensionTime</td>
+                    <td>@coupon.Token</td>
+                    <td><a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a></td>
+                </tr>
+            }
+        </tbody>
+</table>
+}
+else
+{
+    <h2>Brak kuponów</h2>
+}
+</div>

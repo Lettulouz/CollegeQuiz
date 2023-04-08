@@ -28,9 +28,6 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        string? userNotExist = HttpContext.Session.GetString(SessionKey.USER_NOT_EXIST);
-        HttpContext.Session.Remove(SessionKey.USER_NOT_EXIST);
-        ViewBag.userNotExist = userNotExist!;
         return View();
     }
 
@@ -46,11 +43,11 @@ public class AdminController : Controller
     {
         return View();
     }
-
+    
     [HttpGet]
-    public async Task<IActionResult> UserProfile([FromRoute(Name = "id")] long id)
+    public async Task<IActionResult> CouponList()
     {
-        await _adminService.UserInfo(id, this);
+        ViewBag.coupons = await _adminService.GetCoupons();
         return View();
     }
 
