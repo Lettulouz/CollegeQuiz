@@ -59,4 +59,12 @@ public class QuizController : Controller
         await _service.CreateNewQuiz(loggedUsername, payloader);
         return View(dto);
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> QuizLobby([FromRoute(Name = "id")] long quizId)
+    {
+
+        await _service.CreateQuizCode(this, quizId);
+        return View();
+    }
 }

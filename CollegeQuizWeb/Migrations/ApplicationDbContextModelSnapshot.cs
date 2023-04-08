@@ -202,6 +202,42 @@ namespace CollegeQuizWeb.Migrations
                     b.ToTable("quizes");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.QuizLobbyEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("varchar(5)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("ExpiredAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("expired_at");
+
+                    b.Property<long>("QuizId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuizId");
+
+                    b.ToTable("quiz_lobby");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -309,6 +345,17 @@ namespace CollegeQuizWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("UserEntity");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.QuizLobbyEntity", b =>
+                {
+                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "QuizEntity")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuizEntity");
                 });
 #pragma warning restore 612, 618
         }
