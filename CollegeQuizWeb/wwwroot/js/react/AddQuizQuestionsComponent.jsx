@@ -132,7 +132,10 @@ const AddQuizQuestionsRoot = () => {
                     setAlert({ active: true, style: 'alert-danger', message: r.message });
                 }
             })
-            .then(e => { if (e !== undefined) console.log(e) });
+            .then(e => {
+                if (e === undefined) return;
+                setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
+            });
     };
     
     useEffect(() => {
@@ -147,7 +150,10 @@ const AddQuizQuestionsRoot = () => {
             },
         }).then(r => r.json())
             .then(r => setQuestions(r.aggregate))
-            .then(e => { if (e !== undefined) console.log(e) });
+            .then(e => {
+                if (e === undefined) return;
+                setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
+            });
     }, []);
     
     useEffect(() => {
