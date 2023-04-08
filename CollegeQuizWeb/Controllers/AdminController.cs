@@ -46,6 +46,11 @@ public class AdminController : Controller
     {
         return View();
     }
+    public async Task<IActionResult> CouponList()
+    {
+        ViewBag.coupons = await _adminService.GetCoupons();
+        return View();
+    }
 
     [HttpGet]
     public async Task<IActionResult> UserProfile([FromRoute(Name = "id")] long id)
