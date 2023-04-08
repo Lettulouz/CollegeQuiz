@@ -89,24 +89,30 @@ public class QuizService : IQuizService
     
     public async Task CreateQuizCode(QuizController controller, long quizId)
     {
+        DateTime now = DateTime.Now;
         string username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        //long userId = _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(username)).Id;
+        var userId = _context.Users.FirstOrDefault(u => u.Username.Equals(username)).Id;
         int tokenLife = 2; // in houres
-        string generatedCode;
-        bool isExactTheSame = false;
+
+        var test = await _context.QuizLobbies.FirstOrDefaultAsync(
+            q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId) && now < q.ExpiredAt);
+        if (test != null)
+        {
+            controller.ViewBag.Code = test.Code;
+            return;
+        }
         
+        string generatedCode;
         do
         {
             generatedCode = Utilities.GenerateOtaToken(5, 2);
-            var test = await _context.QuizLobbies.FirstOrDefaultAsync(c => c.Code.Equals(generatedCode));
-            isExactTheSame = (test != null);
-        } while (isExactTheSame);
+        } while (await _context.QuizLobbies.FirstOrDefaultAsync(c => c.Code.Equals(generatedCode)) != null);
 
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
             Code = generatedCode,
             ExpiredAt = DateTime.Now.AddHours(tokenLife),
-            //UserHostId = 2,
+            UserHostId = userId,
             QuizId = quizId
         };
         await _context.AddAsync(codeQuiz);

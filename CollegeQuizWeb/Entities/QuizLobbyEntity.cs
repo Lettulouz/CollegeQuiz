@@ -17,14 +17,14 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     [Column("expired_at")]
     public DateTime ExpiredAt { get; set; }
     
-    //[ForeignKey(nameof(UserEntity))]
-    //[Column("user_host_id")]
-    //public long UserHostId { get; set; }
+    [ForeignKey(nameof(UserEntity))]
+    [Column("user_host_id")]
+    public long UserHostId { get; set; }
     
     [ForeignKey(nameof(QuizEntity))]
     [Column("quiz_id")]
     public long QuizId { get; set; }
     
-    //public virtual UserEntity UserEntity { get; set; }
-    public virtual UserEntity QuizEntity { get; set; }
+    public virtual UserEntity UserEntity { get; set; }
+    public virtual QuizEntity QuizEntity { get; set; }
 }

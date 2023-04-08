@@ -235,9 +235,15 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
 
+                    b.Property<long>("UserHostId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_host_id");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuizId");
+
+                    b.HasIndex("UserHostId");
 
                     b.ToTable("quiz_lobby");
                 });
@@ -353,13 +359,21 @@ namespace CollegeQuizWeb.Migrations
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.QuizLobbyEntity", b =>
                 {
-                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "QuizEntity")
+                    b.HasOne("CollegeQuizWeb.Entities.QuizEntity", "QuizEntity")
                         .WithMany()
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
+                        .WithMany()
+                        .HasForeignKey("UserHostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("QuizEntity");
+
+                    b.Navigation("UserEntity");
                 });
 #pragma warning restore 612, 618
         }
