@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
+using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
@@ -60,7 +61,53 @@ public class AdminService : IAdminService
 
         }
     }
-    
+
+    public async Task DelUser(long id, AdminController controller)
+    {
+        var user = _context.Users.Find(id);
+        if (user != null)
+        {
+            _context.Remove(user);
+            _context.SaveChanges();
+            controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, Lang.USER_DELETED);
+            
+        }
+        
+        controller.Response.Redirect("/Admin/UsersList");
+    }
+
+    public async Task SuspendUser(SuspendUserDtoPayload obj)
+    {
+        var controller = obj.ControllerReference;
+        DateTime suspendTo = obj.Dto.SuspendedTo;
+        bool perm = obj.Dto.Perm;
+        var id = obj.Dto.Id;
+
+        if (perm || suspendTo != DateTime.MinValue)
+        {
+
+            if (perm)
+            {
+                var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+                user.AccountStatus = -1;
+                _context.Update(user);
+                await _context.SaveChangesAsync(); 
+            }else if (suspendTo != DateTime.MinValue)
+            {
+                var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+                user.AccountStatus = -1;
+                user.CurrentStatusExpirationDate = suspendTo;
+                _context.Update(user);
+                await _context.SaveChangesAsync(); 
+            }
+            controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, Lang.USER_SUSPENDED);
+            controller.Response.Redirect("/Admin/UsersList");
+            }
+        else
+        {
+            controller.ModelState.AddModelError("Perm", Lang.BAN_ERROR);
+        }
+    }
 
     public async Task CreateCoupons(CouponDtoPayload obj)
     {

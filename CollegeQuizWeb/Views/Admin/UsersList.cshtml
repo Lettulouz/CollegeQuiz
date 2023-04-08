@@ -11,8 +11,34 @@
 <div class="container-fluid">
 @if (ViewBag.users != null)
 {
+    @if (ViewBag.userRemoved!=null)
+    {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            @ViewBag.userRemoved
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (ViewBag.userSuspended!=null)
+    {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            @ViewBag.userSuspended
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" id="searchBox" placeholder="Wyszukaj użytkownika">
+            <button type="button" class="btn bg-transparent clrBtn" style="margin-left: -40px; z-index: 100;">
+                <i class="bi bi-x"></i>
+            </button>
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+        </div>
+    </div>
     @foreach (var user in ViewBag.users)
     {
+
         <div class='row  p-2'>
             <div class="user-card col-12 col-lg-5">
                 <div class="row">
@@ -27,13 +53,18 @@
                         <div class="row">
                             <div class='col-lg-9 col-xl-7 '>
                                 <p class="mb-1">@user.FirstName @user.LastName</p>
-                                <p>Email: @user.Email</p>
+                                <p class="mb-1">Email: @user.Email</p>
+                                <p>Status: @user.AccountStatus</p>
                             </div>
                             <div class='col-lg-3 p-1 me-2 text-right'>
                                 <div class="btn-group btn-group-sm text-right">
                                     <a class="btn btn-sm btn-dark" asp-action="UserProfile" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-eye-fill"></i></a>
-                                    <a class="btn btn-sm btn-dark"><i class="bi bi-gear-fill"></i></a>
-                                    <a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                                    <a class="btn btn-sm btn-dark"><i class="bi bi-pencil-square"></i></a>
+                                    <a class="btn btn-sm btn-danger" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@user.Id" ><i class="bi bi-person-fill-lock"></i></a>
+                                    @using (Html.BeginForm("DelUser", "Admin", new { id = @user.Id }, FormMethod.Post))
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-danger" ><i class="bi bi-trash"></i></button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -48,9 +79,10 @@ else
 {
     <h2>Brak użytkowników</h2>
 }
-
-
 </div>
+
+
+
 
 <script>
     document.getElementById('users_collapse').classList.add('show');
@@ -58,4 +90,26 @@ else
     document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
     document.getElementById('users_list').setAttribute( 'style', 'color:white !important' );
 
+
+    
+
+    
+        $(document).ready(function(){
+      $("#searchBox").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(".user-card").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+
+
+        });
+      });
+    });
+    
+    $('.clrBtn').click(function(){
+            $('#searchBox').val('');
+            $(".user-card").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf('') > -1)
+
+        });
+        })
 </script>
