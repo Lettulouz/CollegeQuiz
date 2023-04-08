@@ -6,40 +6,40 @@
 }
 <h1 class="text-muted px-2">Dodawanie kuponów</h1> 
     <hr class="divider mt-0">
-    
+
 <div class="container" style="max-width:960px;">
-    @if (ViewBag.GeneratedCouponsMessage != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @Html.Raw(ViewBag.GeneratedCouponsMessage)
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
+     @if (ViewBag.GeneratedCouponsMessage != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @Html.Raw(ViewBag.GeneratedCouponsMessage)
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
     <form method="post" asp-controller="Admin" asp-action="AddCoupon">
-        <div class="row">
-            <div class="col-4">
+        <div class="row mb-0">
+            <div class="col-6 col-sm-4">
                 <div class="form-floating ">
                     <input class="form-control" asp-for="Amount">
                     <label>Ilość kuponów</label>
                 </div>
                 <span asp-validation-for="Amount" class="mx-2 mt-1 errorTextColor"></span>
             </div>
-            <div class="col-4">
+            <div class="col-6 col-sm-4">
                 <div class="form-floating">
-                    <input class="form-control" asp-for="ExpiringAt">
+                    <input class="form-control" id="ExpiringAt" asp-for="ExpiringAt">
                     <label>Ważne do</label>
                 </div>
-                <span asp-validation-for="ExpiringAt" class="mx-2 mt-1 errorTextColor"></span>
+                <span asp-validation-for="ExpiringAt"  class="mx-2 mt-1 errorTextColor"></span>
             </div>
-            <div class="col-4">
+            <div class="col-6 col-sm-4">
                 <div class="form-floating">
                     <input class="form-control" asp-for="ExtensionTime">
-                    <label>Ważne do</label>
+                    <label>Ważne przez</label>
                 </div>
                 <span asp-validation-for="ExtensionTime" class="mx-2 mt-1 errorTextColor"></span>
             </div>
         </div>
-        <div class="row">
+        <div class="col-6 col-sm-12">
             <div class="form-floating">
                 <select class="form-select" asp-for="TypeOfSubscription">
                     <option value="1">One</option>
@@ -64,6 +64,6 @@
     document.getElementById('coupon_collapse_btn').setAttribute( 'style', 'color:white !important' );
     document.getElementById('addcp').setAttribute( 'style', 'color:white !important' );
     
-    couponDate.min = new Date().toISOString().split("T")[0];
+    ExpiringAt.min = new Date().toISOString().split("T")[0];
 
 </script>
