@@ -59,8 +59,12 @@ public static class Lang
         "*Należy podać prawidłową ilość kuponów.";
     public const string INVALID_COUPON_SUBSCRIPTION_TIME_ERROR = 
         "*Należy wybrać jeden z możliwych typów subskrypcji.";
-
+    
     public const string COUPONS_GENERATED_INFO_STRING =
         "Wygenerowano <strong>{0}</strong> kluczy dla subkypcji ważnych do <strong>{1}</strong> " +
         "aktywujących subskypcję typu <strong>{2}</strong> na <strong>{3}</strong> dni.</br>";
+    
+    public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
+    
+    
 }

@@ -1,0 +1,64 @@
+@using Microsoft.AspNetCore.Identity
+@model dynamic
+
+@{
+    ViewBag.Title = "Przeglądaj profile";
+    Layout = "_AdminLayout";
+}
+
+@if (@ViewBag.userInfo!=null)
+{
+    <h1 class="text-muted px-2">Profil użytkownika @ViewBag.UserInfo.Username</h1> 
+    <hr class="divider mt-0">
+    <div class="container-fluid">
+        <div class="row ">
+            <div class="col-auto py-0 my-0">
+                <i class="bi bi-file-person p-0" style=" font-size: 100px;"></i>
+            </div>
+            
+            <div class="col-auto">
+                <div class="row">
+                    <h3>Dane użytkownika</h3>
+                </div>
+                <div class="row">
+                    <div class="col-auto">
+                        <p>Nazwa: @ViewBag.UserInfo.Username</p>
+                        <p>Imię: @ViewBag.UserInfo.FirstName @ViewBag.UserInfo.LastName</p>
+                        <p>Email: @ViewBag.UserInfo.Email</p>
+                    </div>
+                    <div class="col-auto">
+                        <p>Status:  @ViewBag.UserInfo.AccountStatus</p>
+                        <p>Konto aktywowane: @if (@ViewBag.UserInfo.IsAccountActivated == true)
+                                             {
+                                                 <a>Tak</a>
+                                             }
+                                             else
+                                             {
+                                                 <a>Nie</a>
+                                             }</p>
+                        <p>Data dołączenia: @ViewBag.UserInfo.CreatedAt</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <h3>Quizy użytkownika</h3>
+                    @if (@ViewBag.UserQuizes != null)
+                    {
+                        @foreach (var quiz in ViewBag.UserQuizes)
+                        {
+                            <a>@quiz.Name</a>
+                        }
+                    }
+                </div>
+                </div>
+            </div>
+                
+    </div>
+
+    <script>
+    document.getElementById('users_collapse').classList.add('show');
+    document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+    document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
+    document.getElementById('users_list').setAttribute( 'style', 'color:white !important' );
+
+</script>
+}

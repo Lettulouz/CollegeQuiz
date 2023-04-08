@@ -8,4 +8,5 @@ public class SessionKey
     public const string IS_USER_LOGGED = "IS_USER_LOGGED+SESS";
     public const string USER_LOGOUT = "USER_LOGOUT+SESS";
     public const string MY_QUIZES_ALERT = "MY_QUIZES_ALERT+SESS";
+    public const string USER_NOT_EXIST = "USER_NOT_EXIST+SESS";
 }

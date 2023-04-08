@@ -7,6 +7,7 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.User;
+using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
 using CollegeQuizWeb.SmtpViewModels;
@@ -39,6 +40,27 @@ public class AdminService : IAdminService
     {
         return await _context.Users.ToListAsync();
     }
+
+    public async Task UserInfo(long id, AdminController controller)
+    {
+        var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+
+        if (userInfo == null)
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+
+        }
+        else
+        {
+            controller.ViewBag.userInfo = userInfo;
+
+            controller.ViewBag.UserQuizes = await _context.Quizes
+                .Where(q => q.UserId.Equals(id)).ToListAsync();
+
+        }
+    }
+    
 
     public async Task CreateCoupons(CouponDtoPayload obj)
     {

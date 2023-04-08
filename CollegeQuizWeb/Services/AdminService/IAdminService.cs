@@ -10,5 +10,7 @@ namespace CollegeQuizWeb.Services.AdminService;
 public interface IAdminService
 {
     Task<List<UserEntity>> GetUsers();
+
+    Task UserInfo(long id, AdminController controller);
     Task CreateCoupons(CouponDtoPayload obj);
 }

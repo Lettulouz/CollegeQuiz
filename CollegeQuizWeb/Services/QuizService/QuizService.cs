@@ -8,6 +8,7 @@ using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -84,5 +85,32 @@ public class QuizService : IQuizService
         {
             Name = quizEntity.Name
         };
+    }
+    
+    public async Task CreateQuizCode(QuizController controller, long quizId)
+    {
+        string username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        //long userId = _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(username)).Id;
+        int tokenLife = 2; // in houres
+        string generatedCode;
+        bool isExactTheSame = false;
+        
+        do
+        {
+            generatedCode = Utilities.GenerateOtaToken(5, 2);
+            var test = await _context.QuizLobbies.FirstOrDefaultAsync(c => c.Code.Equals(generatedCode));
+            isExactTheSame = (test != null);
+        } while (isExactTheSame);
+
+        QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
+        {
+            Code = generatedCode,
+            ExpiredAt = DateTime.Now.AddHours(tokenLife),
+            //UserHostId = 2,
+            QuizId = quizId
+        };
+        await _context.AddAsync(codeQuiz);
+        await _context.SaveChangesAsync();
+        controller.ViewBag.Code = generatedCode;
     }
 }

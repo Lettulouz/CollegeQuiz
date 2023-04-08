@@ -108,8 +108,7 @@ public class AuthService : IAuthService
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
-        userEntity.Password =
-            obj.Dto.Password == null ? "" : _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
+        userEntity.Password = _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
         userEntity.Email = obj.Dto.Email;
         userEntity.TeamID = obj.Dto.TeamID;
         userEntity.RulesAccept = obj.Dto.RulesAccept;
@@ -133,18 +132,15 @@ public class AuthService : IAuthService
         if (!controller.ModelState.IsValid) return;
 
         string generatedToken;
-        bool isExactTheSame = false;
         do
         {
             generatedToken = Utilities.GenerateOtaToken();
-            var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
-            if (token != null) isExactTheSame = true;
-        } while (isExactTheSame);
+        } while (await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken)) != null);
 
         OtaTokenEntity otaToken = new OtaTokenEntity()
         {
             Token = generatedToken,
-            ExpiredAt = DateTime.Now.AddMinutes(tokenLife),
+            ExpiredAt = DateTime.Now.AddHours(tokenLife),
             IsUsed = false,
             UserEntity = userEntity,
         };

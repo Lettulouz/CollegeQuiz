@@ -5,31 +5,35 @@
     Layout= "_AdminLayout";
     ViewData["Title"] = "Lista użytkowników";
 }
+<h1 class="text-muted px-2">Lista użytkowników</h1> 
+<hr class="divider mt-0">
 
 <div class="container-fluid">
+@if (ViewBag.users != null)
+{
     @foreach (var user in ViewBag.users)
     {
         <div class='row  p-2'>
-            <div class="user-card col-12 col-md-7">
+            <div class="user-card col-12 col-lg-5">
                 <div class="row">
-                    <div class='col-2 col-lg-1 text-center '><i class='bi bi-person' style='font-size:50px;'></i>
+                    <div class='col-auto text-center '><i class='bi bi-person' style='font-size:50px;'></i>
                     </div>
-                    <div class='col-10 col-lg-10 ps-2  ps-xl-2'>
+                    <div class='col-9 ps-2  ps-xl-2'>
                         <div class="row">
-                            <div class='col-12 user-car-header'>
+                            <div class='col-auto user-car-header'>
                                 @user.Username
                             </div>
                         </div>
                         <div class="row">
-                            <div class='col-md-7 align-self-center d-block'>
+                            <div class='col-lg-9 col-xl-7 '>
                                 <p class="mb-1">@user.FirstName @user.LastName</p>
                                 <p>Email: @user.Email</p>
                             </div>
-                            <div class='col-md-4 align-self-center d-block p-1'>
-                                <div class="btn-group btn-group-sm">
-                                  <a  class="btn btn-sm btn-dark"><i class="bi bi-eye-fill"></i></a>
-                                  <a  class="btn btn-sm btn-dark"><i class="bi bi-gear-fill"></i></a>
-                                  <a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                            <div class='col-lg-3 p-1 me-2 text-right'>
+                                <div class="btn-group btn-group-sm text-right">
+                                    <a class="btn btn-sm btn-dark" asp-action="UserProfile" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-eye-fill"></i></a>
+                                    <a class="btn btn-sm btn-dark"><i class="bi bi-gear-fill"></i></a>
+                                    <a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -39,7 +43,11 @@
             </div>
         </div>
     }
-    
+}
+else
+{
+    <h2>Brak użytkowników</h2>
+}
 
 
 </div>
