@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230406203332_ChangedCouponsTableNameMigration")]
-    partial class ChangedCouponsTableNameMigration
+    [Migration("20230407211855_ChangeQuizesTables")]
+    partial class ChangeQuizesTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,7 +43,7 @@ namespace CollegeQuizWeb.Migrations
 
                     b.Property<long>("QuestionId")
                         .HasColumnType("bigint")
-                        .HasColumnName("quiz_id");
+                        .HasColumnName("question_id");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -84,6 +84,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("token");
+
+                    b.Property<int>("TypeOfSubscription")
+                        .HasColumnType("int")
+                        .HasColumnName("type_of_subscription");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -144,6 +148,10 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int")
+                        .HasColumnName("index");
 
                     b.Property<string>("Name")
                         .IsRequired()

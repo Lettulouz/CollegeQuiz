@@ -24,6 +24,7 @@ public class CouponEntity : AbstractAuditableEntity
     [Column("extension_time")]
     public int ExtensionTime { get; set; }
     
+    [Column("type_of_subscription")]
     [Required]
     public int TypeOfSubscription { get; set; }
 }

@@ -41,7 +41,7 @@ namespace CollegeQuizWeb.Migrations
 
                     b.Property<long>("QuestionId")
                         .HasColumnType("bigint")
-                        .HasColumnName("quiz_id");
+                        .HasColumnName("question_id");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -84,7 +84,8 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("token");
 
                     b.Property<int>("TypeOfSubscription")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("type_of_subscription");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
@@ -145,6 +146,10 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int")
+                        .HasColumnName("index");
 
                     b.Property<string>("Name")
                         .IsRequired()

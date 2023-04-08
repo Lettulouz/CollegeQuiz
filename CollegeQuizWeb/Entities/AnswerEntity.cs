@@ -16,7 +16,7 @@ public class AnswerEntity : AbstractAuditableEntity
     public bool IsGood { get; set; }
     
     [ForeignKey(nameof(QuestionEntity))]
-    [Column("quiz_id")]
+    [Column("question_id")]
     public long QuestionId { get; set; }
     
     public virtual QuestionEntity QuestionEntity { get; set; }

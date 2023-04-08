@@ -15,6 +15,7 @@ using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.Services.AdminService;
@@ -69,6 +70,9 @@ public class AdminService : IAdminService
         int extensionTime = obj.Dto.ExtensionTime;
         int typeOfSubscription = obj.Dto.TypeOfSubscription;
         List<CouponEntity> listOfGeneretedCoupons = new();
+        string message;
+        message = string.Format(Lang.COUPONS_GENERATED_INFO_STRING, amount, expiringAt, typeOfSubscription,
+            extensionTime);
         for (int i = 0; i < amount; i++)
         {
             bool isExactTheSame = false;
@@ -84,11 +88,15 @@ public class AdminService : IAdminService
             couponEntity.ExpiringAt = expiringAt;
             couponEntity.ExtensionTime = extensionTime;
             couponEntity.TypeOfSubscription = typeOfSubscription;
+            message += generatedToken;
+            message += "</br>";
             listOfGeneretedCoupons.Add(couponEntity);
         }
-
+        controller.ViewBag.GeneratedCouponsMessage = message;
         await _context.AddRangeAsync(listOfGeneretedCoupons);
         await _context.SaveChangesAsync();
+        
+
     }
 
 }
