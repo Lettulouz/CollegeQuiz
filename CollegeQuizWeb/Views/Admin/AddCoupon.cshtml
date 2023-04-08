@@ -38,7 +38,7 @@
                 </div>
                 <span asp-validation-for="ExtensionTime" class="mx-2 mt-1 errorTextColor"></span>
             </div>
-        </div>
+
         <div class="col-6 col-sm-12">
             <div class="form-floating">
                 <select class="form-select" asp-for="TypeOfSubscription">
@@ -48,6 +48,7 @@
                 <label for="couponType" class="ms-1">Rodzaj kuponu</label>
             </div>
             <span asp-validation-for="TypeOfSubscription" class="mx-2 mt-1 errorTextColor"></span>
+        </div>
         </div>
         <div class="row p-2">
             <button class="btn btn-lg btn-primary w-100" name="couponSubmit" type="submit">Dodaj</button>
@@ -64,6 +65,6 @@
     document.getElementById('coupon_collapse_btn').setAttribute( 'style', 'color:white !important' );
     document.getElementById('addcp').setAttribute( 'style', 'color:white !important' );
     
-    ExpiringAt.min = new Date().toISOString().split("T")[0];
+    ExpiringAt.min = new Date().toISOString().split(".")[0];
 
 </script>
