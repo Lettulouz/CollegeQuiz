@@ -8,7 +8,9 @@ public class SessionKey
     public const string IS_USER_LOGGED = "IS_USER_LOGGED+SESS";
     public const string USER_LOGOUT = "USER_LOGOUT+SESS";
     public const string MY_QUIZES_ALERT = "MY_QUIZES_ALERT+SESS";
-    public const string USER_NOT_EXIST = "USER_NOT_EXIST+SESS";
+    public const string USER_NOT_EXIST = "USER_NOT_EXIST+SESS"; 
+    public const string COUPON_CODE_MESSAGE_REDEEM = "COUPON_CODE_MESSAGE_REDEEM+SESS";
+    public const string COUPON_CODE_MESSAGE_REDEEM_TYPE = "COUPON_CODE_MESSAGE_REDEEM_TYPE+SESS";
     public const string USER_REMOVED = "USER_REMOVED+SESS";
     public const string USER_SUSPENDED = "USER_SUSPENDED+SESS";
 }

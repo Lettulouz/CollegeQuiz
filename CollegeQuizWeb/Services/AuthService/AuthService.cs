@@ -139,10 +139,13 @@ public class AuthService : IAuthService
         if (!controller.ModelState.IsValid) return;
 
         string generatedToken;
+        bool isExactTheSame = false;
         do
         {
             generatedToken = Utilities.GenerateOtaToken();
-        } while (await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken)) != null);
+            var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
+            isExactTheSame = (token != null);
+        } while (isExactTheSame);
 
         OtaTokenEntity otaToken = new OtaTokenEntity()
         {

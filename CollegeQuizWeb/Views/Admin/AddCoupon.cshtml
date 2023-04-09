@@ -8,13 +8,13 @@
     <hr class="divider mt-0">
 
 <div class="container" style="max-width:960px;">
-     @if (ViewBag.GeneratedCouponsMessage != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @Html.Raw(ViewBag.GeneratedCouponsMessage)
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+    @if (ViewBag.GeneratedCouponsMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @Html.Raw(ViewBag.GeneratedCouponsMessage)
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     <form method="post" asp-controller="Admin" asp-action="AddCoupon">
         <div class="row mb-0">
             <div class="col-6 col-sm-4">
@@ -34,7 +34,7 @@
             <div class="col-6 col-sm-4">
                 <div class="form-floating">
                     <input class="form-control" asp-for="ExtensionTime">
-                    <label>Ważne przez</label>
+                    <label>Przedłuża subskrypcję o</label>
                 </div>
                 <span asp-validation-for="ExtensionTime" class="mx-2 mt-1 errorTextColor"></span>
             </div>

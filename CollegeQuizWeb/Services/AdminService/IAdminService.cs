@@ -19,5 +19,5 @@ public interface IAdminService
     Task DelUser(long id, AdminController controller);
     Task CreateCoupons(CouponDtoPayload obj);
     
-    Task<List<CouponEntity>> GetCoupons();
+    Task<List<CouponDto>> GetCoupons();
 }

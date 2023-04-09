@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.ChangePassword;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -48,8 +50,8 @@ public class AdminController : Controller
     }
     public async Task<IActionResult> CouponList()
     {
-        ViewBag.coupons = await _adminService.GetCoupons();
-        return View();
+        var test = await _adminService.GetCoupons();
+        return View(test);
     }
 
     [HttpGet]

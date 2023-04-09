@@ -127,7 +127,8 @@ public class AdminService : IAdminService
             do
             {
                 generatedToken = Utilities.GenerateOtaToken(20);
-                var token = await _context.OtaTokens.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
+                var token = await _context.OtaTokens
+                    .FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
                 if (token != null) isExactTheSame = true;
             } while (isExactTheSame);
             CouponEntity couponEntity = new();
@@ -145,9 +146,21 @@ public class AdminService : IAdminService
         
 
     }
-    public async Task<List<CouponEntity>> GetCoupons()
+    public async Task<List<CouponDto>> GetCoupons()
     {
-        return await _context.Coupons.ToListAsync();
+        var test = await _context.Coupons.ToListAsync();
+        List<CouponDto> test2 = new();
+        foreach (var VARIABLE in test)
+        {
+            CouponDto test3 = new();
+            test3.Coupon = VARIABLE.Token;
+            test3.ExpiringAt = VARIABLE.ExpiringAt;
+            test3.TypeOfSubscription = VARIABLE.TypeOfSubscription;
+            test3.ExtensionTime = VARIABLE.ExtensionTime;
+            test3.IsUsed = VARIABLE.IsUsed;
+            test2.Add(test3);
+        }
+        return test2;
     }
 
     
