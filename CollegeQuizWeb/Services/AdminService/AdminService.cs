@@ -67,9 +67,10 @@ public class AdminService : IAdminService
         var user = _context.Users.Find(id);
         if (user != null)
         {
+            String message = string.Format(Lang.USER_DELETED, user.Username);
             _context.Remove(user);
             _context.SaveChanges();
-            controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, Lang.USER_DELETED);
+            controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
             
         }
         
@@ -85,22 +86,24 @@ public class AdminService : IAdminService
 
         if (perm || suspendTo != DateTime.MinValue)
         {
-
+            var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+            user.AccountStatus = -1;
+            String banTime="";
             if (perm)
             {
-                var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
-                user.AccountStatus = -1;
                 _context.Update(user);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
+                banTime = "permanentie";
             }else if (suspendTo != DateTime.MinValue)
             {
-                var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
-                user.AccountStatus = -1;
                 user.CurrentStatusExpirationDate = suspendTo;
                 _context.Update(user);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
+                banTime = "do " + suspendTo.ToString();
             }
-            controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, Lang.USER_SUSPENDED);
+
+            String message = string.Format(Lang.USER_SUSPENDED, user.Username, banTime);
+            controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
             controller.Response.Redirect("/Admin/UsersList");
             }
         else

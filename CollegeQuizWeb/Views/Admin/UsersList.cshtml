@@ -39,8 +39,8 @@
     @foreach (var user in ViewBag.users)
     {
 
-        <div class='row  p-2'>
-            <div class="user-card col-12 col-lg-5">
+        <div class='row user-row px-2 py-0'>
+            <div class="user-card col-12 col-lg-5 my-2">
                 <div class="row">
                     <div class='col-auto text-center '><i class='bi bi-person' style='font-size:50px;'></i>
                     </div>
@@ -98,7 +98,7 @@ else
       $("#searchBox").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $(".user-card").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          $(this).toggle($(this).parent().text().toLowerCase().indexOf(value) > -1)
 
 
         });
@@ -108,7 +108,7 @@ else
     $('.clrBtn').click(function(){
             $('#searchBox').val('');
             $(".user-card").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf('') > -1)
+          $(this).toggle($(this).parent().text().toLowerCase().indexOf('') > -1)
 
         });
         })

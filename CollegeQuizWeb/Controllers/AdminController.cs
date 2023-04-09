@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.ChangePassword;
 using CollegeQuizWeb.Dto.User;
+using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +40,14 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> UsersList()
     {
+        string? userRemoved = HttpContext.Session.GetString(SessionKey.USER_REMOVED);
+        HttpContext.Session.Remove(SessionKey.USER_REMOVED);
+        ViewBag.userRemoved = userRemoved!;
+
+        string? userSuspended = HttpContext.Session.GetString(SessionKey.USER_SUSPENDED);
+        HttpContext.Session.Remove(SessionKey.USER_SUSPENDED);
+        ViewBag.userSuspended = userSuspended!;
+        
         ViewBag.users = await _adminService.GetUsers();
         return View();
     }
@@ -53,7 +62,30 @@ public class AdminController : Controller
         var test = await _adminService.GetCoupons();
         return View(test);
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> SuspendUser([FromRoute(Name = "id")] long id)
+    {
+        return View();
+    }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SuspendUser(SuspendUserDto suspendUserDto)
+    {
+        var payloadDto = new SuspendUserDtoPayload(this) { Dto = suspendUserDto };
+        await _adminService.SuspendUser(payloadDto);
+
+        return View();
+    }
+
+    [HttpPost]
+    public async Task DelUser(long id)
+    {
+
+        _adminService.DelUser(id, this);
+    }
+    
     [HttpGet]
     public async Task<IActionResult> UserProfile([FromRoute(Name = "id")] long id)
     {
