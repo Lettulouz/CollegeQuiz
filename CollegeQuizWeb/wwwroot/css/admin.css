@@ -104,3 +104,16 @@
     font-size: 1.2rem;
     
 }
+
+
+.toast-top-right{
+    position: absolute;
+    top: 75px;
+    right: 25px;
+}
+
+.toast-success{
+    background: radial-gradient(ellipse at center, #2cc755 0, #119e36 100%);
+    color: white;
+    padding: 10px;
+}

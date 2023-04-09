@@ -5,19 +5,66 @@
     ViewData["Title"] = "Lista kuponów";
 }
 
-<h1 class="text-muted px-2">Lista Kuponów</h1>
+
+<h1 class="text-muted px-3">Lista kuponów</h1>
 <div class="container-fluid">
     <div class="row">
         <div class="col-1">
-            <button class="btn btn-lg btn-dark w-100" id="allButton" onclick="allList()" type="submit">Wszystkie</button>
+            <button class="btn btn-lg btn-dark w-100" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
         </div>
         <div class="col-1">
-            <button class="btn btn-lg btn-secondary w-100" id="activeButton" onclick="activeList()" type="submit">Aktywne</button>
+            <button class="btn btn-lg btn-secondary w-100" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
         </div>
         <div class="col-1">
-            <button class="btn btn-lg btn-secondary w-100" id="archiveButton" onclick="archiveList()" type="submit">Archiwalne</button>
+            <button class="btn btn-lg btn-secondary w-100" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
+        </div>
+        <div class="col-1">
+            <a class="btn btn-lg btn-warning" onclick="getAllSelectedCoupons()">
+                <i class="bi bi-printer-fill"></i>
+            </a>
+        </div>
+        <div class="col-8">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item me-2">
+                        <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
+                            <option value="10">10</option>
+                            <option value="25" selected="selected">25</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="goToFirstPage()">
+                            <i class="bi bi-caret-left-fill"></i>
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="prevPage()">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                    </li>
+                    <li class="page-item" style="width: 75px">
+                        <input type="text" class="page-link" id="pagination123" style="width: 75px" value="1">
+                    </li>
+                    <li class="page-item" style="width: 75px">
+                        <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="nextPage()">
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="goToLastPage()">
+                            <i class="bi bi-caret-right-fill"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
+
     @if (Model.FirstOrDefault() != null)
     {
         <div id="renderTable"></div>
@@ -28,78 +75,143 @@
     }
 </div>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <script>
     @{
         var couponList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
         var test = 1;
     }
-    $(document).ready(allList());
+    $(document).ready(function (){
+        allList();
+        });
+    var couponList = @(couponList);
+    var selectedCouponsList = [];
+    var page = 1;
+    var recordsPerPage = 25;
+    var chosenFilter = 1;
+    var maxPage = 1;
     
     // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
     String.prototype.replaceAll = function(str1, str2, ignore) 
     {
-        return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+        return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),
+        (ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
     } 
     
+    function couponsPerPageChange(){
+        recordsPerPage = parseInt(document.getElementById('couponsPerPagePag').value);
+        page = 1;
+        redirectToProperList();
+    }
+    
+    function filterButtonClick(option){
+        page = 1;
+        document.getElementById('pagination123').value = 1;
+        switch (option){
+            case 1:             
+                allList();
+                break;
+            case 2:
+                activeList();
+                break;
+            case 3:
+                archiveList();
+                break;
+        }
+    }
+    
     function archiveList(){
+        document.getElementById('pagination123').value = page;
         document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-dark w-100";
-        var couponList = @(couponList);
+        chosenFilter = 3;
         var filteredCouponList = couponList.filter(obj => obj.IsUsed == 1);
+        var filteredCouponList2 = [];
         var currentDate = new Date();
         couponList.forEach(obj=> {
             if (currentDate.getTime()>new Date(obj.ExpiringAt).getTime() && !filteredCouponList.includes(obj))
                 filteredCouponList.push(obj);
         });
-        
-        generateListHTML(filteredCouponList);
+        for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+            if (filteredCouponList[i] != null)
+                filteredCouponList2.push(filteredCouponList[i]);
+        }    
+        generateListHTML(filteredCouponList2);
     }
     
-    function activeList(){
+    function activeList(){  
+        document.getElementById('pagination123').value = page;
         document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
-        var couponList = @(couponList);
+        chosenFilter = 2;
         var filteredCouponList = couponList.filter(obj => obj.IsUsed == 0);
         var filteredCouponList2 = [];
+        var filteredCouponList3 = [];
         var currentDate = new Date();
         filteredCouponList.forEach(obj=> {
             if (currentDate.getDate()<=new Date(obj.ExpiringAt).getDate())
                 filteredCouponList2.push(obj);
         });
-        generateListHTML(filteredCouponList2);
+        var initialLength = filteredCouponList2.length;
+        for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+            if (filteredCouponList2[i] != null)
+                filteredCouponList3.push(filteredCouponList2[i]);
+        }
+        generateListHTML(filteredCouponList3, initialLength);
     }
     
-    function allList(){
+    function allList(){ 
+        document.getElementById('pagination123').value = page;
         document.getElementById('allButton').className = "btn btn-lg btn-dark w-100";  
         document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
-        var couponList = @(couponList);
-        generateListHTML(couponList);
+        chosenFilter = 1;
+        var filteredCouponList = [];
+        var initialLength = couponList.length;
+        for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+            if (couponList[i] != null)
+                filteredCouponList.push(couponList[i]);
+        }
+        generateListHTML(filteredCouponList, initialLength);
     }
     
-    function generateListHTML(couponList){
+    function generateListHTML(couponListLoc, initialLength){
+        var numberOfPages = parseInt(initialLength/recordsPerPage);
+        if(initialLength%recordsPerPage !== 0)
+            numberOfPages++;
+        if (isNaN(numberOfPages))
+            numberOfPages = 1;
+        var innerTextVal =`z ${numberOfPages}`;
+        maxPage = numberOfPages;
+        document.getElementById('pagination321').innerText = innerTextVal;
         var html = `<table class="table text-center">
             <thead>
             <tr>
+            <th></th>
             <th>Poziom subskrypcji</th>
             <th>Data i godzina wygaśnięcia</th>
-            <th >Ilość dni przedłużenia</th>
+            <th>Ilość dni przedłużenia</th>
             <th>Kupon</th>
             <th></th>
             </tr>
             </thead>
             <tbody>`;
-        couponList.forEach(obj => {
+        couponListLoc.forEach(obj => {
             var temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
             html+=`<tr class='tabrow'>
+            <td><input class="form-check-input" onclick="checkboxClicked(this)" type="checkbox" value=""></td>
             <td>${obj.TypeOfSubscription}</td>
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
-            <td>${obj.Coupon}</td>
-            <td><a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a></td>
+            <td class="couponVal">${obj.Coupon}</td>
+            <td>
+                <a class="btn btn-sm btn-dark" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
+                <a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+            </td>
             </tr>`
         });             
         html+=`</tbody>
@@ -107,5 +219,84 @@
         document.getElementById('renderTable').innerHTML = html;
     }
 
-            
+    function copyToClipBoardButtonClick(obj)
+    {
+        var row = $(obj).parent().parent();
+        var valueToCopy = row.find('.couponVal').text();
+        navigator.clipboard.writeText(valueToCopy);
+        var message = `Skopiowano kod ${valueToCopy} do schowka.`;
+        toastr.success(message);
+    }
+    
+    function checkboxClicked(obj){
+        var row = $(obj).parent().parent();
+        var valueToCopy = row.find('.couponVal').text();
+        if (obj.checked){
+            if(!selectedCouponsList.includes(valueToCopy))
+                selectedCouponsList.push(valueToCopy);
+        }
+        else{
+            selectedCouponsList = selectedCouponsList.filter(s => s != valueToCopy);
+        }
+    }
+    
+    function getAllSelectedCoupons(){
+        var stringOfCoupons = selectedCouponsList.toString();
+        stringOfCoupons = stringOfCoupons.replaceAll(",","\n");
+        FileSave(stringOfCoupons, "Coupons.txt");
+    }
+    
+    function nextPage(){
+        if (page<maxPage){
+            page++;
+            redirectToProperList();
+        }     
+    }
+    
+    function prevPage(){
+        if (page>1){
+            page--;
+            redirectToProperList();
+        } 
+    }
+    
+    function redirectToProperList(){
+        switch(chosenFilter){
+            case 1: 
+                allList();
+                break;
+            case 2: 
+                activeList();
+                break;    
+            case 3: 
+                archiveList();
+                break; 
+        }
+    }
+    
+    function goToFirstPage(){
+        page = 1;
+        redirectToProperList();
+    }
+    
+    function goToLastPage(){
+        page = maxPage;
+        redirectToProperList();
+    }
+    
+    //https://stackoverflow.com/questions/13405129/create-and-save-a-file-with-javascript
+    function FileSave(sourceText, fileIdentity) {
+        var workElement = document.createElement("a");
+        if ('download' in workElement) {
+            workElement.href = "data:" + 'text/plain' + "charset=utf-8," + escape(sourceText);
+            workElement.setAttribute("download", fileIdentity);
+            document.body.appendChild(workElement);
+            var eventMouse = document.createEvent("MouseEvents");
+            eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            workElement.dispatchEvent(eventMouse);
+            document.body.removeChild(workElement);
+        } else throw 'File saving not supported for this browser';
+    }
+    
 </script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
