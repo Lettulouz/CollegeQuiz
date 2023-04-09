@@ -48,9 +48,9 @@ public static class Lang
     public const string QUIZ_NAME_TOO_SHORT_ERROR = "*Podana nazwa quizu jest zbyt krótka.";
     public const string QUIZ_NAME_TOO_LONG_ERROR = "*Podana nazwa quizu jest zbyt długa.";
 
-    public const string INVALID_COUPON_CODE_ERROR = "*Należy podać prawidłowy kupon.";
-    public const string INACTIVE_COUPON_CODE_ERROR = "*Podany kupon jest już nieaktywny.";
-    public const string USED_COUPON_CODE_ERROR = "*Podany kupon został już zużyty.";
+    public const string INVALID_COUPON_CODE_ERROR = "Należy podać prawidłowy kupon.";
+    public const string INACTIVE_COUPON_CODE_ERROR = "Podany kupon jest już nieaktywny.";
+    public const string USED_COUPON_CODE_ERROR = "Podany kupon został już zużyty.";
     public const string INVALID_COUPON_EXPIRING_DATE_ERROR = 
         "*Należy podać prawidłową datę wygaśnięcia kuponu.";
     public const string INVALID_COUPON_EXTENSION_TIME_ERROR = 
@@ -63,6 +63,9 @@ public static class Lang
     public const string COUPONS_GENERATED_INFO_STRING =
         "Wygenerowano <strong>{0}</strong> kluczy dla subkypcji ważnych do <strong>{1}</strong> " +
         "aktywujących subskypcję typu <strong>{2}</strong> na <strong>{3}</strong> dni.</br>";
+
+    public const string COUPON_ACTIVATED_MESSAGE = "Sukces! Do Twojego konta przypisano właśnie subskrybcję " + 
+        "zmieniającą Twoje konto na status <strong>{0}</strong> na <strong>{1}</strong> dni.";
     
     public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
     public const string USER_DELETED = "*Wybrany użytkownik został usunięty.";

@@ -26,6 +26,10 @@ public class UserController : Controller
     public IActionResult AttemptCouponRedeem()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        ViewBag.CouponMessage = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM);
+        ViewBag.Type = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE);
+        HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM);
+        HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE);
         ViewBag.Username = isLogged;
         return View();
     }

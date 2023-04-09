@@ -16,6 +16,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
+                @if (ViewBag.CouponMessage != null)
+                {
+                    <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+                        @Html.Raw(ViewBag.CouponMessage)
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
                 <form method="post" asp-action="AttemptCouponRedeem">
                     <div class="form-data">
                         <label id="mainName">Wykorzystaj swój kupon</label>
