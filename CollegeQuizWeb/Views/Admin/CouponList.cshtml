@@ -1,41 +1,111 @@
-@model CollegeQuizWeb.Dto.User.CouponDto
+@model IEnumerable<CollegeQuizWeb.Dto.User.CouponDto>
 
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Lista kuponów";
 }
 
-<h1 class="text-muted px-2">Lista Kuponów</h1> 
+<h1 class="text-muted px-2">Lista Kuponów</h1>
 <div class="container-fluid">
-@if (ViewBag.coupons != null)
-{
+    <div class="row">
+        <div class="col-1">
+            <button class="btn btn-lg btn-dark w-100" id="allButton" onclick="allList()" type="submit">Wszystkie</button>
+        </div>
+        <div class="col-1">
+            <button class="btn btn-lg btn-secondary w-100" id="activeButton" onclick="activeList()" type="submit">Aktywne</button>
+        </div>
+        <div class="col-1">
+            <button class="btn btn-lg btn-secondary w-100" id="archiveButton" onclick="archiveList()" type="submit">Archiwalne</button>
+        </div>
+    </div>
+    @if (Model.FirstOrDefault() != null)
+    {
+        <div id="renderTable"></div>
+    }
+    else
+    {
+        <h2>Brak kuponów</h2>
+    }
+</div>
+
+<script>
+    @{
+        var couponList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        var test = 1;
+    }
+    $(document).ready(allList());
     
-    <table class="table text-center">
-        <thead>
-        <tr>
+    // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
+    String.prototype.replaceAll = function(str1, str2, ignore) 
+    {
+        return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+    } 
+    
+    function archiveList(){
+        document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+        document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+        document.getElementById('archiveButton').className = "btn btn-lg btn-dark w-100";
+        var couponList = @(couponList);
+        var filteredCouponList = couponList.filter(obj => obj.IsUsed == 1);
+        var currentDate = new Date();
+        couponList.forEach(obj=> {
+            if (currentDate.getTime()>new Date(obj.ExpiringAt).getTime() && !filteredCouponList.includes(obj))
+                filteredCouponList.push(obj);
+        });
+        
+        generateListHTML(filteredCouponList);
+    }
+    
+    function activeList(){
+        document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+        document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
+        document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+        var couponList = @(couponList);
+        var filteredCouponList = couponList.filter(obj => obj.IsUsed == 0);
+        var filteredCouponList2 = [];
+        var currentDate = new Date();
+        filteredCouponList.forEach(obj=> {
+            if (currentDate.getDate()<=new Date(obj.ExpiringAt).getDate())
+                filteredCouponList2.push(obj);
+        });
+        generateListHTML(filteredCouponList2);
+    }
+    
+    function allList(){
+        document.getElementById('allButton').className = "btn btn-lg btn-dark w-100";  
+        document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+        document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+        var couponList = @(couponList);
+        generateListHTML(couponList);
+    }
+    
+    function generateListHTML(couponList){
+        var html = `<table class="table text-center">
+            <thead>
+            <tr>
             <th>Poziom subskrypcji</th>
             <th>Data i godzina wygaśnięcia</th>
             <th >Ilość dni przedłużenia</th>
             <th>Kupon</th>
             <th></th>
-        </tr>
-        </thead>
-        <tbody>
-            @foreach (var coupon in ViewBag.coupons)
-            {
-                <tr class='tabrow'>
-                    <td>@coupon.TypeOfSubscription</td>
-                    <td>@coupon.ExpiringAt</td>
-                    <td>@coupon.ExtensionTime</td>
-                    <td>@coupon.Token</td>
-                    <td><a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a></td>
-                </tr>
-            }
-        </tbody>
-</table>
-}
-else
-{
-    <h2>Brak kuponów</h2>
-}
-</div>
+            </tr>
+            </thead>
+            <tbody>`;
+        couponList.forEach(obj => {
+            var temp = obj.ExpiringAt;
+            temp = temp.replaceAll("T"," ");
+            html+=`<tr class='tabrow'>
+            <td>${obj.TypeOfSubscription}</td>
+            <td>${temp}</td>
+            <td>${obj.ExtensionTime}</td>
+            <td>${obj.Coupon}</td>
+            <td><a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a></td>
+            </tr>`
+        });             
+        html+=`</tbody>
+        </table>`;
+        document.getElementById('renderTable').innerHTML = html;
+    }
+
+            
+</script>
