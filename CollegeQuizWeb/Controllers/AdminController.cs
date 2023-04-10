@@ -57,8 +57,15 @@ public class AdminController : Controller
     {
         return View();
     }
-    public async Task<IActionResult> CouponList()
+    
+   
+    public async Task<IActionResult> CouponList([FromRoute(Name = "id")] string couponToDelete = "")
     {
+        if (couponToDelete.Length.Equals(20))
+        {
+            _adminService.DeleteCoupon(couponToDelete, this);
+        }
+        
         var test = await _adminService.GetCoupons();
         return View(test);
     }

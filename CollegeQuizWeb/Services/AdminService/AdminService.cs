@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -164,6 +165,22 @@ public class AdminService : IAdminService
             test2.Add(test3);
         }
         return test2;
+    }
+
+    public async Task DeleteCoupon(string couponToDelete, AdminController controller)
+    {
+        var couponEntity = _context.Coupons.FirstOrDefault(obj => obj.Token.Equals(couponToDelete));
+        if (couponEntity != null)
+        {
+            var pastDate = DateTime.Now.AddDays(-1);
+            
+             var date = new DateTime(pastDate.Year, pastDate.Month, pastDate.Day, pastDate.Hour, pastDate.Minute, pastDate.Second, pastDate.Kind);
+            
+            couponEntity.ExpiringAt = date;
+            _context.Update(couponEntity);
+            _context.SaveChanges();
+        }
+        controller.Response.Redirect("/Admin/CouponList");
     }
 
     

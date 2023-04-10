@@ -20,4 +20,5 @@ public interface IAdminService
     Task CreateCoupons(CouponDtoPayload obj);
     
     Task<List<CouponDto>> GetCoupons();
+    Task DeleteCoupon(string couponToDelete, AdminController controller);
 }

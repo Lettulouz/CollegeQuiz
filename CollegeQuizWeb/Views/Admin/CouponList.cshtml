@@ -211,10 +211,11 @@
         var innerTextVal =`z ${numberOfPages}`;
         maxPage = numberOfPages;
         document.getElementById('pagination321').innerText = innerTextVal;
+        var currentDate = new Date();                 
         var html = `<table class="table text-center">
             <thead>
             <tr>
-            <th></th>
+            <th><input class="form-check-input" onclick="allCheckboxClicked(this)" type="checkbox" value=""></th>
             <th>Poziom subskrypcji</th>
             <th>Data i godzina wygaśnięcia</th>
             <th>Ilość dni przedłużenia</th>
@@ -231,17 +232,30 @@
             <td>${obj.TypeOfSubscription}</td>
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
-            <td class="couponVal">${obj.Coupon}</td>
-            <td>
-                <a class="btn btn-sm btn-dark" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
-                <a class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
-            </td>
-            </tr>`
+            <td class="couponVal">${obj.Coupon}</td>`
+            if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
+                html+= `<td>
+                            <a class="btn btn-sm btn-dark" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
+                            <a class="btn btn-sm btn-danger" onclick="deleteCoupon(this)"><i class="bi bi-trash"></i></a>
+                        </td>`
+            }else{
+                html+= `<td>
+                           <a class="btn btn-sm btn-info"><i class="bi bi-slash-circle"></i></a>
+                           <a class="btn btn-sm btn-info"><i class="bi bi-slash-circle"></i></a>
+                       </td>`
+            }           
+            html+=`</tr>`;
         });             
         html+=`</tbody>
         </table>`;
         document.getElementById('renderTable').innerHTML = html;
         reCheckboxes();
+    }
+    
+    function deleteCoupon(obj){
+        var row = $(obj).parent().parent();
+        var value = row.find('.couponVal').text();
+        window.location.pathname = `/Admin/CouponList/${value}`;
     }
 
     function copyToClipBoardButtonClick(obj)
@@ -252,6 +266,22 @@
         var message = `Skopiowano kod ${valueToCopy} do schowka.`;
         toastr.success(message);
     }
+    
+    function allCheckboxClicked(obj){
+        var listOfCheckboxes = document.getElementsByName('couponCheckboxes');
+        if (obj.checked === true){        
+            listOfCheckboxes.forEach(x =>{
+                if (x.checked === false)
+                    x.click();
+            });
+        }else{
+            listOfCheckboxes.forEach(x =>{
+                if (x.checked === true)
+                    x.click();    
+            });
+        }
+    }
+    
     
     function checkboxClicked(obj){
         var row = $(obj).parent().parent();
@@ -269,6 +299,8 @@
         var stringOfCoupons = selectedCouponsList.toString();
         stringOfCoupons = stringOfCoupons.replaceAll(",","\n");
         FileSave(stringOfCoupons, "Coupons.txt");
+        var message = `Wygenerowano plik z kuponami.`;
+        toastr.success(message);
     }
     
     function nextPage(){
