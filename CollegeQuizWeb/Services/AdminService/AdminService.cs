@@ -195,21 +195,32 @@ public class AdminService : IAdminService
         return test2;
     }
 
-    public async Task DeleteCoupon(string couponToDelete, AdminController controller)
+    public async Task DeleteCoupon(string couponsToDelete, AdminController controller)
     {
-        var couponEntity = _context.Coupons.FirstOrDefault(obj => obj.Token.Equals(couponToDelete));
-        if (couponEntity != null)
+        List<string> couponsToDeleteList = new();
+        if (!couponsToDelete.Contains(","))
         {
-            var pastDate = DateTime.Now.AddDays(-1);
-            
-             var date = new DateTime(pastDate.Year, pastDate.Month, pastDate.Day, pastDate.Hour, pastDate.Minute, pastDate.Second, pastDate.Kind);
-            
-            couponEntity.ExpiringAt = date;
-            _context.Update(couponEntity);
-            _context.SaveChanges();
+            couponsToDeleteList.Add(couponsToDelete);
         }
+        else
+        {
+            List<string> temp = couponsToDelete.Split(',').ToList(); 
+            couponsToDeleteList.AddRange(temp);
+        }
+
+        foreach (var coupon in couponsToDeleteList)
+        {
+            var couponEntity = _context.Coupons.FirstOrDefault(obj => obj.Token.Equals(coupon));
+            if (couponEntity != null && (couponEntity.ExpiringAt > DateTime.Now))
+            {
+                var pastDate = DateTime.Now.AddYears(-40);
+                var date = new DateTime(pastDate.Year, pastDate.Month, pastDate.Day, pastDate.Hour, pastDate.Minute,
+                    pastDate.Second, pastDate.Kind);
+                couponEntity.ExpiringAt = date;
+                _context.Update(couponEntity);
+            }
+        }
+        await _context.SaveChangesAsync();
         controller.Response.Redirect("/Admin/CouponList");
     }
-
-    
 }

@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+      <PackageReference Include="BarCode" Version="2023.4.1" />
       <PackageReference Include="DotNetEnv" Version="2.5.0" />
       <PackageReference Include="FluentEmail.Core" Version="3.0.2" />
       <PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />

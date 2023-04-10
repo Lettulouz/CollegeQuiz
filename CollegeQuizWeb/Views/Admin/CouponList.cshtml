@@ -1,4 +1,5 @@
-@model IEnumerable<CollegeQuizWeb.Dto.User.CouponDto>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Tuple<CollegeQuizWeb.Dto.Admin.CouponListDto,IEnumerable<CollegeQuizWeb.Dto.User.CouponDto>>
 
 @{
     Layout = "_AdminLayout";
@@ -6,67 +7,89 @@
 }
 
 
+<form method="post" asp-controller="Admin" asp-action="CouponList">
+
+    <input type="hidden" id="oneElement" asp-for="Item1.OneElement"/>
+    <input type="hidden" id="manyElements" asp-for="Item1.ManyElements"/>
+    <button type="submit" hidden="hidden" id="deleteButtonHidden"></button>
+</form>
+
 <h1 class="text-muted px-3">Lista kuponów</h1>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-1">
-            <button class="btn btn-lg btn-dark w-100" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
-        </div>
-        <div class="col-1">
-            <button class="btn btn-lg btn-secondary w-100" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
-        </div>
-        <div class="col-1">
-            <button class="btn btn-lg btn-secondary w-100" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
-        </div>
-        <div class="col-1">
-            <a class="btn btn-lg btn-warning" type="button" data-bs-toggle="tooltip" data-bs-placement="right" 
-               data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
-                <i class="bi bi-printer-fill"></i>
-            </a>
-        </div>
-        <div class="col-8">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
+        <div class="col">
+            <nav aria-label="Buttons">
+                <ul class="pagination justify-content-start">
                     <li class="page-item me-2">
-                        <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
-                            <option value="10">10</option>
-                            <option value="25" selected="selected">25</option>
-                            <option value="100">100</option>
-                            <option value="500">500</option>
-                        </select>
+                        <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
                     </li>
-                    <li class="page-item">
-                        <button class="page-link" onclick="goToFirstPage()">
-                            <i class="bi bi-caret-left-fill"></i>
-                        </button>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
                     </li>
-                    <li class="page-item">
-                        <button class="page-link" onclick="prevPage()">
-                            <i class="bi bi-arrow-left"></i>
-                        </button>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
                     </li>
-                    <li class="page-item" style="width: 75px">
-                        <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                    <li class="page-item me-2">
+                        <a class="btn btn-lg btn-warning justify-content-center mx-0 " style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
+                            data-bs-placement="top" data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
+                            <i class="bi bi-printer-fill"></i>
+                        </a>
                     </li>
-                    <li class="page-item" style="width: 75px">
-                        <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
-                    </li>
-                    <li class="page-item">
-                        <button class="page-link" onclick="nextPage()">
-                            <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </li>
-                    <li class="page-item">
-                        <button class="page-link" onclick="goToLastPage()">
-                            <i class="bi bi-caret-right-fill"></i>
-                        </button>
+                    <li class="page-item me-2">
+                        <a class="btn btn-lg btn-danger justify-content-center mx-0" style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
+                        data-bs-placement="top" data-bs-title="Usuń zaznaczone" onclick="deleteButtonClicked()">
+                            <i class="bi bi-trash"></i>
+                        </a>
                     </li>
                 </ul>
             </nav>
         </div>
+        <hr class="dropdown-divider m-0"></hr>
+        <div class="row mt-3">
+            <div class="col">
+                <nav aria-label="Site Pagination">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item me-2">
+                            <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
+                                <option value="10">10</option>
+                                <option value="25" selected="selected">25</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                            </select>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToFirstPage()">
+                                <i class="bi bi-caret-left-fill"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="prevPage()">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                        </li>
+                        <li class="page-item" style="width: 75px">
+                            <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                        </li>
+                        <li class="page-item" style="width: 75px">
+                            <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="nextPage()">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToLastPage()">
+                                <i class="bi bi-caret-right-fill"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 
-    @if (Model.FirstOrDefault() != null)
+    @if (Model.Item2.FirstOrDefault() != null)
     {
         <div id="renderTable"></div>
     }
@@ -80,16 +103,15 @@
 
 <script>
     @{
-        var couponList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
-        var test = 1;
+        var couponList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Item2));
     }
     $(document).ready(function (){
         allList();
         });
     
     $('#pagination123').keypress(function(e) {
-        var a = [];
-        var k = e.which;
+        let a = [];
+        let k = e.which;
     
         for (i = 48; i < 58; i++)
             a.push(i);
@@ -102,6 +124,18 @@
           e.preventDefault();
        });
     
+    function confirmFormSubmit(){
+        let temp = document.getElementById('deleteButtonHidden');
+        temp.click();
+    }
+    
+    function deleteButtonClicked(){
+        let itemsToDelete = selectedCouponsList.join();
+        let manyCoupons = document.getElementById('manyElements');
+        manyCoupons.value = itemsToDelete;
+        confirmFormSubmit();
+    }
+    
     function changePageInput(obj){
         if (parseInt(obj.value)>parseInt(maxPage))
             obj.value = maxPage;
@@ -109,12 +143,12 @@
         redirectToProperList();
     }
     
-    var couponList = @(couponList);
-    var selectedCouponsList = [];
-    var page = 1;
-    var recordsPerPage = 25;
-    var chosenFilter = 1;
-    var maxPage = 1;
+    let couponList = @(couponList);
+    let selectedCouponsList = [];
+    let page = 1;
+    let recordsPerPage = 25;
+    let chosenFilter = 1;
+    let maxPage = 1;
     
     // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
     String.prototype.replaceAll = function(str1, str2, ignore) 
@@ -152,18 +186,20 @@
         document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-dark w-100";
         chosenFilter = 3;
-        var filteredCouponList = couponList.filter(obj => obj.IsUsed == 1);
-        var filteredCouponList2 = [];
-        var currentDate = new Date();
+        let filteredCouponList = couponList.filter(obj => obj.IsUsed == 1);
+        let filteredCouponList2 = [];
+        let currentDate = new Date();
         couponList.forEach(obj=> {
-            if (currentDate.getTime()>new Date(obj.ExpiringAt).getTime() && !filteredCouponList.includes(obj))
+            if (currentDate>new Date(obj.ExpiringAt) && !filteredCouponList.includes(obj)){
                 filteredCouponList.push(obj);
+                }
         });
+        let initialLength = filteredCouponList.length;
         for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
             if (filteredCouponList[i] != null)
                 filteredCouponList2.push(filteredCouponList[i]);
         }    
-        generateListHTML(filteredCouponList2);
+        generateListHTML(filteredCouponList2, initialLength);
     }
     
     function activeList(){  
@@ -172,15 +208,15 @@
         document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
         chosenFilter = 2;
-        var filteredCouponList = couponList.filter(obj => obj.IsUsed == 0);
-        var filteredCouponList2 = [];
-        var filteredCouponList3 = [];
-        var currentDate = new Date();
+        let filteredCouponList = couponList.filter(obj => obj.IsUsed == 0);
+        let filteredCouponList2 = [];
+        let filteredCouponList3 = [];
+        let currentDate = new Date();
         filteredCouponList.forEach(obj=> {
-            if (currentDate.getDate()<=new Date(obj.ExpiringAt).getDate())
+            if (currentDate<=new Date(obj.ExpiringAt))
                 filteredCouponList2.push(obj);
         });
-        var initialLength = filteredCouponList2.length;
+        let initialLength = filteredCouponList2.length;
         for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
             if (filteredCouponList2[i] != null)
                 filteredCouponList3.push(filteredCouponList2[i]);
@@ -194,29 +230,27 @@
         document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
         chosenFilter = 1;
-        var filteredCouponList = [];
-        var initialLength = couponList.length;
+        let filteredCouponList = [];
+        let initialLength = couponList.length;
         for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
             if (couponList[i] != null)
                 filteredCouponList.push(couponList[i]);
         }
         generateListHTML(filteredCouponList, initialLength);
     }
-
+    
     function generateListHTML(couponListLoc, initialLength){
-  $("[data-toggle=\"tooltip\"]").tooltip();
-  
-            $(document.body).tooltip({ selector: "[title]" });
-        var numberOfPages = parseInt(initialLength/recordsPerPage);
+        $("[data-toggle=\"tooltip\"]").tooltip();
+        let numberOfPages = parseInt(initialLength/recordsPerPage);
         if(initialLength%recordsPerPage !== 0)
             numberOfPages++;
         if (isNaN(numberOfPages))
             numberOfPages = 1;
-        var innerTextVal =`z ${numberOfPages}`;
+        let innerTextVal =`z ${numberOfPages}`;
         maxPage = numberOfPages;
         document.getElementById('pagination321').innerText = innerTextVal;
-        var currentDate = new Date();                 
-        var html = `<table class="table text-center">
+        let currentDate = new Date();                 
+        let html = `<table class="table text-center">
             <thead>
             <tr>
             <th><input class="form-check-input" onclick="allCheckboxClicked(this)" type="checkbox" value=""></th>
@@ -224,12 +258,12 @@
             <th>Data i godzina wygaśnięcia</th>
             <th>Ilość dni przedłużenia</th>
             <th class="d-none d-xl-table-cell">Kupon</th>
-            <th class="fit"></th>
+            <th></th>
             </tr>
             </thead>
             <tbody>`;
         couponListLoc.forEach(obj => {
-            var temp = obj.ExpiringAt;
+            let temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
             html+=`<tr class='tabrow'>
             <td><input class="form-check-input" name="couponCheckboxes" onclick="checkboxClicked(this)" type="checkbox" value=""></td>
@@ -259,22 +293,24 @@
     }
     
     function deleteCoupon(obj){
-        var row = $(obj).parent().parent();
-        var value = row.find('.couponVal').text();
-        window.location.pathname = `/Admin/CouponList/${value}`;
+        let row = $(obj).parent().parent();
+        let value = row.find('.couponVal').text();
+        let singleCoupon = document.getElementById('oneElement');
+        singleCoupon.value = value;
+        confirmFormSubmit();
     }
 
     function copyToClipBoardButtonClick(obj)
     {
-        var row = $(obj).parent().parent();
-        var valueToCopy = row.find('.couponVal').text();
+        let row = $(obj).parent().parent();
+        let valueToCopy = row.find('.couponVal').text();
         navigator.clipboard.writeText(valueToCopy);
-        var message = `Skopiowano kod ${valueToCopy} do schowka.`;
+        let message = `Skopiowano kod ${valueToCopy} do schowka.`;
         toastr.success(message);
     }
     
     function allCheckboxClicked(obj){
-        var listOfCheckboxes = document.getElementsByName('couponCheckboxes');
+        let listOfCheckboxes = document.getElementsByName('couponCheckboxes');
         if (obj.checked === true){        
             listOfCheckboxes.forEach(x =>{
                 if (x.checked === false)
@@ -290,8 +326,8 @@
     
     
     function checkboxClicked(obj){
-        var row = $(obj).parent().parent();
-        var valueToCopy = row.find('.couponVal').text();
+        let row = $(obj).parent().parent();
+        let valueToCopy = row.find('.couponVal').text();
         if (obj.checked){
             if(!selectedCouponsList.includes(valueToCopy))
                 selectedCouponsList.push(valueToCopy);
@@ -302,10 +338,10 @@
     }
     
     function getAllSelectedCoupons(){
-        var stringOfCoupons = selectedCouponsList.toString();
+        let stringOfCoupons = selectedCouponsList.toString();
         stringOfCoupons = stringOfCoupons.replaceAll(",","\n");
         FileSave(stringOfCoupons, "Coupons.txt");
-        var message = `Wygenerowano plik z kuponami.`;
+        let message = `Wygenerowano plik z kuponami.`;
         toastr.success(message);
     }
     
@@ -348,10 +384,10 @@
     }
     
     function reCheckboxes(){
-        var listOfCheckboxes = document.getElementsByName('couponCheckboxes');
+        let listOfCheckboxes = document.getElementsByName('couponCheckboxes');
         listOfCheckboxes.forEach(x => {
             row = $(x).parent().parent();
-            var valueOfCheckboxsCoupon = row.find('.couponVal').text();
+            let valueOfCheckboxsCoupon = row.find('.couponVal').text();
             if (selectedCouponsList.includes(valueOfCheckboxsCoupon))
                 x.checked = true;
         });
@@ -359,12 +395,12 @@
     
     //https://stackoverflow.com/questions/13405129/create-and-save-a-file-with-javascript
     function FileSave(sourceText, fileIdentity) {
-        var workElement = document.createElement("a");
+        let workElement = document.createElement("a");
         if ('download' in workElement) {
             workElement.href = "data:" + 'text/plain' + "charset=utf-8," + escape(sourceText);
             workElement.setAttribute("download", fileIdentity);
             document.body.appendChild(workElement);
-            var eventMouse = document.createEvent("MouseEvents");
+            let eventMouse = document.createEvent("MouseEvents");
             eventMouse.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             workElement.dispatchEvent(eventMouse);
             document.body.removeChild(workElement);
