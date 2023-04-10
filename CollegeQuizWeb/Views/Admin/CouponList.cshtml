@@ -45,7 +45,7 @@
                         </button>
                     </li>
                     <li class="page-item" style="width: 75px">
-                        <input type="text" class="page-link" id="pagination123" style="width: 75px" value="1">
+                        <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
                     </li>
                     <li class="page-item" style="width: 75px">
                         <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
@@ -85,6 +85,29 @@
     $(document).ready(function (){
         allList();
         });
+    
+    $('#pagination123').keypress(function(e) {
+        var a = [];
+        var k = e.which;
+    
+        for (i = 48; i < 58; i++)
+            a.push(i);
+    
+        if (!(a.indexOf(k)>=0))
+            e.preventDefault();
+    });
+    
+    $('#pagination123').on("cut copy paste",function(e) {
+          e.preventDefault();
+       });
+    
+    function changePageInput(obj){
+        if (parseInt(obj.value)>parseInt(maxPage))
+            obj.value = maxPage;
+        page = obj.value;
+        redirectToProperList();
+    }
+    
     var couponList = @(couponList);
     var selectedCouponsList = [];
     var page = 1;
@@ -107,7 +130,8 @@
     
     function filterButtonClick(option){
         page = 1;
-        document.getElementById('pagination123').value = 1;
+        document.getElementById('pagination123').value = 1;    
+        selectedCouponsList = [];
         switch (option){
             case 1:             
                 allList();
@@ -203,7 +227,7 @@
             var temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
             html+=`<tr class='tabrow'>
-            <td><input class="form-check-input" onclick="checkboxClicked(this)" type="checkbox" value=""></td>
+            <td><input class="form-check-input" name="couponCheckboxes" onclick="checkboxClicked(this)" type="checkbox" value=""></td>
             <td>${obj.TypeOfSubscription}</td>
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
@@ -217,6 +241,7 @@
         html+=`</tbody>
         </table>`;
         document.getElementById('renderTable').innerHTML = html;
+        reCheckboxes();
     }
 
     function copyToClipBoardButtonClick(obj)
@@ -282,6 +307,16 @@
     function goToLastPage(){
         page = maxPage;
         redirectToProperList();
+    }
+    
+    function reCheckboxes(){
+        var listOfCheckboxes = document.getElementsByName('couponCheckboxes');
+        listOfCheckboxes.forEach(x => {
+            row = $(x).parent().parent();
+            var valueOfCheckboxsCoupon = row.find('.couponVal').text();
+            if (selectedCouponsList.includes(valueOfCheckboxsCoupon))
+                x.checked = true;
+        });
     }
     
     //https://stackoverflow.com/questions/13405129/create-and-save-a-file-with-javascript
