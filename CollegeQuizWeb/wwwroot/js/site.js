@@ -13,6 +13,9 @@ function showModal() {
 
 function onLoad() {
     showModal();
+    $('[data-bs-toggle="tooltip"]').toArray().forEach(function(el) {
+        new bootstrap.Tooltip(el);
+    });
 }
 
 $(window).on('load', onLoad);

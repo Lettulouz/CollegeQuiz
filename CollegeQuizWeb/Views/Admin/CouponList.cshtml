@@ -19,7 +19,8 @@
             <button class="btn btn-lg btn-secondary w-100" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
         </div>
         <div class="col-1">
-            <a class="btn btn-lg btn-warning" onclick="getAllSelectedCoupons()">
+            <a class="btn btn-lg btn-warning" type="button" data-bs-toggle="tooltip" data-bs-placement="right" 
+               data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
                 <i class="bi bi-printer-fill"></i>
             </a>
         </div>
@@ -201,8 +202,11 @@
         }
         generateListHTML(filteredCouponList, initialLength);
     }
-    
+
     function generateListHTML(couponListLoc, initialLength){
+  $("[data-toggle=\"tooltip\"]").tooltip();
+  
+            $(document.body).tooltip({ selector: "[title]" });
         var numberOfPages = parseInt(initialLength/recordsPerPage);
         if(initialLength%recordsPerPage !== 0)
             numberOfPages++;
@@ -219,8 +223,8 @@
             <th>Poziom subskrypcji</th>
             <th>Data i godzina wygaśnięcia</th>
             <th>Ilość dni przedłużenia</th>
-            <th>Kupon</th>
-            <th></th>
+            <th class="d-none d-xl-table-cell">Kupon</th>
+            <th class="fit"></th>
             </tr>
             </thead>
             <tbody>`;
@@ -232,11 +236,13 @@
             <td>${obj.TypeOfSubscription}</td>
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
-            <td class="couponVal">${obj.Coupon}</td>`
+            <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
-                html+= `<td>
-                            <a class="btn btn-sm btn-dark" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
-                            <a class="btn btn-sm btn-danger" onclick="deleteCoupon(this)"><i class="bi bi-trash"></i></a>
+                html+= `<td class="fit">
+                            <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="left" 
+                             data-bs-title="Kopiuj do schowka" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
+                            <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                            data-bs-title="Usuń kupon" onclick="deleteCoupon(this)"><i class="bi bi-trash"></i></a>
                         </td>`
             }else{
                 html+= `<td>
