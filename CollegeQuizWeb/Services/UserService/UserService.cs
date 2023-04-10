@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.User;
+using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CollegeQuizWeb.Services.UserService;
 
@@ -27,6 +29,21 @@ public class UserService : IUserService
     {
         UserController controller = obj.ControllerReference;
         var coupon = _context.Coupons.FirstOrDefault(o => o.Token.Equals(obj.Dto.Coupon));
+        
+        string? loggedUser = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUser.IsNullOrEmpty())
+        {
+            controller.Response.Redirect("/Auth/Login");
+            return;
+        }
+
+        var userEntity = _context.Users.FirstOrDefault(x => x.Username.Equals(loggedUser));
+        if (userEntity == null)
+        {
+            controller.HttpContext.Session.Remove(SessionKey.IS_USER_LOGGED);
+            controller.Response.Redirect("/Auth/Login");
+            return;
+        }
 
         if (coupon != null)
         {
@@ -51,10 +68,66 @@ public class UserService : IUserService
             if (controller.ModelState.IsValid)
             {
                 coupon.IsUsed = true;
+                
+                string message = "";
+                if (userEntity.AccountStatus == 0)
+                {
+                    userEntity.AccountStatus = coupon.TypeOfSubscription;
+                    var endDate = DateTime.Today.AddDays(coupon.ExtensionTime);
+                    userEntity.CurrentStatusExpirationDate = endDate;
+                    message = 
+                        string.Format(Lang.COUPON_ACTIVATED_MESSAGE, coupon.TypeOfSubscription, coupon.ExtensionTime, coupon.ExtensionTime, endDate);
+                }
+                else if (userEntity.AccountStatus == 1)
+                {
+                    if (coupon.TypeOfSubscription == 1)
+                    {
+                        var endDate = userEntity.CurrentStatusExpirationDate.AddDays(coupon.ExtensionTime);
+                        userEntity.CurrentStatusExpirationDate = endDate;
+                        message = 
+                            string
+                                .Format(Lang.COUPON_ACTIVATED_MESSAGE, coupon.TypeOfSubscription, coupon.ExtensionTime, (endDate - DateTime.Today).TotalDays, endDate);
+                    }
+                    else if (coupon.TypeOfSubscription == 2)
+                    {
+                        userEntity.AccountStatus = coupon.TypeOfSubscription;
+                        int daysToAdd = 0;
+                        var calculateRemainingTime =
+                            (userEntity.CurrentStatusExpirationDate - DateTime.Today).TotalDays;
+                        if (calculateRemainingTime % 2 == 0)
+                            daysToAdd = (int) (calculateRemainingTime / 2);
+                        else
+                            daysToAdd = (int) (calculateRemainingTime / 2) + 1;
+                        var endDate = DateTime.Today.AddDays(coupon.ExtensionTime + daysToAdd);
+                        userEntity.CurrentStatusExpirationDate = endDate;
+                        message = 
+                            string.Format(Lang.COUPON_ACTIVATED_WITH_COMPENSATION_MESSAGE, coupon.TypeOfSubscription, 
+                                coupon.ExtensionTime, calculateRemainingTime, daysToAdd, (endDate - DateTime.Today).TotalDays, endDate);
+                    }
+                }
+                else if (userEntity.AccountStatus == 2)
+                {
+                    if (coupon.TypeOfSubscription == 2)
+                    {
+                        var endDate = userEntity.CurrentStatusExpirationDate.AddDays(coupon.ExtensionTime);
+                        userEntity.CurrentStatusExpirationDate = endDate;
+                        message = 
+                            string
+                                .Format(Lang.COUPON_ACTIVATED_MESSAGE, coupon.TypeOfSubscription, coupon.ExtensionTime, (endDate - DateTime.Today).TotalDays, endDate);
+                    }
+                    else
+                    {
+                        controller.HttpContext.Session
+                            .SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM, Lang.COUPON_CODE_LOWER_LEVEL_ERROR);
+                        controller.HttpContext.Session.SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE,
+                            "alert-danger");
+                        controller.Response.Redirect("/User/AttemptCouponRedeem");
+                        return;
+                    }
+                }
                 _context.Update(coupon);
+                _context.Update(userEntity);
                 await _context.SaveChangesAsync();
-                string message = 
-                    string.Format(Lang.COUPON_ACTIVATED_MESSAGE, coupon.TypeOfSubscription, coupon.ExtensionTime);
                 controller.HttpContext.Session.SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM, message);
                 controller.HttpContext.Session.SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE, "alert-success");
                 controller.Response.Redirect("/User/AttemptCouponRedeem");
