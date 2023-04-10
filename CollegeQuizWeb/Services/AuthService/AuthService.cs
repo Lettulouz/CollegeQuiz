@@ -115,7 +115,7 @@ public class AuthService : IAuthService
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
-        userEntity.Password = _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
+        userEntity.Password = obj.Dto.Password == null ? "" : _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
         userEntity.Email = obj.Dto.Email;
         userEntity.TeamID = obj.Dto.TeamID;
         userEntity.RulesAccept = obj.Dto.RulesAccept;
