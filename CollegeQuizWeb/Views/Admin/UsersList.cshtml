@@ -60,10 +60,21 @@
                                 <div class="btn-group btn-group-sm text-right">
                                     <a class="btn btn-sm btn-dark" asp-action="UserProfile" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-eye-fill"></i></a>
                                     <a class="btn btn-sm btn-dark"><i class="bi bi-pencil-square"></i></a>
-                                    <a class="btn btn-sm btn-danger" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@user.Id" ><i class="bi bi-person-fill-lock"></i></a>
+                                    @if (@user.AccountStatus == -1)
+                                    {
+                                        @using (Html.BeginForm("UnbanUser", "Admin", new { id = @user.Id }, FormMethod.Post))
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-dark mid-button" ><i class="bi bi-unlock"></i></button>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-sm btn-danger" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-person-fill-lock"></i></a>
+                                    }
                                     @using (Html.BeginForm("DelUser", "Admin", new { id = @user.Id }, FormMethod.Post))
                                     {
-                                        <button type="submit" class="btn btn-sm btn-danger" ><i class="bi bi-trash"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-danger right-button" ><i class="bi bi-trash"></i></button>
                                     }
                                 </div>
                             </div>

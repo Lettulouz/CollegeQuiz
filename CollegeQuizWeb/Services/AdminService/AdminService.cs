@@ -78,38 +78,66 @@ public class AdminService : IAdminService
         controller.Response.Redirect("/Admin/UsersList");
     }
 
+    public async Task UnbanUser(long id, AdminController controller)
+    {
+        var user =_context.Users.Find(id);
+        if (user != null)
+        {
+            String message = string.Format(Lang.USER_UNBAN, user.Username);
+            user.AccountStatus = 0;
+            user.CurrentStatusExpirationDate = DateTime.MinValue;
+            _context.Update(user);
+            _context.SaveChanges();
+            controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
+            
+        }
+        
+        controller.Response.Redirect("/Admin/UsersList");
+    }
+    
     public async Task SuspendUser(SuspendUserDtoPayload obj)
     {
         var controller = obj.ControllerReference;
         DateTime suspendTo = obj.Dto.SuspendedTo;
         bool perm = obj.Dto.Perm;
         var id = obj.Dto.Id;
-
-        if (perm || suspendTo != DateTime.MinValue)
+        var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+        if (user != null)
         {
-            var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
-            user.AccountStatus = -1;
-            String banTime="";
-            if (perm)
+            if (perm || suspendTo != DateTime.MinValue)
             {
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-                banTime = "permanentie";
-            }else if (suspendTo != DateTime.MinValue)
-            {
-                user.CurrentStatusExpirationDate = suspendTo;
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-                banTime = "do " + suspendTo.ToString();
-            }
 
-            String message = string.Format(Lang.USER_SUSPENDED, user.Username, banTime);
-            controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
-            controller.Response.Redirect("/Admin/UsersList");
+
+                    user.AccountStatus = -1;
+                    String banTime = "";
+                    if (perm)
+                    {
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
+                        banTime = "permanentie";
+                    }
+                    else if (suspendTo != DateTime.MinValue)
+                    {
+                        user.CurrentStatusExpirationDate = suspendTo;
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
+                        banTime = "do " + suspendTo.ToString();
+                    }
+
+                    String message = string.Format(Lang.USER_SUSPENDED, user.Username, banTime);
+                    controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
+                    controller.Response.Redirect("/Admin/UsersList");
+                
             }
+            else
+            {
+                controller.ModelState.AddModelError("Perm", Lang.BAN_ERROR);
+            }
+        }
         else
         {
-            controller.ModelState.AddModelError("Perm", Lang.BAN_ERROR);
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
         }
     }
 

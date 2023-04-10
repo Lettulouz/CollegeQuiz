@@ -52,6 +52,9 @@ public class AdminController : Controller
         return View();
     }
 
+    [HttpGet] public IActionResult AddUser() => View();
+    
+    
     [HttpGet]
     public async Task<IActionResult> AddCoupon()
     {
@@ -85,8 +88,16 @@ public class AdminController : Controller
 
         return View();
     }
-
+    
     [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task UnbanUser(long id)
+    {
+        _adminService.UnbanUser(id, this);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task DelUser(long id)
     {
 
