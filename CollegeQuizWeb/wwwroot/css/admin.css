@@ -117,3 +117,16 @@
     color: white;
     padding: 10px;
 }
+
+.errorTextColor {
+    color: indianred;
+}
+
+.mid-button{
+    border-radius: 0;
+}
+
+.right-button{
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}

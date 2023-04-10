@@ -74,6 +74,7 @@ public static class Lang
     public const string ACCOUNT_SUSPENDED = "*Twoje konto zostało zawieszone";
     
     public const string USER_SUSPENDED = "*Użytkownik {0} został zawieszony {1}.";
+    public const string USER_UNBAN = "*Użytkownik {0} został odblokowany.";
 
 
 }
