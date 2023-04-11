@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
@@ -12,7 +13,6 @@ using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace CollegeQuizWeb.Services.QuizService;
 
@@ -90,13 +90,11 @@ public class QuizService : IQuizService
     
     public async Task CreateQuizCode(QuizController controller, long quizId)
     {
-        DateTime now = DateTime.Now;
         string? username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(username))!.Id;
-        int tokenLife = 2; // in houres
 
         var test = await _context.QuizLobbies.FirstOrDefaultAsync(
-            q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId) && now < q.ExpiredAt);
+            q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId) && !q.IsExpired);
         if (test != null)
         {
             controller.ViewBag.Code = test.Code;
@@ -112,7 +110,7 @@ public class QuizService : IQuizService
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
             Code = generatedCode,
-            ExpiredAt = DateTime.Now.AddHours(tokenLife),
+            IsExpired = false,
             UserHostId = userId,
             QuizId = quizId
         };
@@ -126,8 +124,7 @@ public class QuizService : IQuizService
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
         QRCodeData qrCodeData = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
         QRCode qrCode = new QRCode(qrCodeData);
-        return qrCode
-            .GetGraphic(50,Color.Black, Color.White, 
-                (Bitmap)Bitmap.FromFile(@"wwwroot/qrCodeLogo.png"), 20, 1);
+        return qrCode.GetGraphic(50,Color.Black, Color.White,
+            (Bitmap)Image.FromFile(@"wwwroot/qrCodeLogo.png"), 20, 1);
     }
 }

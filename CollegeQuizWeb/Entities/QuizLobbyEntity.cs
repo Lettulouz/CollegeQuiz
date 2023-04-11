@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CollegeQuizWeb.DbConfig;
@@ -14,8 +13,8 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     public string Code { get; set; }
     
     [Required]
-    [Column("expired_at")]
-    public DateTime ExpiredAt { get; set; }
+    [Column("is_expired")]
+    public bool IsExpired { get; set; }
     
     [ForeignKey(nameof(UserEntity))]
     [Column("user_host_id")]
