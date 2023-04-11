@@ -36,7 +36,8 @@ public class AuthController : Controller
 
         return View();
     }
-
+    
+    
     [HttpGet]
     public async Task ConfirmAccount([FromQuery(Name = "token")] string token)
     {
@@ -57,6 +58,22 @@ public class AuthController : Controller
         }
         
         return View(obj);
+    }
+    
+    public async Task LoginDEV()
+    {
+        LoginDto obj = new LoginDto();
+        obj.LoginOrEmail = "domipis771@student.polsl.pl";
+        obj.Password = "Haselko1234*";
+        var payloadDto = new LoginDtoPayload(this) { Dto = obj };
+        
+        if (ModelState.IsValid)
+        {
+            await _authService.Login(payloadDto);
+            // return RedirectToAction("Privacy", "Home");
+        }
+        
+        Response.Redirect("/Home");
     }
 
     [HttpPost]
