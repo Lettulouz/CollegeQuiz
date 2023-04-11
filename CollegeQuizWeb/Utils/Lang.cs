@@ -85,6 +85,9 @@ public static class Lang
     
     public const string USER_SUSPENDED = "*Użytkownik {0} został zawieszony {1}.";
     public const string USER_UNBAN = "*Użytkownik {0} został odblokowany.";
+    public const string USER_ADDED = "*Pomyślnie utworzono użytkownika {0}";
+    public const string PASS_REQUIRED = "*Aktywowane konto wymaga podania hasła";
+    public const string PASS_LEN_ERROR = "*Hasło powinno mieć pomiędzy 8 a 25 znaków";
 
 
 }

@@ -55,8 +55,21 @@ public class AdminController : Controller
     }
 
     [HttpGet] public IActionResult AddUser() => View();
-    
-    
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddUser(AddUserDto obj)
+    {
+        var payloadDto = new AddUserDtoPayload(this) { Dto = obj };
+
+        if (ModelState.IsValid)
+        {
+            await _adminService.AddUser(payloadDto);
+        }
+        
+        return View(obj);
+    }
+
     [HttpGet]
     public async Task<IActionResult> AddCoupon()
     {
