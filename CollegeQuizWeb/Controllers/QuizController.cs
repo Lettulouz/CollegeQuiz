@@ -83,4 +83,10 @@ public class QuizController : Controller
         if (loggedUsername == null) return Redirect("/Auth/Login");
         return View();
     }
+    
+    [HttpGet]
+    public IActionResult InGameQuestion()
+    {
+        return View();
+    }
 }
