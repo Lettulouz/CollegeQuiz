@@ -5,6 +5,7 @@ using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Hubs;
 using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
@@ -52,6 +53,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 // serwisy kontrolerów API
 builder.Services.AddScoped<IQuizAPIService, QuizAPIService>();
 
+// signalR
+builder.Services.AddSignalR();
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var app = builder.Build();
@@ -74,6 +78,8 @@ app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapHub<QuizSessionHub>("/quizSessionHub");
 
 app.MapControllerRoute(
     name: "default",
