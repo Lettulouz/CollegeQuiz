@@ -29,7 +29,7 @@ const QuizAnswerComponent = ({ id, answer }) => {
 };
 
 const QuizQuestionComponent = () => {
-    const { q, onSetQuestionTitle, onRemoveQuestion } = useContext(QuestionsContext);
+    const { q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds } = useContext(QuestionsContext);
     
     const answersComponents = q.answers.map((answer, idx) => (
         <QuizAnswerComponent key={idx} id={idx + 1} answer={answer}/>
@@ -38,11 +38,21 @@ const QuizQuestionComponent = () => {
     return (
         <div className="row g-2 mb-4">
             <div className="col-12">
-                <div className="p-3 card hstack">
+                <div className="p-3 card hstack gap-2">
                     <div className="me-2 fs-3">{q.id}</div>
-                    <input type="text" className="form-control" placeholder="Treść pytania" value={q.text}
-                        onChange={e => onSetQuestionTitle(e.target.value, q.id)}/>
-                    {q.id > 1 && <button className="btn btn-danger text-white ms-2" 
+                    <textarea className="form-control h-100" placeholder="Treść pytania" value={q.text}
+                        onChange={e => onSetQuestionTitle(e.target.value, q.id)}></textarea>
+                    <div>
+                        <label className="mb-1">Czas trwania pytania:</label>
+                        <div className="d-flex">
+                            <input type="number" className="form-control time-control" placeholder="min"
+                                value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
+                            <span className="mx-2 fw-bold pt-1">:</span>
+                            <input type="number" className="form-control time-control" placeholder="sek"
+                                value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
+                        </div>
+                    </div>
+                    {q.id > 1 && <button className="btn btn-danger text-white ms-2"
                                          onClick={() => onRemoveQuestion(q.id)}>X</button>}
                 </div>
             </div>
@@ -55,13 +65,15 @@ const initialQuestions = [
     {
         id: 1,
         text: '',
+        timeMin: '',
+        timeSec: '',
         answers: [
             { id: 1, text: '', isCorrect: true },
             { id: 2, text: '', isCorrect: false },
             { id: 3, text: '', isCorrect: false },
             { id: 4, text: '', isCorrect: false }
         ]
-    }  
+    }
 ];
 
 const AddQuizQuestionsRoot = () => {
@@ -94,6 +106,20 @@ const AddQuizQuestionsRoot = () => {
         setQuestions(qst);
     };
     
+    const onSetMinutes = (questionId, minutes) => {
+        const qst = [ ...questions ];
+        const idx = qst.findIndex(q => q.id === questionId);
+        qst[idx].timeMin = minutes;
+        setQuestions(qst);
+    };
+
+    const onSetSeconds = (questionId, seconds) => {
+        const qst = [ ...questions ];
+        const idx = qst.findIndex(q => q.id === questionId);
+        qst[idx].timeSec = seconds;
+        setQuestions(qst);
+    };
+
     const onAddNewQuestion = () => {
         setQuestions([ ...questions, {
             id: questions.length + 1,
@@ -126,8 +152,6 @@ const AddQuizQuestionsRoot = () => {
         }).then(r => r.json())
             .then(r => {
                 if (r.isGood) {
-                    setQuestions(initialQuestions);
-                    console.log(alert);
                     setAlert({ active: true, style: 'alert-success', message: r.message });
                 } else {
                     setAlert({ active: true, style: 'alert-danger', message: r.message });
@@ -176,7 +200,8 @@ const AddQuizQuestionsRoot = () => {
     
     const generateQuestionsComponents = questions.map((q, idx) => (
         <QuestionsContext.Provider key={idx} value={{
-            q, setQuestions, onSetQuestionAnswer, onChangeCorrectAnswer, onSetQuestionTitle, onRemoveQuestion
+            q, setQuestions, onSetQuestionAnswer, onChangeCorrectAnswer, onSetQuestionTitle, onRemoveQuestion,
+            onSetMinutes, onSetSeconds
         }}>
             <QuizQuestionComponent/>
         </QuestionsContext.Provider>

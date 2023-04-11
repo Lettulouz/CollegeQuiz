@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,14 +36,31 @@ public class QuizAPIService : IQuizAPIService
         if (flattedQuestions.Count != flattedQuestions.Distinct().Count()) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = $"Pytania w edytowanym quizie nie mogą się powtarzać."
+            Message = "Pytania w edytowanym quizie nie mogą się powtarzać."
         };
         foreach (var question in dto.Aggregate)
         {
+            int min, sec;
+            if (!int.TryParse(question.TimeMin, out min) || !int.TryParse(question.TimeSec, out sec)) 
+            {
+                return new SimpleResponseDto()
+                {
+                    IsGood = false,
+                    Message = "Podane wartości czasu nie są liczbami."
+                };
+            }
+            if (sec < 10 || sec > 59) return new SimpleResponseDto()
+            {
+                IsGood = false,
+                Message = "Wartość sekund nie może być mniejsza od 10 i większa od 59."
+            };
+            if (min < 0) min = 0;
             QuestionEntity questionEntity = new QuestionEntity()
             {
                 Index = question.Id,
                 Name = question.Text,
+                TimeMin = min,
+                TimeSec = sec,
                 QuizEntity = quizEntity
             };
             // sprawdzenie, czy odpowiedzi nie są takie same
@@ -68,7 +86,7 @@ public class QuizAPIService : IQuizAPIService
         return new SimpleResponseDto()
         {
             IsGood = true,
-            Message = $"Quiz o nazwie {quizEntity.Name} został pomyślnie zaktualizowany."
+            Message = $"Quiz o nazwie <strong>{quizEntity.Name}</strong> został pomyślnie zaktualizowany."
         };
     }
 
@@ -107,6 +125,8 @@ public class QuizAPIService : IQuizAPIService
             {
                 Id = question.Index,
                 Text = question.Name,
+                TimeMin = question.TimeMin.ToString(),
+                TimeSec = question.TimeSec.ToString(),
                 Answers = answerDtos
             };
             dto.Aggregate.Add(questionsReqDto);

@@ -113,6 +113,10 @@ a.navbar-brand {
     color: #3a8a7f;
 }
 
+.time-control {
+    max-width: 150px;
+}
+
 /*
 Stylowanie treści strony głównej
  */
