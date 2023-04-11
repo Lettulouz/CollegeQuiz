@@ -37,7 +37,7 @@
                     <div class="col-12">
                         <div class="forms-inputs"> 
                             <div class="form-floating">
-                                <input type="email"  class="form-control" id="Email" asp-for="Email" placeholder="a">
+                                <input type="text"  class="form-control" id="Email" asp-for="Email" placeholder="a">
                                 <label for="Email">Email</label>
                             </div>
                             <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Email"></span>
@@ -59,10 +59,10 @@
                     <div class="col-12">
                         <div class="forms-inputs"> 
                             <div class="form-floating ">
-                                <input type="Password"  class="form-control" asp-for="Password" placeholder="a">
+                                <input type="text"  class="form-control" asp-for="Password" placeholder="a">
                                 <label for="Password">Hasło</label> 
                             </div>
-                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Password"></span>
+                             <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Password"></span> 
                         </div>    
                     </div>
                     <label style="color:darkgray; margin-top:3px">*W przypadku pozostawienia pola hasła pustego użytkownik dostanie losowe hasło na maila</label>

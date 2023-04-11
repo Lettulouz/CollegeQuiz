@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
+
 namespace CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.Utils;
@@ -23,9 +26,11 @@ public class AddUserDto
     [MaxLength(25, ErrorMessage = Lang.USERNAME_TOO_LONG_ERROR)]
     public string Username { get; set; }
     
-    public string Password { get; set; }
+
+    public string? Password { get; set; }
     
-    public string Email { get; set; }
+
+    public string? Email { get; set; }
     
     public bool IsAccountActivated { get; set; }
 

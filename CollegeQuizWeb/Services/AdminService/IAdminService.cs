@@ -15,6 +15,8 @@ public interface IAdminService
     Task UserInfo(long id, AdminController controller);
 
     Task SuspendUser(SuspendUserDtoPayload obj);
+
+    Task AddUser(AddUserDtoPayload obj);
     
     Task UnbanUser(long id, AdminController controller);
     Task DelUser(long id, AdminController controller);
