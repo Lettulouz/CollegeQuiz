@@ -232,20 +232,20 @@ public class AdminService : IAdminService
                 FullName = $"{userEntity.FirstName} {userEntity.LastName}",
                 TokenValidTime = tokenLife,
                 ConfirmAccountLink = $"{uriBuilder.Uri.AbsoluteUri}Auth/ConfirmAccount?token={generatedToken}",
+                Username = $"{userEntity.Username}",
                 Password = $"{pass}"
             };
             UserEmailOptions<AdduserViewModel> options = new()
             {
-                TemplateName = TemplateName.CONFIRM_ACCOUNT_CREATE,
+                TemplateName = TemplateName.ADD_USER,
                 ToEmails = new List<string>() { userEntity.Email },
                 Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
                 DataModel = emailViewModel
             };
             if (!await _smtpService.SendEmailMessage(options))
             {
-               // controller.ViewBag.Type = "alert-danger";
-              //  controller.ViewBag.AlertMessage =
-              //      $"Nieudane wysłanie wiadomości email na adres {userEntity.Email}. Spróbuj ponownie później.";
+                String mess = string.Format(Lang.EMAIL_SENDING_ERROR, userEntity.Email);
+                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, mess);
             }
         }
         
