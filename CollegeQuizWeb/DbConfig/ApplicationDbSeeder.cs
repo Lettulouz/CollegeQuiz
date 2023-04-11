@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace CollegeQuizWeb.DbConfig;
 
 public class ApplicationDbSeeder
@@ -11,7 +9,7 @@ public class ApplicationDbSeeder
         _context = context;
     }
 
-    public async Task Seed()
+    public void Seed()
     {
         if (!_context.Database.CanConnect()) return;
         // insert here asynchronyous methods for adding content to the database

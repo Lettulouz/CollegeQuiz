@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
@@ -92,7 +91,7 @@ public class AuthService : IAuthService
             long chosenUserId = tokenEntity.UserId;
             var userEntity = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id.Equals(chosenUserId));
-            userEntity.IsAccountActivated = true;
+            userEntity!.IsAccountActivated = true;
             _context.Update(tokenEntity);
             _context.Update(userEntity);
             await _context.SaveChangesAsync();
@@ -115,12 +114,11 @@ public class AuthService : IAuthService
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
-        userEntity.Password = obj.Dto.Password == null ? "" : _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
+        userEntity.Password = _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
         userEntity.Email = obj.Dto.Email;
         userEntity.TeamID = obj.Dto.TeamID;
         userEntity.RulesAccept = obj.Dto.RulesAccept;
-
-
+        
         if (await EmailExistsInDb(obj.Dto.Email))
         {
             controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
@@ -139,7 +137,7 @@ public class AuthService : IAuthService
         if (!controller.ModelState.IsValid) return;
 
         string generatedToken;
-        bool isExactTheSame = false;
+        bool isExactTheSame;
         do
         {
             generatedToken = Utilities.GenerateOtaToken();
@@ -185,19 +183,9 @@ public class AuthService : IAuthService
         controller.Response.Redirect("/Home");
     }
 
-    public async Task<bool> EmailExistsInDb(string email)
-    {
-        if (await _context.Users.FirstOrDefaultAsync(o => o.Email.Equals(email)) == null)
-            return false;
-        return true;
-    }
+    public async Task<bool> EmailExistsInDb(string email) =>
+        !((await _context.Users.FirstOrDefaultAsync(o => o.Email.Equals(email))) == null);
 
-    public async Task<bool> UsernameExistsInDb(string username)
-    {
-        if (await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(username)) == null)
-            return false;
-        return true;
-    }
-
-
+    public async Task<bool> UsernameExistsInDb(string username) =>
+        !((await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(username))) == null);
 }

@@ -9,7 +9,6 @@ using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
@@ -92,8 +91,8 @@ public class QuizService : IQuizService
     public async Task CreateQuizCode(QuizController controller, long quizId)
     {
         DateTime now = DateTime.Now;
-        string username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        var userId = _context.Users.FirstOrDefault(u => u.Username.Equals(username)).Id;
+        string? username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(username))!.Id;
         int tokenLife = 2; // in houres
 
         var test = await _context.QuizLobbies.FirstOrDefaultAsync(

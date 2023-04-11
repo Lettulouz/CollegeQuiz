@@ -1,16 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
-using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Dto.User;
-using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
 using CollegeQuizWeb.SmtpViewModels;
@@ -18,7 +15,6 @@ using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.Services.AdminService;
@@ -52,7 +48,6 @@ public class AdminService : IAdminService
         {
             controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
             controller.Response.Redirect("/Admin");
-
         }
         else
         {
@@ -60,7 +55,6 @@ public class AdminService : IAdminService
 
             controller.ViewBag.UserQuizes = await _context.Quizes
                 .Where(q => q.UserId.Equals(id)).ToListAsync();
-
         }
     }
 
@@ -71,11 +65,9 @@ public class AdminService : IAdminService
         {
             String message = string.Format(Lang.USER_DELETED, user.Username);
             _context.Remove(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
-            
         }
-        
         controller.Response.Redirect("/Admin/UsersList");
     }
 
@@ -88,11 +80,9 @@ public class AdminService : IAdminService
             user.AccountStatus = 0;
             user.CurrentStatusExpirationDate = DateTime.MinValue;
             _context.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
-            
         }
-        
         controller.Response.Redirect("/Admin/UsersList");
     }
     
@@ -107,9 +97,7 @@ public class AdminService : IAdminService
         {
             if (perm || suspendTo != DateTime.MinValue)
             {
-
-
-                    user.AccountStatus = -1;
+                user.AccountStatus = -1;
                     String banTime = "";
                     if (perm)
                     {
@@ -122,13 +110,12 @@ public class AdminService : IAdminService
                         user.CurrentStatusExpirationDate = suspendTo;
                         _context.Update(user);
                         await _context.SaveChangesAsync();
-                        banTime = "do " + suspendTo.ToString();
+                        banTime = "do " + suspendTo.ToString(CultureInfo.InvariantCulture);
                     }
 
                     String message = string.Format(Lang.USER_SUSPENDED, user.Username, banTime);
                     controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
                     controller.Response.Redirect("/Admin/UsersList");
-                
             }
             else
             {
@@ -142,7 +129,7 @@ public class AdminService : IAdminService
         }
     }
 
-      public async Task AddUser(AddUserDtoPayload obj)
+    public async Task AddUser(AddUserDtoPayload obj)
     {
         AdminController controller = obj.ControllerReference;
         
@@ -152,8 +139,7 @@ public class AdminService : IAdminService
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
         string pass="";
-
-
+        
         if (UsernameExistsInDb(obj.Dto.Username))
         {
             controller.ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
@@ -197,31 +183,30 @@ public class AdminService : IAdminService
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_IS_REQUIRED_ERROR);
             }
-            if (obj.Dto.Email.Length>264)
+            if (obj.Dto.Email?.Length>264)
             {
                 controller.ModelState.AddModelError("Password", Lang.EMAIL_TOO_LONG_ERROR);
             }
-            if (EmailExistsInDb(obj.Dto.Email))
+            if (EmailExistsInDb(obj.Dto.Email!))
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
             }
-            if (!IsValidEmail(obj.Dto.Email))
+            if (!IsValidEmail(obj.Dto.Email!))
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_INCORRECT_ERROR);
             }
-            userEntity.Email = obj.Dto.Email;
+            userEntity.Email = obj.Dto.Email!;
         }
             
         if (!controller.ModelState.IsValid) return;
         
-
 
         if (!obj.Dto.IsAccountActivated)
         {
             int tokenLife = 48; // in hours
             
             string generatedToken;
-            bool isExactTheSame = false;
+            bool isExactTheSame;
             do
             {
                 generatedToken = Utilities.GenerateOtaToken();

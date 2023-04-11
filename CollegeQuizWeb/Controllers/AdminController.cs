@@ -1,37 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using CollegeQuizWeb.Dto;
-using CollegeQuizWeb.Dto.ChangePassword;
 using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 
 namespace CollegeQuizWeb.Controllers;
 
 public class AdminController : Controller
 {
-    
     private readonly IAdminService _adminService;
-
 
     public AdminController(IAdminService adminService)
     {
         _adminService = adminService;
-
     }
     
     // GET
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         string? userNotExist = HttpContext.Session.GetString(SessionKey.USER_NOT_EXIST);
         HttpContext.Session.Remove(SessionKey.USER_NOT_EXIST);
@@ -53,9 +44,7 @@ public class AdminController : Controller
         ViewBag.users = await _adminService.GetUsers();
         return View();
     }
-
-    [HttpGet] public IActionResult AddUser() => View();
-
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddUser(AddUserDto obj)
@@ -70,12 +59,10 @@ public class AdminController : Controller
         return View(obj);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> AddCoupon()
-    {
-        return View();
-    }
-    
+    [HttpGet] public IActionResult AddUser() => View();
+    [HttpGet] public IActionResult AddCoupon() => View();
+    [HttpGet] public IActionResult SuspendUser([FromRoute(Name = "id")] long id) => View();
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task CouponList([Bind(Prefix = "Item1")] CouponListDto couponListDto)
@@ -84,7 +71,6 @@ public class AdminController : Controller
         {
            await _adminService.DeleteCoupon(couponListDto.OneElement, this);
         }
-
         if (!couponListDto.ManyElements.IsNullOrEmpty())
         {
             await _adminService.DeleteCoupon(couponListDto.ManyElements, this);
@@ -97,12 +83,6 @@ public class AdminController : Controller
         var test = await _adminService.GetCoupons();
         var tuple= new Tuple<CouponListDto, IEnumerable<CouponDto>>(new CouponListDto(), test);
         return View(tuple);
-    }
-    
-    [HttpGet]
-    public async Task<IActionResult> SuspendUser([FromRoute(Name = "id")] long id)
-    {
-        return View();
     }
 
     [HttpPost]
@@ -119,15 +99,14 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task UnbanUser(long id)
     {
-        _adminService.UnbanUser(id, this);
+        await _adminService.UnbanUser(id, this);
     }
     
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task DelUser(long id)
     {
-
-        _adminService.DelUser(id, this);
+        await _adminService.DelUser(id, this);
     }
     
     [HttpGet]
