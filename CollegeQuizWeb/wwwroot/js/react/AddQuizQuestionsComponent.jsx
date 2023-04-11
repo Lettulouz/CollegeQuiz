@@ -149,7 +149,9 @@ const AddQuizQuestionsRoot = () => {
                 'Content-Type': 'application/json'
             },
         }).then(r => r.json())
-            .then(r => setQuestions(r.aggregate))
+            .then(r => { 
+                if (r.aggregate.length !== 0) setQuestions(r.aggregate);
+            })
             .then(e => {
                 if (e === undefined) return;
                 setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });

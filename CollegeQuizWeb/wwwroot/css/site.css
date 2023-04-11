@@ -114,14 +114,14 @@ Stylowanie treści strony głównej
 
 .click-me {
     text-decoration: none;
-    background-color: #128e58;
-    color: #f9fef8;
+    background-color: #63c4ab;
+    color: #f9fef8 !important;
     font-size: x-large;
     width: 300px;
 }
 
 .click-me:hover {
-    background-color: #4dce96;
+    background-color: #3a8a7f;
     color: #f9fef8;
 
 }
@@ -130,7 +130,7 @@ Stylowanie treści strony głównej
  * Stylowanie interfejsu autoryzacji użytkownika
 */
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0px 1000px #fbfbfb inset;
+    -webkit-box-shadow: 0 0 0 1000px #fbfbfb inset;
 }
 
 .bg-custom-4 {
@@ -182,7 +182,7 @@ input:-webkit-autofill {
 }
 
 .forms-inputs input {
-    padding: 0px 0px 0px 15px;
+    padding: 0 0 0 15px;
     height: 50px;
     border: 2px solid rgb(238, 238, 238);
     width: 100%;
