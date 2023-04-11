@@ -89,5 +89,18 @@ public static class Lang
     public const string PASS_REQUIRED = "*Aktywowane konto wymaga podania hasła";
     public const string PASS_LEN_ERROR = "*Hasło powinno mieć pomiędzy 8 a 25 znaków";
 
-
+    public const string EMAIL_SENDING_ERROR = "Nieudane wysłanie wiadomości email na adres {0}. Spróbuj ponownie później.";
+    public const string EMAIL_ACCOUNT_CRETED_INFROMATION = "Tworzenie konta dla {0} {1} {2}.";
+    public const string EMAIL_PASSWORD_RESET_INFROMATION = "Reset hasła dla {0} {1} {2}.";
+    public const string EMAIL_PASSWORD_RESET_SENT = 
+        "Na adres email <strong>{0}</strong> została wysłana wiadomość z linkiem umożliwiającym zmianę hasła.";
+    public const string ACCOUNT_ACTIVATED_SUCCESSFULLY = "Pomyślnie aktywowano nowe konto. Możesz teraz się zalogować.";
+    public const string ACCOUNT_ACTIVATION_LINK_EXPIRED = "Podany link nie istnieje, wygasł bądź został już wykorzystany.";
+    public const string USER_NOT_FOUND = "Nie znaleziono użytkownika na podstawie przekazanych danych.";
+    public const string ERROR_PASSWORD_DIFFERENCE = "Wartości w polach nowego hasła i potwórzonego hasła nie są takie same.";
+    public const string ERROR_TOKEN = "Wartości w polach nowego hasła i potwórzonego hasła nie są takie same.";
+    public const string PASSWORD_CHANGED = "Hasło do Twojego konta zostało pomyślnie zmienione.";
+    public const string QUIZ_ALREADY_EXISTS = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.";
+    public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
+    
 }
