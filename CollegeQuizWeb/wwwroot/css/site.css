@@ -104,6 +104,15 @@ a.navbar-brand {
     color: #19452e;
 }
 
+.load-spinner {
+    height: 120px;
+}
+.load-spinner-circle {
+    width: 5rem;
+    height: 5rem;
+    color: #3a8a7f;
+}
+
 /*
 Stylowanie treści strony głównej
  */
@@ -123,7 +132,6 @@ Stylowanie treści strony głównej
 .click-me:hover {
     background-color: #3a8a7f;
     color: #f9fef8;
-
 }
 
 /*

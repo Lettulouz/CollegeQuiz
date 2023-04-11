@@ -11,7 +11,15 @@
 <h2>@ViewBag.QuizData.Name</h2>
 
 @* Stuff do reacta, renderowanie dodawania pytań i zmiany nazwy quizu *@
-<div class="mt-3" id="addQuizQuestionsRoot"></div>
+<div class="position-relative">
+    <div class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner">
+        <div id="react-loadable-spinner-content" class="spinner-border load-spinner-circle mt-4" role="status">
+        </div>
+    </div>
+    <div class="position-absolute">
+        <div class="mt-3" id="addQuizQuestionsRoot"></div>
+    </div>
+</div>
 
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>

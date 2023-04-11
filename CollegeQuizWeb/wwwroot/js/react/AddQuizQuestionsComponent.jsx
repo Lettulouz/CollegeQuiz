@@ -68,6 +68,7 @@ const AddQuizQuestionsRoot = () => {
     const [ questions, setQuestions ] = useState(initialQuestions);
     const [ allGood, setAllGood ] = useState(true);
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
+    const [ showContent, setShowContent ] = useState(false);
     
     const onSetQuestionTitle = (text, questionId) => {
         const qst = [ ...questions ];
@@ -139,6 +140,7 @@ const AddQuizQuestionsRoot = () => {
     };
     
     useEffect(() => {
+        const loadableSpinner = document.getElementById('react-loadable-spinner-content');
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
         fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, {
@@ -148,14 +150,16 @@ const AddQuizQuestionsRoot = () => {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(r => r.json())
-            .then(r => { 
-                if (r.aggregate.length !== 0) setQuestions(r.aggregate);
-            })
-            .then(e => {
-                if (e === undefined) return;
-                setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
-            });
+        }).then(r => {
+            loadableSpinner.style.cssText = 'display:none !important';
+            setShowContent(true);
+            return r.json()
+        }).then(r => { 
+            if (r.aggregate.length !== 0) setQuestions(r.aggregate);
+        }).then(e => {
+            if (e === undefined) return;
+            setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
+        });
     }, []);
     
     useEffect(() => {
@@ -180,17 +184,19 @@ const AddQuizQuestionsRoot = () => {
     
     return (
         <>
-            {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
-                <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
-                <button type="button" className="btn-close" onClick={resetAlert}></button>
-            </div>}
-            {generateQuestionsComponents}
-            <button onClick={onAddNewQuestion} className="btn btn-color-one w-100 mt-2">
-                Dodaj nowe pytanie
-            </button>
-            {allGood && <button className="btn btn-color-one mt-2 btn-light w-100" onClick={appendQuestionsTooQuiz}>
-                Zaktualizuj pytania quizu
-            </button>}
+            {showContent && <>
+                {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
+                    <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
+                    <button type="button" className="btn-close" onClick={resetAlert}></button>
+                </div>}
+                {generateQuestionsComponents}
+                <button onClick={onAddNewQuestion} className="btn btn-color-one w-100 mt-2">
+                    Dodaj nowe pytanie
+                </button>
+                {allGood && <button className="btn btn-color-one mt-2 btn-light w-100" onClick={appendQuestionsTooQuiz}>
+                    Zaktualizuj pytania quizu
+                </button>}
+            </>}
         </>
     );
 };
