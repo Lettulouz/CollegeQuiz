@@ -32,7 +32,7 @@ public class UserEntity : AbstractAuditableEntity
     [Column("account_status")]
     [DefaultValue(1)]
     [Range(1,3)]
-    public short AccountStatus { get; set; }
+    public int AccountStatus { get; set; }
     
     [Column("current_status_expiration_date")]
     public DateTime CurrentStatusExpirationDate { get; set; }

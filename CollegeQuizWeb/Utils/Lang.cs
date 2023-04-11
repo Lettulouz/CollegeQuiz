@@ -65,7 +65,17 @@ public static class Lang
         "aktywujących subskypcję typu <strong>{2}</strong> na <strong>{3}</strong> dni.</br>";
 
     public const string COUPON_ACTIVATED_MESSAGE = "Sukces! Do Twojego konta przypisano właśnie subskrybcję " + 
-        "zmieniającą Twoje konto na status <strong>{0}</strong> na <strong>{1}</strong> dni.";
+        "typu <strong>{0}</strong> na <strong>{1}</strong> dni. " +
+        "Aktualna subskrypcja będzie ważna jeszcze <strong>{2}</strong> dni, do <strong>{3}</strong>.";
+    
+    public const string COUPON_ACTIVATED_WITH_COMPENSATION_MESSAGE = 
+        "Sukces! Do Twojego konta przypisano właśnie subskrybcję zmieniającą Twoje konto na status <strong>{0}" +
+        "</strong> na <strong>{1}</strong> dni. Przekonwertowano również <strong>{2}</strong> dni aktualnego" +
+        " pakietu na <strong>{3}</strong> dni nowego pakietu. Aktualna subskrypcja będzie ważna jeszcze " +
+        "<strong>{4}</strong> dni, do <strong>{5}</strong>.";
+
+    public const string COUPON_CODE_LOWER_LEVEL_ERROR =
+        "Nie można aktywować kuponu z subskrypcją niższą niż obecnie posiadana!";
     
     public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
     public const string USER_DELETED = "*Użytkownik {0} został usunięty.";

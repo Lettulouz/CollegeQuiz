@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace CollegeQuizWeb.Controllers;
@@ -75,16 +76,27 @@ public class AdminController : Controller
         return View();
     }
     
-   
-    public async Task<IActionResult> CouponList([FromRoute(Name = "id")] string couponToDelete = "")
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task CouponList([Bind(Prefix = "Item1")] CouponListDto couponListDto)
     {
-        if (couponToDelete.Length.Equals(20))
+        if (!couponListDto.OneElement.IsNullOrEmpty() && couponListDto.ManyElements.IsNullOrEmpty())
         {
-            _adminService.DeleteCoupon(couponToDelete, this);
+           await _adminService.DeleteCoupon(couponListDto.OneElement, this);
         }
-        
+
+        if (!couponListDto.ManyElements.IsNullOrEmpty())
+        {
+            await _adminService.DeleteCoupon(couponListDto.ManyElements, this);
+        }
+        Response.Redirect("/Admin/CouponList");
+    }
+    
+    public async Task<IActionResult> CouponList()
+    {
         var test = await _adminService.GetCoupons();
-        return View(test);
+        var tuple= new Tuple<CouponListDto, IEnumerable<CouponDto>>(new CouponListDto(), test);
+        return View(tuple);
     }
     
     [HttpGet]

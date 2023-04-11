@@ -12,7 +12,22 @@ function showModal() {
 }
 
 function onLoad() {
+    
     showModal();
+    
+    $('[data-bs-toggle="tooltip"]').toArray().forEach(function(el) {
+        new bootstrap.Tooltip(el);
+    });
+    
+    $(function() {
+        $(document).click(function (event) {
+            if($(".navbar-collapse").hasClass("collaps-nav"))
+            $('.navbar-collapse').collapse('hide');
+        });
+    });
+    $('.custom-collapse').click(function(event){
+        event.stopPropagation();
+    });
 }
 
 $(window).on('load', onLoad);
