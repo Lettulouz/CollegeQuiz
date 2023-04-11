@@ -15,6 +15,14 @@ public class QuestionEntity : AbstractAuditableEntity
     [Column("name")]
     public string Name { get; set; }
     
+    [Required]
+    [Column("time_min")]
+    public int TimeMin { get; set; }
+    
+    [Required]
+    [Column("time_sec")]
+    public int TimeSec { get; set; }
+    
     [ForeignKey(nameof(QuizEntity))]
     [Column("quiz_id")]
     public long QuizId { get; set; }
