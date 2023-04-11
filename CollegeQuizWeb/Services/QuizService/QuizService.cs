@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -11,6 +12,7 @@ using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace CollegeQuizWeb.Services.QuizService;
@@ -118,5 +120,15 @@ public class QuizService : IQuizService
         await _context.AddAsync(codeQuiz);
         await _context.SaveChangesAsync();
         controller.ViewBag.Code = generatedCode;
+    }
+
+    public Bitmap GenerateQRCode(QuizController controller, string code)
+    {
+        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
+        QRCode qrCode = new QRCode(qrCodeData);
+        return qrCode
+            .GetGraphic(50,Color.Black, Color.White, 
+                (Bitmap)Bitmap.FromFile(@"wwwroot/qrCodeLogo.png"), 20, 1);
     }
 }

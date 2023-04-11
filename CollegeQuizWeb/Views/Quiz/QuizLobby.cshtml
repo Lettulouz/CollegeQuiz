@@ -1,9 +1,91 @@
 @{
     ViewData["Title"] = "Poczekalnia do quizu";
 }
-<div class="mt-3 mb-3">
-    <h3>Poczekalnia do quizu</h3>
+
+<div class="container mt-2 mb-1">
+    <div class="row mt-2">
+        <div class="col-0 col-xl-3 d-none d-xl-inline">
+            <div class="card px-3 py-3 h-100" id="form1">
+                <h3>Poczekalnia do quizu</h3>
+                
+                <h5>Nazwa Quizu</h5>
+                <h6>Opis Quizu</h6>
+                
+                <h5>Host</h5>
+                <h6>Ten uzytkownik</h6>
+                
+                <h5>Połączeni użytkownicy</h5>
+                <h6>*U1</h6>
+                <h6>*U2</h6>
+            </div>
+        </div>
+        <div class="col-12 col-xl-6 d-xl-inline">
+            <div class="row d-flex justify-content-center">
+                <div class="card px-3 py-3 h-100"  id="form1">
+                    <img src="data:image/gif;base64,@ViewBag.Test"/>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center mt-2">
+                <div class="card px-3 py-3 h-100" id="form1">
+                    <div class="row d-flex">
+                        <div class="col-9">
+                            <label class="form-control text-center" id="lobbyCode" 
+                                   style="font-size: 38px;font-weight: bolder">
+                                @ViewBag.Code
+                            </label>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-lg btn-dark w-100 h-100 text-white" type="button" data-bs-toggle="tooltip" 
+                               data-bs-placement="left" data-bs-title="Kopiuj do schowka" 
+                               onclick="copyToClipBoardButtonClick()">
+                                <i class="bi bi-clipboard"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-flex d-xl-none justify-content-center mt-2">
+                <div class="card px-3 py-3 h-100 " id="form1">
+                    <input type="submit" class="btn btn-info mt-1 mx-1" value="Rozpocznij">
+                </div>
+            </div>  
+            <div class="row d-flex d-xl-none justify-content-center mt-2">
+                <div class="card px-3 py-3 h-100" id="form1">
+                    <h3>Poczekalnia do quizu</h3>
+                    
+                    <h5>Nazwa Quizu</h5>
+                    <h6>Opis Quizu</h6>
+                    
+                    <h5>Host</h5>
+                    <h6>Ten uzytkownik</h6>
+                    
+                    <h5>Połączeni użytkownicy</h5>
+                    <h6>*U1</h6>
+                    <h6>*U2</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-0 col-xl-3 d-none d-xl-inline">
+            <div class="card px-3 py-3 h-100 " id="form1">
+                <div class="row d-flex justify-content-center ">
+                    <input type="submit" class="btn btn-info mt-1 mx-1" value="Rozpocznij">
+                </div>           
+            </div>
+        </div>
+        
+    </div>
+    
 </div>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-@{ @ViewBag.Code }
+<script>
+    function copyToClipBoardButtonClick()
+    {
+        let valueToCopy = document.getElementById('lobbyCode').innerText;
+        navigator.clipboard.writeText(valueToCopy);
+        let message = `Skopiowano kod ${valueToCopy} do schowka.`;
+        toastr.success(message);
+    }
+</script>

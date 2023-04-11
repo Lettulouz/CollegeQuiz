@@ -1,3 +1,7 @@
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Services.QuizService;
@@ -63,8 +67,12 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizLobby([FromRoute(Name = "id")] long quizId)
     {
-
         await _service.CreateQuizCode(this, quizId);
+        Bitmap test = _service.GenerateQRCode(this, ViewBag.Code);
+        System.IO.MemoryStream ms = new MemoryStream();
+        test.Save(ms, ImageFormat.Jpeg);
+        byte[] byteImage = ms.ToArray();
+        ViewBag.Test = Convert.ToBase64String(byteImage);;
         return View();
     }
 }
