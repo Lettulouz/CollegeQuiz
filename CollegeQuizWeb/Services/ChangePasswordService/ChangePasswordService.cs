@@ -51,7 +51,7 @@ public class ChangePasswordService : IChangePasswordService
         if (userEntity == null)
         {
             controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage = "Nie znaleziono użytkownika na podstawie przekazanych danych.";
+            controller.ViewBag.AlertMessage = Lang.USER_NOT_FOUND;
             _logger.LogError("User with passed data: {} not exist", payloadDto.Dto.LoginOrEmail);
             return;
         }
@@ -86,24 +86,21 @@ public class ChangePasswordService : IChangePasswordService
         {
             TemplateName = TemplateName.CHANGE_PASSWORD,
             ToEmails = new List<string>() { userEntity.Email },
-            Subject = $"Reset hasła dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            Subject = string.Format(Lang.EMAIL_PASSWORD_RESET_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
             DataModel = emailViewModel
         };
         if (!await _smtpService.SendEmailMessage(options))
         {
             controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage = 
-                $"Nieudane wysłanie wiadomości email na adres {userEntity.Email}. Spróbuj ponownie później.";
+            controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENDING_ERROR, userEntity.Email);
         }
         
         await _context.AddAsync(otaToken);
         await _context.SaveChangesAsync();
         
         controller.ViewBag.Type = "alert-success";
-        controller.ViewBag.AlertMessage = 
-            $"Na adres email <strong>{userEntity.Email}</strong> została wysłana wiadomość z linkiem umożliwiającym " +
-            $"zmianę hasła.";
-        
+        controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_PASSWORD_RESET_SENT, userEntity.Email);
+
         _logger.LogInformation("Send request to change password for account: {}", userEntity.Email);
         controller.ModelState.SetModelValue("LoginOrEmail", new ValueProviderResult(string.Empty, CultureInfo.InvariantCulture));
     }
@@ -141,7 +138,7 @@ public class ChangePasswordService : IChangePasswordService
         if (!payloadDto.Dto.NewPassword.Equals(payloadDto.Dto.RepeatNewPassword))
         {
             controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage = $"Wartości w polach nowego hasła i potwórzonego hasła nie są takie same.";
+            controller.ViewBag.AlertMessage = Lang.ERROR_PASSWORD_DIFFERENCE;
             return;
         }
         
@@ -152,7 +149,7 @@ public class ChangePasswordService : IChangePasswordService
         if (tokenEntity == null)
         {
             controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage = $"Podany token nie istnieje, wygasł bądź został już wykorzystany.";
+            controller.ViewBag.AlertMessage = Lang.ERROR_TOKEN;
             _logger.LogError("Attempt to proceed request with non existing or invalid token. Token: {}", token);
             return;
         }
@@ -164,7 +161,7 @@ public class ChangePasswordService : IChangePasswordService
         _context.Update(tokenEntity);
         await _context.SaveChangesAsync(); 
         
-        string responseMessage = "Hasło do Twojego konta zostało pomyślnie zmienione.";
+        string responseMessage = Lang.PASSWORD_CHANGED;
         controller.HttpContext.Session.SetString(SessionKey.CHANGE_PASSWORD_LOGIN_REDIRECT, responseMessage);
         controller.Response.Redirect("/Auth/Login");
     }

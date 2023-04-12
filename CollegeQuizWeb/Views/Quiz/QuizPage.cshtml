@@ -12,16 +12,14 @@
 
 @* Stuff do reacta, renderowanie dodawania pytań i zmiany nazwy quizu *@
 <div class="position-relative">
-    <div class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner">
-        <div id="react-loadable-spinner-content" class="spinner-border load-spinner-circle mt-4" role="status">
+    <div class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner"
+         id="react-loadable-spinner-content">
+        <div class="spinner-border load-spinner-circle mt-4" role="status">
         </div>
     </div>
     <div class="mt-3" id="addQuizQuestionsRoot"></div>
 </div>
 
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
 <script type="module" src="@Url.Content("~/js/react/AddQuizQuestionsComponent.jsx")"></script>
 @* Stuff do reacta, renderowanie dodawania pytań i zmiany nazwy quizu *@
 

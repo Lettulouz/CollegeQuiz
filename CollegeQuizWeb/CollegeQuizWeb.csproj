@@ -17,6 +17,12 @@
       <PackageReference Include="JavaScriptEngineSwitcher.Extensions.MsDependencyInjection" Version="3.21.0" />
       <PackageReference Include="JavaScriptEngineSwitcher.V8" Version="3.21.0" />
       <PackageReference Include="JavaScriptEngineSwitcher.V8.Native.win-x64" Version="3.21.0" />
+      <PackageReference Include="JavaScriptEngineSwitcher.V8.Native.win-x86" Version="3.21.1" />
+      <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.3" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.0-preview.3.23177.8" />
+      <PackageReference Include="Microsoft.ClearScript.V8" Version="7.4.1" />
+      <PackageReference Include="Microsoft.ClearScript.V8.Native.win-x64" Version="7.4.1" />
+      <PackageReference Include="Microsoft.ClearScript.V8.Native.win-x86" Version="7.4.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.15" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.15" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.15" />

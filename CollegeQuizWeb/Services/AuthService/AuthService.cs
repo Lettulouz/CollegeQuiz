@@ -83,7 +83,7 @@ public class AuthService : IAuthService
         {
             _logger.LogError("Attempt to proceed request with non existing or invalid token. Token: {}", token);
             viewBagType = "alert-danger";
-            responseMessage = "Podany link nie istnieje, wygasł bądź został już wykorzystany.";
+            responseMessage = Lang.ACCOUNT_ACTIVATION_LINK_EXPIRED;
         }
         else
         {
@@ -96,7 +96,7 @@ public class AuthService : IAuthService
             _context.Update(userEntity);
             await _context.SaveChangesAsync();
             viewBagType = "alert-success";
-            responseMessage = "Pomyślnie aktywowano nowe konto. Możesz teraz się zalogować.";
+            responseMessage = Lang.ACCOUNT_ACTIVATED_SUCCESSFULLY;
         }
 
         controller.HttpContext.Session.SetString(SessionKey.ACTIVATE_ACCOUNT_REDIRECT, responseMessage);
@@ -170,14 +170,13 @@ public class AuthService : IAuthService
         {
             TemplateName = TemplateName.CONFIRM_ACCOUNT_CREATE,
             ToEmails = new List<string>() { userEntity.Email },
-            Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            Subject = string.Format(Lang.EMAIL_ACCOUNT_CRETED_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
             DataModel = emailViewModel
         };
         if (!await _smtpService.SendEmailMessage(options))
         {
             controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage =
-                $"Nieudane wysłanie wiadomości email na adres {userEntity.Email}. Spróbuj ponownie później.";
+            controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENDING_ERROR, userEntity.Email);
         }
 
         controller.Response.Redirect("/Home");

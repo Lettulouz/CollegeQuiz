@@ -39,7 +39,7 @@ public class QuizService : IQuizService
             AlertDto alertDto = new AlertDto()
             {
                 Type = "alert-danger",
-                Content = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.",
+                Content = Lang.QUIZ_ALREADY_EXISTS,
             };
             controller.ViewBag.Alert = alertDto;
             return;
@@ -59,7 +59,7 @@ public class QuizService : IQuizService
         AlertDto alertDto2 = new AlertDto()
         {
             Type = "alert-success",
-            Content = $"Quiz o nazwie <strong>{dtoPayloader.Dto.QuizName}</strong> został pomyślnie utworzony."
+            Content = string.Format(Lang.QUIZ_ALREADY_EXISTS_NAME,dtoPayloader.Dto.QuizName)
         };
         controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
         controller.Response.Redirect("/Quiz/MyQuizes");

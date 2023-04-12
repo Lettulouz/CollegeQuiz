@@ -69,10 +69,24 @@ public class QuizController : Controller
     {
         await _service.CreateQuizCode(this, quizId);
         Bitmap test = _service.GenerateQRCode(this, ViewBag.Code);
-        System.IO.MemoryStream ms = new MemoryStream();
+        MemoryStream ms = new MemoryStream();
         test.Save(ms, ImageFormat.Jpeg);
         byte[] byteImage = ms.ToArray();
-        ViewBag.Test = Convert.ToBase64String(byteImage);;
+        ViewBag.Test = Convert.ToBase64String(byteImage);
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult JoinToQuiz()
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        return View();
+    }
+    
+    [HttpGet]
+    public IActionResult InGameQuestion()
+    {
         return View();
     }
 }

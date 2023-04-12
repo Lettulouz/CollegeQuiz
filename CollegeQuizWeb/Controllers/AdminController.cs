@@ -41,6 +41,10 @@ public class AdminController : Controller
         HttpContext.Session.Remove(SessionKey.USER_SUSPENDED);
         ViewBag.userSuspended = userSuspended!;
         
+        string? mailError = HttpContext.Session.GetString(SessionKey.ADMIN_ERROR);
+        HttpContext.Session.Remove(SessionKey.USER_REMOVED);
+        ViewBag.mailError = mailError!;
+        
         ViewBag.users = await _adminService.GetUsers();
         return View();
     }
