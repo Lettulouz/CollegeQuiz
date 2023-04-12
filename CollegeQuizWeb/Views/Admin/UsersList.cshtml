@@ -27,6 +27,14 @@
         </div>
     }
     
+    @if (ViewBag.mailError!=null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.mailError
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
     <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="input-group">
             <input type="text" class="form-control" id="searchBox" placeholder="Wyszukaj użytkownika">

@@ -13,4 +13,5 @@ public class SessionKey
     public const string COUPON_CODE_MESSAGE_REDEEM_TYPE = "COUPON_CODE_MESSAGE_REDEEM_TYPE+SESS";
     public const string USER_REMOVED = "USER_REMOVED+SESS";
     public const string USER_SUSPENDED = "USER_SUSPENDED+SESS";
+    public const string ADMIN_ERROR = "ADMIN_ERROR+SESS";
 }
