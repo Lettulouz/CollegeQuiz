@@ -8,7 +8,33 @@
 
 @if (@ViewBag.userInfo!=null)
 {
+    <div class="d-flex">
     <h1 class="text-muted px-2">Profil użytkownika @ViewBag.UserInfo.Username</h1> 
+    <div class="ms-auto btn-group text-right">
+
+        <a class="btn btn-dark button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+           data-bs-title="Edycja użytkownika"  asp-action="EditUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id"><i class="bi bi-pencil-square"></i></a>
+        @if (@ViewBag.UserInfo.AccountStatus == -1)
+        {
+            @using (Html.BeginForm("UnbanUser", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+            {
+                <button type="submit" class="btn btn-dark mid-button" data-bs-toggle="tooltip" 
+                        data-bs-placement="top" data-bs-title="Odblokuj użytkownika"><i class="bi bi-unlock"></i></button>
+            }
+
+        }
+        else
+        {
+            <a class="btn btn-danger button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+               data-bs-title="Zawieś użytkownika" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id"><i class="bi bi-person-fill-lock"></i></a>
+        }
+        @using (Html.BeginForm("DelUser", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+        {
+            <button type="submit" class="btn btn-danger right-button" data-bs-toggle="tooltip" 
+                    data-bs-placement="top" data-bs-title="Usuń użytkownika" ><i class="bi bi-trash"></i></button>
+        }
+    </div>
+    </div>
     <hr class="divider mt-0">
     <div class="container-fluid">
         <div class="row ">
@@ -27,7 +53,11 @@
                         <p>Email: @ViewBag.UserInfo.Email</p>
                     </div>
                     <div class="col-auto">
-                        <p>Status:  @ViewBag.UserInfo.AccountStatus</p>
+                        <p>Status:  @ViewBag.UserInfo.AccountStatus @if (@ViewBag.UserInfo.CurrentStatusExpirationDate != DateTime.MinValue)
+                                             {
+                                                 <a> do @ViewBag.UserInfo.CurrentStatusExpirationDate</a>
+                                             }
+
                         <p>Konto aktywowane: @if (@ViewBag.UserInfo.IsAccountActivated == true)
                                              {
                                                  <a>Tak</a>

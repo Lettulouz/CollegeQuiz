@@ -52,7 +52,13 @@ public class AuthService : IAuthService
                 {
                     if (userEntity.AccountStatus == -1)
                     {
-                        controller.ModelState.AddModelError("Password", Lang.ACCOUNT_SUSPENDED);
+                        string time="";
+                        if (userEntity.CurrentStatusExpirationDate != DateTime.MinValue)
+                        {
+                            time = "do "+@userEntity.CurrentStatusExpirationDate.ToString();
+                        }
+                        string message = string.Format(Lang.ACCOUNT_SUSPENDED, time);
+                        controller.ModelState.AddModelError("Password", message);
                     }
                     else
                     {

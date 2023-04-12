@@ -58,6 +58,110 @@ public class AdminService : IAdminService
         }
     }
 
+    public async Task<AddUserDto> GetUserData(long id, AdminController controller)
+    {
+        var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+        if (userInfo == null)
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+            return new AddUserDto();
+        }
+
+        AddUserDto userEdit = new AddUserDto()
+        {
+            Id = userInfo.Id, FirstName =  userInfo.FirstName,
+            LastName = userInfo.LastName, Username = userInfo.Username,
+            Email = userInfo.Email 
+        };
+        
+        return userEdit;
+    }
+
+    public async Task UpdateUser(AddUserDtoPayload obj)
+    {
+        AdminController controller = obj.ControllerReference;
+        
+        long? id = obj.Dto.Id;
+        string pass="niezmienione";
+        
+        var userEntity=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+        
+        userEntity.FirstName = obj.Dto.FirstName;
+        userEntity.LastName = obj.Dto.LastName;
+        userEntity.Username = obj.Dto.Username;
+        userEntity.Email = obj.Dto.Email;
+        
+        if (!UsernameBelongsToUser(id,obj.Dto.Username))
+        {
+            controller.ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
+        }
+        if (!EmailBelongsToUser(id,obj.Dto.Email!))
+        {
+            controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
+        }
+        if (!IsValidEmail(obj.Dto.Email))
+        {
+            controller.ModelState.AddModelError("Email", Lang.EMAIL_INCORRECT_ERROR);
+        }
+        if (obj.Dto.Email==null)
+        {
+            controller.ModelState.AddModelError("Email", Lang.EMAIL_TOO_LONG_ERROR);
+            
+        }
+        if (obj.Dto.Email?.Length>264)
+        {
+            controller.ModelState.AddModelError("Password", Lang.EMAIL_TOO_LONG_ERROR);
+        }
+
+        if (obj.Dto.Password!=null)
+        {
+            Regex passCheck = new Regex(RegexApp.MIN_ONE_UPPER_LOWER_NUM_SPEC);
+            if (obj.Dto.Password.Length<8||obj.Dto.Password.Length>25)
+            {
+                controller.ModelState.AddModelError("Password", Lang.PASS_LEN_ERROR);
+            }
+            if (passCheck.IsMatch(obj.Dto.Password))
+            {
+                pass = obj.Dto.Password;
+                userEntity.Password = _passwordHasher.HashPassword(userEntity, obj.Dto.Password);
+            }
+            else
+            {
+                controller.ModelState.AddModelError("Password", Lang.PASSWORD_REGEX_ERROR);
+            }
+        }
+
+        if (!controller.ModelState.IsValid) return;
+        
+        _context.Update(userEntity);
+        await _context.SaveChangesAsync();
+        
+        AdduserViewModel emailViewModel = new()
+        {
+            FullName = $"{userEntity.FirstName} {userEntity.LastName}",
+            Username = $"{userEntity.Username}",
+            Password = $"{pass}"
+        };
+        UserEmailOptions<AdduserViewModel> options = new()
+        {
+            TemplateName = TemplateName.EDIT_USER,
+            ToEmails = new List<string>() { userEntity.Email },
+            Subject = $"Aktualizacja konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            DataModel = emailViewModel
+        };
+        if (!await _smtpService.SendEmailMessage(options))
+        {
+            String mess = string.Format(Lang.EMAIL_SENDING_ERROR, userEntity.Email);
+            controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, mess);
+        }
+        
+        String message = string.Format(Lang.USER_UPDATED, userEntity.Username);
+        controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
+        controller.Response.Redirect("/Admin/UsersList");
+        
+    }
+    
     public async Task DelUser(long id, AdminController controller)
     {
         var user = _context.Users.Find(id);
@@ -138,6 +242,7 @@ public class AdminService : IAdminService
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
+        userEntity.RulesAccept = true;
         string pass="";
         
         if (UsernameExistsInDb(obj.Dto.Username))
@@ -164,7 +269,7 @@ public class AdminService : IAdminService
             }
             else
             {
-                controller.ModelState.AddModelError("Password", Lang.USERNAME_ALREADY_EXIST);
+                controller.ModelState.AddModelError("Password", Lang.PASSWORD_REGEX_ERROR);
             }
         }
 
@@ -182,6 +287,7 @@ public class AdminService : IAdminService
             if (obj.Dto.Email == null)
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_IS_REQUIRED_ERROR);
+                
             }
             if (obj.Dto.Email?.Length>264)
             {
@@ -191,7 +297,7 @@ public class AdminService : IAdminService
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
             }
-            if (!IsValidEmail(obj.Dto.Email!))
+            if (!IsValidEmail(obj.Dto.Email))
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_INCORRECT_ERROR);
             }
@@ -392,8 +498,13 @@ public class AdminService : IAdminService
     }
     
     //https://stackoverflow.com/questions/1365407/c-sharp-code-to-validate-email-address
-    bool IsValidEmail(string email)
+    bool IsValidEmail(string? email)
     {
+        if (email == null)
+        {
+            return false;             
+        }
+        
         var trimmedEmail = email.Trim();
 
         if (trimmedEmail.EndsWith(".")) {
@@ -404,6 +515,40 @@ public class AdminService : IAdminService
             return addr.Address == trimmedEmail;
         }
         catch {
+            return false;
+        }
+    }
+
+    bool EmailBelongsToUser(long? id, string email)
+    {
+        var user = _context.Users.FirstOrDefault(o => o.Email.Equals(email));
+        if (user == null)
+        {
+            return true;
+        }
+        if (user.Id == id)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    bool UsernameBelongsToUser(long? id, string username)
+    {
+        var user = _context.Users.FirstOrDefault(o => o.Username.Equals(username));
+        if (user == null)
+        {
+            return true;
+        }
+        if (user.Id == id)
+        {
+            return true;
+        }
+        else
+        {
             return false;
         }
     }

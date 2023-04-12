@@ -42,11 +42,33 @@ public class AdminController : Controller
         ViewBag.userSuspended = userSuspended!;
         
         string? mailError = HttpContext.Session.GetString(SessionKey.ADMIN_ERROR);
-        HttpContext.Session.Remove(SessionKey.USER_REMOVED);
+        HttpContext.Session.Remove(SessionKey.ADMIN_ERROR);
         ViewBag.mailError = mailError!;
         
         ViewBag.users = await _adminService.GetUsers();
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditUser([FromRoute(Name = "id")] long id)
+    {
+        var user = await _adminService.GetUserData(id, this);
+
+        return View(user);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditUser(AddUserDto obj)
+    {
+        var payloadDto = new AddUserDtoPayload(this) { Dto = obj };
+
+        if (ModelState.IsValid)
+        {
+            await _adminService.UpdateUser(payloadDto);
+        }
+        
+        return View(obj);
     }
     
     [HttpPost]

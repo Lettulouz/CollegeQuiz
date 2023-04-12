@@ -33,6 +33,8 @@ public class AddUserDto
     public string? Email { get; set; }
     
     public bool IsAccountActivated { get; set; }
+    
+    public long? Id { get; set; }
 
 }
 

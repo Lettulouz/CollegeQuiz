@@ -72,7 +72,7 @@
                                     </a>
                                     
                                     <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                       data-bs-title="Edycja użytkownika"><i class="bi bi-pencil-square"></i></a>
+                                       data-bs-title="Edycja użytkownika"  asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-pencil-square"></i></a>
                                     @if (@user.AccountStatus == -1)
                                     {
                                         @using (Html.BeginForm("UnbanUser", "Admin", new { id = @user.Id }, FormMethod.Post))

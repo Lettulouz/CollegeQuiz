@@ -81,14 +81,15 @@ public static class Lang
     public const string USER_DELETED = "*Użytkownik {0} został usunięty.";
     public const string BAN_ERROR = "*Należy zawiesić użytkownika permanentnie lub wybrać datę wygaśnięcia bana.";
 
-    public const string ACCOUNT_SUSPENDED = "*Twoje konto zostało zawieszone";
+    public const string ACCOUNT_SUSPENDED = "*Twoje konto zostało zawieszone {0}";
     
     public const string USER_SUSPENDED = "*Użytkownik {0} został zawieszony {1}.";
     public const string USER_UNBAN = "*Użytkownik {0} został odblokowany.";
     public const string USER_ADDED = "*Pomyślnie utworzono użytkownika {0}";
     public const string PASS_REQUIRED = "*Aktywowane konto wymaga podania hasła";
     public const string PASS_LEN_ERROR = "*Hasło powinno mieć pomiędzy 8 a 25 znaków";
-
+    public const string USER_UPDATED = "Użytkownik {0} został zaktualizowany.";
+    
     public const string EMAIL_SENDING_ERROR = "Nieudane wysłanie wiadomości email na adres {0}. Spróbuj ponownie później.";
     public const string EMAIL_ACCOUNT_CRETED_INFROMATION = "Tworzenie konta dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_INFROMATION = "Reset hasła dla {0} {1} {2}.";
@@ -102,5 +103,6 @@ public static class Lang
     public const string PASSWORD_CHANGED = "Hasło do Twojego konta zostało pomyślnie zmienione.";
     public const string QUIZ_ALREADY_EXISTS = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.";
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
+
     
 }
