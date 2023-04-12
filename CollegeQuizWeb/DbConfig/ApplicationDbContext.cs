@@ -24,6 +24,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<QuizEntity> Quizes { get; set; }
     public DbSet<QuizLobbyEntity> QuizLobbies { get; set; }
     public DbSet<CouponEntity> Coupons { get; set; }
+    public DbSet<QuizSessionParticEntity> QuizSessionPartics { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     

@@ -81,9 +81,7 @@
 <script>
     function copyToClipBoardButtonClick()
     {
-        let valueToCopy = document.getElementById('lobbyCode').innerText;
-        navigator.clipboard.writeText(valueToCopy);
-        let message = `Skopiowano kod ${valueToCopy} do schowka.`;
-        toastr.success(message);
+        navigator.clipboard.writeText(document.getElementById('lobbyCode').innerText);
+        toastr.success(`Skopiowano kod ${valueToCopy} do schowka.`);
     }
 </script>
