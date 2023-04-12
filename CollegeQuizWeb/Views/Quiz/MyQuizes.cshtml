@@ -1,3 +1,6 @@
+@using CollegeQuizWeb.Entities
+@using System.Web.Helpers
+@using System.Web.WebPages
 @{
     ViewData["Title"] = "Moje quizy";
 }
@@ -29,6 +32,12 @@
                             <p class="card-text">Twoje miejsce na opis quizu</p>
                         </div>
                     </a>
+                    <button class="btn btn-block form-control w-100" onclick="showhide(@quiz.Id)">
+                        <i class="bi bi-share"></i>
+                    </button>
+                    <div id="@quiz.Id" style="display:none;">
+                        <p>Kod do udostępnienia</p>
+                    </div>
                 </div>
             </div>
         }
@@ -43,4 +52,13 @@
             </a>
         </div>
     </div>
+    <script>
+        function showhide(quizId){
+            var shareCode = document.getElementById(quizId);
+            
+            if (shareCode.style.display === 'none') {shareCode.style.display = 'block';}
+                else {shareCode.style.display = 'none';}
+        }
+        
+      </script>   
 </div>
