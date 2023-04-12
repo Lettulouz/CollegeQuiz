@@ -33,6 +33,19 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public  IActionResult Sandbox()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Sandbox2()
+    {
+        var temp = await _homeService.MakePayment();
+        return Redirect(temp.RedirectUri);
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
