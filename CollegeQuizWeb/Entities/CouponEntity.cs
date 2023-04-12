@@ -27,4 +27,8 @@ public class CouponEntity : AbstractAuditableEntity
     [Column("type_of_subscription")]
     [Required]
     public int TypeOfSubscription { get; set; }
+    
+    [StringLength(80)]
+    [Column("customer_name")]
+    public string CustomerName { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230412132653_AddedCustomerNameColumnCouponsTableMigration")]
+    partial class AddedCustomerNameColumnCouponsTableMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,47 +264,6 @@ namespace CollegeQuizWeb.Migrations
                     b.ToTable("quiz_lobby");
                 });
 
-            modelBuilder.Entity("CollegeQuizWeb.Entities.QuizSessionParticEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ConnectionId")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("connection_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_active");
-
-                    b.Property<long>("ParticipantId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("participant_id");
-
-                    b.Property<long>("QuizLobbyId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("quiz_lobby_id");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParticipantId");
-
-                    b.HasIndex("QuizLobbyId");
-
-                    b.ToTable("quiz_session_participants");
-                });
-
             modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -427,25 +388,6 @@ namespace CollegeQuizWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("QuizEntity");
-
-                    b.Navigation("UserEntity");
-                });
-
-            modelBuilder.Entity("CollegeQuizWeb.Entities.QuizSessionParticEntity", b =>
-                {
-                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
-                        .WithMany()
-                        .HasForeignKey("ParticipantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CollegeQuizWeb.Entities.QuizLobbyEntity", "QuizLobbyEntity")
-                        .WithMany()
-                        .HasForeignKey("QuizLobbyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("QuizLobbyEntity");
 
                     b.Navigation("UserEntity");
                 });

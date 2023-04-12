@@ -23,6 +23,8 @@ public class CouponDto
     
     [Required(ErrorMessage = Lang.INVALID_COUPON_AMOUNT_ERROR)]
     public int TypeOfSubscription { get; set; }
+    
+    public string CustomerName { get; set; }
 }
 
 public class CouponDtoPayload : AbstractControllerPayloader<AdminController>
