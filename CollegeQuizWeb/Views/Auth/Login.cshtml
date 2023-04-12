@@ -7,7 +7,7 @@
 <div class="container mt-5 mb-1">
     <div class="row d-flex justify-content-center mt-5">
         <div class="col-12 col-md-6 mb-5">
-            <div class="card px-5 py-5 h-100" id="form1">
+            <div class="card px-5 py-5 h-100">
                 @if (ViewBag.ChangePassMessage != null)
                 {
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -23,7 +23,7 @@
                     </div>
                 }
                 <form method="post" asp-action="Login">
-                    <div class="form-data mt-3" id="registerFields">
+                    <div class="form-data mt-3">
                         <label id="mainName">Logowanie</label>
                         <div class="forms-inputs mb-4">
                             <label id="username">Login lub E-mail</label>
