@@ -257,7 +257,6 @@
             <th>Poziom subskrypcji</th>
             <th>Data i godzina wygaśnięcia</th>
             <th>Ilość dni przedłużenia</th>
-            <th>Odbiorca</th>
             <th class="d-none d-xl-table-cell">Kupon</th>
             <th></th>
             </tr>
@@ -266,15 +265,16 @@
         couponListLoc.forEach(obj => {
             let temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
-            html+=`<tr class='tabrow'>
+            html+=`<tr class="tabrow">
             <td><input class="form-check-input" name="couponCheckboxes" onclick="checkboxClicked(this)" type="checkbox" value=""></td>
             <td>${obj.TypeOfSubscription}</td>
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
-            <td>${obj.CustomerName}</td>
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
                 html+= `<td class="fit">
+                            <a class="btn btn-sm btn-dark" type="button" data-bs-toggle='collapse' data-bs-target='#a${obj.Coupon}' aria-expanded='false' data-bs-placement="left" 
+                             data-bs-title="Pokaż więcej" onclick="showMore(this)"><i class="bi bi-three-dots"></i></a>
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="left" 
                              data-bs-title="Kopiuj do schowka" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
                             <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
@@ -286,12 +286,39 @@
                            <a class="btn btn-sm btn-info"><i class="bi bi-slash-circle"></i></a>
                        </td>`
             }           
-            html+=`</tr>`;
+            html+=`</tr>
+                <tr>
+                    <td colspan='12' class='p-0 border-0'>
+                        <div class='hidTab collapse' id='a${obj.Coupon}' >
+                            <table class='table table-active coltab m-0'>
+                                <thead>
+                                    <tr>
+                                    <th>Odbiorca</th>
+                                    </tr>
+                                    </thead>	
+                                    <tbody>
+                                        <tr>
+                                            <td class='customerName'>${obj.CustomerName}</td>
+                                        </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>`;
         });             
         html+=`</tbody>
         </table>`;
         document.getElementById('renderTable').innerHTML = html;
         reCheckboxes();
+    }
+    
+    function showMore(obj){
+        let row = $(obj).parent().parent();
+        console.log(obj);
+        if(row.attr('aria-expanded')=='true'){
+        }
+        else if(row.attr('aria-expanded')=='false'){
+        } 
     }
     
     function deleteCoupon(obj){

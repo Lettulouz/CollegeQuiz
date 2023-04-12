@@ -16,14 +16,17 @@ public class CouponDto
     public DateTime ExpiringAt { get; set; }
     
     [Required(ErrorMessage = Lang.INVALID_COUPON_EXTENSION_TIME_ERROR)]
+    [Range(1,36500)]
     public int ExtensionTime { get; set; }
     
     [Required(ErrorMessage = Lang.INVALID_COUPON_AMOUNT_ERROR)]
+    [Range(1,100)]
     public int Amount { get; set; }
     
     [Required(ErrorMessage = Lang.INVALID_COUPON_AMOUNT_ERROR)]
     public int TypeOfSubscription { get; set; }
     
+    [StringLength(80)]
     public string CustomerName { get; set; }
 }
 
