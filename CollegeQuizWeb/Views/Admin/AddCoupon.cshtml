@@ -19,7 +19,7 @@
         <div class="row mb-0">
             <div class="col-6 col-sm-4">
                 <div class="form-floating ">
-                    <input class="form-control" asp-for="Amount">
+                    <input class="form-control" asp-for="Amount" >
                     <label>Ilość kuponów</label>
                 </div>
                 <span asp-validation-for="Amount" class="mx-2 mt-1 errorTextColor"></span>
@@ -33,7 +33,7 @@
             </div>
             <div class="col-6 col-sm-4">
                 <div class="form-floating">
-                    <input class="form-control" asp-for="ExtensionTime">
+                    <input class="form-control" asp-for="ExtensionTime" >
                     <label>Przedłuża subskrypcję o</label>
                 </div>
                 <span asp-validation-for="ExtensionTime" class="mx-2 mt-1 errorTextColor"></span>
@@ -51,7 +51,7 @@
             </div>
             <div class="col-6 col-sm-12">
                 <div class="form-floating">
-                    <input type="text" class="form-control" maxlength="80" asp-for="CustomerName">
+                    <input type="text" class="form-control" asp-for="CustomerName">
                     <label>Odbiorca</label>
                 </div>
             </div>
