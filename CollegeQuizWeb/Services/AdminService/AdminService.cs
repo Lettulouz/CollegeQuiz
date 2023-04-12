@@ -266,6 +266,8 @@ public class AdminService : IAdminService
         DateTime expiringAt = obj.Dto.ExpiringAt;
         int extensionTime = obj.Dto.ExtensionTime;
         int typeOfSubscription = obj.Dto.TypeOfSubscription;
+        string customerName = obj.Dto.CustomerName;
+        
         List<CouponEntity> listOfGeneretedCoupons = new();
         string message;
         message = string.Format(Lang.COUPONS_GENERATED_INFO_STRING, amount, expiringAt, typeOfSubscription,
@@ -286,6 +288,8 @@ public class AdminService : IAdminService
             couponEntity.ExpiringAt = expiringAt;
             couponEntity.ExtensionTime = extensionTime;
             couponEntity.TypeOfSubscription = typeOfSubscription;
+            couponEntity.CustomerName = customerName;
+            
             message += generatedToken;
             message += "</br>";
             listOfGeneretedCoupons.Add(couponEntity);
@@ -308,6 +312,7 @@ public class AdminService : IAdminService
             test3.TypeOfSubscription = VARIABLE.TypeOfSubscription;
             test3.ExtensionTime = VARIABLE.ExtensionTime;
             test3.IsUsed = VARIABLE.IsUsed;
+            test3.CustomerName = VARIABLE.CustomerName;
             test2.Add(test3);
         }
         return test2;

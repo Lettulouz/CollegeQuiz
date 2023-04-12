@@ -257,6 +257,7 @@
             <th>Poziom subskrypcji</th>
             <th>Data i godzina wygaśnięcia</th>
             <th>Ilość dni przedłużenia</th>
+            <th>Odbiorca</th>
             <th class="d-none d-xl-table-cell">Kupon</th>
             <th></th>
             </tr>
@@ -270,6 +271,7 @@
             <td>${obj.TypeOfSubscription}</td>
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
+            <td>${obj.CustomerName}</td>
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
                 html+= `<td class="fit">
