@@ -149,7 +149,7 @@ public class ChangePasswordService : IChangePasswordService
         if (tokenEntity == null)
         {
             controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage = Lang.ERROR_TOKEN;
+            controller.ViewBag.AlertMessage = String.Format(Lang.ERROR_TOKEN, token);
             _logger.LogError("Attempt to proceed request with non existing or invalid token. Token: {}", token);
             return;
         }

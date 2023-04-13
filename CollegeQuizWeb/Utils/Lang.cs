@@ -99,7 +99,7 @@ public static class Lang
     public const string ACCOUNT_ACTIVATION_LINK_EXPIRED = "Podany link nie istnieje, wygasł bądź został już wykorzystany.";
     public const string USER_NOT_FOUND = "Nie znaleziono użytkownika na podstawie przekazanych danych.";
     public const string ERROR_PASSWORD_DIFFERENCE = "Wartości w polach nowego hasła i potwórzonego hasła nie są takie same.";
-    public const string ERROR_TOKEN = "Wartości w polach nowego hasła i potwórzonego hasła nie są takie same.";
+    public const string ERROR_TOKEN = "Podany przez Ciebie kod <strong>{0}</strong> nie istnieje lub uległ przedawnieniu.";
     public const string PASSWORD_CHANGED = "Hasło do Twojego konta zostało pomyślnie zmienione.";
     public const string QUIZ_ALREADY_EXISTS = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.";
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
