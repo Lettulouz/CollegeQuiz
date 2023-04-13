@@ -73,7 +73,23 @@ public class AuthController : Controller
             // return RedirectToAction("Privacy", "Home");
         }
         
-        Response.Redirect("/Home");
+        Response.Redirect("/Quiz/MyQuizes");
+    }
+    
+    public async Task LoginDEV2()
+    {
+        LoginDto obj = new LoginDto();
+        obj.LoginOrEmail = "juanpablo2";
+        obj.Password = "Admin123@";
+        var payloadDto = new LoginDtoPayload(this) { Dto = obj };
+        
+        if (ModelState.IsValid)
+        {
+            await _authService.Login(payloadDto);
+            // return RedirectToAction("Privacy", "Home");
+        }
+        
+        Response.Redirect("/Quiz/MyQuizes");
     }
 
     [HttpPost]
