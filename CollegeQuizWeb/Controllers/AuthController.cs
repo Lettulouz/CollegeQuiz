@@ -91,6 +91,22 @@ public class AuthController : Controller
         
         Response.Redirect("/Quiz/MyQuizes");
     }
+    
+    public async Task LoginDEV3()
+    {
+        LoginDto obj = new LoginDto();
+        obj.LoginOrEmail = "george123";
+        obj.Password = "Test123@";
+        var payloadDto = new LoginDtoPayload(this) { Dto = obj };
+        
+        if (ModelState.IsValid)
+        {
+            await _authService.Login(payloadDto);
+            // return RedirectToAction("Privacy", "Home");
+        }
+        
+        Response.Redirect("/Quiz/MyQuizes");
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
