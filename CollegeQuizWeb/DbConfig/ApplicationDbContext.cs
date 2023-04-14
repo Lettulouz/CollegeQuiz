@@ -25,6 +25,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<QuizLobbyEntity> QuizLobbies { get; set; }
     public DbSet<CouponEntity> Coupons { get; set; }
     public DbSet<QuizSessionParticEntity> QuizSessionPartics { get; set; }
+    public DbSet<SubscriptionTypesEntity> SubsciptionTypes { get; set; }
+    public DbSet<ClientAddressEntity> ClientsAddresses { get; set; }
+    public DbSet<SubscriptionPaymentHistoryEntity> SubscriptionsPaymentsHistory { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
