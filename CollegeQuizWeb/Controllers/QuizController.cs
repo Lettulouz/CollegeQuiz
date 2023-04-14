@@ -67,7 +67,10 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizLobby([FromRoute(Name = "id")] long quizId)
     {
-        await _service.CreateQuizCode(this, quizId);
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+
+        await _service.CreateQuizCode(this, loggedUsername, quizId);
         Bitmap test = _service.GenerateQRCode(this, ViewBag.Code);
         MemoryStream ms = new MemoryStream();
         test.Save(ms, ImageFormat.Jpeg);
