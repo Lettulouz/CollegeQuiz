@@ -7,8 +7,8 @@ Website that is being created for college project. It will let players to play t
 ## Authors
 
 - [@Lettulouz](https://www.github.com/Lettulouz) - Leader
-- [@Milosz08](https://www.github.com/Milosz08) - Programming know-how
-- [@patrick012016](https://www.github.com/patrick012016) - Mostly mobile app [(]linkdorepo]
+- [@Milosz08](https://www.github.com/Milosz08) - Programming know-how, game session designer and websockets stuff
+- [@patrick012016](https://www.github.com/patrick012016) - Mostly mobile app ([github repo](https://github.com/patrick012016/CollegeQuizMobileApp))
 - [@tentegess](https://www.github.com/tentegess)
 - [@NicoMroo](https://www.github.com/NicoMroo)
 - [@kBaginskik](https://www.github.com/kBaginskik)
@@ -17,10 +17,19 @@ Website that is being created for college project. It will let players to play t
 
 ## Tech Stack
 
-**Client:** Java
+**Clients**:
+* Web: (Razor for static pages - SSR, ReactJS for dynamic web content - CSR, HTML, CSS, JS, Bootstrap)
+* Android: (Java) ([github repo](https://github.com/patrick012016/CollegeQuizMobileApp))
 
-**Server:** ASP.NET C# MVC
+**Server**:
+* ASP.NET C# MVC (static content, pages, authentications)
+* ASP.NET C# WebAPI (websockets concentrators and handshakers, API for mobile app)
 
+**Full-duplex websockets communication technology**: SignalR
+
+**WebAPI authentication technology**: JWT
+
+**Mail templates**: Bootstrap email, Liquid
 
 ## License
 
