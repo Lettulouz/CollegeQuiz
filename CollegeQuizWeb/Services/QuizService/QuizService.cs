@@ -9,8 +9,10 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Hubs;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
 
@@ -19,10 +21,13 @@ namespace CollegeQuizWeb.Services.QuizService;
 public class QuizService : IQuizService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHubContext<QuizSessionHub> _hubContext;
 
-    public QuizService(ApplicationDbContext context)
+
+    public QuizService(ApplicationDbContext context, IHubContext<QuizSessionHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
     
     public async Task CreateNewQuiz(string loggedUsername, AddQuizDtoPayloader dtoPayloader)
@@ -88,33 +93,37 @@ public class QuizService : IQuizService
         };
     }
     
-    public async Task CreateQuizCode(QuizController controller, long quizId)
+    public async Task CreateQuizCode(QuizController controller, string loggedUsername, long quizId)
     {
-        string? username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(username))!.Id;
-
-        var test = await _context.QuizLobbies.FirstOrDefaultAsync(
-            q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId) && !q.IsExpired);
-        if (test != null)
-        {
-            controller.ViewBag.Code = test.Code;
-            return;
-        }
-        
+        long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(loggedUsername))!.Id;
+        var test = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId));
         string generatedCode;
         do
         {
             generatedCode = Utilities.GenerateOtaToken(5, 2);
         } while (await _context.QuizLobbies.FirstOrDefaultAsync(c => c.Code.Equals(generatedCode)) != null);
-
+        if (test != null)
+        {
+            await _hubContext.Clients.Group(test.Code).SendAsync("OnDisconectedSession", "Host zakończył sesję.");
+            test.IsExpired = true;
+            test.Code = generatedCode;
+            test.IsEstabilished = false;
+            _context.QuizLobbies.Update(test);
+            await _context.SaveChangesAsync();
+            controller.ViewBag.Code = generatedCode;
+            return;
+        }
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
             Code = generatedCode,
             IsExpired = false,
             UserHostId = userId,
-            QuizId = quizId
+            QuizId = quizId,
+            HostConnId = string.Empty,
+            IsEstabilished = false
         };
-        await _context.AddAsync(codeQuiz);
+        await _context.QuizLobbies.AddAsync(codeQuiz);
         await _context.SaveChangesAsync();
         controller.ViewBag.Code = generatedCode;
     }

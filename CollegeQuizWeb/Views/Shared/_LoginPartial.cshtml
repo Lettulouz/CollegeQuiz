@@ -24,11 +24,6 @@
     <li class="nav-item">
         <a class="nav-link p-3" asp-area="" asp-controller="Quiz" asp-action="AddQuiz">STWÓRZ QUIZ</a>
     </li>
-    <hr class="dropdown-divider m-0">
-    <li class="nav-item">
-        <a class="nav-link p-3" asp-area="" asp-controller="Quiz" asp-action="JoinToQuiz">DOŁĄCZ</a>
-    </li>
-
     @if (Context.Session.GetString(SessionKey.IS_USER_LOGGED) == null)
     {
         <hr class="dropdown-divider m-0">
@@ -42,6 +37,10 @@
     }
     else
     {
+        <hr class="dropdown-divider m-0">
+        <li class="nav-item">
+            <a class="nav-link p-3" asp-area="" asp-controller="Quiz" asp-action="QuizSession">DOŁĄCZ</a>
+        </li>
         <hr class="dropdown-divider m-0">
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle p-3 list-border" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

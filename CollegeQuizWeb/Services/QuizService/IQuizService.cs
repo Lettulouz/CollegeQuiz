@@ -11,6 +11,6 @@ public interface IQuizService
     Task CreateNewQuiz(string loggedUsername, AddQuizDtoPayloader dtoPayloader);
     Task<List<MyQuizDto>> GetMyQuizes(string userLogin);
     Task<QuizDetailsDto> GetQuizDetails(string userLogin, long quizId, QuizController controller);
-    Task CreateQuizCode(QuizController controller, long quizId);
+    Task CreateQuizCode(QuizController controller, string loggedUsername, long quizId);
     Bitmap GenerateQRCode(QuizController controller, string code);
 }

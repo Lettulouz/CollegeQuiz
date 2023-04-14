@@ -13,6 +13,14 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     public string Code { get; set; }
     
     [Required]
+    [Column("is_estabilished")]
+    public bool IsEstabilished { get; set; }
+    
+    [Required]
+    [Column("host_conn_id")]
+    public string HostConnId { get; set; }
+    
+    [Required]
     [Column("is_expired")]
     public bool IsExpired { get; set; }
     

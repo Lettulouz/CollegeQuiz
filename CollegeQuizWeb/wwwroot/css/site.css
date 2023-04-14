@@ -117,6 +117,14 @@ a.navbar-brand {
     max-width: 150px;
 }
 
+#toast-container {
+    z-index: 999999;
+}
+
+.text-prim-color {
+    color: #3a8a7f;
+}
+
 /*
 Stylowanie treści strony głównej
  */
