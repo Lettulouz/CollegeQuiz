@@ -17,8 +17,9 @@ public class QuizSessionAPIService : IQuizSessionAPIService
     private readonly ApplicationDbContext _context;
     private readonly ILogger<QuizSessionAPIService> _logger;
     private readonly IHubContext<QuizSessionHub> _hubContext;
-
-    public QuizSessionAPIService(IHubContext<QuizSessionHub> hubContext, ApplicationDbContext context, ILogger<QuizSessionAPIService> logger)
+    
+    public QuizSessionAPIService(IHubContext<QuizSessionHub> hubContext, ApplicationDbContext context,
+        ILogger<QuizSessionAPIService> logger)
     {
         _hubContext = hubContext;
         _context = context;

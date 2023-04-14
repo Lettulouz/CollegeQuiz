@@ -1,3 +1,5 @@
+import { useLoadableContent } from "./Hooks.jsx";
+import { getCommonFetchObj } from "./Utils.jsx";
 const { useEffect, useState, createContext, useContext } = React;
 
 const QuestionsContext = createContext(null);
@@ -80,7 +82,7 @@ const AddQuizQuestionsRoot = () => {
     const [ questions, setQuestions ] = useState(initialQuestions);
     const [ allGood, setAllGood ] = useState(true);
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
-    const [ showContent, setShowContent ] = useState(false);
+    const [ isActive, setActiveCallback ] = useLoadableContent();
     
     const onSetQuestionTitle = (text, questionId) => {
         const qst = [ ...questions ];
@@ -141,15 +143,8 @@ const AddQuizQuestionsRoot = () => {
     const appendQuestionsTooQuiz = () => {
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ aggregate: questions })
-        }).then(r => r.json())
+        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObj('POST'))
+            .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
                     setAlert({ active: true, style: 'alert-success', message: r.message });
@@ -167,16 +162,9 @@ const AddQuizQuestionsRoot = () => {
         const loadableSpinner = document.getElementById('react-loadable-spinner-content');
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, {
-            method: 'GET',
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(r => {
+        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObj('GET')).then(r => {
             loadableSpinner.style.cssText = 'display:none !important';
-            setShowContent(true);
+            setActiveCallback();
             return r.json()
         }).then(r => { 
             if (r.aggregate.length !== 0) setQuestions(r.aggregate);
@@ -209,7 +197,7 @@ const AddQuizQuestionsRoot = () => {
     
     return (
         <>
-            {showContent && <>
+            {isActive && <>
                 {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
                     <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
                     <button type="button" className="btn-close" onClick={resetAlert}></button>

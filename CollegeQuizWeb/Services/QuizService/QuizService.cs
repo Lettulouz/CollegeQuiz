@@ -88,19 +88,11 @@ public class QuizService : IQuizService
         };
     }
     
-    public async Task CreateQuizCode(QuizController controller, long quizId)
+    public async Task CreateQuizCode(QuizController controller, string loggedUsername, long quizId)
     {
-        string? username = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(username))!.Id;
-
-        var test = await _context.QuizLobbies.FirstOrDefaultAsync(
-            q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId) && !q.IsExpired);
-        if (test != null)
-        {
-            controller.ViewBag.Code = test.Code;
-            return;
-        }
-        
+        long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(loggedUsername))!.Id;
+        var test = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId));
         string generatedCode;
         do
         {
@@ -114,7 +106,7 @@ public class QuizService : IQuizService
             UserHostId = userId,
             QuizId = quizId
         };
-        await _context.AddAsync(codeQuiz);
+        await _context.QuizLobbies.AddAsync(codeQuiz);
         await _context.SaveChangesAsync();
         controller.ViewBag.Code = generatedCode;
     }

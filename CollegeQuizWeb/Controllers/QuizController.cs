@@ -72,21 +72,17 @@ public class QuizController : Controller
         MemoryStream ms = new MemoryStream();
         test.Save(ms, ImageFormat.Jpeg);
         byte[] byteImage = ms.ToArray();
-        ViewBag.Test = Convert.ToBase64String(byteImage);
+        ViewBag.ImageBtm = Convert.ToBase64String(byteImage);
         return View();
     }
 
     [HttpGet]
-    public IActionResult JoinToQuiz()
+    public IActionResult QuizSession()
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         return View();
     }
     
-    [HttpGet]
-    public IActionResult InGameQuestion()
-    {
-        return View();
-    }
+    [HttpGet] public IActionResult InGameQuestion() => View();
 }
