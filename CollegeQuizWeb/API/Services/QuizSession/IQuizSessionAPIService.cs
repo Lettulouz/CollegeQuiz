@@ -7,7 +7,6 @@ public interface IQuizSessionAPIService
 {
     Task<JoinToSessionDto> JoinRoom(string loggedUsername, string connectionId, string token);
     Task<SimpleResponseDto> LeaveRoom(string loggedUsername, string connectionId, string token);
-    
-    // tylko do testowania
-    Task SendMessage(string loggedUsername, string token, string message);
+    Task<JoinToSessionDto> EstabilishedHostRoom(string loggedUsername, string connectionId, string token);
+    Task<QuizLobbyInfoDto> GetLobbyData(string loggedUsername, string token);
 }

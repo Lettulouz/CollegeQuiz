@@ -2,66 +2,21 @@
     ViewData["Title"] = "Poczekalnia do quizu";
 }
 
-<div class="container mt-2 mb-1">
-    <div class="row mt-2 d-flex">
-        <div class="col-12 col-md-3 d-md-inline order-2 order-md-0 p-0 p-md-3 mt-2 mt-md-0">
-            <div class="card px-3 py-3 h-100" id="form1">
-                <h3>Poczekalnia do quizu</h3>
-
-                <h5>Nazwa Quizu</h5>
-                <h6>Opis Quizu</h6>
-
-                <h5>Host</h5>
-                <h6>Ten uzytkownik</h6>
-
-                <h5>Połączeni użytkownicy</h5>
-                <h6>*U1</h6>
-                <h6>*U2</h6>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 d-md-inline order-0 order-md-1 p-0 p-md-3 mt-3 mt-md-0">
-            <div class="row d-flex justify-content-center mx-0">
-                <div class="card px-3 py-3 h-100">
-                    <img src="data:image/gif;base64,@ViewBag.Test" alt=""/>
-                </div>
-            </div>
-            <div class="row d-flex justify-content-center mt-2 mx-0">
-                <div class="card px-3 py-3 h-100">
-                    <div class="row d-flex">
-                        <div class="col-9">
-                            <label class="form-control text-center" id="lobbyCode"
-                                   style="font-size: 38px;font-weight: bolder">
-                                @ViewBag.Code
-                            </label>
-                        </div>
-                        <div class="col-3 order-1">
-                            <a class="btn btn-lg btn-dark w-100 h-100 text-white" type="button" data-bs-toggle="tooltip"
-                               data-bs-placement="left" data-bs-title="Kopiuj do schowka"
-                               onclick="copyToClipBoardButtonClick()">
-                                <i class="bi bi-clipboard"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-3 d-md-inline order-1 order-md-2 p-0 p-md-3 mt-2 mt-md-0">
-            <div class="card px-3 py-3 h-100">
-                <div class="row d-flex justify-content-center ">
-                    <input type="submit" class="btn btn-info mt-1 mx-1" value="Rozpocznij">
-                </div>
-            </div>
-        </div>
+<div class="position-relative">
+    <div id="react-loadable-spinner-content"
+         class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner">
+        <div class="spinner-border load-spinner-circle mt-4" role="status"></div>
     </div>
+    <div id="quizManagerRoot"></div>
 </div>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<div id="inject-qr-code-blob" style="display: none; !important;">@ViewBag.ImageBtm</div>
+<div id="inject-sess-code" style="display: none; !important;">@ViewBag.Code</div>
 
-<script>
-    function copyToClipBoardButtonClick()
-    {
-        navigator.clipboard.writeText(document.getElementById('lobbyCode').innerText);
-        toastr.success(`Skopiowano kod ${valueToCopy} do schowka.`);
-    }
+<script type="module" src="@Url.Content("~/js/react/QuizManager.jsx")"></script>
+
+<script lang="js">
+    window.onbeforeunload = function() {
+        return "Czy na pewno chcesz przeładować stronę? Niezapisane dane zostaną bezpowrotnie utracone!";
+    };
 </script>

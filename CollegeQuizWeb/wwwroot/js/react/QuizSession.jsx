@@ -1,41 +1,22 @@
-const { useEffect, useState, createContext, useContext } = React;
-
-const alertInfo = (message) => ({ active: true, style: 'alert-success', message });
-const alertDanger = (message) => ({ active: true, style: 'alert-danger', message });
-const alertOff = () => ({ active: false, style: 'alert-success', message: '' });
+import { useLoadableContent } from "./Hooks.jsx";
+import {
+    alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME
+} from "./Utils.jsx";
+const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const SessionContext = createContext(null);
 
-const ShowWaitingScreenComponent = () => {
-    const { connection, token, connectionId, setIsConnect, setAlert } = useContext(SessionContext);
-    
-    const [ message, setMessage ] = useState('');
-    const [ messages, setMessages ] = useState([]);
-    
-    const sendMessage = e => {
-        e.preventDefault();
-        fetch(`/api/v1/dotnet/QuizSessionAPI/SendMessage/${token}/${message}`, {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(r => r)
-    }
+const LeaveSessionButtonComponent = () => {
+    const { token, connectionId, setIsConnect, setAlert, setScreenAction } = useContext(SessionContext);
+    const modalRef = useRef()
     
     const leaveRoom = () => {
-        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(r => r.json())
+        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+            .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
                     setIsConnect(false);
+                    setScreenAction(WAITING_SCREEN);
                     setAlert(alertInfo(r.message));
                 } else {
                     setAlert(alertDanger(r.message));
@@ -47,44 +28,131 @@ const ShowWaitingScreenComponent = () => {
             });
     };
     
-    useEffect(() => {
-        connection.on('ReceivedMessage', data => {
-            setMessages(oldArray => ([ ...oldArray, data ]));
-        });
-    }, []);
+    const showModal = () => new bootstrap.Modal(modalRef.current, { backdrop: 'static', keyboard: false }).show();
+    const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
     
     return (
         <>
-            <div>oczekiwanie na rozpoczęcie quizu</div>
-            <p>wiadomości:</p>
-            <ul>{messages.map(m => <li>{m}</li>)}</ul>
-            <form onSubmit={sendMessage}>
-                <input type="text" value={message} onChange={e => setMessage(e.target.value)}/>
-                <button type="submit">wyslij</button>
-            </form>
-            <button onClick={leaveRoom}>Opuść pokój</button>
+            <div className="modal fade" id="confirm-leave-session-modal" tabIndex="-1" aria-hidden="false" ref={modalRef}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5">Opuszczenie aktywnej sesji</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div className="modal-body fw-normal">
+                            Czy na pewno chcesz opuścić aktywną sesję? Jeśli sesja się jeszcze nie skończy, będziesz
+                            mógł/mogła do niej ponownie dołączyć.
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn-color-one bg-danger text-white" data-bs-dismiss="modal"
+                                onClick={leaveRoom}>
+                                Opuść sesję
+                            </button>
+                            <button type="button" className="btn-color-one" data-bs-dismiss="modal"
+                                onClick={hideModal}>
+                                Zamknij okno
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button className="btn-color-one bg-danger text-white" onClick={showModal}>Opuść pokój</button>
+        </>
+    );
+}
+
+const MainWindowGameComponent = () => {
+    const { connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName } = useContext(SessionContext);
+    const [ counting, setCounting ] = useState(5);
+    
+    useEffect(() => {
+        connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
+            setScreenAction(COUNTING_SCREEN);
+            setCounting(counter);
+        });
+        connection.on("START_GAME_P2P", () => {
+            setScreenAction(IN_GAME);
+            // TODO: pobieranie pierwszego pytania
+        });
+        connection.on("OnDisconectedSession", data => {
+            connection.stop().then(_ => {
+                setIsConnect(false);
+                setAlert(alertDanger(data));
+            });
+        });
+    }, []);
+
+    const renderComponentSection = () => {
+        switch(screenAction) {
+            case WAITING_SCREEN: return (
+                <div className="mt-5">
+                    <div className="mt-5 d-flex flex-column align-items-center">
+                        <div className="spinner-border load-spinner-circle mt-4" role="status"></div>
+                        <p className="mt-3 fs-4 text-prim-color text-center">
+                            Oczekiwanie na uruchomienie quizu "<strong>{quizName}</strong>" przez hosta...
+                        </p>
+                    </div>
+                </div>
+            );
+            case COUNTING_SCREEN: return (
+                <div className="mt-5">
+                    <div className="mt-5 d-flex flex-column align-items-center">
+                        <p className="mt-3 fs-4 text-prim-color text-center">
+                            Przygotuj się! Quiz "<strong>{quizName}</strong>" uruchamia się za:
+                        </p>
+                        <h2 className="fw-bold fs-1 text-prim-color">{counting}</h2>
+                    </div>
+                </div>
+            );
+            default: return (
+                <div>
+                    in game action
+                </div>
+            );
+        }
+    };
+    
+    return (
+        <div className="row">
+            {renderComponentSection()}
+        </div>
+    );
+};
+
+const HeaderPanelComponent = () => {
+    const { isConnect } = useContext(SessionContext);
+    return (
+        <>
+            {isConnect ? <div className="row justify-content-between">
+                <div className="col-md-4">
+                    123
+                </div>
+                <div className="col-md-4">
+                    321
+                </div>
+                <div className="col-md-4">
+                    <LeaveSessionButtonComponent/>
+                </div>
+            </div> : <div className="row">
+                <LeaveSessionButtonComponent/>
+            </div>}
         </>
     );
 };
 
 const JoinToSessionComponent = () => {
     const {
-        setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert
+        setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName
     } = useContext(SessionContext);
     
     const onSubmitJoinToSession = e => {
         e.preventDefault();
-        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(r => r.json())
+        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+            .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
-                    setAlert(alertInfo(`dołączono do pokoju, nazwa quizu: ${r.quizName}`));
+                    setQuizName(r.quizName);
                     setIsConnect(true);
                 } else {
                     setAlert(alertDanger(r.message));
@@ -132,28 +200,31 @@ const JoinToSessionComponent = () => {
 };
 
 const QuizSessionRootComponent = () => {
-    const [ showContent, setShowContent ] = useState(false);
     const [ connection, setConnection ] = useState(null)
     const [ connectionId, setConnectionId ] = useState('');
     const [ isConnect, setIsConnect ] = useState(false);
     const [ token, setToken ] = useState('');
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
+    const [ screenAction, setScreenAction ] = useState(WAITING_SCREEN);
+    const [ quizName, setQuizName ] = useState('');
 
-    useEffect(() => {
-        document.getElementById('react-loadable-spinner-content').style.cssText = 'display:none !important';
-        setShowContent(true);
-    }, []);
+    const [ isActive, setActiveCallback ] = useLoadableContent();
+    useEffect(() => setActiveCallback(), []);
     
     return (
         <SessionContext.Provider value={{
-            connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert
+            connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
+            screenAction, setScreenAction, quizName, setQuizName
         }}>
-            {showContent && <>
-                {isConnect ? <ShowWaitingScreenComponent/> : <JoinToSessionComponent/>}
+            {isActive && <>
+                {isConnect ? <>
+                    <HeaderPanelComponent/>
+                    <MainWindowGameComponent/>
+                </> : <JoinToSessionComponent/>}
             </>}
         </SessionContext.Provider>
     );
-}
+};
 
 ReactDOM
     .createRoot(document.getElementById('quizSessionRoot'))
