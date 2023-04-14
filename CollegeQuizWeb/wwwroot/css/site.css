@@ -157,7 +157,7 @@ input:-webkit-autofill {
     position: absolute;
     top: -18px;
     left: 10px;
-    background-color: rgb(252, 252, 252);
+    background-color: #f7fef5;
     padding: 5px 10px;
     font-size: 15px;
     border-radius: 25px;

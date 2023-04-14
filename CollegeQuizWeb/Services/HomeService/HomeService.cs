@@ -1,7 +1,12 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using CollegeQuizWeb.Controllers;
+using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Dto.Home;
+using CollegeQuizWeb.Entities;
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PayU.Client;
 using PayU.Client.Configurations;
@@ -12,12 +17,27 @@ namespace CollegeQuizWeb.Services.HomeService;
 public class HomeService : IHomeService
 {
     private readonly ILogger<HomeService> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public HomeService(ILogger<HomeService> logger)
+    public HomeService(ILogger<HomeService> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
+    public async Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller)
+    {
+        UserEntity? userEntity = await _context.Users.FirstOrDefaultAsync(obj => obj.Username.Equals(username));
+        if(userEntity == null){controller.Response.Redirect("/Home");return new SubscriptionPaymentDto();}
+
+        SubscriptionPaymentDto subscriptionPaymentDto = new SubscriptionPaymentDto();
+        subscriptionPaymentDto.FirstName = userEntity.FirstName;
+        subscriptionPaymentDto.LastName = userEntity.LastName;
+        subscriptionPaymentDto.Email = userEntity.Email;
+        subscriptionPaymentDto.Username = username;
+        return subscriptionPaymentDto;
+    } 
+    
     public async Task<OrderResponse> MakePayment()
     {
         Env.Load();

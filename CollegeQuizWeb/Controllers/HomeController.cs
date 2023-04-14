@@ -34,6 +34,14 @@ public class HomeController : Controller
         return View();
     }
     
+    public async Task<IActionResult> Subscription(int id)
+    {
+        ViewBag.Test = id;
+        var ye = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        var temp = await _homeService.GetUserData(ye, this);
+        return View(temp);
+    }
+    
     public  IActionResult Sandbox()
     {
         return View();
