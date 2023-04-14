@@ -17,17 +17,19 @@ Website that is being created for college project. It will let players to play t
 
 ## Tech Stack
 
-**Clients:**
-* Web: (Razor for static pages - SSR, ReactJS for dynamic web content - CSR)
+**Clients**:
+* Web: (Razor for static pages - SSR, ReactJS for dynamic web content - CSR, HTML, CSS, JS)
 * Android: (Java)
 
-**Server:**
+**Server**:
 * ASP.NET C# MVC (static content, pages, authentications)
 * ASP.NET C# WebAPI (websockets concentrators and handshakers, API for mobile app)
 
 **Full-duplex websockets communication technology**: SignalR
 
 **WebAPI authentication technology**: JWT
+
+**Mail templates**: Bootstrap email, Liquid
 
 ## License
 
