@@ -18,7 +18,7 @@ Website that is being created for college project. It will let players to play t
 ## Tech Stack
 
 **Clients**:
-* Web: (Razor for static pages - SSR, ReactJS for dynamic web content - CSR, HTML, CSS, JS)
+* Web: (Razor for static pages - SSR, ReactJS for dynamic web content - CSR, HTML, CSS, JS, Bootstrap)
 * Android: (Java)
 
 **Server**:
