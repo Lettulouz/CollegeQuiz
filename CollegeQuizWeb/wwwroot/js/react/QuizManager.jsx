@@ -81,11 +81,12 @@ const QuizManagerCenterComponent = () => {
 };
 
 const QuizManagerRightContentComponent = () => {
-    const { connection, setAlert } = useContext(SessionContext);
+    const { connection, setAlert, isStartClicked, setIsStartClicked, allParticipants } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     
     const startQuiz = () => {
-        if (counting === 0) return;
+        if (counting === 0 || isStartClicked) return;
+        setIsStartClicked(true);
         let i = counting;
         const interval = setInterval(() => {
             connection.invoke('INIT_GAME_SEQUENCER_P2P', i, SESS_TOKEN).then(r => setCounting(r));
@@ -119,9 +120,14 @@ const QuizManagerRootComponent = () => {
     const [ isJoinable, setIsJoinable ] = useState(false);
     const [ connectionId, setConnectionId ] = useState('');
     const [ connection, setConnection ] = useState(null);
-    const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
-    
+    const [ alert, setAlert ] = useState(alertOff());
+    const [ isEstabiblishedClicked, setIsEstabilishedClicked ] = useState(false);
+    const [ isStartClicked, setIsStartClicked ] = useState(false);
+    const [ allParticipants, setAllParticipants ] = useState({ Connected: [], Disconnected: [] });
+
     const estabilishedRoomConnection = () => {
+        if (isEstabiblishedClicked) return;
+        setIsEstabilishedClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/EstabilishedHostRoom/${connectionId}/${SESS_TOKEN}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
@@ -152,7 +158,7 @@ const QuizManagerRootComponent = () => {
     
     return (
         <SessionContext.Provider value={{
-            connection, setAlert
+            connection, setAlert, isStartClicked, setIsStartClicked, allParticipants, setAllParticipants
         }}>
             {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-4`} role="alert">
                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
