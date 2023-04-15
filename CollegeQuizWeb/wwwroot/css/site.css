@@ -195,6 +195,11 @@ input:-webkit-autofill {
     }
 }
 
+.card-img-custom {
+    border: none;
+    border-radius: 50px;
+}
+
 .button-card {
     width: 40px;
     height: 40px;
