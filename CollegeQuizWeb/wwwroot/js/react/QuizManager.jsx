@@ -116,29 +116,36 @@ const QuizManagerRightContentComponent = () => {
 
 const QuizManagerRootComponent = () => {
     const [ isActive, setActiveCallback ] = useLoadableContent();
+    const [ isJoinable, setIsJoinable ] = useState(false);
+    const [ connectionId, setConnectionId ] = useState('');
     const [ connection, setConnection ] = useState(null);
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
     
+    const estabilishedRoomConnection = () => {
+        fetch(`/api/v1/dotnet/QuizSessionAPI/EstabilishedHostRoom/${connectionId}/${SESS_TOKEN}`, getCommonFetchObj('POST'))
+            .then(r => r.json())
+            .then(r => {
+                if (r.isGood) {
+                    setIsJoinable(true);
+                } else {
+                    setAlert(alertDanger(r.message));
+                }
+            })
+            .then(e => {
+                if (e === undefined) return;
+                setAlert(alertDanger('Wystąpił nieznany błąd'));
+            });
+    };
+    
     useEffect(() => {
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl('/quizSessionHub')
+        const connectionObj = new signalR.HubConnectionBuilder()
+            .withUrl('/quizManagerSessionHub')
             .build();
-        connection.start()
-            .then(() => connection.invoke('getConnectionId').then(connId => {
-                fetch(`/api/v1/dotnet/QuizSessionAPI/EstabilishedHostRoom/${connId}/${SESS_TOKEN}`, getCommonFetchObj('POST'))
-                    .then(r => r.json())
-                    .then(r => {
-                        if (r.isGood) {
-                            setConnection(connection);
-                            setActiveCallback();
-                        } else {
-                            setAlert(alertDanger(r.message));
-                        }
-                    })
-                    .then(e => {
-                        if (e === undefined) return;
-                        setAlert(alertDanger('Wystąpił nieznany błąd'));
-                    });
+        connectionObj.start()
+            .then(() => connectionObj.invoke('getConnectionId').then(connId => {
+                setConnectionId(connId);
+                setConnection(connectionObj);
+                setActiveCallback();
             }))
             .catch(() => setAlert(alertDanger('Nieudane dołączenie do sesji.')));
     }, []);
@@ -152,11 +159,13 @@ const QuizManagerRootComponent = () => {
                 <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>
             </div>}
             {isActive && <div className="container">
-                <div className="row position-relative">
+                {isJoinable ? <div className="row position-relative">
                     <QuizManagerLeftContentComponent/>
                     <QuizManagerCenterComponent/>
                     <QuizManagerRightContentComponent/>
-                </div>
+                </div> : <div className="text-center">
+                    <button className="btn click-me mx-auto mt-5" onClick={estabilishedRoomConnection}>Stwórz nowy pokój</button>
+                </div>}
             </div>}
         </SessionContext.Provider>
     );

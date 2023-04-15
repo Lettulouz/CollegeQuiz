@@ -63,7 +63,9 @@ const LeaveSessionButtonComponent = () => {
 }
 
 const MainWindowGameComponent = () => {
-    const { connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, answers, setAnswers } = useContext(SessionContext);
+    const {
+        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, answers, setAnswers
+    } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     
     useEffect(() => {
@@ -147,7 +149,8 @@ const HeaderPanelComponent = () => {
 
 const JoinToSessionComponent = () => {
     const {
-        setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName
+        setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName,
+        setScreenAction
     } = useContext(SessionContext);
     
     const onSubmitJoinToSession = e => {
@@ -157,6 +160,7 @@ const JoinToSessionComponent = () => {
             .then(r => {
                 if (r.isGood) {
                     setQuizName(r.quizName);
+                    setScreenAction(r.screenType);
                     setIsConnect(true);
                 } else {
                     setAlert(alertDanger(r.message));
@@ -170,7 +174,7 @@ const JoinToSessionComponent = () => {
     
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('/quizSessionHub')
+            .withUrl('/quizUserSessionHub')
             .build();
         connection.start()
             .then(() => connection.invoke('getConnectionId').then(connId => setConnectionId(connId)))

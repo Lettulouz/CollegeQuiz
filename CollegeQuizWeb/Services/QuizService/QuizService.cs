@@ -21,10 +21,10 @@ namespace CollegeQuizWeb.Services.QuizService;
 public class QuizService : IQuizService
 {
     private readonly ApplicationDbContext _context;
-    private readonly IHubContext<QuizSessionHub> _hubContext;
+    private readonly IHubContext<QuizUserSessionHub> _hubContext;
 
 
-    public QuizService(ApplicationDbContext context, IHubContext<QuizSessionHub> hubContext)
+    public QuizService(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubContext)
     {
         _context = context;
         _hubContext = hubContext;
@@ -106,9 +106,10 @@ public class QuizService : IQuizService
         if (test != null)
         {
             await _hubContext.Clients.Group(test.Code).SendAsync("OnDisconectedSession", "Host zakończył sesję.");
-            test.IsExpired = true;
+            test.InGameScreen = "WAITING";
             test.Code = generatedCode;
             test.IsEstabilished = false;
+            test.HostConnId = string.Empty;
             _context.QuizLobbies.Update(test);
             await _context.SaveChangesAsync();
             controller.ViewBag.Code = generatedCode;
@@ -117,7 +118,7 @@ public class QuizService : IQuizService
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
             Code = generatedCode,
-            IsExpired = false,
+            InGameScreen = "WAITING",
             UserHostId = userId,
             QuizId = quizId,
             HostConnId = string.Empty,

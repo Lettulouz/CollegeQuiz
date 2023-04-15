@@ -21,8 +21,8 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     public string HostConnId { get; set; }
     
     [Required]
-    [Column("is_expired")]
-    public bool IsExpired { get; set; }
+    [Column("in_game_screen")]
+    public string InGameScreen { get; set; }
     
     [ForeignKey(nameof(UserEntity))]
     [Column("user_host_id")]

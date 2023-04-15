@@ -9,4 +9,5 @@ public class SimpleResponseDto
 public class JoinToSessionDto : SimpleResponseDto
 {
     public string QuizName { get; set; }
+    public string ScreenType { get; set; }
 }

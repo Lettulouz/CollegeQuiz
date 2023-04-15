@@ -8,29 +8,29 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.API.Services.QuizSession;
 
 public class QuizSessionAPIService : IQuizSessionAPIService
 {
     private readonly ApplicationDbContext _context;
-    private readonly ILogger<QuizSessionAPIService> _logger;
-    private readonly IHubContext<QuizSessionHub> _hubContext;
+    private readonly IHubContext<QuizUserSessionHub> _hubUserContext;
+    private readonly IHubContext<QuizManagerSessionHub> _hubManagerContext;
     
-    public QuizSessionAPIService(IHubContext<QuizSessionHub> hubContext, ApplicationDbContext context,
-        ILogger<QuizSessionAPIService> logger)
+    public QuizSessionAPIService(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubUserContext,
+        IHubContext<QuizManagerSessionHub> hubManagerContext)
     {
-        _hubContext = hubContext;
         _context = context;
-        _logger = logger;
+        _hubUserContext = hubUserContext;
+        _hubManagerContext = hubManagerContext;
     }
 
     public async Task<JoinToSessionDto> JoinRoom(string loggedUsername, string connectionId, string token)
     {
         var quizLobby = await _context.QuizLobbies
             .Include(l => l.QuizEntity)
-            .FirstOrDefaultAsync(l => l.Code.Equals(token, StringComparison.InvariantCultureIgnoreCase));
+            .FirstOrDefaultAsync(l => l.Code.Equals(token, StringComparison.InvariantCultureIgnoreCase) 
+                                      && l.IsEstabilished == true);
 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUsername));
         if (quizLobby == null) return new JoinToSessionDto()
@@ -77,7 +77,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             alreadyJoinedInactive.ConnectionId = connectionId;
             alreadyJoinedInactive.IsActive = true;
         }
-        await _hubContext.Groups.AddToGroupAsync(connectionId, token);
+        await _hubUserContext.Groups.AddToGroupAsync(connectionId, token);
         await _context.SaveChangesAsync();
 
         var restOfPartic = _context.QuizSessionPartics
@@ -85,7 +85,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             .Include(p => p.UserEntity)
             .Where(p => p.QuizLobbyEntity.Code.Equals(token));
         
-        await _hubContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
+        await _hubManagerContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
         {
             Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
             Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
@@ -94,6 +94,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         return new JoinToSessionDto()
         {
             IsGood = true,
+            ScreenType = quizLobby.InGameScreen,
             QuizName = quizLobby.QuizEntity.Name
         };
     }
@@ -112,14 +113,14 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         };
         quizSessionPart.IsActive = false;
         await _context.SaveChangesAsync();
-        await _hubContext.Groups.RemoveFromGroupAsync(connectionId, token);
+        await _hubUserContext.Groups.RemoveFromGroupAsync(connectionId, token);
 
         var restOfPartic = _context.QuizSessionPartics
             .Include(p => p.QuizLobbyEntity)
             .Include(p => p.UserEntity)
             .Where(p => p.QuizLobbyEntity.Code.Equals(token));
         
-        await _hubContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
+        await _hubManagerContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
         {
             Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
             Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
@@ -133,22 +134,20 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
     public async Task<JoinToSessionDto> EstabilishedHostRoom(string loggedUsername, string connectionId, string token)
     {
-        var usersPre = _context.QuizSessionPartics.Include(u => u.QuizLobbyEntity)
-            .Where(e => e.QuizLobbyEntity.Code.Equals(token));
         var isHost = await _context.QuizLobbies
             .Include(p => p.UserEntity)
-            .FirstOrDefaultAsync(p => p.UserEntity.Username.Equals(loggedUsername));
+            .FirstOrDefaultAsync(p => p.UserEntity.Username.Equals(loggedUsername) && p.Code.Equals(token));
         if (isHost == null) return new JoinToSessionDto()
         {
             IsGood = false,
+            Message = "Nie znaleziono aktywnego hosta sesji gry."
         };
         isHost.IsEstabilished = true;
-        isHost.IsExpired = false;
+        isHost.InGameScreen = "WAITING_SCREEN";
         isHost.HostConnId = connectionId;
-        _context.QuizSessionPartics.RemoveRange(usersPre);
         _context.QuizLobbies.Update(isHost);
         await _context.SaveChangesAsync();
-        await _hubContext.Groups.AddToGroupAsync(connectionId, token);
+        await _hubManagerContext.Groups.AddToGroupAsync(connectionId, token);
         return new JoinToSessionDto()
         {
             IsGood = true,

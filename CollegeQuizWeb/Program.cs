@@ -81,7 +81,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapHub<QuizSessionHub>("/quizSessionHub");
+// signalR
+app.MapHub<QuizUserSessionHub>("/quizUserSessionHub");
+app.MapHub<QuizManagerSessionHub>("/quizManagerSessionHub");
 
 app.MapControllerRoute(
     name: "default",
