@@ -51,7 +51,7 @@
                     <nav class="navbar-dark">
                         <ul class="navbar-nav">
                             <li class="my-2">
-                                <a id="gotoadmain" class="text-muted small fw-bold text-uppercase text-decoration-none" 
+                                <a id="gotoadmain" class="text-muted small fw-bold text-uppercase text-decoration-none sidebar-link" 
                               asp-area="" asp-controller="Admin" asp-action="Index" >Strona główna</a>
                             </li>
                             <li class="my-3">
@@ -76,6 +76,21 @@
                                     </a>
                                     <a  class="nav-link text-muted sidebar-link" id="addad">
                                         Dodawanie administratorów
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="my-3">
+                                <hr class="dropdown divider">
+                            </li>
+                            <li>
+                                <a class="text-muted small fw-bold text-uppercase text-decoration-none sidebar-link"
+                                data-bs-toggle="collapse" href="#quiz_collapse" role="button"  aria-controls="quiz_collapse" 
+                                aria-expanded="false" id="quiz_collapse_btn">Quizy
+                                    <span class="bi bi-chevron-right right-icon ms-auto"></span>
+                                </a>
+                                <div class="collapse" id="quiz_collapse">
+                                    <a class="nav-link text-muted sidebar-link" id="quizes_list" asp-area="" asp-controller="Admin" asp-action="QuizList">
+                                        Lista quizów
                                     </a>
                                 </div>
                             </li>

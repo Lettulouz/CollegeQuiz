@@ -14,4 +14,5 @@ public class SessionKey
     public const string USER_REMOVED = "USER_REMOVED+SESS";
     public const string USER_SUSPENDED = "USER_SUSPENDED+SESS";
     public const string ADMIN_ERROR = "ADMIN_ERROR+SESS";
+    public const string QUIZ_REMOVED = "QUIZ_REMOVED+SESS";
 }
