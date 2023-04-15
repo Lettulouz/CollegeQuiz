@@ -105,6 +105,9 @@ public class QuizService : IQuizService
         } while (await _context.QuizLobbies.FirstOrDefaultAsync(c => c.Code.Equals(generatedCode)) != null);
         if (test != null)
         {
+            var entities = await _context.QuizSessionPartics.Where(e => e.QuizLobbyId.Equals(test.Id)).ToListAsync();
+            if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
+            
             await _hubContext.Clients.Group(test.Code).SendAsync("OnDisconectedSession", "Host zakończył sesję.");
             test.InGameScreen = "WAITING";
             test.Code = generatedCode;
