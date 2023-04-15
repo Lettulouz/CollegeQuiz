@@ -2,6 +2,7 @@ import { useLoadableContent } from "./Hooks.jsx";
 import {
     alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME
 } from "./Utils.jsx";
+
 const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const SessionContext = createContext(null);
@@ -88,9 +89,10 @@ const MainWindowGameComponent = () => {
             setQuestion(test.question);
             setAnswers(test.answers.map(q=> q));
             setQuestionTimer(test.time_sec);
-            
         });
-        
+        connection.on("QUESTION_TIMER_P2P", counter => {
+            setQuestionTimer(counter);
+        });
         connection.on("OnDisconectedSession", data => {
             connection.stop().then(_ => {
                 setIsConnect(false);
@@ -122,14 +124,59 @@ const MainWindowGameComponent = () => {
                 </div>
             );
             default: return (
-                <div>
-                    <p>pytanie {question}</p>
-                    <p>odpowiedź 1 {answers[0]}</p>
-                    <p>odpowiedź 2 {answers[1]}</p>
-                    <p>odpowiedź 3 {answers[2]}</p>
-                    <p>odpowiedź 4 {answers[3]}</p>
-                    <p>czas {questionTimer}</p>
-                    
+                <div className="container">
+                    <div className="row d-flex justify-content-center">
+                        <div className="col-10">
+                            <div className="card px-3 py-3">
+                                <h3>{question} {questionTimer}</h3>
+                                <img src={"/gfx/qrCodeLogo.png"} width="300px" height="300px"/>
+                            </div>
+                            <div className="row d-flex mt-3 px-3">
+                                <div className="col-6 d-flex m-0">
+                                    <div className="card bg-dark text-white card-img-custom">
+                                        <img src={"/gfx/blueCard.svg"} className="card-img" alt="image_answer_A"/>
+                                            <div
+                                                className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                                                <h5 className="card-title ">Odpowiedź A</h5>
+                                                <p className="card-text">{answers[0]}</p>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div className="col-6 d-flex m-0">
+                                    <div className="card bg-dark text-white card-img-custom">
+                                        <img src={"/gfx/greenCard.svg"} className="card-img" alt="image_answer_B"/>
+                                            <div
+                                                className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                                                <h5 className="card-title text-center">Odpowiedź B</h5>
+                                                <p className="card-text text-center">{answers[1]}</p>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row d-flex mt-3 px-3">
+                                <div className="col-6 d-flex m-0">
+                                    <div className="card bg-dark text-white card-img-custom">
+                                        <img src={"/gfx/darkblueCard.svg"} className="card-img" alt="image_answer_C"/>
+                                            <div
+                                                className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                                                <h5 className="card-title ">Odpowiedź C</h5>
+                                                <p className="card-text">{answers[2]}</p>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div className="col-6 d-flex m-0">
+                                    <div className="card bg-dark text-white card-img-custom">
+                                        <img src={"/gfx/tealCard.svg"} className="card-img" alt="image_answer_D"/>
+                                            <div
+                                                className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                                                <h5 className="card-title text-center">Odpowiedź D</h5>
+                                                <p className="card-text text-center">{answers[3]}</p>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -231,6 +278,7 @@ const QuizSessionRootComponent = () => {
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
     const [ screenAction, setScreenAction ] = useState(WAITING_SCREEN);
     const [ quizName, setQuizName ] = useState('');
+    const [ quizStarted, setQuizStarted ] = useState(false);
 
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -238,7 +286,7 @@ const QuizSessionRootComponent = () => {
     return (
         <SessionContext.Provider value={{
             connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
-            screenAction, setScreenAction, quizName, setQuizName, 
+            screenAction, setScreenAction, quizName, setQuizName, quizStarted, setQuizStarted 
         }}>
             {isActive && <>
                 {isConnect ? <>
