@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.AspNetCore.SignalR;
@@ -49,7 +50,7 @@ public class QuizManagerSessionHub : Hub
             .Select(q => new
             {
                 question = q.QuestionEntity.Name,
-                answer = q.Name,
+                answers = q.Name,
                 time_min = q.QuestionEntity.TimeMin,
                 time_sec = q.QuestionEntity.TimeSec
             })
@@ -57,23 +58,22 @@ public class QuizManagerSessionHub : Hub
             .Select(q=>new
             {
                 question = q.Key,
-                asnwer = q.Select(a => a.answer).ToList(),
-                time_sec = q.Sum(a=>a.time_min*60+a.time_sec)
+                answers = q.Select(a => a.answers).ToList(),
+                time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum()
             }).ToListAsync();
-
-        var delay = await _context.Answers
-            .Include(q => q.QuestionEntity)
-            .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
-            .GroupBy(q => q.QuestionEntity.Name)
-            .Select(q => q.Sum(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec))
-            .ToListAsync();
+        
 
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
-        
         foreach (var question in questions)
         {
+
             await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
+            Thread.Sleep(question.time_sec*1000);
         }
+
+        string test =
+            "{\"question\":\"Kto pisze swoje imie na tablicy co zajecia?\",\"answers\":[\"Arek\",\"Kornel\",\"Mikolaj\",\"Dominik\"],\"time_sec\":2137}";
+        await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  test);
     }
     
     public async override Task OnDisconnectedAsync(Exception? exception)

@@ -64,9 +64,14 @@ const LeaveSessionButtonComponent = () => {
 
 const MainWindowGameComponent = () => {
     const {
-        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, answers, setAnswers
+        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName,
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
+    const [ question, setQuestion ] = useState();
+    const [ answers, setAnswers ] = useState([]);
+    const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
+    const [ questionTimer, setQuestionTimer ] = useState();
+    
     
     useEffect(() => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
@@ -78,9 +83,14 @@ const MainWindowGameComponent = () => {
             // TODO: pobieranie pierwszego pytania
         });
         connection.on("QUESTION_P2P", answ=>{
-            console.log("test-arek");
-            console.log(answ);
+            const test = JSON.parse(answ);
+            console.log(test); 
+            setQuestion(test.question);
+            setAnswers(test.answers.map(q=> q));
+            setQuestionTimer(test.time_sec);
+            
         });
+        
         connection.on("OnDisconectedSession", data => {
             connection.stop().then(_ => {
                 setIsConnect(false);
@@ -113,7 +123,13 @@ const MainWindowGameComponent = () => {
             );
             default: return (
                 <div>
-                    in game action
+                    <p>pytanie {question}</p>
+                    <p>odpowiedź 1 {answers[0]}</p>
+                    <p>odpowiedź 2 {answers[1]}</p>
+                    <p>odpowiedź 3 {answers[2]}</p>
+                    <p>odpowiedź 4 {answers[3]}</p>
+                    <p>czas {questionTimer}</p>
+                    
                 </div>
             );
         }
@@ -215,7 +231,6 @@ const QuizSessionRootComponent = () => {
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
     const [ screenAction, setScreenAction ] = useState(WAITING_SCREEN);
     const [ quizName, setQuizName ] = useState('');
-    const [ arek, setArek ] = useState([]);
 
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -223,7 +238,7 @@ const QuizSessionRootComponent = () => {
     return (
         <SessionContext.Provider value={{
             connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
-            screenAction, setScreenAction, quizName, setQuizName, arek, setArek
+            screenAction, setScreenAction, quizName, setQuizName, 
         }}>
             {isActive && <>
                 {isConnect ? <>
