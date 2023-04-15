@@ -3,6 +3,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Entities;
+using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,7 +33,42 @@ public class QuizSessionHub : Hub
     public async Task START_GAME_P2P(string token)
     {
         // TODO: odliczanie i serwowanie 1 pytania quizu
+        var quiz = await _context.QuizLobbies
+            .Include(q => q.QuizEntity)
+            .FirstOrDefaultAsync(q => q.Code.Equals(token));
+
+        var questions = await _context.Answers
+            .Include(q => q.QuestionEntity)
+            .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
+            .Select(q => new
+            {
+                question = q.QuestionEntity.Name,
+                answer = q.Name,
+                time_min = q.QuestionEntity.TimeMin,
+                time_sec = q.QuestionEntity.TimeSec
+            })
+            .GroupBy(q=>q.question)
+            .Select(q=>new
+            {
+                question = q.Key,
+                asnwer = q.Select(a => a.answer).ToList(),
+                time_sec = q.Sum(a=>a.time_min*60+a.time_sec)
+            }).ToListAsync();
+
+        var delay = await _context.Answers
+            .Include(q => q.QuestionEntity)
+            .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
+            .GroupBy(q => q.QuestionEntity.Name)
+            .Select(q => q.Sum(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec))
+                .ToListAsync();
+
         await Clients.Group(token).SendAsync("START_GAME_P2P");
+
+
+        foreach (var question in questions)
+        {
+            await Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
+        }
     }
 
     public async override Task OnDisconnectedAsync(Exception? exception)

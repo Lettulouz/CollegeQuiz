@@ -45,7 +45,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
                                       p.QuizLobbyEntity.Code.Equals(token) && p.IsActive == false);
 
         var isHost = await _context.QuizLobbies.Include(l => l.UserEntity)
-            .FirstOrDefaultAsync(l => l.UserEntity.Username.Equals(loggedUsername));
+            .FirstOrDefaultAsync(l => l.UserEntity.Username.Equals(loggedUsername) && l.Code.Equals(token));
         if (isHost != null) return new JoinToSessionDto()
         {
             IsGood = false,
