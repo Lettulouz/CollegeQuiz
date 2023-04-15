@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
+using System.Collections.Generic;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,33 +54,44 @@ public class QuizManagerSessionHub : Hub
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
             .Select(q => new
             {
+                questionId = q.QuestionEntity.Id,
                 question = q.QuestionEntity.Name,
                 answers = q.Name,
                 time_min = q.QuestionEntity.TimeMin,
                 time_sec = q.QuestionEntity.TimeSec
             })
-            .GroupBy(q=>q.question)
+            .GroupBy(q=>q.questionId)
             .Select(q=>new
             {
-                question = q.Key,
+                question = q.First(),
                 answers = q.Select(a => a.answers).ToList(),
                 time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum()
             }).ToListAsync();
         
-
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
+        
+        
+        int timer;
+
         foreach (var question in questions)
         {
-
             await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
-            Thread.Sleep(question.time_sec*1000);
+            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationToken token2 = cts.Token;
+            timer = question.time_sec;
+            var periodicTimer= new PeriodicTimer(TimeSpan.FromSeconds(1));
+            cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
+            while (!cts.IsCancellationRequested)
+            {
+                await periodicTimer.WaitForNextTickAsync(token2);
+                await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", --timer);
+            }
         }
+        
+        
 
-        string test =
-            "{\"question\":\"Kto pisze swoje imie na tablicy co zajecia?\",\"answers\":[\"Arek\",\"Kornel\",\"Mikolaj\",\"Dominik\"],\"time_sec\":2137}";
-        await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  test);
     }
-    
+
     public async override Task OnDisconnectedAsync(Exception? exception)
     {
         var hostUser = await _context.QuizLobbies

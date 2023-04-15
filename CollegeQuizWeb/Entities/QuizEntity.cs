@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CollegeQuizWeb.DbConfig;
@@ -20,4 +21,6 @@ public class QuizEntity : AbstractAuditableEntity
     public long UserId { get; set; }
     
     public virtual UserEntity UserEntity { get; set; }
+    
+    public IList<SharedQuizes> SharedQuizesEnumerable { get; set; }
 }
