@@ -8,22 +8,28 @@ const { useEffect, useState, createContext, useContext, useRef } = React;
 const SessionContext = createContext(null);
 
 const LeaveSessionButtonComponent = () => {
-    const { token, connectionId, setIsConnect, setAlert, setScreenAction } = useContext(SessionContext);
+    const {
+        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked
+    } = useContext(SessionContext);
     const modalRef = useRef()
     
     const leaveRoom = () => {
+        if (isLeaveClicked) return;
+        setIsLeaveClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
                     setIsConnect(false);
                     setScreenAction(WAITING_SCREEN);
+                    setIsJoinClicked(false);
+                    setIsLeaveClicked(false);
                     setAlert(alertInfo(r.message));
                 } else {
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
@@ -65,7 +71,7 @@ const LeaveSessionButtonComponent = () => {
 
 const MainWindowGameComponent = () => {
     const {
-        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName,
+        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, setIsLeaveClicked
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ question, setQuestion ] = useState();
@@ -73,16 +79,12 @@ const MainWindowGameComponent = () => {
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
     const [ questionTimer, setQuestionTimer ] = useState();
     
-    
     useEffect(() => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
             setScreenAction(COUNTING_SCREEN);
             setCounting(counter);
         });
-        connection.on("START_GAME_P2P", () => {
-            setScreenAction(IN_GAME);
-            // TODO: pobieranie pierwszego pytania
-        });
+        connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
         connection.on("QUESTION_P2P", answ=>{
             const test = JSON.parse(answ);
             console.log(test); 
@@ -94,6 +96,8 @@ const MainWindowGameComponent = () => {
             setQuestionTimer(counter);
         });
         connection.on("OnDisconectedSession", data => {
+            setIsJoinClicked(false);
+            setIsLeaveClicked(false);
             connection.stop().then(_ => {
                 setIsConnect(false);
                 setAlert(alertDanger(data));
@@ -213,11 +217,15 @@ const HeaderPanelComponent = () => {
 const JoinToSessionComponent = () => {
     const {
         setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName,
-        setScreenAction
+        setScreenAction, isJoinClicked, setIsJoinClicked
     } = useContext(SessionContext);
+    
+    const [ joinDisabled, setJoinDisabled ] = useState(true);
     
     const onSubmitJoinToSession = e => {
         e.preventDefault();
+        if (isJoinClicked) return;
+        setIsJoinClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
@@ -226,14 +234,20 @@ const JoinToSessionComponent = () => {
                     setScreenAction(r.screenType);
                     setIsConnect(true);
                 } else {
+                    setIsJoinClicked(false);
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
+                setIsJoinClicked(false);
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
     };
+    
+    useEffect(() => {
+        setJoinDisabled(token.length !== 5);
+    }, [ token ]);
     
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
@@ -259,8 +273,9 @@ const JoinToSessionComponent = () => {
                             <div className="forms-inputs mb-4">
                                 <label id="username">Token</label>
                                 <input type="text" className="form-control" value={token} onChange={e => setToken(e.target.value)}
-                                       pattern="[a-zA-Z]{5}" placeholder="np. RGKQE"/>
-                                <button type="submit" className="btn btn-color-one mt-4 text-white w-100">Dołącz</button>
+                                       pattern="[a-zA-Z]{5}" maxLength="5" placeholder="np. RGKQE"/>
+                                <button className={`btn btn-color-one mt-4 text-white w-100 ${joinDisabled && 'disabled'}`}
+                                        type="submit">Dołącz</button>
                             </div>
                         </form>
                     </div>
@@ -278,6 +293,8 @@ const QuizSessionRootComponent = () => {
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
     const [ screenAction, setScreenAction ] = useState(WAITING_SCREEN);
     const [ quizName, setQuizName ] = useState('');
+    const [ isJoinClicked, setIsJoinClicked ] = useState(false);
+    const [ isLeaveClicked, setIsLeaveClicked ] = useState(false);
     const [ quizStarted, setQuizStarted ] = useState(false);
 
     const [ isActive, setActiveCallback ] = useLoadableContent();
@@ -286,7 +303,8 @@ const QuizSessionRootComponent = () => {
     return (
         <SessionContext.Provider value={{
             connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
-            screenAction, setScreenAction, quizName, setQuizName, quizStarted, setQuizStarted 
+            screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
+            setIsLeaveClicked, quizStarted, setQuizStarted
         }}>
             {isActive && <>
                 {isConnect ? <>

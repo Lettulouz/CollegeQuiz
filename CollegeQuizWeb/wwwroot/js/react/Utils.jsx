@@ -14,3 +14,13 @@ export const getCommonFetchObj = method => ({
         'Content-Type': 'application/json'
     },
 });
+
+export const getCommonFetchObjWithBody = (method, body) => ({
+    method,
+    credentials: 'same-origin',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+});
