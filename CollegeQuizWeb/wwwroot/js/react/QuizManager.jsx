@@ -8,9 +8,8 @@ const QR_CODE_BLOB = document.getElementById('inject-qr-code-blob').innerText;
 const SESS_TOKEN = document.getElementById('inject-sess-code').innerText;
 
 const QuizManagerLeftContentComponent = () => {
-    const { connection } = useContext(SessionContext);
+    const { connection, allParticipants, setAllParticipants } = useContext(SessionContext);
     const [ lobbyData, setLobbyData ] = useState({ name: '', host: '' });
-    const [ allParticipants, setAllParticipants ] = useState({ Connected: [], Disconnected: [] });
     
     useEffect(() => {
         connection.on('GetAllParticipants', data => {
@@ -104,7 +103,8 @@ const QuizManagerRightContentComponent = () => {
     return (
         <div className="col-lg-3 px-0 mb-2 mb-lg-0 order-lg-0 order-2">
             <div className="card px-3 py-3 h-100">
-                {counting !== 0 && <button className="btn btn-info mt-1 mx-1" onClick={startQuiz}>
+                {counting !== 0 && allParticipants.Connected.length > 0 && 
+                    <button className="btn btn-info mt-1 mx-1" onClick={startQuiz}>
                     {counting !== 5 ? `Zaczyna się za ${counting}...` : 'Rozpocznij'}
                 </button>}
                 <button className="btn btn-danger text-white mt-1 mx-1" onClick={() => window.location.reload()}>
