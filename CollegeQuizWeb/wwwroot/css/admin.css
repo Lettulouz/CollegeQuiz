@@ -86,8 +86,8 @@
 }
 
 .custom-card-2{
-    background: rgb(5,232,0) !important;
-    background: linear-gradient(180deg, rgba(5,232,0,1) 0%, rgba(91,252,88,1) 100%) !important;
+    background: rgb(52,191,52) !important;
+    background: linear-gradient(180deg, rgba(52,191,52,1) 0%, rgba(0,207,0,1) 85%) !important;
 }
 
 .user-card{

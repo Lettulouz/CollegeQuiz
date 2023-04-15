@@ -7,6 +7,7 @@ using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CollegeQuizWeb.Controllers;
@@ -22,11 +23,14 @@ public class AdminController : Controller
     
     // GET
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         string? userNotExist = HttpContext.Session.GetString(SessionKey.USER_NOT_EXIST);
         HttpContext.Session.Remove(SessionKey.USER_NOT_EXIST);
         ViewBag.userNotExist = userNotExist!;
+
+        await _adminService.GetStats(this);
+        
         return View();
     }
 
@@ -132,6 +136,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelUser(long id)
     {
+
         await _adminService.DelUser(id, this);
     }
     
@@ -140,6 +145,24 @@ public class AdminController : Controller
     {
         await _adminService.UserInfo(id, this);
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> QuizList()
+    {
+        string? quizRemoved = HttpContext.Session.GetString(SessionKey.QUIZ_REMOVED);
+        HttpContext.Session.Remove(SessionKey.QUIZ_REMOVED);
+        ViewBag.quizRemoved = quizRemoved!;
+        
+        ViewBag.quizList = await _adminService.GetQuizList();
+        return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task DelQuiz(long id)
+    {
+        await _adminService.DelQuiz(id, this);
     }
 
     [HttpPost]

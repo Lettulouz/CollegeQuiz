@@ -104,6 +104,7 @@ public static class Lang
     public const string QUIZ_ALREADY_EXISTS = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.";
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
 
+    public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
     // subscription payment
 
     public const string INVALID_PHONE_NUMBER = "*Podano nieprawidłowy numer telefonu.";

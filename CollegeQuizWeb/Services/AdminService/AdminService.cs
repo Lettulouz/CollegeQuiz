@@ -40,6 +40,18 @@ public class AdminService : IAdminService
         return await _context.Users.ToListAsync();
     }
 
+    public async Task GetStats(AdminController controller)
+    {
+        controller.ViewBag.userStats = await (from u in _context.Users
+            group u by 1
+            into g
+            select new
+            {
+                Total = _context.Users.Count(),
+                Suspended = _context.Users.Count(s => s.AccountStatus == -1)
+            }).FirstOrDefaultAsync();
+    }
+
     public async Task UserInfo(long id, AdminController controller)
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
@@ -364,6 +376,25 @@ public class AdminService : IAdminService
         controller.Response.Redirect("/Admin/UsersList");
         
     }
+
+    public async Task<List<QuizEntity>> GetQuizList()
+    {
+        return await _context.Quizes.Include(u=>u.UserEntity).ToListAsync();
+    }
+    
+    public async Task DelQuiz(long id, AdminController controller)
+    {
+        var quiz = _context.Quizes.Find(id);
+        if (quiz != null)
+        {
+            String message = string.Format(Lang.QUIZ_REMOVED, quiz.Name);
+            _context.Remove(quiz);
+            await _context.SaveChangesAsync();
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+        }
+        controller.Response.Redirect("/Admin/QuizList");
+    }
+
     
     public async Task CreateCoupons(CouponDtoPayload obj)
     {

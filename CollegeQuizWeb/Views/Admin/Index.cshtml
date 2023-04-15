@@ -16,7 +16,7 @@
     }
     <div class="row">
         <div class="col-12 col-sm-6 col-xl-4 mb-3">
-            <div class="card main-card custom-card-1 text-white mb-3">
+            <div class="card main-card custom-card-1 text-white mb-0 h-100">
                 <div class="card-header">Administratorzy</div>
                 <div class="card-body">
                     <h5 class="card-title">Liczba czy coś</h5>
@@ -25,11 +25,19 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-4 mb-3">
-            <div class="card main-card custom-card-2 text-white mb-3">
-                <div class="card-header">Użytkownicy</div>
+            <div class="card main-card custom-card-2 text-white mb-0 h-100 ">
+                <div class="card-header">Użytkownicy
+                <a style='float:right;' class="text-white"  asp-area="" asp-controller="Admin" asp-action="AddUser">
+                    <i class="bi bi-plus-lg"></i>
+                    </a>
+                    </div>
                 <div class="card-body">
-                    <h5 class="card-title">Liczba czy coś</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                   <h5 class="card-title">Łączna liczba użytkowników: @ViewBag.userStats.Total</h5>
+                   <p class="card-text">Zawieszeni: @ViewBag.userStats.Suspended</p>
+                    <p class="card-text">
+                        <a class="text-white" asp-area="" asp-controller="Admin" asp-action="UsersList">
+                        Przeglądaj użytkowników</a>
+                    </p>
                 </div>
             </div>
         </div>
