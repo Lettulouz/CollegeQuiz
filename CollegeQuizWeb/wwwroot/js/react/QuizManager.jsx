@@ -19,7 +19,7 @@ const QuizManagerLeftContentComponent = () => {
         fetch(`/api/v1/dotnet/QuizSessionAPI/GetLobbyData/${SESS_TOKEN}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(({ name, host }) => setLobbyData({ name, host }))
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
@@ -131,7 +131,7 @@ const QuizManagerRootComponent = () => {
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });

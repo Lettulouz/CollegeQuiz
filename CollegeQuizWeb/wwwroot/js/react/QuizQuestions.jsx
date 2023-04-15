@@ -1,5 +1,5 @@
 import { useLoadableContent } from "./Hooks.jsx";
-import { getCommonFetchObj } from "./Utils.jsx";
+import {getCommonFetchObj, alertOff, alertInfo, alertDanger, getCommonFetchObjWithBody} from "./Utils.jsx";
 const { useEffect, useState, createContext, useContext } = React;
 
 const QuestionsContext = createContext(null);
@@ -81,7 +81,7 @@ const initialQuestions = [
 const AddQuizQuestionsRoot = () => {
     const [ questions, setQuestions ] = useState(initialQuestions);
     const [ allGood, setAllGood ] = useState(true);
-    const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
+    const [ alert, setAlert ] = useState(alertOff());
     const [ isActive, setActiveCallback ] = useLoadableContent();
     
     const onSetQuestionTitle = (text, questionId) => {
@@ -147,14 +147,14 @@ const AddQuizQuestionsRoot = () => {
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
-                    setAlert({ active: true, style: 'alert-success', message: r.message });
+                    setAlert(alertInfo(r.message));
                 } else {
-                    setAlert({ active: true, style: 'alert-danger', message: r.message });
+                    setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
-                setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
+                setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
     };
     
@@ -168,7 +168,7 @@ const AddQuizQuestionsRoot = () => {
             return r.json()
         }).then(r => { 
             if (r.aggregate.length !== 0) setQuestions(r.aggregate);
-        }).then(e => {
+        }).catch(e => {
             if (e === undefined) return;
             setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
         });
@@ -181,10 +181,6 @@ const AddQuizQuestionsRoot = () => {
         });
         setAllGood(allGood);
     }, [ questions ]);
-    
-    const resetAlert = () => {
-       setAlert({ active: false, style: 'alert-success', message: '' }); 
-    };
     
     const generateQuestionsComponents = questions.map((q, idx) => (
         <QuestionsContext.Provider key={idx} value={{
@@ -200,7 +196,7 @@ const AddQuizQuestionsRoot = () => {
             {isActive && <>
                 {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
                     <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
-                    <button type="button" className="btn-close" onClick={resetAlert}></button>
+                    <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>
                 </div>}
                 {generateQuestionsComponents}
                 <button onClick={onAddNewQuestion} className="btn btn-color-one w-100 mt-2">

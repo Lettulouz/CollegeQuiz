@@ -22,7 +22,7 @@ const LeaveSessionButtonComponent = () => {
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
@@ -72,25 +72,19 @@ const MainWindowGameComponent = () => {
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
     const [ questionTimer, setQuestionTimer ] = useState();
     
-    
     useEffect(() => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
             setScreenAction(COUNTING_SCREEN);
             setCounting(counter);
         });
-        connection.on("START_GAME_P2P", () => {
-            setScreenAction(IN_GAME);
-            // TODO: pobieranie pierwszego pytania
-        });
+        connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
         connection.on("QUESTION_P2P", answ=>{
             const test = JSON.parse(answ);
             console.log(test); 
             setQuestion(test.question);
             setAnswers(test.answers.map(q=> q));
             setQuestionTimer(test.time_sec);
-            
         });
-        
         connection.on("OnDisconectedSession", data => {
             connection.stop().then(_ => {
                 setIsConnect(false);
