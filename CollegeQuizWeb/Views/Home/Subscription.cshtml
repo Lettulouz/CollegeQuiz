@@ -1,66 +1,86 @@
 @model CollegeQuizWeb.Dto.Home.SubscriptionPaymentDto
 
 <div class="container">
-    <div class="row d-flex justify-content-center">
-        <div class="col-9">
-            <div class="card px-5 py-5 h-100">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="forms-inputs mb-4">
-                            <label>Imię</label>
-                            <input type="text" value="@Model.FirstName" disabled>
+    <form method="post" asp-action="Subscription" asp-controller="Home">
+        <div class="row d-flex justify-content-center">
+            <div class="col-9">
+                <div class="card px-5 py-5 h-100">
+                    <div class="row">
+                        <input type="hidden" asp-for="Username" value="@Model.Username">
+                        <input type="hidden" asp-for="FirstName" value="@Model.FirstName">
+                        <input type="hidden" asp-for="LastName" value="@Model.LastName">
+                        <input type="hidden" asp-for="Email" value="@Model.Email">
+                        <input type="hidden" asp-for="SubscriptionType" value="@ViewBag.TypeOfSubscription">
+                        <div class="col-6">
+                            <div class="forms-inputs mb-4">
+                                <label>Imię</label>
+                                <input type="text" value="@Model.FirstName" disabled>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="forms-inputs mb-4">
-                            <label>Nazwisko</label>
-                            <input type="text" value="@Model.LastName" disabled>
+                        <div class="col-6">
+                            <div class="forms-inputs mb-4">
+                                <label>Nazwisko</label>
+                                <input type="text" value="@Model.LastName" disabled>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <div class="forms-inputs mb-4">
-                            <label>Email</label>
-                            <input type="text" value="@Model.Email" disabled>
+                        <div class="col-6 mt-2">
+                            <div class="forms-inputs mb-4">
+                                <label>Email</label>
+                                <input type="text" value="@Model.Email" disabled>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <div class="forms-inputs mb-4">
-                            <label>Telefon</label>
-                            <input asp-for="PhoneNumber" type="text">
+                        <div class="col-6 mt-2">
+                            <div class="forms-inputs mb-4">
+                                <label>Telefon</label>
+                                <input asp-for="PhoneNumber" type="text">
+                                <span class="mx-2 mt-1 errorTextColor" asp-validation-for="PhoneNumber"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <div class="forms-inputs mb-4">
-                            <label>Państwo</label>
-                            <input asp-for="Country" type="text">
+                        <div class="col-6 mt-2">
+                            <div class="forms-inputs mb-4">
+                                <label>Państwo</label>
+                                <input asp-for="Country" type="text">
+                                <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Country"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <div class="forms-inputs mb-4">
-                            <label>Województwo</label>
-                            <input asp-for="State" type="text">
+                        <div class="col-6 mt-2">
+                            <div class="forms-inputs mb-4">
+                                <label>Województwo</label>
+                                <input asp-for="State" type="text">
+                                <span class="mx-2 mt-1 errorTextColor" asp-validation-for="State"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <div class="forms-inputs mb-4">
-                            <label>Adres 1</label>
-                            <input asp-for="Address1" type="text">
+                        <div class="col-6 mt-2">
+                            <div class="forms-inputs mb-4">
+                                <label>Adres 1</label>
+                                <input asp-for="Address1" type="text">
+                                <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Address1"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-6 mt-2">
-                        <div class="forms-inputs mb-4">
-                            <label>Adres 2</label>
-                            <input asp-for="Address2" type="text">
+                        <div class="col-6 mt-2">
+                            <div class="forms-inputs mb-4">
+                                <label>Adres 2</label>
+                                <input asp-for="Address2" type="text">
+                                <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Address2"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-12 mt-2">
-                        <select class="form-select">
-                            <option value="1">Dla siebie</option>
-                            <option value="2">Jako prezent</option>
-                        </select>
+                        <div class="col-12 mt-2">
+                            <div class="forms-inputs test">
+                                <label>Kup jako prezent</label>
+                                <select asp-for="ForWho" class="editedSelect">
+                                    <option value="1">Dla siebie</option>
+                                    <option value="2">Jako prezent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <input type="checkbox" class="form-check-input" asp-for="RememberAddressForLater">
+                            <label asp-for="RememberAddressForLater" class="form-check-label">Zapisz mój adres na później</label>
+                        </div>
+                        <input class="form-control" type="submit">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>

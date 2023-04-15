@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
+using CollegeQuizWeb.Dto.Home;
 using Microsoft.AspNetCore.Mvc;
 using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
@@ -36,10 +37,19 @@ public class HomeController : Controller
     
     public async Task<IActionResult> Subscription(int id)
     {
-        ViewBag.Test = id;
-        var ye = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        var temp = await _homeService.GetUserData(ye, this);
-        return View(temp);
+        ViewBag.TypeOfSubscription = id;
+        var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        var subscriptionPaymentDto = await _homeService.GetUserData(username, this);
+        return View(subscriptionPaymentDto);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Subscription(SubscriptionPaymentDto subscriptionPaymentDto)
+    {
+        var payloadDto = new SubscriptionPaymentDtoPayload(this) { Dto = subscriptionPaymentDto };
+        await _homeService.MakePaymentForSubscription(payloadDto);
+        return View(subscriptionPaymentDto);
     }
     
     public  IActionResult Sandbox()

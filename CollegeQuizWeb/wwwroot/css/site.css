@@ -165,7 +165,7 @@ input:-webkit-autofill {
     position: absolute;
     top: -18px;
     left: 10px;
-    background-color: #f7fef5;
+    background-color: #aee5d4;
     padding: 5px 10px;
     font-size: 15px;
     border-radius: 25px;
@@ -204,9 +204,27 @@ input:-webkit-autofill {
 .forms-inputs input {
     padding: 0 0 0 15px;
     height: 50px;
-    border: 2px solid rgb(238, 238, 238);
+    border: 2px solid #63c4ab;
     width: 100%;
     border-radius: 15px 25px 25px 25px;
+}
+
+.editedSelect {
+    padding: 0 0 0 15px !important;
+    height: 50px !important;
+    border: 2px solid #63c4ab !important;
+    width: 100% !important;
+    border-radius: 15px 25px 25px 25px !important;
+}
+
+select{
+    background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right white;
+    -webkit-appearance: none;
+    background-position-x: 95%;
+}
+
+.editedSelect .dropdown-container:after {
+    margin-right: 150px;
 }
 
 .forms-inputs input:focus {

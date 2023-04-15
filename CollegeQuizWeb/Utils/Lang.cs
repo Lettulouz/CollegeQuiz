@@ -105,6 +105,17 @@ public static class Lang
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
 
     public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
+    // subscription payment
 
+    public const string INVALID_PHONE_NUMBER = "*Podano nieprawidłowy numer telefonu.";
+    public const string COUNTRY_IS_REQUIRED = "*Pole Państwo jest wymagane.";
+    public const string COUNTRY_TOO_LONG = "*Pole Państwo nie może przekraczać 40 znaków.";
+    public const string COUNTRY_TOO_SHORT = "*Pole Państwo nie może być krótsze niż 3 znaki.";
+    public const string STATE_IS_REQUIRED = "*Pole Województwo jest wymagane.";
+    public const string STATE_TOO_LONG = "*Pole Województwo nie może przekraczać 40 znaków.";
+    public const string STATE_TOO_SHORT = "*Pole Województwo nie może być krótsze niż 3 znaki.";
+    public const string ADDRESS1_IS_REQUIRED = "*Pole Adres 1 jest wymagane.";
+    public const string ADDRESS1_TOO_LONG = "*Pole Adres 1 nie może przekraczać 40 znaków.";
+    public const string ADDRESS1_TOO_SHORT = "*Pole Adres 1 nie może być krótsze niż 3 znaki.";
 
 }

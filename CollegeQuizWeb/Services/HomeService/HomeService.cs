@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using CollegeQuizWeb.Config;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Home;
@@ -11,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using PayU.Client;
 using PayU.Client.Configurations;
 using PayU.Client.Models;
+using Sprache;
 
 namespace CollegeQuizWeb.Services.HomeService;
 
@@ -40,21 +45,113 @@ public class HomeService : IHomeService
     
     public async Task<OrderResponse> MakePayment()
     {
-        Env.Load();
-        PayUClientSettings settings = new PayUClientSettings(
-            PayUContainer.PayUApiUrl.Sandbox, // Url You could use string example from configuration or use const
-            "v2_1", // api version
-            Env.GetString("CLIENT_ID"), // clientId from shop configuration
-            Env.GetString("CLIENT_SECRET") // clientId from shop configuration
-        );
-        
-        PayUClient client = new PayUClient(settings);
+        PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
         
         var products = new List<Product>(2);
         products.Add(new Product("Wireless mouse", "15000", "1"));
         products.Add(new Product("HDMI cable", "6000", "1"));
-        var request = new OrderRequest("127.0.0.1", Env.GetString("CLIENT_ID"), "RTV market", "PLN", "21000", products);
+        var request = new OrderRequest("127.0.0.1", ConfigLoader.PayuClientId, "RTV market", "PLN", "21000", products);
         var result = await client.PostOrderAsync(request, default(CancellationToken));
         return result;
+    }
+
+    public async Task MakePaymentForSubscription(SubscriptionPaymentDtoPayload subscriptionPaymentDtoPayload)
+    {
+        var controller = subscriptionPaymentDtoPayload.ControllerReference;
+        if (!controller.ModelState.IsValid)
+        {
+            return;
+        }
+        
+        var subscriptionPaymentDto = subscriptionPaymentDtoPayload.Dto;
+        UserEntity? userEntity = new();
+        userEntity =  _context.Users.FirstOrDefault(obj=> obj.Username.Equals(subscriptionPaymentDto.Username));
+        if (userEntity == null)
+        {
+            controller.Response.Redirect("/Home");
+            return;
+        }
+        if (subscriptionPaymentDto.RememberAddressForLater)
+        {
+            ClientAddressEntity? checkIfAddressExists = new();
+            checkIfAddressExists =
+                _context.ClientsAddresses.FirstOrDefault(obj => obj.UserEntity.Equals(userEntity));
+
+            ClientAddressEntity clientAddressEntity = new();
+            clientAddressEntity.UserEntity = userEntity;
+            clientAddressEntity.PhoneNumber = subscriptionPaymentDto.PhoneNumber;
+            clientAddressEntity.Country = subscriptionPaymentDto.Country;
+            clientAddressEntity.State = subscriptionPaymentDto.State;
+            clientAddressEntity.Address1 = subscriptionPaymentDto.Address1;
+            clientAddressEntity.Address2 = subscriptionPaymentDto.Address2;
+            if (checkIfAddressExists != null)
+                _context.ClientsAddresses.Update(clientAddressEntity);
+            else
+                _context.ClientsAddresses.Add(clientAddressEntity);
+        }
+
+        SubscriptionTypesEntity? subscriptionTypesEntity = new SubscriptionTypesEntity();
+        subscriptionTypesEntity = _context.SubsciptionTypes
+            .FirstOrDefault(obj => obj.SiteId.Equals(subscriptionPaymentDto.SubscriptionType));
+        if (subscriptionTypesEntity == null)
+        {
+            controller.Response.Redirect("/Home");
+            return;
+        }
+        
+        
+        PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
+
+        var remoteIpAddress = GetIpAddress(controller);
+        Decimal tempDec = subscriptionTypesEntity.Price * 100;
+        int price = (int)tempDec;
+        
+        var products = new List<Product>(1);
+        products.Add(new Product(subscriptionTypesEntity.Name, price.ToString(), "1"));
+        var request = new OrderRequest(remoteIpAddress, 
+            ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
+            price.ToString(), products);
+
+        OrderResponse orderResponse = new();
+        try
+        {
+            orderResponse = await client.PostOrderAsync(request, default(CancellationToken));
+        }
+        catch (Exception e)
+        {
+            controller.Response.Redirect("/Home");
+            return;
+        }
+
+        SubscriptionPaymentHistoryEntity subscriptionPaymentHistoryEntity = new();
+        subscriptionPaymentHistoryEntity.UserEntity = userEntity;
+        subscriptionPaymentHistoryEntity.PayuId = orderResponse.OrderId;
+        subscriptionPaymentHistoryEntity.Price = price;
+        subscriptionPaymentHistoryEntity.Subscription = subscriptionTypesEntity.Name;
+        _context.SubscriptionsPaymentsHistory.Add(subscriptionPaymentHistoryEntity);
+        await _context.SaveChangesAsync();
+
+        controller.Response.Redirect(orderResponse.RedirectUri);
+    }
+    
+    private string GetIpAddress(HomeController controller)
+    {
+        string ipAddressString = controller.Request.HttpContext.Connection.RemoteIpAddress.ToString();
+
+        if (ipAddressString == null)
+            return null;
+
+        IPAddress ipAddress;
+        IPAddress.TryParse(ipAddressString, out ipAddress);
+
+        // If we got an IPV6 address, then we need to ask the network for the IPV4 address 
+        // This usually only happens when the browser is on the same machine as the server.
+        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+        {
+            ipAddress = System.Net.Dns.GetHostEntry(ipAddress).AddressList
+                .First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+        }
+
+        return ipAddress.ToString();
     }
 }

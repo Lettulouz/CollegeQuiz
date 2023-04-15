@@ -1,5 +1,7 @@
 using DotNetEnv;
 using Microsoft.Extensions.Configuration;
+using PayU.Client;
+using PayU.Client.Configurations;
 
 namespace CollegeQuizWeb.Config;
 
@@ -14,6 +16,10 @@ public class ConfigLoader
     public static int SmtpPort { get; set; }
     public static string SmtpPassword { get; set; }
 
+    public static string PayuClientId { get; set; }
+    public static PayUClientSettings PayUClientSettings { get; set; }
+    
+
     public static void InsertEnvProperties(IConfiguration configuration)
     {
         Env.Load();
@@ -23,5 +29,12 @@ public class ConfigLoader
         DbConnectionString = Env.GetString("MY_SEQUEL_CONNECTION");
         SmtpHost = Env.GetString("SMTP_HOST");
         SmtpPassword = Env.GetString("SMTP_PASSWORD");
+        PayuClientId = Env.GetString("CLIENT_ID");
+        PayUClientSettings = new PayUClientSettings(
+            PayUContainer.PayUApiUrl.Sandbox, // Url You could use string example from configuration or use const
+            "v2_1", // api version
+            PayuClientId , // clientId from shop configuration
+            Env.GetString("CLIENT_SECRET") // clientId from shop configuration
+        );
     }
 }
