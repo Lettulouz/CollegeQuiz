@@ -37,6 +37,15 @@ const QuizQuestionComponent = () => {
         <QuizAnswerComponent key={idx} id={idx + 1} answer={answer}/>
     ));
     
+    useEffect(() => {
+        if (q.timeMin.length > 3) onSetMinutes(q.id, q.timeMin.slice(0, 3));
+    }, [ q.timeMin ]);
+
+    useEffect(() => {
+        if (q.timeSec.length > 2) onSetSeconds(q.id, e.timeSec.slice(0, 2));
+        if (q.timeSec > 59) onSetSeconds(q.id, 59);
+    }, [ q.timeSec ]);
+    
     return (
         <div className="row g-2 mb-4">
             <div className="col-12">
@@ -47,11 +56,11 @@ const QuizQuestionComponent = () => {
                     <div>
                         <label className="mb-1">Czas trwania pytania:</label>
                         <div className="d-flex">
-                            <input type="number" className="form-control time-control" placeholder="min"
-                                value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
+                            <input type="number" className="form-control time-control" placeholder="min" min="0" max="999"
+                                maxLength="3" value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
                             <span className="mx-2 fw-bold pt-1">:</span>
-                            <input type="number" className="form-control time-control" placeholder="sek"
-                                value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
+                            <input type="number" className="form-control time-control" placeholder="sek" min="0" max="59"
+                                maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
                         </div>
                     </div>
                     {q.id > 1 && <button className="btn btn-danger text-white ms-2"
@@ -73,9 +82,9 @@ const initialQuestions = [
             { id: 1, text: '', isCorrect: true },
             { id: 2, text: '', isCorrect: false },
             { id: 3, text: '', isCorrect: false },
-            { id: 4, text: '', isCorrect: false }
-        ]
-    }
+            { id: 4, text: '', isCorrect: false },
+        ],
+    },
 ];
 
 const AddQuizQuestionsRoot = () => {
@@ -83,6 +92,7 @@ const AddQuizQuestionsRoot = () => {
     const [ allGood, setAllGood ] = useState(true);
     const [ alert, setAlert ] = useState(alertOff());
     const [ isActive, setActiveCallback ] = useLoadableContent();
+    const [ isSended, setIsSended ] = useState(false);
     
     const onSetQuestionTitle = (text, questionId) => {
         const qst = [ ...questions ];
@@ -126,6 +136,8 @@ const AddQuizQuestionsRoot = () => {
         setQuestions([ ...questions, {
             id: questions.length + 1,
             text: '',
+            timeMin: '',
+            timeSec: '',
             answers: [
                 { id: 1, text: '', isCorrect: true },
                 { id: 2, text: '', isCorrect: false },
@@ -141,10 +153,16 @@ const AddQuizQuestionsRoot = () => {
     };
     
     const appendQuestionsTooQuiz = () => {
+        if (isSended) return;
+        setIsSended(true);
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObj('POST'))
-            .then(r => r.json())
+        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
+            .then(r => {
+                setIsSended(false);
+                window.scrollTo(0, 0);
+                return r.json()
+            })
             .then(r => {
                 if (r.isGood) {
                     setAlert(alertInfo(r.message));
@@ -175,11 +193,11 @@ const AddQuizQuestionsRoot = () => {
     }, []);
     
     useEffect(() => {
-        let allGood = false;
-        questions.forEach(q => {
-            allGood = q.text.length > 2 && q.answers.filter(a => a.text.length > 2).length === q.answers.length;
+        const anyBad = questions.filter(q => {
+            return q.text.length <= 2 || q.answers.filter(a => a.text.length > 2).length !== q.answers.length ||
+                q.timeMin.length === 0 || q.timeMin.length === 0;
         });
-        setAllGood(allGood);
+        setAllGood(anyBad.length === 0);
     }, [ questions ]);
     
     const generateQuestionsComponents = questions.map((q, idx) => (
