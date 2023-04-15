@@ -175,6 +175,8 @@ const JoinToSessionComponent = () => {
     
     const onSubmitJoinToSession = e => {
         e.preventDefault();
+        if (isJoinClicked) return;
+        setIsJoinClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
@@ -193,6 +195,10 @@ const JoinToSessionComponent = () => {
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
     };
+    
+    useEffect(() => {
+        setJoinDisabled(token.length !== 5);
+    }, [ token ]);
     
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
