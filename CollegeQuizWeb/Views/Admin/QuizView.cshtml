@@ -1,0 +1,63 @@
+@model dynamic
+
+@{
+    ViewBag.Title = "Podgląd Quizu";
+    Layout = "_AdminLayout";
+}
+
+@if (@ViewBag.quizInfo != null)
+{
+    <div class="d-flex">
+        <h1 class="text-muted px-2">@ViewBag.quizInfo.Name</h1> 
+        <div class="ms-auto text-right pe-1">
+            @using (Html.BeginForm("DelQuiz", "Admin", new { id = @ViewBag.quizInfo.Id }, FormMethod.Post))
+            {
+                <button type="submit" class="btn btn-danger" data-bs-toggle="tooltip" 
+                        data-bs-placement="top" data-bs-title="Usuń quiz" ><i class="bi bi-trash"></i></button>
+            }
+        </div>
+    </div>
+    <hr class="divider mt-0">
+     <div class="container-fluid">                       
+     <div class="row ">
+         <div class="col-auto py-0 my-0">
+             <i class="bi bi-puzzle-fill p-0" style=" font-size: 100px;"></i>
+         </div>
+        
+         <div class="col-auto">
+             <div class="row">
+                 <h3>Dane Quizu</h3>
+             </div>
+             <div class="row">
+                 <div class="col-auto">
+                     <p>Nazwa: @ViewBag.quizInfo.Name</p>
+                     <p>Właściciel: <a asp-action="UserProfile" asp-controller="Admin" asp-route-id=" @ViewBag.quizInfo.UserEntity.Id">
+                         @ViewBag.quizInfo.UserEntity.Username
+                     </a></p>
+                     <p>Utworzono: @ViewBag.quizInfo.CreatedAt</p>
+                 </div>
+                 <div class="col-auto">
+                 </div>
+             </div>
+             <div class="row">
+                 <h3>Pytania</h3>
+                 @if (@ViewBag.questions != null)
+                 {
+                     @foreach (var question in ViewBag.questions)
+                     {
+                         <h5>@question.question</h5>
+                         <ul >
+                             @foreach (var answer in @question.answers)
+                             {
+                                 <li class="ms-4">
+                                     @answer
+                                 </li>
+                             }
+                         </ul>
+                     }
+                 }
+             </div>
+         </div>
+     </div>
+          </div>
+     }
