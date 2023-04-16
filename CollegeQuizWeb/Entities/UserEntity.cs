@@ -49,5 +49,9 @@ public class UserEntity : AbstractAuditableEntity
     [Column("is_account_activated")]
     public bool IsAccountActivated { get; set; }
     
+    [DefaultValue(0)]
+    [Column("is_admin")]
+    public bool IsAdmin { get; set; }
+    
     public IList<SharedQuizes> SharedQuizesEnumerable { get; set; }
 }

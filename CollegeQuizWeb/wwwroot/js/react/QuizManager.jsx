@@ -8,9 +8,8 @@ const QR_CODE_BLOB = document.getElementById('inject-qr-code-blob').innerText;
 const SESS_TOKEN = document.getElementById('inject-sess-code').innerText;
 
 const QuizManagerLeftContentComponent = () => {
-    const { connection } = useContext(SessionContext);
+    const { connection, allParticipants, setAllParticipants } = useContext(SessionContext);
     const [ lobbyData, setLobbyData ] = useState({ name: '', host: '' });
-    const [ allParticipants, setAllParticipants ] = useState({ Connected: [], Disconnected: [] });
     
     useEffect(() => {
         connection.on('GetAllParticipants', data => {
@@ -19,7 +18,7 @@ const QuizManagerLeftContentComponent = () => {
         fetch(`/api/v1/dotnet/QuizSessionAPI/GetLobbyData/${SESS_TOKEN}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(({ name, host }) => setLobbyData({ name, host }))
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
@@ -81,11 +80,12 @@ const QuizManagerCenterComponent = () => {
 };
 
 const QuizManagerRightContentComponent = () => {
-    const { connection, setAlert } = useContext(SessionContext);
+    const { connection, setAlert, isStartClicked, setIsStartClicked, allParticipants } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     
     const startQuiz = () => {
-        if (counting === 0) return;
+        if (counting === 0 || isStartClicked) return;
+        setIsStartClicked(true);
         let i = counting;
         const interval = setInterval(() => {
             connection.invoke('INIT_GAME_SEQUENCER_P2P', i, SESS_TOKEN).then(r => setCounting(r));
@@ -103,7 +103,8 @@ const QuizManagerRightContentComponent = () => {
     return (
         <div className="col-lg-3 px-0 mb-2 mb-lg-0 order-lg-0 order-2">
             <div className="card px-3 py-3 h-100">
-                {counting !== 0 && <button className="btn btn-info mt-1 mx-1" onClick={startQuiz}>
+                {counting !== 0 && allParticipants.Connected.length > 0 && 
+                    <button className="btn btn-info mt-1 mx-1" onClick={startQuiz}>
                     {counting !== 5 ? `Zaczyna się za ${counting}...` : 'Rozpocznij'}
                 </button>}
                 <button className="btn btn-danger text-white mt-1 mx-1" onClick={() => window.location.reload()}>
@@ -119,9 +120,14 @@ const QuizManagerRootComponent = () => {
     const [ isJoinable, setIsJoinable ] = useState(false);
     const [ connectionId, setConnectionId ] = useState('');
     const [ connection, setConnection ] = useState(null);
-    const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
-    
+    const [ alert, setAlert ] = useState(alertOff());
+    const [ isEstabiblishedClicked, setIsEstabilishedClicked ] = useState(false);
+    const [ isStartClicked, setIsStartClicked ] = useState(false);
+    const [ allParticipants, setAllParticipants ] = useState({ Connected: [], Disconnected: [] });
+
     const estabilishedRoomConnection = () => {
+        if (isEstabiblishedClicked) return;
+        setIsEstabilishedClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/EstabilishedHostRoom/${connectionId}/${SESS_TOKEN}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
@@ -131,7 +137,7 @@ const QuizManagerRootComponent = () => {
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
@@ -152,7 +158,7 @@ const QuizManagerRootComponent = () => {
     
     return (
         <SessionContext.Provider value={{
-            connection, setAlert
+            connection, setAlert, isStartClicked, setIsStartClicked, allParticipants, setAllParticipants
         }}>
             {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-4`} role="alert">
                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>

@@ -13,6 +13,7 @@ public interface IAdminService
     Task GetStats(AdminController controller);
     Task<List<UserEntity>> GetUsers();
     Task<List<QuizEntity>> GetQuizList();
+    Task QuizInfo(long id, AdminController controller);
     Task DelQuiz(long id, AdminController controller);
     Task<AddUserDto> GetUserData(long id, AdminController controller);
     Task UserInfo(long id, AdminController controller);

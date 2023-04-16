@@ -146,6 +146,13 @@ public class AdminController : Controller
         await _adminService.UserInfo(id, this);
         return View();
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> QuizView([FromRoute(Name = "id")] long id)
+    {
+        await _adminService.QuizInfo(id, this);
+        return View();
+    }
 
     [HttpGet]
     public async Task<IActionResult> QuizList()

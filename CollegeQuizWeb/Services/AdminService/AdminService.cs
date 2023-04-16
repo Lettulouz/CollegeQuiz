@@ -48,10 +48,35 @@ public class AdminService : IAdminService
             select new
             {
                 Total = _context.Users.Count(),
+                Gold = _context.Users.Count(s => s.AccountStatus == 1),
+                Platinum = _context.Users.Count(s => s.AccountStatus == 2),
                 Suspended = _context.Users.Count(s => s.AccountStatus == -1)
             }).FirstOrDefaultAsync();
+        
+        controller.ViewBag.quizStats = await (from q in _context.Quizes
+            group q by 1
+            into g
+            select new
+            {
+                Total = _context.Quizes.Count(),
+                Public = _context.Quizes.Count(s => s.IsPublic == true),
+                Private = _context.Quizes.Count(s => s.IsPublic == false)
+            }).FirstOrDefaultAsync();
+        
+        controller.ViewBag.couponStats = await (from q in _context.Coupons
+            group q by 1
+            into g
+            select new
+            {
+                Total = _context.Coupons.Count(),
+                Archive = _context.Coupons.Count(s => s.IsUsed == true || s.ExpiringAt <= DateTime.Now),
+                Active = _context.Coupons.Count(s => s.IsUsed == false && s.ExpiringAt > DateTime.Now)
+            }).FirstOrDefaultAsync();
     }
-
+    
+    
+    
+    //user view
     public async Task UserInfo(long id, AdminController controller)
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
@@ -67,9 +92,15 @@ public class AdminService : IAdminService
 
             controller.ViewBag.UserQuizes = await _context.Quizes
                 .Where(q => q.UserId.Equals(id)).ToListAsync();
+
+            controller.ViewBag.payments = await _context.SubscriptionsPaymentsHistory
+                .Where(p => p.UserId.Equals(id))
+                .OrderByDescending(c => c.CreatedAt).ToListAsync();
         }
     }
-
+    
+   
+    //User edit
     public async Task<AddUserDto> GetUserData(long id, AdminController controller)
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
@@ -395,6 +426,41 @@ public class AdminService : IAdminService
         controller.Response.Redirect("/Admin/QuizList");
     }
 
+    public async Task QuizInfo(long id, AdminController controller)
+    {
+        var quizInfo = await _context.Quizes.Include(u=>u.UserEntity)
+            .FirstOrDefaultAsync(q => q.Id.Equals(id));
+
+        if (quizInfo == null)
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.QUIZ_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+        }
+        else
+        {
+            controller.ViewBag.quizInfo = quizInfo;
+
+            controller.ViewBag.questions = await _context.Answers
+                .Include(q => q.QuestionEntity)
+                .Where(q => q.QuestionEntity.QuizId.Equals(quizInfo.Id))
+                .Select(q => new
+                {
+                    question = q.QuestionEntity.Name,
+                    answer = q.Name,
+                    time_min = q.QuestionEntity.TimeMin,
+                    time_sec = q.QuestionEntity.TimeSec
+                })
+                .GroupBy(q=>q.question)
+                .Select(q=>new
+                {
+                    question = q.Key,
+                    answers = q.Select(a => a.answer).ToList(),
+                    time_sec = q.Sum(a=>a.time_min*60+a.time_sec)
+                }).ToListAsync();
+            //controller.ViewBag.UserQuizes = await _context.Quizes
+            //    .Where(q => q.UserId.Equals(id)).ToListAsync();
+        }
+    }
     
     public async Task CreateCoupons(CouponDtoPayload obj)
     {

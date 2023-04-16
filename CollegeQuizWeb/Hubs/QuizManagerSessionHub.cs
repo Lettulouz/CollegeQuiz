@@ -63,7 +63,7 @@ public class QuizManagerSessionHub : Hub
             .GroupBy(q=>q.questionId)
             .Select(q=>new
             {
-                question = q.First(),
+                question = q.Select(a => a.question).Distinct(),
                 answers = q.Select(a => a.answers).ToList(),
                 time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum()
             }).ToListAsync();
