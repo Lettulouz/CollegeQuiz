@@ -21,6 +21,5 @@ public class QuizEntity : AbstractAuditableEntity
     public long UserId { get; set; }
     
     public virtual UserEntity UserEntity { get; set; }
-    
-    public IList<SharedQuizes> SharedQuizesEnumerable { get; set; }
+    public virtual ICollection<SharedQuizesEntity> SharedQuizesEntities { get; set; }
 }
