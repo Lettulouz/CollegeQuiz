@@ -53,5 +53,5 @@ public class UserEntity : AbstractAuditableEntity
     [Column("is_admin")]
     public bool IsAdmin { get; set; }
     
-    public IList<SharedQuizes> SharedQuizesEnumerable { get; set; }
+    public virtual ICollection<SharedQuizesEntity> SharedQuizesEntities { get; set; }
 }
