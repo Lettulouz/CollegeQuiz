@@ -11,6 +11,7 @@ using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
 using CollegeQuizWeb.Services.QuizService;
+using CollegeQuizWeb.Services.SharedQuizesService;
 using CollegeQuizWeb.Services.UserService;
 using CollegeQuizWeb.Smtp;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
@@ -50,6 +51,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IChangePasswordService, ChangePasswordService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISharedQuizesService, SharedQuizesService>();
 
 // serwisy kontrolerów API
 builder.Services.AddScoped<IQuizAPIService, QuizAPIService>();

@@ -47,6 +47,8 @@ public static class Lang
     public const string QUIZ_NAME_REQUIRED_ERROR = "*Nazwa quizu jest wymagana.";
     public const string QUIZ_NAME_TOO_SHORT_ERROR = "*Podana nazwa quizu jest zbyt krótka.";
     public const string QUIZ_NAME_TOO_LONG_ERROR = "*Podana nazwa quizu jest zbyt długa.";
+    
+    public const string QUIZ_SHARED_TOKEN_ERROR = "*Niepoprawny token.";
 
     public const string INVALID_COUPON_CODE_ERROR = "Należy podać prawidłowy kupon.";
     public const string INACTIVE_COUPON_CODE_ERROR = "Podany kupon jest już nieaktywny.";

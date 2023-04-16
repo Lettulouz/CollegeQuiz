@@ -49,4 +49,21 @@
       <AdditionalFiles Include="Views\Quiz\AddQuiz.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Services\SharedQuizes\**" />
+      <Compile Remove="Views\SharedQuizes\SharedQuizes.cshtml.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Services\SharedQuizes\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Services\SharedQuizes\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Services\SharedQuizes\**" />
+    </ItemGroup>
+
 </Project>
