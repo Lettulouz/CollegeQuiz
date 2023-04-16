@@ -347,3 +347,7 @@ select{
     color: white;
     padding: 10px;
 }
+
+.bg-profile{
+    background-color: #aee5d4
+}
