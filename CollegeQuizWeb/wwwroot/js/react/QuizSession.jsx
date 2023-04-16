@@ -2,27 +2,34 @@ import { useLoadableContent } from "./Hooks.jsx";
 import {
     alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME
 } from "./Utils.jsx";
+
 const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const SessionContext = createContext(null);
 
 const LeaveSessionButtonComponent = () => {
-    const { token, connectionId, setIsConnect, setAlert, setScreenAction } = useContext(SessionContext);
+    const {
+        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked
+    } = useContext(SessionContext);
     const modalRef = useRef()
     
     const leaveRoom = () => {
+        if (isLeaveClicked) return;
+        setIsLeaveClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
                     setIsConnect(false);
                     setScreenAction(WAITING_SCREEN);
+                    setIsJoinClicked(false);
+                    setIsLeaveClicked(false);
                     setAlert(alertInfo(r.message));
                 } else {
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
@@ -64,13 +71,11 @@ const LeaveSessionButtonComponent = () => {
 
 const MainWindowGameComponent = () => {
     const {
-        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName,
+        connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
+        setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
-    const [ question, setQuestion ] = useState();
-    const [ answers, setAnswers ] = useState([]);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
-    const [ questionTimer, setQuestionTimer ] = useState();
     
     
     useEffect(() => {
@@ -78,20 +83,21 @@ const MainWindowGameComponent = () => {
             setScreenAction(COUNTING_SCREEN);
             setCounting(counter);
         });
-        connection.on("START_GAME_P2P", () => {
-            setScreenAction(IN_GAME);
-            // TODO: pobieranie pierwszego pytania
-        });
+        connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
         connection.on("QUESTION_P2P", answ=>{
             const test = JSON.parse(answ);
             console.log(test); 
             setQuestion(test.question);
             setAnswers(test.answers.map(q=> q));
+            console.log(test.answers.map(q=> q));
             setQuestionTimer(test.time_sec);
-            
         });
-        
+        connection.on("QUESTION_TIMER_P2P", counter => {
+            setQuestionTimer(counter);
+        });
         connection.on("OnDisconectedSession", data => {
+            setIsJoinClicked(false);
+            setIsLeaveClicked(false);
             connection.stop().then(_ => {
                 setIsConnect(false);
                 setAlert(alertDanger(data));
@@ -122,15 +128,7 @@ const MainWindowGameComponent = () => {
                 </div>
             );
             default: return (
-                <div>
-                    <p>pytanie {question}</p>
-                    <p>odpowiedź 1 {answers[0]}</p>
-                    <p>odpowiedź 2 {answers[1]}</p>
-                    <p>odpowiedź 3 {answers[2]}</p>
-                    <p>odpowiedź 4 {answers[3]}</p>
-                    <p>czas {questionTimer}</p>
-                    
-                </div>
+                <QuestionType1/>
             );
         }
     };
@@ -142,6 +140,52 @@ const MainWindowGameComponent = () => {
     );
 };
 
+
+const QuestionType1 = () => {
+    const {
+        question, questionTimer
+    } = useContext(SessionContext);
+    return (
+        <div className="container">
+            <div className="row d-flex justify-content-center">
+                <div className="col-10">
+                    <div className="card px-3 py-3">
+                        <h3>{question} {questionTimer}</h3>
+                        <img src={"/gfx/qrCodeLogo.png"} width="300px" height="300px"/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCard number={0}/>
+                        <QuestionCard number={1}/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCard number={2}/>
+                        <QuestionCard number={3}/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+
+const QuestionCard = (props) => {
+    const {
+        answers, answerLetter, answerSVG
+    } = useContext(SessionContext);
+    return (
+        <div className="col-6 d-flex m-0">
+            <div className="card bg-dark text-white card-img-custom">
+                <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D"/>
+                <div
+                    className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                    <h5 className="card-title text-center">Odpowiedź {answerLetter[props.number]}</h5>
+                    <p className="card-text text-center">{answers[props.number]}</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const HeaderPanelComponent = () => {
     const { isConnect } = useContext(SessionContext);
     return (
@@ -150,7 +194,7 @@ const HeaderPanelComponent = () => {
                 <div className="col-md-4">
                     123
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-4"> 
                     321
                 </div>
                 <div className="col-md-4">
@@ -166,11 +210,15 @@ const HeaderPanelComponent = () => {
 const JoinToSessionComponent = () => {
     const {
         setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName,
-        setScreenAction
+        setScreenAction, isJoinClicked, setIsJoinClicked
     } = useContext(SessionContext);
+    
+    const [ joinDisabled, setJoinDisabled ] = useState(true);
     
     const onSubmitJoinToSession = e => {
         e.preventDefault();
+        if (isJoinClicked) return;
+        setIsJoinClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
@@ -179,14 +227,20 @@ const JoinToSessionComponent = () => {
                     setScreenAction(r.screenType);
                     setIsConnect(true);
                 } else {
+                    setIsJoinClicked(false);
                     setAlert(alertDanger(r.message));
                 }
             })
-            .then(e => {
+            .catch(e => {
+                setIsJoinClicked(false);
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
             });
     };
+    
+    useEffect(() => {
+        setJoinDisabled(token.length !== 5);
+    }, [ token ]);
     
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
@@ -212,8 +266,9 @@ const JoinToSessionComponent = () => {
                             <div className="forms-inputs mb-4">
                                 <label id="username">Token</label>
                                 <input type="text" className="form-control" value={token} onChange={e => setToken(e.target.value)}
-                                       pattern="[a-zA-Z]{5}" placeholder="np. RGKQE"/>
-                                <button type="submit" className="btn btn-color-one mt-4 text-white w-100">Dołącz</button>
+                                       pattern="[a-zA-Z]{5}" maxLength="5" placeholder="np. RGKQE"/>
+                                <button className={`btn btn-color-one mt-4 text-white w-100 ${joinDisabled && 'disabled'}`}
+                                        type="submit">Dołącz</button>
                             </div>
                         </form>
                     </div>
@@ -231,6 +286,15 @@ const QuizSessionRootComponent = () => {
     const [ alert, setAlert ] = useState({ active: false, style: 'alert-success', message: '' });
     const [ screenAction, setScreenAction ] = useState(WAITING_SCREEN);
     const [ quizName, setQuizName ] = useState('');
+    const [ isJoinClicked, setIsJoinClicked ] = useState(false);
+    const [ isLeaveClicked, setIsLeaveClicked ] = useState(false);
+    const [ quizStarted, setQuizStarted ] = useState(false);
+    const [ answers, setAnswers ] = useState([]);
+    const [ answerLetter, setAnswerLetter ] = useState(["A", "B", "C", "D"]);
+    const [ answerSVG, setAnswerSVG ] 
+        = useState(["/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg", "/gfx/tealCard.svg"]);
+    const [ question, setQuestion ] = useState();
+    const [ questionTimer, setQuestionTimer ] = useState();
 
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -238,7 +302,9 @@ const QuizSessionRootComponent = () => {
     return (
         <SessionContext.Provider value={{
             connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
-            screenAction, setScreenAction, quizName, setQuizName, 
+            screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
+            setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
+            setQuestion, questionTimer, setQuestionTimer
         }}>
             {isActive && <>
                 {isConnect ? <>

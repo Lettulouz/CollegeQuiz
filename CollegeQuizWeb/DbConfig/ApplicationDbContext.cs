@@ -28,6 +28,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<SubscriptionTypesEntity> SubsciptionTypes { get; set; }
     public DbSet<ClientAddressEntity> ClientsAddresses { get; set; }
     public DbSet<SubscriptionPaymentHistoryEntity> SubscriptionsPaymentsHistory { get; set; }
+    
+    public DbSet<QuizEntity> QuizEntities { get; set; }
+    
+    public DbSet<UserEntity> UserEntities { get; set; }
+    
+    public DbSet<SharedQuizes> SharedQuizesEnumerable { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -50,6 +56,18 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // before model creating, ex. relational mapping
+
+        modelBuilder.Entity<SharedQuizes>().HasKey(sq => new { sq.QuizId, sq.UserId });
+
+        modelBuilder.Entity<SharedQuizes>()
+            .HasOne<QuizEntity>(sq => sq.QuizEntity)
+            .WithMany(s => s.SharedQuizesEnumerable)
+            .HasForeignKey(sq => sq.QuizId);
+
+        modelBuilder.Entity<SharedQuizes>()
+            .HasOne<UserEntity>(sq => sq.UserEntity)
+            .WithMany(s => s.SharedQuizesEnumerable)
+            .HasForeignKey(sq => sq.UserId);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

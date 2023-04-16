@@ -10,7 +10,7 @@
 {
     <div class="d-flex">
     <h1 class="text-muted px-2">Profil użytkownika @ViewBag.UserInfo.Username</h1> 
-    <div class="ms-auto btn-group text-right">
+    <div class="ms-auto btn-group text-right pe-1">
 
         <a class="btn btn-dark button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
            data-bs-title="Edycja użytkownika"  asp-action="EditUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id"><i class="bi bi-pencil-square"></i></a>
@@ -69,13 +69,23 @@
                         <p>Data dołączenia: @ViewBag.UserInfo.CreatedAt</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-3">
                     <h3>Quizy użytkownika</h3>
                     @if (@ViewBag.UserQuizes != null)
                     {
                         @foreach (var quiz in ViewBag.UserQuizes)
                         {
-                            <a>@quiz.Name</a>
+                            <a asp-action="QuizView" asp-controller="Admin" asp-route-id="@quiz.Id">@quiz.Name</a>
+                        }
+                    }
+                </div>
+                <div class="row">
+                    <h3>Płatności użytkownika</h3>
+                    @if (@ViewBag.payments != null)
+                    {
+                        @foreach (var payment in ViewBag.payments)
+                        {
+                            <p class="mb-1">@payment.Subscription @payment.CreatedAt</p>
                         }
                     }
                 </div>

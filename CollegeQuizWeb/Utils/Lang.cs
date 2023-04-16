@@ -105,6 +105,7 @@ public static class Lang
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
 
     public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
+    public const string QUIZ_NOT_EXIST = "Quiz nie istnieje";
     // subscription payment
 
     public const string INVALID_PHONE_NUMBER = "*Podano nieprawidłowy numer telefonu.";

@@ -90,6 +90,16 @@
     background: linear-gradient(180deg, rgba(52,191,52,1) 0%, rgba(0,207,0,1) 85%) !important;
 }
 
+.custom-card-3{
+    background: rgb(242,165,0) !important;
+    background: linear-gradient(180deg, rgba(242,165,0,1) 0%, rgba(255,174,0,1) 85%) !important;
+}
+
+.custom-card-4{
+    background: rgb(226,0,0) !important;
+    background: linear-gradient(180deg, rgba(226,0,0,1) 0%, rgba(255,0,0,1) 85%) !important;
+}
+
 .user-card{
     border-radius: 7px;
     border-width: 1px;

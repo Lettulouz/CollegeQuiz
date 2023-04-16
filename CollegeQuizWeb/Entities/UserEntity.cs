@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -47,4 +48,6 @@ public class UserEntity : AbstractAuditableEntity
     [DefaultValue(0)]
     [Column("is_account_activated")]
     public bool IsAccountActivated { get; set; }
+    
+    public IList<SharedQuizes> SharedQuizesEnumerable { get; set; }
 }
