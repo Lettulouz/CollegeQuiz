@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230414224002_AddedSubscriptionTypesInPaymentHistoryTableMigration")]
-    partial class AddedSubscriptionTypesInPaymentHistoryTableMigration
+    [Migration("20230417141326_ShareTokens")]
+    partial class ShareTokens
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -293,13 +293,14 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("host_conn_id");
 
+                    b.Property<string>("InGameScreen")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("in_game_screen");
+
                     b.Property<bool>("IsEstabilished")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_estabilished");
-
-                    b.Property<bool>("IsExpired")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_expired");
 
                     b.Property<long>("QuizId")
                         .HasColumnType("bigint")
@@ -338,6 +339,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
+                    b.Property<int>("CurrentStreak")
+                        .HasColumnType("int")
+                        .HasColumnName("current_streak");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
@@ -350,6 +355,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("quiz_lobby_id");
 
+                    b.Property<long>("Score")
+                        .HasColumnType("bigint")
+                        .HasColumnName("score");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
@@ -361,6 +370,23 @@ namespace CollegeQuizWeb.Migrations
                     b.HasIndex("QuizLobbyId");
 
                     b.ToTable("quiz_session_participants");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.SharedQuizesEntity", b =>
+                {
+                    b.Property<long>("QuizId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("QuizId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("shared_quizes");
                 });
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.SubscriptionPaymentHistoryEntity", b =>
@@ -473,6 +499,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_account_activated");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_admin");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -503,6 +533,40 @@ namespace CollegeQuizWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.UsersQuestionsAnswersEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Answer")
+                        .HasColumnType("int")
+                        .HasColumnName("answer");
+
+                    b.Property<long>("ConnectionId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_of_connections");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Question")
+                        .HasColumnType("int")
+                        .HasColumnName("question");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConnectionId");
+
+                    b.ToTable("users_questions_answers");
                 });
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.AnswerEntity", b =>
@@ -598,6 +662,25 @@ namespace CollegeQuizWeb.Migrations
                     b.Navigation("UserEntity");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.SharedQuizesEntity", b =>
+                {
+                    b.HasOne("CollegeQuizWeb.Entities.QuizEntity", "QuizEntity")
+                        .WithMany("SharedQuizesEntities")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
+                        .WithMany("SharedQuizesEntities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuizEntity");
+
+                    b.Navigation("UserEntity");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.SubscriptionPaymentHistoryEntity", b =>
                 {
                     b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
@@ -607,6 +690,27 @@ namespace CollegeQuizWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("UserEntity");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.UsersQuestionsAnswersEntity", b =>
+                {
+                    b.HasOne("CollegeQuizWeb.Entities.QuizSessionParticEntity", "QuizSessionParticEntity")
+                        .WithMany()
+                        .HasForeignKey("ConnectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuizSessionParticEntity");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.QuizEntity", b =>
+                {
+                    b.Navigation("SharedQuizesEntities");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
+                {
+                    b.Navigation("SharedQuizesEntities");
                 });
 #pragma warning restore 612, 618
         }

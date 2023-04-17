@@ -30,7 +30,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<SubscriptionPaymentHistoryEntity> SubscriptionsPaymentsHistory { get; set; }
     public DbSet<SharedQuizesEntity> SharedQuizes { get; set; }
     public DbSet<UsersQuestionsAnswersEntity> UsersQuestionsAnswers { get; set; }
-    
+    public DbSet<ShareTokensEntity> ShareTokensEntities { get; set; }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}

@@ -6,44 +6,44 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CollegeQuizWeb.Migrations
 {
-    public partial class AddedUsersQuestionAnswersTableMigration : Migration
+    public partial class ShareTokensUpdate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "users_questions_answers",
+                name: "quiz_tokens",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    id_of_connections = table.Column<long>(type: "bigint", nullable: false),
-                    question = table.Column<int>(type: "int", nullable: false),
-                    answer = table.Column<int>(type: "int", nullable: false),
+                    token = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    quiz_id = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users_questions_answers", x => x.id);
+                    table.PrimaryKey("PK_quiz_tokens", x => x.id);
                     table.ForeignKey(
-                        name: "FK_users_questions_answers_quiz_session_participants_id_of_conn~",
-                        column: x => x.id_of_connections,
-                        principalTable: "quiz_session_participants",
+                        name: "FK_quiz_tokens_quizes_quiz_id",
+                        column: x => x.quiz_id,
+                        principalTable: "quizes",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_users_questions_answers_id_of_connections",
-                table: "users_questions_answers",
-                column: "id_of_connections");
+                name: "IX_quiz_tokens_quiz_id",
+                table: "quiz_tokens",
+                column: "quiz_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "users_questions_answers");
+                name: "quiz_tokens");
         }
     }
 }
