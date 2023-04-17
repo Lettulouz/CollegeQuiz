@@ -1,0 +1,147 @@
+@using CollegeQuizWeb.Entities
+@using CollegeQuizWeb.Utils
+@using Microsoft.AspNetCore.Http
+@model dynamic
+
+@{
+    Layout= "_AdminLayout";
+    ViewData["Title"] = "Lista Administratorów";
+}
+<h1 class="text-muted px-2">Lista Administratorów</h1> 
+<hr class="divider mt-0">
+
+<div class="container-fluid">
+@if (ViewBag.users != null)
+{
+    @if (ViewBag.userRemoved!=null)
+    {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            @ViewBag.userRemoved
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (ViewBag.userSuspended!=null)
+    {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            @ViewBag.userSuspended
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (ViewBag.mailError!=null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.mailError
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" id="searchBox" placeholder="Wyszukaj administratora">
+            <button type="button" class="btn bg-transparent clrBtn" style="margin-left: -40px; z-index: 100;">
+                <i class="bi bi-x"></i>
+            </button>
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+        </div>
+    </div>
+    @foreach (var user in ViewBag.users)
+    {
+
+        <div class='row user-row px-2 py-0'>
+            <div class="user-card col-12 col-lg-5 my-2">
+                <div class="row">
+                    <div class='col-auto text-center '><i class='bi bi-person' style='font-size:50px;'></i>
+                    </div>
+                    <div class='col-9 ps-2  ps-xl-2'>
+                        <div class="row">
+                            <div class='col-auto user-car-header'>
+                                @user.Username
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class='col-lg-9 col-xl-7 '>
+                                <p class="mb-1">@user.FirstName @user.LastName</p>
+                                <p class="mb-1">Email: @user.Email</p>
+                                <p>Status: @user.AccountStatus</p>
+                            </div>
+                            <div class='col-lg-3 p-1 me-2 text-right'>
+                                <div class="btn-group btn-group-sm text-right">
+                                    <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                       data-bs-title="Szczegóły użytkownika" asp-action="UserProfile" asp-controller="Admin" asp-route-id="@user.Id">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    
+                                    <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                                       data-bs-title="Edycja użytkownika"  asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-pencil-square"></i></a>
+                                     @if (@Context.Session.GetString(SessionKey.IS_USER_LOGGED)!=@user.Username)
+                                     {
+                                         @if (@user.AccountStatus == -1)
+                                         {
+                                             @using (Html.BeginForm("UnbanUser", "Admin", new { id = @user.Id }, FormMethod.Post))
+                                             {
+                                                 <button type="submit" class="btn btn-sm btn-dark mid-button" data-bs-toggle="tooltip"
+                                                         data-bs-placement="top" data-bs-title="Odblokuj użytkownika"><i class="bi bi-unlock"></i></button>
+                                             }
+
+                                         }
+                                         else
+                                         {
+                                             <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                data-bs-title="Zawieś użytkownika" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-person-fill-lock"></i></a>
+                                         }
+                                         @using (Html.BeginForm("DelUser", "Admin", new { id = @user.Id }, FormMethod.Post))
+                                         {
+                                             <button type="submit" class="btn btn-sm btn-danger right-button" data-bs-toggle="tooltip"
+                                                     data-bs-placement="top" data-bs-title="Usuń użytkownika"><i class="bi bi-trash"></i></button>
+                                         }
+                                     }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <h2>Brak użytkowników</h2>
+}
+</div>
+
+
+
+
+<script>
+    document.getElementById('users_collapse').classList.add('show');
+    document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+    document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
+    document.getElementById('ad_list').setAttribute( 'style', 'color:white !important' );
+
+
+    
+
+    
+        $(document).ready(function(){
+      $("#searchBox").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $(".user-card").filter(function() {
+          $(this).toggle($(this).parent().text().toLowerCase().indexOf(value) > -1)
+
+
+        });
+      });
+    });
+    
+    $('.clrBtn').click(function(){
+            $('#searchBox').val('');
+            $(".user-card").filter(function() {
+          $(this).toggle($(this).parent().text().toLowerCase().indexOf('') > -1)
+
+        });
+        })
+</script>

@@ -25,6 +25,9 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         string? userNotExist = HttpContext.Session.GetString(SessionKey.USER_NOT_EXIST);
         HttpContext.Session.Remove(SessionKey.USER_NOT_EXIST);
         ViewBag.userNotExist = userNotExist!;
@@ -37,6 +40,9 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> UsersList()
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         string? userRemoved = HttpContext.Session.GetString(SessionKey.USER_REMOVED);
         HttpContext.Session.Remove(SessionKey.USER_REMOVED);
         ViewBag.userRemoved = userRemoved!;
@@ -52,10 +58,34 @@ public class AdminController : Controller
         ViewBag.users = await _adminService.GetUsers();
         return View();
     }
+    
+    public async Task<IActionResult> AdminList()
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        string? userRemoved = HttpContext.Session.GetString(SessionKey.USER_REMOVED);
+        HttpContext.Session.Remove(SessionKey.USER_REMOVED);
+        ViewBag.userRemoved = userRemoved!;
+
+        string? userSuspended = HttpContext.Session.GetString(SessionKey.USER_SUSPENDED);
+        HttpContext.Session.Remove(SessionKey.USER_SUSPENDED);
+        ViewBag.userSuspended = userSuspended!;
+        
+        string? mailError = HttpContext.Session.GetString(SessionKey.ADMIN_ERROR);
+        HttpContext.Session.Remove(SessionKey.ADMIN_ERROR);
+        ViewBag.mailError = mailError!;
+        
+        ViewBag.users = await _adminService.GetAdmins();
+        return View();
+    }
 
     [HttpGet]
     public async Task<IActionResult> EditUser([FromRoute(Name = "id")] long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         var user = await _adminService.GetUserData(id, this);
 
         return View(user);
@@ -65,6 +95,9 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditUser(AddUserDto obj)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         var payloadDto = new AddUserDtoPayload(this) { Dto = obj };
 
         if (ModelState.IsValid)
@@ -79,24 +112,68 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddUser(AddUserDto obj)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         var payloadDto = new AddUserDtoPayload(this) { Dto = obj };
 
         if (ModelState.IsValid)
         {
-            await _adminService.AddUser(payloadDto);
+            await _adminService.AddUser(payloadDto,false);
+        }
+        
+        return View(obj);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAdmin(AddUserDto obj)
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        var payloadDto = new AddUserDtoPayload(this) { Dto = obj };
+
+        if (ModelState.IsValid)
+        {
+            await _adminService.AddUser(payloadDto,true);
         }
         
         return View(obj);
     }
 
-    [HttpGet] public IActionResult AddUser() => View();
-    [HttpGet] public IActionResult AddCoupon() => View();
-    [HttpGet] public IActionResult SuspendUser([FromRoute(Name = "id")] long id) => View();
+    [HttpGet] public IActionResult AddUser()
+    { 
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        return View();
+    } 
+    
+    [HttpGet] public IActionResult AddAdmin(){ 
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        return View();
+    } 
+    [HttpGet] public IActionResult AddCoupon(){ 
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        return View();
+    } 
+    [HttpGet] public IActionResult SuspendUser([FromRoute(Name = "id")] long id){ 
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        return View();
+    } 
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task CouponList([Bind(Prefix = "Item1")] CouponListDto couponListDto)
     {
+        
         if (!couponListDto.OneElement.IsNullOrEmpty() && couponListDto.ManyElements.IsNullOrEmpty())
         {
            await _adminService.DeleteCoupon(couponListDto.OneElement, this);
@@ -110,6 +187,9 @@ public class AdminController : Controller
     
     public async Task<IActionResult> CouponList()
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         var test = await _adminService.GetCoupons();
         var tuple= new Tuple<CouponListDto, IEnumerable<CouponDto>>(new CouponListDto(), test);
         return View(tuple);
@@ -119,8 +199,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SuspendUser(SuspendUserDto suspendUserDto)
     {
+
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         var payloadDto = new SuspendUserDtoPayload(this) { Dto = suspendUserDto };
-        await _adminService.SuspendUser(payloadDto);
+        await _adminService.SuspendUser(payloadDto, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
 
         return View();
     }
@@ -137,12 +221,15 @@ public class AdminController : Controller
     public async Task DelUser(long id)
     {
 
-        await _adminService.DelUser(id, this);
+        await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
     }
     
     [HttpGet]
     public async Task<IActionResult> UserProfile([FromRoute(Name = "id")] long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         await _adminService.UserInfo(id, this);
         return View();
     }
@@ -150,6 +237,9 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizView([FromRoute(Name = "id")] long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         await _adminService.QuizInfo(id, this);
         return View();
     }
@@ -157,6 +247,9 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizList()
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
         string? quizRemoved = HttpContext.Session.GetString(SessionKey.QUIZ_REMOVED);
         HttpContext.Session.Remove(SessionKey.QUIZ_REMOVED);
         ViewBag.quizRemoved = quizRemoved!;

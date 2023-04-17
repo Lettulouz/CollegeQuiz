@@ -49,6 +49,12 @@
             <ul class="dropdown-menu dropdown-menu-end rouded-options">
 
                 <li list-border>
+                    @if (Context.Session.GetString(SessionKey.IS_USER_ADMIN) == "True")
+                    {
+                        <a class="dropdown-item mt-1 top-context-item" asp-area="" asp-controller="Admin" asp-action="Index">
+                            Panel administratora
+                        </a>
+                    }
                     <a class="dropdown-item mt-1 top-context-item" asp-area="" asp-controller="Quiz" asp-action="MyQuizes">
                         Moje quizy
                     </a>
