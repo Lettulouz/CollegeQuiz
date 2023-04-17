@@ -28,13 +28,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<SubscriptionTypesEntity> SubsciptionTypes { get; set; }
     public DbSet<ClientAddressEntity> ClientsAddresses { get; set; }
     public DbSet<SubscriptionPaymentHistoryEntity> SubscriptionsPaymentsHistory { get; set; }
+    public DbSet<SharedQuizesEntity> SharedQuizes { get; set; }
     
-    public DbSet<QuizEntity> QuizEntities { get; set; }
-    
-    public DbSet<UserEntity> UserEntities { get; set; }
-    
-    public DbSet<SharedQuizes> SharedQuizesEnumerable { get; set; }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
@@ -56,18 +51,15 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // before model creating, ex. relational mapping
-
-        modelBuilder.Entity<SharedQuizes>().HasKey(sq => new { sq.QuizId, sq.UserId });
-
-        modelBuilder.Entity<SharedQuizes>()
-            .HasOne<QuizEntity>(sq => sq.QuizEntity)
-            .WithMany(s => s.SharedQuizesEnumerable)
-            .HasForeignKey(sq => sq.QuizId);
-
-        modelBuilder.Entity<SharedQuizes>()
-            .HasOne<UserEntity>(sq => sq.UserEntity)
-            .WithMany(s => s.SharedQuizesEnumerable)
-            .HasForeignKey(sq => sq.UserId);
+        modelBuilder.Entity<SharedQuizesEntity>().HasKey(e => new { e.QuizId, e.UserId });
+        modelBuilder.Entity<SharedQuizesEntity>()
+            .HasOne(e => e.QuizEntity)
+            .WithMany(e => e.SharedQuizesEntities)
+            .HasForeignKey(e => e.QuizId);
+        modelBuilder.Entity<SharedQuizesEntity>()
+            .HasOne(e => e.UserEntity)
+            .WithMany(e => e.SharedQuizesEntities)
+            .HasForeignKey(e => e.UserId);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

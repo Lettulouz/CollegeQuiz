@@ -54,7 +54,7 @@ public class QuizManagerSessionHub : Hub
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
             .Select(q => new
             {
-                questionId = q.QuestionEntity.Id,
+                questionId = q.QuestionEntity.Index,
                 question = q.QuestionEntity.Name,
                 answers = q.Name,
                 time_min = q.QuestionEntity.TimeMin,
@@ -63,7 +63,8 @@ public class QuizManagerSessionHub : Hub
             .GroupBy(q=>q.questionId)
             .Select(q=>new
             {
-                question = q.Select(a => a.question).Distinct(),
+                questionId = q.Select(a => a.questionId).Distinct().FirstOrDefault(),
+                question = q.Select(a => a.question).Distinct().FirstOrDefault(),
                 answers = q.Select(a => a.answers).ToList(),
                 time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum()
             }).ToListAsync();
