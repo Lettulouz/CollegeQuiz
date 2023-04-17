@@ -49,6 +49,15 @@ public class QuizService : IQuizService
             controller.ViewBag.Alert = alertDto;
             return;
         }
+        
+        string generatedToken;
+        bool isExactTheSame;
+        do
+        {
+            generatedToken = Utilities.GenerateOtaToken(12, 1);
+            var token = await _context.ShareTokensEntities.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
+            isExactTheSame = (token != null);
+        } while (isExactTheSame);
 
         UserEntity? userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUsername));
         QuizEntity quizEntity = new QuizEntity()
@@ -57,7 +66,14 @@ public class QuizService : IQuizService
             IsPublic = !dtoPayloader.Dto.IsPrivate,
             UserEntity = userEntity!
         };
-
+        
+        ShareTokensEntity shareTokensEntity = new ShareTokensEntity()
+        {
+            Token = generatedToken,
+            QuizEntity = quizEntity
+        };
+        
+        await _context.ShareTokensEntities.AddAsync(shareTokensEntity);
         await _context.Quizes.AddAsync(quizEntity);
         await _context.SaveChangesAsync();
 
