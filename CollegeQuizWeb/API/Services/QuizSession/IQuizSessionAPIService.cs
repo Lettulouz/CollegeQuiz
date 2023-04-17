@@ -9,4 +9,5 @@ public interface IQuizSessionAPIService
     Task<SimpleResponseDto> LeaveRoom(string loggedUsername, string connectionId, string token);
     Task<JoinToSessionDto> EstabilishedHostRoom(string loggedUsername, string connectionId, string token);
     Task<QuizLobbyInfoDto> GetLobbyData(string loggedUsername, string token);
+    Task SendAnswer(string connectionId, string token, string questionId, string answerId);
 }

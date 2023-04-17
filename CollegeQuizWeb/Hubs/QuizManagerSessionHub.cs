@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Collections.Generic;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Sprache;
 
 namespace CollegeQuizWeb.Hubs;
 
@@ -87,6 +90,14 @@ public class QuizManagerSessionHub : Hub
                 await periodicTimer.WaitForNextTickAsync(token2);
                 await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", --timer);
             }
+
+            var getAllAnswers =
+                _context.UsersQuestionsAnswers
+                    .Where(obj => obj.Question.Equals(question.questionId))
+                    .OrderBy(obj=>obj.CreatedAt).ToList();
+
+            var test = getAllAnswers[0].CreatedAt.TimeOfDay;
+
         }
         
         
@@ -112,6 +123,6 @@ public class QuizManagerSessionHub : Hub
         
         if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
         await _context.SaveChangesAsync();
-
+        
     }
 }

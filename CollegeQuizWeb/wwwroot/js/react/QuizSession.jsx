@@ -179,12 +179,18 @@ const QuestionType1Component = () => {
 
 const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber
+        answers, answerLetter, answerSVG, connectionId, questionNumber, token
     } = useContext(SessionContext);
-
-    const handleClick = siema => {
-        
-        console.log(siema, questionNumber, connectionId);
+    
+    const handleClick = answer => {
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${token}/${questionNumber}/${answer}`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(r => r)
     }
     
     return (

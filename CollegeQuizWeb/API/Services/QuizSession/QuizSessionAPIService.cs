@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -16,10 +17,11 @@ public class QuizSessionAPIService : IQuizSessionAPIService
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<QuizUserSessionHub> _hubUserContext;
     private readonly IHubContext<QuizManagerSessionHub> _hubManagerContext;
-    
+
     public QuizSessionAPIService(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubUserContext,
         IHubContext<QuizManagerSessionHub> hubManagerContext)
     {
+        
         _context = context;
         _hubUserContext = hubUserContext;
         _hubManagerContext = hubManagerContext;
@@ -166,5 +168,36 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             Name = lobbyData.QuizEntity.Name,
             Host = lobbyData.UserEntity.Username
         };
+    }
+
+    public async Task SendAnswer(string connectionId, string token, string questionId, string answerId)
+    {
+        int questionNum, answerNum;
+        if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
+            return;
+
+        var connetionIdInDb = _context.QuizSessionPartics
+            .FirstOrDefault(obj => obj.ConnectionId.Equals(connectionId));
+
+        if (connetionIdInDb == null)
+            return;
+
+        var answerInDb =
+            _context.UsersQuestionsAnswers
+                .Include(p => p.QuizSessionParticEntity)
+                .Where(p =>
+                    p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                .ToList();
+
+        if (!answerInDb.Count.Equals(0))
+            return;
+        
+        UsersQuestionsAnswersEntity usersAnswersEntity = new();
+        usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
+        usersAnswersEntity.Question = questionNum;
+        usersAnswersEntity.Answer = answerNum;
+
+        _context.Add(usersAnswersEntity);
+        await _context.SaveChangesAsync();
     }
 }
