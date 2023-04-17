@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230417014839_AddedUsersQuestionAnswersTableMigration")]
+    partial class AddedUsersQuestionAnswersTableMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,10 +339,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
-                    b.Property<int>("CurrentStreak")
-                        .HasColumnType("int")
-                        .HasColumnName("current_streak");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_active");
@@ -352,10 +350,6 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<long>("QuizLobbyId")
                         .HasColumnType("bigint")
                         .HasColumnName("quiz_lobby_id");
-
-                    b.Property<long>("Score")
-                        .HasColumnType("bigint")
-                        .HasColumnName("score");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")

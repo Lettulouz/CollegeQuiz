@@ -12,6 +12,14 @@ public class QuizSessionParticEntity : AbstractAuditableEntity
     public string ConnectionId { get; set; }
     
     [Required]
+    [Column("score")]
+    public long Score { get; set; }
+    
+    [Required]
+    [Column("current_streak")]
+    public int CurrentStreak { get; set; }
+    
+    [Required]
     [Column("is_active")]
     public bool IsActive { get; set; }
     

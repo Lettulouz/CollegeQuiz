@@ -29,6 +29,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<ClientAddressEntity> ClientsAddresses { get; set; }
     public DbSet<SubscriptionPaymentHistoryEntity> SubscriptionsPaymentsHistory { get; set; }
     public DbSet<SharedQuizesEntity> SharedQuizes { get; set; }
+    public DbSet<UsersQuestionsAnswersEntity> UsersQuestionsAnswers { get; set; }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -71,7 +72,7 @@ public class ApplicationDbContext : DbContext
                         && (x.State == EntityState.Added || x.State == EntityState.Modified));
         
         foreach (var entityEntry in entitiesWithPrimaryKey) {
-            DateTime formatedDateTime = new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second);
+            DateTime formatedDateTime = new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond);
             if (entityEntry.State == EntityState.Added) {
                 ((AbstractAuditableEntity)entityEntry.Entity).CreatedAt = formatedDateTime;
             }
