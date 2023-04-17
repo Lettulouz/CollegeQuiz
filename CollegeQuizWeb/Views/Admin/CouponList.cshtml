@@ -46,6 +46,14 @@
         </div>
         <hr class="dropdown-divider m-0"></hr>
         <div class="row mt-3">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchBox" onkeyup="searchList()" placeholder="Wyszukaj odbiorcę">
+                        <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
             <div class="col">
                 <nav aria-label="Site Pagination">
                     <ul class="pagination justify-content-end">
@@ -105,9 +113,11 @@
     @{
         var couponList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Item2));
     }
+    
     $(document).ready(function (){
+
         allList();
-        });
+    });
     
     $('#pagination123').keypress(function(e) {
         let a = [];
@@ -163,6 +173,21 @@
         redirectToProperList();
     }
     
+    function searchList(){
+        var value = $(this).val().toLowerCase();
+        
+        $("#hidInfo").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+        
+        
+    }
+    
+    function delSearch(){
+        $('#searchBox').val('');
+        searchList();
+    }
+        
     function filterButtonClick(option){
         page = 1;
         document.getElementById('pagination123').value = 1;    
@@ -273,7 +298,7 @@
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
                 html+= `<td class="fit">
-                            <a class="btn btn-sm btn-dark" type="button" data-bs-toggle='collapse' data-bs-target='#a${obj.Coupon}' aria-expanded='false' data-bs-placement="left" 
+                            <a class="btn btn-sm btn-dark" type="button" data-bs-toggle='collapse' data-bs-target='#c${obj.Coupon}' aria-expanded='false' data-bs-placement="left" 
                              data-bs-title="Pokaż więcej" onclick="showMore(this)"><i class="bi bi-three-dots"></i></a>
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="left" 
                              data-bs-title="Kopiuj do schowka" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
@@ -286,16 +311,16 @@
             html+=`</tr>
                 <tr>
                     <td colspan='12' class='p-0 border-0'>
-                        <div class='hidTab collapse' id='a${obj.Coupon}' >
-                            <table class='table table-active coltab m-0'>
+                        <div class='hidTab collapse' id='c${obj.Coupon}' >
+                            <table class='table table-active coltab m-0' >
                                 <thead>
                                     <tr>
                                     <th>Odbiorca</th>
                                     </tr>
                                     </thead>	
-                                    <tbody>
+                                    <tbody id='hidInfo'>
                                         <tr>
-                                            <td class='customerName'>${obj.CustomerName}</td>
+                                            <td>${obj.CustomerName}</td>
                                         </tr>
                                     </tbody>
                             </table>

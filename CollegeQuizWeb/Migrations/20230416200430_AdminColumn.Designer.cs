@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230416200430_AdminColumn")]
+    partial class AdminColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -362,7 +364,7 @@ namespace CollegeQuizWeb.Migrations
                     b.ToTable("quiz_session_participants");
                 });
 
-            modelBuilder.Entity("CollegeQuizWeb.Entities.SharedQuizesEntity", b =>
+            modelBuilder.Entity("CollegeQuizWeb.Entities.SharedQuizes", b =>
                 {
                     b.Property<long>("QuizId")
                         .HasColumnType("bigint")
@@ -618,16 +620,16 @@ namespace CollegeQuizWeb.Migrations
                     b.Navigation("UserEntity");
                 });
 
-            modelBuilder.Entity("CollegeQuizWeb.Entities.SharedQuizesEntity", b =>
+            modelBuilder.Entity("CollegeQuizWeb.Entities.SharedQuizes", b =>
                 {
                     b.HasOne("CollegeQuizWeb.Entities.QuizEntity", "QuizEntity")
-                        .WithMany("SharedQuizesEntities")
+                        .WithMany("SharedQuizesEnumerable")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
-                        .WithMany("SharedQuizesEntities")
+                        .WithMany("SharedQuizesEnumerable")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -650,12 +652,12 @@ namespace CollegeQuizWeb.Migrations
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.QuizEntity", b =>
                 {
-                    b.Navigation("SharedQuizesEntities");
+                    b.Navigation("SharedQuizesEnumerable");
                 });
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
                 {
-                    b.Navigation("SharedQuizesEntities");
+                    b.Navigation("SharedQuizesEnumerable");
                 });
 #pragma warning restore 612, 618
         }

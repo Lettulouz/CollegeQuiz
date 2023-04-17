@@ -1,8 +1,48 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CollegeQuizWeb.Dto.LoginDto
 @{
-    ViewData["Title"] = ViewBag.Username;
+    ViewData["Title"] = "Profil użytkownika";
 }
 
-
-<h2>title</h2>
+<div class="container mt-5 mb-1">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="col-12 col-md-6 mb-5">
+            <div class="card px-5 py-5 h-100" id="form1">
+                
+                <label id="mainName">Profil użytkownika </label>
+                <div class="container-fluid bg-profile">
+                    <div class="row ">
+                        <div class="col-auto py-0 my-0">
+                            <i class="bi bi-file-person p-0" style=" font-size: 200px;"></i>
+                        </div>
+                       
+                    </div>
+                    <div class="row ">
+                        <div class="col-auto ">
+                            <h4 >Dane użytkownika</h4>
+                        </div> 
+                        <div class="col-auto py-0 my-0">
+                            <a class="btn button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edycja użytkownika" asp-action="EditUser" asp-controller="" asp-route-id="">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </div>                        
+                    </div>
+                    <div class="row ">
+                        <div class="col-auto">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <p>Nazwa: </p>
+                                    <p>Imię: </p>
+                                    <p>Email: </p>
+                                    <p>Status: </p>
+                                    <p>Konto aktywowane: </p>
+                                    <p>Data dołączenia: </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

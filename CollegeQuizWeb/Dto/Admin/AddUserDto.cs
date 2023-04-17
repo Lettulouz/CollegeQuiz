@@ -34,6 +34,8 @@ public class AddUserDto
     
     public bool IsAccountActivated { get; set; }
     
+    public bool IsAdmin { get; set; }
+    
     public long? Id { get; set; }
 
 }

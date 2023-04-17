@@ -1,16 +1,16 @@
 @model CollegeQuizWeb.Dto.Admin.AddUserDto
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewBag.Title = "Dodaj użytkownika";
+    ViewBag.Title = "Dodaj Administratora";
     Layout = "_AdminLayout";
 }
-<h1 class="text-muted px-2">Dodaj użytkownika</h1> 
+<h1 class="text-muted px-2">Dodaj administratora</h1> 
 <hr class="divider mt-0">
 
 <div class="container" style="max-width:960px;">
     
-    <form method="post" autocomplete="off" asp-controller="Admin" asp-action="AddUser">
-      <partial name="_AddUserPartial"/>
+    <form method="post" autocomplete="off" asp-controller="Admin" asp-action="AddAdmin">
+        <partial name="_AddUserPartial"/>
     </form>
 </div>
 
@@ -18,5 +18,5 @@
     document.getElementById('users_collapse').classList.add('show');
     document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
     document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
-    document.getElementById('addus').setAttribute( 'style', 'color:white !important' );
+    document.getElementById('addad').setAttribute( 'style', 'color:white !important' );
     </script>

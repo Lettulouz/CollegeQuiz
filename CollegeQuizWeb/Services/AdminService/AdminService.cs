@@ -37,20 +37,34 @@ public class AdminService : IAdminService
 
     public async Task<List<UserEntity>> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users.Where(u=>u.IsAdmin==false).ToListAsync();
+    }
+    
+    public async Task<List<UserEntity>> GetAdmins()
+    {
+        return await _context.Users.Where(u=>u.IsAdmin==true).ToListAsync();
     }
 
     public async Task GetStats(AdminController controller)
     {
+        
+        controller.ViewBag.adminStats = await (from u in _context.Users
+            group u by 1
+            into g
+            select new
+            {
+                Total = _context.Users.Count(s => s.IsAdmin==true),
+            }).FirstOrDefaultAsync();
+        
         controller.ViewBag.userStats = await (from u in _context.Users
             group u by 1
             into g
             select new
             {
-                Total = _context.Users.Count(),
-                Gold = _context.Users.Count(s => s.AccountStatus == 1),
-                Platinum = _context.Users.Count(s => s.AccountStatus == 2),
-                Suspended = _context.Users.Count(s => s.AccountStatus == -1)
+                Total = _context.Users.Count(s => s.IsAdmin==false),
+                Gold = _context.Users.Count(s => s.AccountStatus == 1 && s.IsAdmin==false),
+                Platinum = _context.Users.Count(s => s.AccountStatus == 2 && s.IsAdmin==false),
+                Suspended = _context.Users.Count(s => s.AccountStatus == -1 && s.IsAdmin==false)
             }).FirstOrDefaultAsync();
         
         controller.ViewBag.quizStats = await (from q in _context.Quizes
@@ -115,7 +129,7 @@ public class AdminService : IAdminService
         {
             Id = userInfo.Id, FirstName =  userInfo.FirstName,
             LastName = userInfo.LastName, Username = userInfo.Username,
-            Email = userInfo.Email 
+            Email = userInfo.Email, IsAdmin = userInfo.IsAdmin
         };
         
         return userEdit;
@@ -134,6 +148,7 @@ public class AdminService : IAdminService
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
         userEntity.Email = obj.Dto.Email;
+        userEntity.IsAdmin = obj.Dto.IsAdmin;
         
         if (!UsernameBelongsToUser(id,obj.Dto.Username))
         {
@@ -201,21 +216,49 @@ public class AdminService : IAdminService
         
         String message = string.Format(Lang.USER_UPDATED, userEntity.Username);
         controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
-        controller.Response.Redirect("/Admin/UsersList");
+        if (userEntity.IsAdmin)
+        {
+            controller.Response.Redirect("/Admin/AdminList");
+        }
+        else
+        {
+            controller.Response.Redirect("/Admin/UsersList");
+        }
+        
         
     }
     
-    public async Task DelUser(long id, AdminController controller)
+    public async Task DelUser(long id, AdminController controller, string loggedUser)
     {
         var user = _context.Users.Find(id);
+        bool isAdmin = false;
         if (user != null)
         {
+            if (loggedUser == user.Username)
+            {
+                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_YOURSELF);
+                controller.Response.Redirect("/Admin/AdminList");
+                return;
+            }
+
+            
+            if (user.IsAdmin)
+            {
+                isAdmin = true;
+            }
             String message = string.Format(Lang.USER_DELETED, user.Username);
             _context.Remove(user);
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
         }
-        controller.Response.Redirect("/Admin/UsersList");
+        if (isAdmin)
+        {
+            controller.Response.Redirect("/Admin/AdminList");
+        }
+        else
+        {
+            controller.Response.Redirect("/Admin/UsersList");
+        }
     }
 
     public async Task UnbanUser(long id, AdminController controller)
@@ -230,18 +273,36 @@ public class AdminService : IAdminService
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
         }
-        controller.Response.Redirect("/Admin/UsersList");
+        if (user.IsAdmin)
+        {
+            controller.Response.Redirect("/Admin/AdminList");
+        }
+        else
+        {
+            controller.Response.Redirect("/Admin/UsersList");
+        }
     }
     
-    public async Task SuspendUser(SuspendUserDtoPayload obj)
+    public async Task SuspendUser(SuspendUserDtoPayload obj, string loggedUser)
     {
         var controller = obj.ControllerReference;
         DateTime suspendTo = obj.Dto.SuspendedTo;
         bool perm = obj.Dto.Perm;
         var id = obj.Dto.Id;
         var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+
+
+
         if (user != null)
         {
+
+            if (loggedUser == user.Username)
+            {
+                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_SUSPEND_YOURSELF);
+                controller.Response.Redirect("/Admin/AdminList");
+                return;
+            }
+
             if (perm || suspendTo != DateTime.MinValue)
             {
                 user.AccountStatus = -1;
@@ -262,7 +323,14 @@ public class AdminService : IAdminService
 
                     String message = string.Format(Lang.USER_SUSPENDED, user.Username, banTime);
                     controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
-                    controller.Response.Redirect("/Admin/UsersList");
+                    if (user.IsAdmin)
+                    {
+                        controller.Response.Redirect("/Admin/AdminList");
+                    }
+                    else
+                    {
+                        controller.Response.Redirect("/Admin/UsersList");
+                    }
             }
             else
             {
@@ -276,7 +344,7 @@ public class AdminService : IAdminService
         }
     }
 
-    public async Task AddUser(AddUserDtoPayload obj)
+    public async Task AddUser(AddUserDtoPayload obj, bool Admin)
     {
         AdminController controller = obj.ControllerReference;
         
@@ -286,6 +354,8 @@ public class AdminService : IAdminService
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
         userEntity.RulesAccept = true;
+        userEntity.IsAdmin = Admin;
+        
         string pass="";
         
         if (UsernameExistsInDb(obj.Dto.Username))
@@ -404,7 +474,14 @@ public class AdminService : IAdminService
         String message = string.Format(Lang.USER_ADDED, userEntity.Username);
         controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
         
-        controller.Response.Redirect("/Admin/UsersList");
+        if (userEntity.IsAdmin)
+        {
+            controller.Response.Redirect("/Admin/AdminList");
+        }
+        else
+        {
+            controller.Response.Redirect("/Admin/UsersList");
+        }
         
     }
 

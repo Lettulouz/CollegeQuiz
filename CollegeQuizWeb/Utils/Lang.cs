@@ -47,6 +47,8 @@ public static class Lang
     public const string QUIZ_NAME_REQUIRED_ERROR = "*Nazwa quizu jest wymagana.";
     public const string QUIZ_NAME_TOO_SHORT_ERROR = "*Podana nazwa quizu jest zbyt krótka.";
     public const string QUIZ_NAME_TOO_LONG_ERROR = "*Podana nazwa quizu jest zbyt długa.";
+    
+    public const string QUIZ_SHARED_TOKEN_ERROR = "*Niepoprawny token.";
 
     public const string INVALID_COUPON_CODE_ERROR = "Należy podać prawidłowy kupon.";
     public const string INACTIVE_COUPON_CODE_ERROR = "Podany kupon jest już nieaktywny.";
@@ -80,7 +82,8 @@ public static class Lang
     public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
     public const string USER_DELETED = "*Użytkownik {0} został usunięty.";
     public const string BAN_ERROR = "*Należy zawiesić użytkownika permanentnie lub wybrać datę wygaśnięcia bana.";
-
+    public const string CANNOT_SUSPEND_YOURSELF = "*Nie możesz zawiesić swojego konta";
+    public const string CANNOT_DELETE_YOURSELF = "*Nie możesz usunąć swojego konta";
     public const string ACCOUNT_SUSPENDED = "*Twoje konto zostało zawieszone {0}";
     
     public const string USER_SUSPENDED = "*Użytkownik {0} został zawieszony {1}.";
@@ -118,5 +121,6 @@ public static class Lang
     public const string ADDRESS1_IS_REQUIRED = "*Pole Adres 1 jest wymagane.";
     public const string ADDRESS1_TOO_LONG = "*Pole Adres 1 nie może przekraczać 40 znaków.";
     public const string ADDRESS1_TOO_SHORT = "*Pole Adres 1 nie może być krótsze niż 3 znaki.";
+    
 
 }

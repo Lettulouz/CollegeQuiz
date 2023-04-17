@@ -1,0 +1,43 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CollegeQuizWeb.Dto.SharedQuizes.ShareTokenDto
+@{
+    ViewData["Title"] = "Udostępnianie quizu";
+}
+
+
+<div class="container mt-5 mb-1">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="col-12 col-md-6 mb-5">
+            <div class="card px-5 py-5 h-100" id="form1">
+                @if (ViewBag.AlertMessage != null)
+                {
+                    <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+                        @Html.Raw(ViewBag.AlertMessage)
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (ViewBag.CouponMessage != null)
+                {
+                    <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+                        @Html.Raw(ViewBag.CouponMessage)
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <form method="post" asp-action="Share">
+                    <div class="form-data">
+                        <label id="mainName">Udostępnij swój quiz</label>
+                        <div class="forms-inputs mb-4 mt-3">
+                            <label for="sharedQuizToken">Kod</label>
+                            <input type="text" id="sharedQuizToken" asp-for="ShareToken">
+                            <i id="blinkingName" class='bx bxs-error-circle bx-flip-horizontal bx-burst'></i>
+                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="ShareToken"></span>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn-color-one w-100" type="submit">Udostępnij</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

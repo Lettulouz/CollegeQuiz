@@ -63,6 +63,7 @@ public class AuthService : IAuthService
                     else
                     {
                         controller.HttpContext.Session.SetString(SessionKey.IS_USER_LOGGED, userEntity.Username);
+                        controller.HttpContext.Session.SetString(SessionKey.IS_USER_ADMIN, userEntity.IsAdmin.ToString());
                         controller.Response.Redirect("/home");
                     }
                 }

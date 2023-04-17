@@ -7,7 +7,7 @@ const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const SessionContext = createContext(null);
 
-const LeaveSessionButtonComponent = () => {
+const LeaveSessionButtonComponent = props => {
     const {
         token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked
     } = useContext(SessionContext);
@@ -64,7 +64,7 @@ const LeaveSessionButtonComponent = () => {
                     </div>
                 </div>
             </div>
-            <button className="btn-color-one bg-danger text-white" onClick={showModal}>Opuść pokój</button>
+            <button className="btn-color-one bg-danger text-white w-100 rounded" onClick={showModal}>{props.text}</button>
         </>
     );
 }
@@ -73,6 +73,7 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
+        setQuestionNumber
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -85,12 +86,11 @@ const MainWindowGameComponent = () => {
         });
         connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
         connection.on("QUESTION_P2P", answ=>{
-            const test = JSON.parse(answ);
-            console.log(test); 
-            setQuestion(test.question);
-            setAnswers(test.answers.map(q=> q));
-            console.log(test.answers.map(q=> q));
-            setQuestionTimer(test.time_sec);
+            const parsedAnswers = JSON.parse(answ);
+            setQuestion(parsedAnswers.question);
+            setAnswers(parsedAnswers.answers.map(q=> q));
+            setQuestionTimer(parsedAnswers.time_sec);
+            setQuestionNumber(parsedAnswers.questionId)
         });
         connection.on("QUESTION_TIMER_P2P", counter => {
             setQuestionTimer(counter);
@@ -128,7 +128,7 @@ const MainWindowGameComponent = () => {
                 </div>
             );
             default: return (
-                <QuestionType1/>
+                <QuestionType1Component/>
             );
         }
     };
@@ -141,67 +141,76 @@ const MainWindowGameComponent = () => {
 };
 
 
-const QuestionType1 = () => {
+const QuestionType1Component = () => {
     const {
         question, questionTimer
     } = useContext(SessionContext);
     return (
-        <div className="container">
+        <div className="container d-flex">
             <div className="row d-flex justify-content-center">
-                <div className="col-10">
-                    <div className="card px-3 py-3">
-                        <h3>{question} {questionTimer}</h3>
-                        <img src={"/gfx/qrCodeLogo.png"} width="300px" height="300px"/>
-                    </div>
-                    <div className="row d-flex mt-3 px-3">
-                        <QuestionCard number={0}/>
-                        <QuestionCard number={1}/>
-                    </div>
-                    <div className="row d-flex mt-3 px-3">
-                        <QuestionCard number={2}/>
-                        <QuestionCard number={3}/>
+                <div className="col-1 p-0">
+                    <div className="card card-img-custom">
+                        <img src={"/gfx/timer.svg"} alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
+                        </div>
                     </div>
                 </div>
+                <div className="col-10">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <h3>{question}</h3>
+                        <img src={"/gfx/1.png"} width="200px" height="200px"/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={0}/>
+                        <QuestionCardComponent number={1}/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={2}/>
+                        <QuestionCardComponent number={3}/>
+                    </div>
+                </div>
+                <div className="col-1"><LeaveSessionButtonComponent text={"Wyjdź"}/></div>
             </div>
         </div>
     );
 }
 
 
-const QuestionCard = (props) => {
+const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG
+        answers, answerLetter, answerSVG, connectionId, questionNumber
     } = useContext(SessionContext);
+
+    const handleClick = siema => {
+        
+        console.log(siema, questionNumber, connectionId);
+    }
+    
     return (
         <div className="col-6 d-flex m-0">
-            <div className="card bg-dark text-white card-img-custom">
-                <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D"/>
-                <div
-                    className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
-                    <h5 className="card-title text-center">Odpowiedź {answerLetter[props.number]}</h5>
-                    <p className="card-text text-center">{answers[props.number]}</p>
-                </div>
+            <div className="card bg-dark text-white card-img-custom" onClick={() => handleClick(props.number)}>
+                <button className="bg-transparent border-0 p-0 m-0" >
+                    <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D" />
+                    <div
+                        className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                        <h5 className="card-title text-center">Odpowiedź {answerLetter[props.number]}</h5>
+                        <p className="card-text text-center">{answers[props.number]}</p>
+                    </div>
+                </button>
             </div>
         </div>
     );
 }
 
 const HeaderPanelComponent = () => {
-    const { isConnect } = useContext(SessionContext);
+    const { screenAction } = useContext(SessionContext);
+    console.log(screenAction)
     return (
         <>
-            {isConnect ? <div className="row justify-content-between">
-                <div className="col-md-4">
-                    123
-                </div>
-                <div className="col-md-4"> 
-                    321
-                </div>
-                <div className="col-md-4">
-                    <LeaveSessionButtonComponent/>
-                </div>
-            </div> : <div className="row">
-                <LeaveSessionButtonComponent/>
+            {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && 
+             <div className="row">
+                <LeaveSessionButtonComponent text={"Opuść pokój"}/>
             </div>}
         </>
     );
@@ -293,18 +302,19 @@ const QuizSessionRootComponent = () => {
     const [ answerLetter, setAnswerLetter ] = useState(["A", "B", "C", "D"]);
     const [ answerSVG, setAnswerSVG ] 
         = useState(["/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg", "/gfx/tealCard.svg"]);
-    const [ question, setQuestion ] = useState();
-    const [ questionTimer, setQuestionTimer ] = useState();
+    const [ question, setQuestion ] = useState('');
+    const [ questionTimer, setQuestionTimer ] = useState(null);
+    const [ questionNumber, setQuestionNumber ] = useState(null);
 
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
     
     return (
         <SessionContext.Provider value={{
-            connection, setConnection, setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
+            connection, setConnection, isConnect,  setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
-            setQuestion, questionTimer, setQuestionTimer
+            setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber
         }}>
             {isActive && <>
                 {isConnect ? <>
