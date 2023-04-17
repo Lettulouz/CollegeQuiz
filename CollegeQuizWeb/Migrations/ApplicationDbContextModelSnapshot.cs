@@ -254,10 +254,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
-                    b.Property<long>("TokenId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("token_id");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
@@ -267,8 +263,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TokenId");
 
                     b.HasIndex("UserId");
 
@@ -651,19 +645,11 @@ namespace CollegeQuizWeb.Migrations
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.QuizEntity", b =>
                 {
-                    b.HasOne("CollegeQuizWeb.Entities.ShareTokensEntity", "ShareTokensEntity")
-                        .WithMany()
-                        .HasForeignKey("TokenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ShareTokensEntity");
 
                     b.Navigation("UserEntity");
                 });

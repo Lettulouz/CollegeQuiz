@@ -20,11 +20,6 @@ public class QuizEntity : AbstractAuditableEntity
     [Column("user_id")]
     public long UserId { get; set; }
     
-    [ForeignKey(nameof(ShareTokensEntity))]
-    [Column("token_id")]
-    public long TokenId { get; set; }
-    
-    public virtual ShareTokensEntity ShareTokensEntity { get; set; }
     public virtual UserEntity UserEntity { get; set; }
     public virtual ICollection<SharedQuizesEntity> SharedQuizesEntities { get; set; }
 }
