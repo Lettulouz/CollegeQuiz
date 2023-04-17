@@ -48,15 +48,17 @@ public class AdminService : IAdminService
     public async Task GetStats(AdminController controller)
     {
         
-        controller.ViewBag.adminStats = await (from u in _context.Users
+        var adminStats = await (from u in _context.Users
             group u by 1
             into g
             select new
             {
                 Total = _context.Users.Count(s => s.IsAdmin==true),
             }).FirstOrDefaultAsync();
+
+        controller.ViewBag.adminStats = adminStats ?? new { Total = 0 };
         
-        controller.ViewBag.userStats = await (from u in _context.Users
+        var userStats = await (from u in _context.Users
             group u by 1
             into g
             select new
@@ -67,7 +69,9 @@ public class AdminService : IAdminService
                 Suspended = _context.Users.Count(s => s.AccountStatus == -1 && s.IsAdmin==false)
             }).FirstOrDefaultAsync();
         
-        controller.ViewBag.quizStats = await (from q in _context.Quizes
+        controller.ViewBag.userStats = userStats ?? new { Total = 0, Gold = 0, Platinum = 0, Suspended = 0};
+        
+        var quizStats = await (from q in _context.Quizes
             group q by 1
             into g
             select new
@@ -77,7 +81,9 @@ public class AdminService : IAdminService
                 Private = _context.Quizes.Count(s => s.IsPublic == false)
             }).FirstOrDefaultAsync();
         
-        controller.ViewBag.couponStats = await (from q in _context.Coupons
+        controller.ViewBag.quizStats = quizStats ?? new { Total = 0, Public = 0, Private = 0};
+        
+       var couponStats = await (from q in _context.Coupons
             group q by 1
             into g
             select new
@@ -86,6 +92,8 @@ public class AdminService : IAdminService
                 Archive = _context.Coupons.Count(s => s.IsUsed == true || s.ExpiringAt <= DateTime.Now),
                 Active = _context.Coupons.Count(s => s.IsUsed == false && s.ExpiringAt > DateTime.Now)
             }).FirstOrDefaultAsync();
+       
+       controller.ViewBag.couponStats = couponStats ?? new { Total = 0, Archive = 0, Active = 0};
     }
     
     
