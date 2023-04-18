@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
+using Svg;
 
 namespace CollegeQuizWeb.Services.QuizService;
 
@@ -155,7 +156,9 @@ public class QuizService : IQuizService
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
         QRCodeData qrCodeData = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
         QRCode qrCode = new QRCode(qrCodeData);
+        var svgDocument = SvgDocument.Open(@"wwwroot/logo.svg");
+        var bitmap = svgDocument.Draw();
         return qrCode.GetGraphic(50,Color.Black, Color.White,
-            (Bitmap)Image.FromFile(@"wwwroot/qrCodeLogo.png"), 20, 1);
+            bitmap, 20, 1);
     }
 }
