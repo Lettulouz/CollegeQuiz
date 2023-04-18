@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CollegeQuizWeb.API.Services.Auth;
 using CollegeQuizWeb.API.Services.Quiz;
 using CollegeQuizWeb.API.Services.QuizSession;
 using CollegeQuizWeb.Services.HomeService;
@@ -7,6 +8,7 @@ using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
+using CollegeQuizWeb.Jwt;
 using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
@@ -56,9 +58,17 @@ builder.Services.AddScoped<ISharedQuizesService, SharedQuizesService>();
 // serwisy kontrolerów API
 builder.Services.AddScoped<IQuizAPIService, QuizAPIService>();
 builder.Services.AddScoped<IQuizSessionAPIService, QuizSessionAPIService>();
+builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
+
+// swagger, only dev
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(ConfigLoader.GetSwaggerConfiguration());
 
 // signalR
 builder.Services.AddSignalR();
+
+// JWT
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,6 +78,13 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => {  
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quizazu API");
+    });    
 }
 
 app.UseHttpsRedirection();
