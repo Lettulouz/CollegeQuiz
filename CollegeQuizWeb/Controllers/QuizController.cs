@@ -28,6 +28,7 @@ public class QuizController : Controller
         
         ViewBag.Alert = Utilities.getSessionPropertyAndRemove(HttpContext, SessionKey.MY_QUIZES_ALERT)!;
         ViewBag.Quizes = await _service.GetMyQuizes(loggedUsername);
+        ViewBag.QuizesShared = await _service.GetMyShareQuizes(loggedUsername);
         
         return View();
     }
