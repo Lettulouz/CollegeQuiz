@@ -99,6 +99,12 @@ const QuizManagerRightContentComponent = () => {
             --i;
         }, 1000);
     };
+
+    const temp = () => {
+        connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => {
+            setTimeout(() => setAlert(alertOff()), 3000);
+        });
+    }
     
     return (
         <div className="col-lg-3 px-0 mb-2 mb-lg-0 order-lg-0 order-2">
@@ -109,6 +115,9 @@ const QuizManagerRightContentComponent = () => {
                 </button>}
                 <button className="btn btn-danger text-white mt-1 mx-1" onClick={() => window.location.reload()}>
                     Zakończ quiz
+                </button>
+                <button className="btn btn-danger text-white mt-1 mx-1" onClick={() => temp()}>
+                    Następne pytanie
                 </button>
             </div>
         </div>

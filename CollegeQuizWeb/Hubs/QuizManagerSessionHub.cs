@@ -73,35 +73,40 @@ public class QuizManagerSessionHub : Hub
             }).ToListAsync();
         
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
-        
+
+        var question = questions[quiz.CurrentQuestion];
         
         int timer;
-
-        foreach (var question in questions)
+        
+        await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
+        CancellationTokenSource cts = new CancellationTokenSource();
+        CancellationToken token2 = cts.Token;
+        timer = question.time_sec;
+        var periodicTimer= new PeriodicTimer(TimeSpan.FromSeconds(1));
+        cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
+        while (!cts.IsCancellationRequested && timer > 0)
         {
-            await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
-            CancellationTokenSource cts = new CancellationTokenSource();
-            CancellationToken token2 = cts.Token;
-            timer = question.time_sec;
-            var periodicTimer= new PeriodicTimer(TimeSpan.FromSeconds(1));
-            cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
-            while (!cts.IsCancellationRequested)
+            if(await periodicTimer.WaitForNextTickAsync(token2))
             {
-                if(await periodicTimer.WaitForNextTickAsync(token2))
-                    await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", --timer);
+                timer--;
+                await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", timer);
             }
-
-            var getAllAnswers =
-                _context.UsersQuestionsAnswers
-                    .Where(obj => obj.Question.Equals(question.questionId))
-                    .OrderBy(obj=>obj.CreatedAt).ToList();
-            
-            await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(getAllAnswers));
-
         }
-        
-        
+        cts.Cancel();
 
+        var getAllAnswers =
+            _context.UsersQuestionsAnswers
+                .Where(obj => obj.Question.Equals(question.questionId))
+                .OrderBy(obj=>obj.CreatedAt).Select(obj=> new
+                {
+                    obj.QuizSessionParticEntity.UserEntity.Username,
+                    obj.QuizSessionParticEntity.Score
+                }).ToList();
+        
+        await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(getAllAnswers));
+        quiz.CurrentQuestion++;
+        _context.QuizLobbies.Update(quiz);
+        await _context.SaveChangesAsync();
     }
 
     public async override Task OnDisconnectedAsync(Exception? exception)

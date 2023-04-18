@@ -73,7 +73,7 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setQuestionAnswers
+        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -99,7 +99,9 @@ const MainWindowGameComponent = () => {
         connection.on("QUESTION_RESULT_P2P", questionAnsw => {
             setScreenAction(QUESTION_RESULT_SCREEN);
             const parsedAnswers = JSON.parse(questionAnsw);
-            setQuestionAnswers(parsedAnswers.answers.map(q=> q));
+            const temp = parsedAnswers.map(q=> q);
+            console.log(temp);
+            setAfterQuestionResults(temp);
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -151,35 +153,13 @@ const MainWindowGameComponent = () => {
 
 const QuestionResultComponent = () => {
     const {
-        questionAnswers
+        afterQuestionResults
     } = useContext(SessionContext);
     return (
-        <div className="container d-flex">
-            <div className="row d-flex justify-content-center">
-                <div className="col-1 p-0">
-                    <div className="card card-img-custom">
-                        <img src={"/gfx/timer.svg"} alt="image_answer_D"/>
-                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
-                        </div>
-                    </div>
-                </div>
-                <h3>{questionAnswers}</h3>
-                <div className="col-10">
-                    <div className="card px-3 py-3 d-flex align-items-center text-break">
-                        <img src={"/gfx/1.png"} width="200px" height="200px"/>
-                    </div>
-                    <div className="row d-flex mt-3 px-3">
-                        <QuestionCardComponent number={questionAnswers}/>
-                        <QuestionCardComponent number={questionAnswers}/>
-                    </div>
-                    <div className="row d-flex mt-3 px-3">
-                        <QuestionCardComponent number={questionAnswers}/>
-                        <QuestionCardComponent number={questionAnswers}/>
-                    </div>
-                </div>
-                <div className="col-1"><LeaveSessionButtonComponent text={"Wyjdź"}/></div>
-            </div>
-        </div>
+        <ul>{afterQuestionResults.map(m => (
+                <li className="leaderboard" key={m}>{m.Username}, {m.Score}</li>
+            ))}
+        </ul>
     );
 }
 
@@ -358,7 +338,7 @@ const QuizSessionRootComponent = () => {
     const [ questionTimer, setQuestionTimer ] = useState(null);
     const [ questionNumber, setQuestionNumber ] = useState(null);
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
-    const [ questionAnswers, setQuestionAnswers ] = useState([]);
+    const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -369,7 +349,7 @@ const QuizSessionRootComponent = () => {
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
-            questionAnswers, setQuestionAnswers
+            afterQuestionResults, setAfterQuestionResults
         }}>
             {isActive && <>
                 {isConnect ? <>

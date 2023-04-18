@@ -1,6 +1,8 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CollegeQuizWeb.DbConfig;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CollegeQuizWeb.Entities;
 
@@ -23,6 +25,10 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     [Required]
     [Column("in_game_screen")]
     public string InGameScreen { get; set; }
+    
+    [DefaultValue(1)]
+    [Column("current_question")]
+    public int CurrentQuestion { get; set; }
     
     [ForeignKey(nameof(UserEntity))]
     [Column("user_host_id")]

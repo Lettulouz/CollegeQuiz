@@ -147,6 +147,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         isHost.IsEstabilished = true;
         isHost.InGameScreen = "WAITING_SCREEN";
         isHost.HostConnId = connectionId;
+        isHost.CurrentQuestion = 0;
         _context.QuizLobbies.Update(isHost);
         await _context.SaveChangesAsync();
         await _hubManagerContext.Groups.AddToGroupAsync(connectionId, token);

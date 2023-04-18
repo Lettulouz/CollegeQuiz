@@ -286,6 +286,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
+                    b.Property<int>("CurrentQuestion")
+                        .HasColumnType("int")
+                        .HasColumnName("current_question");
+
                     b.Property<string>("HostConnId")
                         .IsRequired()
                         .HasColumnType("longtext")
