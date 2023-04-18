@@ -18,7 +18,7 @@ public interface IAdminService
     Task DelQuiz(long id, AdminController controller);
     Task<AddUserDto> GetUserData(long id, AdminController controller);
     Task UserInfo(long id, AdminController controller);
-    Task UpdateUser(AddUserDtoPayload obj);
+    Task UpdateUser(AddUserDtoPayload obj, string loggedUser);
     Task SuspendUser(SuspendUserDtoPayload obj, string loggedUser);
     Task AddUser(AddUserDtoPayload obj, bool Admin);
     Task UnbanUser(long id, AdminController controller);

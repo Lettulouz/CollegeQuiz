@@ -143,7 +143,7 @@ public class AdminService : IAdminService
         return userEdit;
     }
 
-    public async Task UpdateUser(AddUserDtoPayload obj)
+    public async Task UpdateUser(AddUserDtoPayload obj, string loggedUser)
     {
         AdminController controller = obj.ControllerReference;
         
@@ -151,12 +151,27 @@ public class AdminService : IAdminService
         string pass="niezmienione";
         
         var userEntity=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+
+        if (userEntity == null)
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+            return;
+        }
         
+        if (userEntity.Username == loggedUser)
+        {
+            userEntity.IsAdmin = true;
+        }
+        else
+        {
+            userEntity.IsAdmin = obj.Dto.IsAdmin;
+        }
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
         userEntity.Email = obj.Dto.Email;
-        userEntity.IsAdmin = obj.Dto.IsAdmin;
+        
         
         if (!UsernameBelongsToUser(id,obj.Dto.Username))
         {

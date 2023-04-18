@@ -102,7 +102,7 @@ public class AdminController : Controller
 
         if (ModelState.IsValid)
         {
-            await _adminService.UpdateUser(payloadDto);
+            await _adminService.UpdateUser(payloadDto, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
         }
         
         return View(obj);
