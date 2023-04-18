@@ -8,6 +8,7 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Quiz;
+using CollegeQuizWeb.Dto.SharedQuizes;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using CollegeQuizWeb.Utils;
@@ -88,9 +89,22 @@ public class QuizService : IQuizService
 
     public async Task<List<MyQuizDto>> GetMyQuizes(string userLogin)
     {
-        return await _context.Quizes.Include(q => q.UserEntity)
-            .Where(q => q.UserEntity.Username.Equals(userLogin))
-            .Select(q => new MyQuizDto(){ Name = q.Name, Id = q.Id })
+        return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
+            .ThenInclude(q =>q.UserEntity)
+            .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin))
+            .Select(q => new MyQuizDto()
+                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
+            .ToListAsync();
+    }
+    
+    public async Task<List<MyQuizSharedDto>> GetMyShareQuizes(string userLogin)
+    {
+        var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(userLogin));
+        
+        return await _context.SharedQuizes
+            .Where(x => x.UserId.Equals(userEntity.Id))
+            .Select(q => new MyQuizSharedDto()
+                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id})
             .ToListAsync();
     }
 

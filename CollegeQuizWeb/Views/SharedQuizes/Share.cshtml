@@ -16,16 +16,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
-                @if (ViewBag.CouponMessage != null)
+                @if (ViewBag.TokenMessage != null)
                 {
                     <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
-                        @Html.Raw(ViewBag.CouponMessage)
+                        @Html.Raw(ViewBag.TokenMessage)
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
                 <form method="post" asp-action="Share">
                     <div class="form-data">
-                        <label id="mainName">Udostępnij swój quiz</label>
+                        <label id="mainName">Udostępnij quiz</label>
                         <div class="forms-inputs mb-4 mt-3">
                             <label for="sharedQuizToken">Kod</label>
                             <input type="text" id="sharedQuizToken" asp-for="ShareToken">
