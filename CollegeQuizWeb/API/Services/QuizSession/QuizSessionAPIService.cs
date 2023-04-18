@@ -170,7 +170,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         };
     }
 
-    public async Task SendAnswer(string connectionId, string token, string questionId, string answerId)
+    public async Task SendAnswer(string connectionId, string questionId, string answerId)
     {
         int questionNum, answerNum;
         if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))

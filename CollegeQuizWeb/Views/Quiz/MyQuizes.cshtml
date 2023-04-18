@@ -50,3 +50,28 @@
         </div>
     </div>
 </div>
+<div class="mt-5 mb-3">
+    <h3>Udostępnione quizy</h3>
+</div>
+<div class="container">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
+        @foreach (var quizes in ViewBag.QuizesShared)
+        {
+            <div class="col mb-3">
+                <div class="card card-resize text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
+                    <div class="d-flex justify-content-end pt-3 mx-3">
+                        <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quizes.Id">
+                            <i class="bi bi-plus-circle"></i>
+                        </a>
+                    </div>
+                    <a class="btn text-decoration-none" asp-action="QuizPage" asp-controller="Quiz" asp-route-id="@quizes.Id">
+                        <div class="card-body">
+                            <h5 class="card-title">@quizes.Name</h5>
+                            <p class="card-text">Twoje miejsce na opis quizu</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
