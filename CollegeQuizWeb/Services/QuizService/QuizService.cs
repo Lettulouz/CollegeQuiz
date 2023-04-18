@@ -8,6 +8,7 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Quiz;
+using CollegeQuizWeb.Dto.SharedQuizes;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using CollegeQuizWeb.Utils;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
+using Svg;
 
 namespace CollegeQuizWeb.Services.QuizService;
 
@@ -88,9 +90,22 @@ public class QuizService : IQuizService
 
     public async Task<List<MyQuizDto>> GetMyQuizes(string userLogin)
     {
-        return await _context.Quizes.Include(q => q.UserEntity)
-            .Where(q => q.UserEntity.Username.Equals(userLogin))
-            .Select(q => new MyQuizDto(){ Name = q.Name, Id = q.Id })
+        return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
+            .ThenInclude(q =>q.UserEntity)
+            .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin))
+            .Select(q => new MyQuizDto()
+                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
+            .ToListAsync();
+    }
+    
+    public async Task<List<MyQuizSharedDto>> GetMyShareQuizes(string userLogin)
+    {
+        var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(userLogin));
+        
+        return await _context.SharedQuizes
+            .Where(x => x.UserId.Equals(userEntity.Id))
+            .Select(q => new MyQuizSharedDto()
+                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id})
             .ToListAsync();
     }
 
@@ -153,7 +168,9 @@ public class QuizService : IQuizService
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
         QRCodeData qrCodeData = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
         QRCode qrCode = new QRCode(qrCodeData);
+        var svgDocument = SvgDocument.Open(@"wwwroot/logo.svg");
+        var bitmap = svgDocument.Draw();
         return qrCode.GetGraphic(50,Color.Black, Color.White,
-            (Bitmap)Image.FromFile(@"wwwroot/qrCodeLogo.png"), 20, 1);
+            bitmap, 20, 1);
     }
 }

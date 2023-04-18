@@ -194,7 +194,7 @@ const AddQuizQuestionsRoot = () => {
     
     useEffect(() => {
         const anyBad = questions.filter(q => {
-            return q.text.length <= 2 || q.answers.filter(a => a.text.length > 2).length !== q.answers.length ||
+            return q.text.length <= 2 || q.answers.filter(a => a.text.length >= 1).length !== q.answers.length ||
                 q.timeMin.length === 0 || q.timeMin.length === 0;
         });
         setAllGood(anyBad.length === 0);

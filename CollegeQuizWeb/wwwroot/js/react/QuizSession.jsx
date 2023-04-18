@@ -1,6 +1,6 @@
 import { useLoadableContent } from "./Hooks.jsx";
 import {
-    alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME
+    alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN
 } from "./Utils.jsx";
 
 const { useEffect, useState, createContext, useContext, useRef } = React;
@@ -73,7 +73,7 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
-        setQuestionNumber
+        setQuestionNumber, setIsAnswerSet, setQuestionAnswers
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -90,10 +90,16 @@ const MainWindowGameComponent = () => {
             setQuestion(parsedAnswers.question);
             setAnswers(parsedAnswers.answers.map(q=> q));
             setQuestionTimer(parsedAnswers.time_sec);
-            setQuestionNumber(parsedAnswers.questionId)
+            setQuestionNumber(parsedAnswers.questionId);
+            setIsAnswerSet(false);
         });
         connection.on("QUESTION_TIMER_P2P", counter => {
             setQuestionTimer(counter);
+        });
+        connection.on("QUESTION_RESULT_P2P", questionAnsw => {
+            setScreenAction(QUESTION_RESULT_SCREEN);
+            const parsedAnswers = JSON.parse(questionAnsw);
+            setQuestionAnswers(parsedAnswers.answers.map(q=> q));
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -127,6 +133,9 @@ const MainWindowGameComponent = () => {
                     </div>
                 </div>
             );
+            case QUESTION_RESULT_SCREEN: return (
+                <QuestionResultComponent/>
+            );
             default: return (
                 <QuestionType1Component/>
             );
@@ -140,6 +149,39 @@ const MainWindowGameComponent = () => {
     );
 };
 
+const QuestionResultComponent = () => {
+    const {
+        questionAnswers
+    } = useContext(SessionContext);
+    return (
+        <div className="container d-flex">
+            <div className="row d-flex justify-content-center">
+                <div className="col-1 p-0">
+                    <div className="card card-img-custom">
+                        <img src={"/gfx/timer.svg"} alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                        </div>
+                    </div>
+                </div>
+                <h3>{questionAnswers}</h3>
+                <div className="col-10">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <img src={"/gfx/1.png"} width="200px" height="200px"/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={questionAnswers}/>
+                        <QuestionCardComponent number={questionAnswers}/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={questionAnswers}/>
+                        <QuestionCardComponent number={questionAnswers}/>
+                    </div>
+                </div>
+                <div className="col-1"><LeaveSessionButtonComponent text={"Wyjdź"}/></div>
+            </div>
+        </div>
+    );
+}
 
 const QuestionType1Component = () => {
     const {
@@ -179,11 +221,14 @@ const QuestionType1Component = () => {
 
 const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber, token
+        answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet
     } = useContext(SessionContext);
     
     const handleClick = answer => {
-        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${token}/${questionNumber}/${answer}`, {
+        console.log("Arek2017")
+        if(isAnswerSet === true) return;
+        console.log("7102kerA")
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`, {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
@@ -191,6 +236,7 @@ const QuestionCardComponent = props => {
                 'Content-Type': 'application/json'
             },
         }).then(r => r)
+        setIsAnswerSet(true);
     }
     
     return (
@@ -311,7 +357,9 @@ const QuizSessionRootComponent = () => {
     const [ question, setQuestion ] = useState('');
     const [ questionTimer, setQuestionTimer ] = useState(null);
     const [ questionNumber, setQuestionNumber ] = useState(null);
-
+    const [ isAnswerSet, setIsAnswerSet ] = useState(false);
+    const [ questionAnswers, setQuestionAnswers ] = useState([]);
+    
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
     
@@ -320,7 +368,8 @@ const QuizSessionRootComponent = () => {
             connection, setConnection, isConnect,  setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
-            setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber
+            setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
+            questionAnswers, setQuestionAnswers
         }}>
             {isActive && <>
                 {isConnect ? <>
