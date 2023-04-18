@@ -13,6 +13,17 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
+<script>
+function copyToBoard(obj)
+    {
+            let row = $(obj).parent().parent();
+            let valueToCopy = row.find('.copy-class').text();
+            navigator.clipboard.writeText(valueToCopy);
+            let message = `Skopiowano token udostepniający ${valueToCopy} do schowka.`;
+            toastr.success(message);
+    }
+</script>
+
 <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
         @foreach (var quiz in ViewBag.Quizes)
@@ -31,9 +42,7 @@
                         </div>
                     </a>
                     <div class="d-flex justify-content-center clip-clas">
-                        <a class="btn btn-light text-center">
-                           @quiz.Token &nbsp;<i class="bi bi-share"></i>
-                        </a>
+                        <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this)">@quiz.Token<i class="bi bi-share mx-1"></i></a>
                     </div>
                 </div>
             </div>
