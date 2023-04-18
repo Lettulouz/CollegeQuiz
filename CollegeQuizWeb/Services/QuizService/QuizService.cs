@@ -88,9 +88,11 @@ public class QuizService : IQuizService
 
     public async Task<List<MyQuizDto>> GetMyQuizes(string userLogin)
     {
-        return await _context.Quizes.Include(q => q.UserEntity)
-            .Where(q => q.UserEntity.Username.Equals(userLogin))
-            .Select(q => new MyQuizDto(){ Name = q.Name, Id = q.Id })
+        return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
+            .ThenInclude(q =>q.UserEntity)
+            .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin))
+            .Select(q => new MyQuizDto()
+                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
             .ToListAsync();
     }
 

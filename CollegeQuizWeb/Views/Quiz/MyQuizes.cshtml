@@ -30,11 +30,10 @@
                             <p class="card-text">Twoje miejsce na opis quizu</p>
                         </div>
                     </a>
-                    <button class="btn btn-block form-control w-100" onclick="showhide(@quiz.Id)">
-                        <i class="bi bi-share"></i>
-                    </button>
-                    <div id="@quiz.Id" style="display:none;">
-                        <span class="form-control text-center" style="font-size: 20px; font-weight: bolder;">Kod</span>
+                    <div class="d-flex justify-content-center clip-clas">
+                        <a class="btn btn-light text-center">
+                           @quiz.Token &nbsp;<i class="bi bi-share"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -50,13 +49,4 @@
             </a>
         </div>
     </div>
-    <script>
-        function showhide(quizId){
-            var shareCode = document.getElementById(quizId);
-            
-            if (shareCode.style.display === 'none') {shareCode.style.display = 'block';}
-                else {shareCode.style.display = 'none';}
-        }
-        
-      </script>   
 </div>
