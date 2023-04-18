@@ -87,16 +87,16 @@ public class QuizManagerSessionHub : Hub
             cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
             while (!cts.IsCancellationRequested)
             {
-                await periodicTimer.WaitForNextTickAsync(token2);
-                await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", --timer);
+                if(await periodicTimer.WaitForNextTickAsync(token2))
+                    await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", --timer);
             }
 
             var getAllAnswers =
                 _context.UsersQuestionsAnswers
                     .Where(obj => obj.Question.Equals(question.questionId))
                     .OrderBy(obj=>obj.CreatedAt).ToList();
-
-            var test = getAllAnswers[0].CreatedAt.TimeOfDay;
+            
+            await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(getAllAnswers));
 
         }
         
