@@ -87,9 +87,11 @@ const QuizManagerRightContentComponent = () => {
         if (counting === 0 || isStartClicked) return;
         setIsStartClicked(true);
         let i = counting;
+        console.log("punkt testowy 1");
         const interval = setInterval(() => {
             connection.invoke('INIT_GAME_SEQUENCER_P2P', i, SESS_TOKEN).then(r => setCounting(r));
             if (i === 0) {
+                console.log(i);
                 clearInterval(interval);
                 connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => {
                     setAlert(alertInfo('GRA WŁAŚNIE SIĘ ROZPOCZĘŁA!'));
@@ -101,9 +103,7 @@ const QuizManagerRightContentComponent = () => {
     };
 
     const temp = () => {
-        connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => {
-            setTimeout(() => setAlert(alertOff()), 3000);
-        });
+        connection.invoke('START_GAME_P2P', SESS_TOKEN);
     }
     
     return (

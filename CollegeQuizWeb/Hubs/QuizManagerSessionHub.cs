@@ -48,10 +48,12 @@ public class QuizManagerSessionHub : Hub
     
     public async Task START_GAME_P2P(string token)
     {
+        Console.WriteLine("punkt testowy 1");
         var quiz = await _context.QuizLobbies
             .Include(q => q.QuizEntity)
             .FirstOrDefaultAsync(q => q.Code.Equals(token));
 
+        Console.WriteLine("punkt testowy 2");
         var questions = await _context.Answers
             .Include(q => q.QuestionEntity)
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
@@ -72,28 +74,35 @@ public class QuizManagerSessionHub : Hub
                 time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum()
             }).ToListAsync();
         
+        Console.WriteLine("punkt testowy 3");
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
 
+        Console.WriteLine("punkt testowy 4");
+        if(quiz.CurrentQuestion>=questions.Count) return;
         var question = questions[quiz.CurrentQuestion];
         
         int timer;
         
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
+        Console.WriteLine("punkt testowy 5");
         CancellationTokenSource cts = new CancellationTokenSource();
         CancellationToken token2 = cts.Token;
         timer = question.time_sec;
         var periodicTimer= new PeriodicTimer(TimeSpan.FromSeconds(1));
         cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
-        while (!cts.IsCancellationRequested && timer > 0)
+        Console.WriteLine("punkt testowy 6");
+        while (!cts.IsCancellationRequested)
         {
             if(await periodicTimer.WaitForNextTickAsync(token2))
             {
                 timer--;
                 await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", timer);
             }
+            Console.WriteLine(timer);
         }
         cts.Cancel();
 
+        Console.WriteLine("punkt testowy 7");
         var getAllAnswers =
             _context.UsersQuestionsAnswers
                 .Where(obj => obj.Question.Equals(question.questionId))
@@ -102,11 +111,13 @@ public class QuizManagerSessionHub : Hub
                     obj.QuizSessionParticEntity.UserEntity.Username,
                     obj.QuizSessionParticEntity.Score
                 }).ToList();
-        
+        Console.WriteLine("punkt testowy 8");
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(getAllAnswers));
+        Console.WriteLine("punkt testowy 9");
         quiz.CurrentQuestion++;
         _context.QuizLobbies.Update(quiz);
         await _context.SaveChangesAsync();
+        Console.WriteLine("punkt testowy 10");
     }
 
     public async override Task OnDisconnectedAsync(Exception? exception)
