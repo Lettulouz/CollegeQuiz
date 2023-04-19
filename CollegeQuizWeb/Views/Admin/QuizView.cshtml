@@ -10,7 +10,7 @@
     <div class="d-flex">
         <h1 class="text-muted px-2">@ViewBag.quizInfo.Name</h1> 
         <div class="ms-auto text-right pe-1">
-            @using (Html.BeginForm("DelQuiz", "Admin", new { id = @ViewBag.quizInfo.Id }, FormMethod.Post))
+            @using (Html.BeginForm("DelQuizView", "Admin", new { id = @ViewBag.quizInfo.Id }, FormMethod.Post))
             {
                 <button type="submit" class="btn btn-danger" data-bs-toggle="tooltip" 
                         data-bs-placement="top" data-bs-title="Usuń quiz" ><i class="bi bi-trash"></i></button>

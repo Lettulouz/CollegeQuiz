@@ -37,7 +37,8 @@ public class AdminController : Controller
         return View();
     }
 
-    [HttpGet]
+ 
+    
     public async Task<IActionResult> UsersList()
     {
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
@@ -55,8 +56,8 @@ public class AdminController : Controller
         HttpContext.Session.Remove(SessionKey.ADMIN_ERROR);
         ViewBag.mailError = mailError!;
         
-        ViewBag.users = await _adminService.GetUsers();
-        return View();
+        var userList = await _adminService.GetUsers();
+        return View(userList);
     }
     
     public async Task<IActionResult> AdminList()
@@ -76,8 +77,8 @@ public class AdminController : Controller
         HttpContext.Session.Remove(SessionKey.ADMIN_ERROR);
         ViewBag.mailError = mailError!;
         
-        ViewBag.users = await _adminService.GetAdmins();
-        return View();
+        var adminList = await _adminService.GetAdmins();
+        return View(adminList);
     }
 
     [HttpGet]
@@ -211,16 +212,38 @@ public class AdminController : Controller
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task UnbanUser(long id)
+    public async Task UnbanUser(List<UserListDto> list)
+    {
+        var id = list[0].Id;
+        await _adminService.UnbanUser(id, this);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task UnbanUserProf(long id)
     {
         await _adminService.UnbanUser(id, this);
     }
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task DelUser(long id)
+    public async Task ResendEmail(long id)
     {
-
+        await _adminService.ResendEmail(id, this);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task DelUser(List<UserListDto> list)
+    {
+        var id = list[0].Id;
+        await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task DelUserProf(long id)
+    {
         await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
     }
     
@@ -229,6 +252,14 @@ public class AdminController : Controller
     {
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
+        
+        string? mailError = HttpContext.Session.GetString(SessionKey.ADMIN_ERROR);
+        HttpContext.Session.Remove(SessionKey.ADMIN_ERROR);
+        ViewBag.mailError = mailError!;
+        
+        string? emailSent = HttpContext.Session.GetString(SessionKey.EMAIL_SENT);
+        HttpContext.Session.Remove(SessionKey.EMAIL_SENT);
+        ViewBag.emailSent = emailSent!;
         
         await _adminService.UserInfo(id, this);
         return View();
@@ -254,14 +285,26 @@ public class AdminController : Controller
         HttpContext.Session.Remove(SessionKey.QUIZ_REMOVED);
         ViewBag.quizRemoved = quizRemoved!;
         
-        ViewBag.quizList = await _adminService.GetQuizList();
-        return View();
+        var quizList = await _adminService.GetQuizList();
+        return View(quizList);
+    }
+    
+ 
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task DelQuiz(List<QuizListDto> list)
+    {
+        var id = list[0].Id;
+
+        await _adminService.DelQuiz(id, this);
     }
     
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task DelQuiz(long id)
+    public async Task DelQuizView(long id)
     {
+
         await _adminService.DelQuiz(id, this);
     }
 

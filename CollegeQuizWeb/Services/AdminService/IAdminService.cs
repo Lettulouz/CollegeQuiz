@@ -11,9 +11,11 @@ namespace CollegeQuizWeb.Services.AdminService;
 public interface IAdminService
 {
     Task GetStats(AdminController controller);
-    Task<List<UserEntity>> GetUsers();
-    Task<List<UserEntity>> GetAdmins();
-    Task<List<QuizEntity>> GetQuizList();
+
+    Task<List<UserListDto>> GetUsers();
+    Task<List<UserListDto>> GetAdmins();
+
+    Task<List<QuizListDto>> GetQuizList();
     Task QuizInfo(long id, AdminController controller);
     Task DelQuiz(long id, AdminController controller);
     Task<AddUserDto> GetUserData(long id, AdminController controller);
@@ -23,6 +25,8 @@ public interface IAdminService
     Task AddUser(AddUserDtoPayload obj, bool Admin);
     Task UnbanUser(long id, AdminController controller);
     Task DelUser(long id, AdminController controller, string loggedUser);
+
+    Task ResendEmail(long id, AdminController controller);
 
     Task CreateCoupons(CouponDtoPayload obj);
     Task<List<CouponDto>> GetCoupons();

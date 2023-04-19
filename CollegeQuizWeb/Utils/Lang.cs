@@ -97,6 +97,7 @@ public static class Lang
     public const string USER_UPDATED = "Użytkownik {0} został zaktualizowany.";
     
     public const string EMAIL_SENDING_ERROR = "Nieudane wysłanie wiadomości email na adres {0}. Spróbuj ponownie później.";
+    public const string EMAIL_SENT = "Wysłano wiadomość email na adres {0}";
     public const string EMAIL_ACCOUNT_CRETED_INFROMATION = "Tworzenie konta dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_INFROMATION = "Reset hasła dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_SENT = 

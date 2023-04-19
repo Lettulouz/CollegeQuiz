@@ -35,14 +35,54 @@ public class AdminService : IAdminService
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<List<UserEntity>> GetUsers()
+ 
+    
+    public async Task<List<UserListDto>> GetUsers()
     {
-        return await _context.Users.Where(u=>u.IsAdmin==false).ToListAsync();
+       var users = await _context.Users.Where(u=>u.IsAdmin==false).ToListAsync();
+       
+       List<UserListDto> DtoList = new();
+       
+       foreach (var userData in users)
+       {
+           UserListDto userModel = new();
+
+           userModel.Id = userData.Id;
+           userModel.FirstName = userData.FirstName;
+           userModel.LastName = userData.LastName;
+           userModel.CreatedAt = userData.CreatedAt;
+           userModel.Email = userData.Email;
+           userModel.UserName = userData.Username;
+           userModel.AccountStatus =userData.AccountStatus;
+           userModel.IsAccountActivated = userData.IsAccountActivated; 
+           DtoList.Add(userModel);
+       }
+
+       return DtoList;
     }
     
-    public async Task<List<UserEntity>> GetAdmins()
+    public async Task<List<UserListDto>> GetAdmins()
     {
-        return await _context.Users.Where(u=>u.IsAdmin==true).ToListAsync();
+        var users = await _context.Users.Where(u=>u.IsAdmin==true).ToListAsync();
+        
+        List<UserListDto> DtoList = new();
+       
+        foreach (var userData in users)
+        {
+            UserListDto userModel = new();
+
+            userModel.Id = userData.Id;
+            userModel.FirstName = userData.FirstName;
+            userModel.LastName = userData.LastName;
+            userModel.CreatedAt = userData.CreatedAt;
+            userModel.Email = userData.Email;
+            userModel.UserName = userData.Username;
+            userModel.AccountStatus =userData.AccountStatus;
+            userModel.IsAccountActivated = userData.IsAccountActivated; 
+            DtoList.Add(userModel);
+        }
+
+        return DtoList;
     }
 
     public async Task GetStats(AdminController controller)
@@ -492,7 +532,7 @@ public class AdminService : IAdminService
         }
         
         _context.Add(userEntity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         String message = string.Format(Lang.USER_ADDED, userEntity.Username);
         controller.HttpContext.Session.SetString(SessionKey.USER_SUSPENDED, message);
@@ -508,9 +548,93 @@ public class AdminService : IAdminService
         
     }
 
-    public async Task<List<QuizEntity>> GetQuizList()
+    public async Task ResendEmail(long id, AdminController controller)
     {
-        return await _context.Quizes.Include(u=>u.UserEntity).ToListAsync();
+        var userEntity=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
+        
+        if (userEntity == null)
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+            return;
+        }
+
+        int tokenLife = 48; // in hours
+            
+        string generatedToken;
+        bool isExactTheSame;
+        bool isSent = true;
+        do
+        {
+            generatedToken = Utilities.GenerateOtaToken();
+            var token = _context.OtaTokens.FirstOrDefault(t => t.Token.Equals(generatedToken));
+            isExactTheSame = (token != null);
+        } while (isExactTheSame);
+
+        OtaTokenEntity otaToken = new OtaTokenEntity()
+        {
+            Token = generatedToken,
+            ExpiredAt = DateTime.Now.AddHours(tokenLife),
+            IsUsed = false,
+            UserEntity = userEntity,
+        };
+        _context.Add(otaToken);
+
+        var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
+            controller.Request.Host.Port ?? -1);
+        if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
+            
+        ResendEmailViewModel emailViewModel = new()
+        {
+            FullName = $"{userEntity.FirstName} {userEntity.LastName}",
+            TokenValidTime = tokenLife,
+            ConfirmAccountLink = $"{uriBuilder.Uri.AbsoluteUri}Auth/ConfirmAccount?token={generatedToken}",
+        };
+        UserEmailOptions<ResendEmailViewModel> options = new()
+        {
+            TemplateName = TemplateName.RESEND_EMAIL,
+            ToEmails = new List<string>() { userEntity.Email },
+            Subject = $"Tworzenie konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            DataModel = emailViewModel
+        };
+        if (!await _smtpService.SendEmailMessage(options))
+        {
+            String mess = string.Format(Lang.EMAIL_SENDING_ERROR, userEntity.Email);
+            controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, mess);
+            isSent = false;
+        }
+
+        if (isSent)
+        {
+            await _context.SaveChangesAsync();
+            String mess = string.Format(Lang.EMAIL_SENT, userEntity.Email);
+            controller.HttpContext.Session.SetString(SessionKey.EMAIL_SENT, mess);
+        }
+            controller.Response.Redirect("/Admin/UserProfile/"+userEntity.Id);
+    }
+
+
+    public async Task<List<QuizListDto>> GetQuizList()
+    {
+        var quizes = await _context.Quizes.Include(u=>u.UserEntity).ToListAsync();
+
+        List<QuizListDto> DtoList = new();
+
+        foreach (var quizData in quizes)
+        {
+            QuizListDto quizModel = new();
+
+            quizModel.Id = quizData.Id;
+            quizModel.Name = quizData.Name;
+            quizModel.IsPublic = quizData.IsPublic;
+            quizModel.CreatedAt = quizData.CreatedAt;
+            quizModel.UserId = quizData.UserId;
+            quizModel.UserName = quizData.UserEntity.Username;
+            
+            DtoList.Add(quizModel);
+        }
+
+        return DtoList;
     }
     
     public async Task DelQuiz(long id, AdminController controller)
