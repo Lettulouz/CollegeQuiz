@@ -156,10 +156,14 @@ const QuestionResultComponent = () => {
         afterQuestionResults
     } = useContext(SessionContext);
     return (
-        <ul>{afterQuestionResults.map(m => (
-                <li className="leaderboard" key={m}>{m.Username}, {m.Score}</li>
-            ))}
-        </ul>
+        
+        <div className="container">
+            {afterQuestionResults.map(m => (
+                <div key={m} className="row mb-2">
+                    <div className="leaderboard text-white px-5" style={{"height" : "100px"}}>{m.Username}, {m.Score}</div>
+                </div>
+             ))}
+        </div>
     );
 }
 
