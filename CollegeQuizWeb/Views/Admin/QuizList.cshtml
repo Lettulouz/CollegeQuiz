@@ -1,100 +1,367 @@
-@model dynamic
+@model List<CollegeQuizWeb.Dto.Admin.QuizListDto>
 
 @{
     ViewBag.Title = "Lista quizów";
     Layout = "_AdminLayout";
 }
 
+<form method="POST" asp-controller="Admin" asp-action="DelQuiz">
+
+    <input type="hidden" id="Id" asp-for="@Model[0].Id"/>
+    <button type="submit" hidden="hidden" id="deleteButtonHidden"></button>
+</form>
+
+
 <h1 class="text-muted px-2">Lista quizów</h1> 
 <hr class="divider mt-0">
 
 <div class="container-fluid">
-    @if (ViewBag.quizList != null)
-    {
-@if (ViewBag.quizRemoved != null)
-{
-    <div class="alert alert-primary alert-dismissible fade show" role="alert">
-        @ViewBag.quizRemoved
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-            <div class="input-group">
-                <input type="text" class="form-control" id="searchBox" placeholder="Wyszukaj Quiz">
-                <button type="button" class="btn bg-transparent clrBtn" style="margin-left: -40px; z-index: 100;">
-                    <i class="bi bi-x"></i>
-                </button>
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Buttons">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
+                    </li>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Publiczne</button>
+                    </li>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Prywatne</button>
+                    </li>
+                    
+                </ul>
+            </nav>
+        </div>
+        <hr class="dropdown-divider m-0"></hr>
+        <div class="row mt-3">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchBox" value onkeyup="filterButtonClick(4)" placeholder="Wyszukaj quiz">
+                    <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                </div>
+            </div>
+            <div class="col">
+                <nav aria-label="Site Pagination">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item me-2">
+                            <select class="form-select justify-content-end" id="quizsPerPagePag" onchange="quizsPerPageChange()">
+                                <option value="10">10</option>
+                                <option value="25" selected="selected">25</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                            </select>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToFirstPage()">
+                                <i class="bi bi-caret-left-fill"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="prevPage()">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                        </li>
+                        <li class="page-item" style="width: 75px">
+                            <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                        </li>
+                        <li class="page-item" style="width: 75px">
+                            <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="nextPage()">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToLastPage()">
+                                <i class="bi bi-caret-right-fill"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
-        
-        <table class="table text-center">
-            <thead>
-            <tr>
-                <th>Nazwa</th>
-                <th>Publiczny</th>
-                <th>Właściciel</th>
-                <th class="d-none d-md-table-cell">Utworzony</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var quiz in ViewBag.quizList)
-            {
-                <tr class="quiz_row">
-                    <td>@quiz.Name</td>
-                    <td>@(quiz.IsPublic ? "Tak" : "Nie")</td>
-                    <td>
-                        <a asp-action="UserProfile" asp-controller="Admin" asp-route-id="@quiz.UserEntity.Id">
-                            @quiz.UserEntity.Username</a></td>
-                    <td class="d-none d-md-table-cell">@quiz.CreatedAt</td>
-                    <td>
-                        <div class="btn-group btn-group-sm p-0 m-0">
-                            <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                               asp-action="QuizView" asp-controller="Admin" asp-route-id="@quiz.Id"
-                               data-bs-title="Szczegóły quizu">
-                                <i class="bi bi-eye-fill"></i>
-                            </a>
-                            @using (Html.BeginForm("DelQuiz", "Admin", new { id = @quiz.Id }, FormMethod.Post))
-                            {
-                                <button type="submit" class="btn btn-sm btn-danger right-button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" data-bs-title="Usuń quiz"><i class="bi bi-trash"></i></button>
-                            }
-                        </div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+    </div>
+    @if (ViewBag.quizRemoved != null)
+    {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            @ViewBag.quizRemoved
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (Model.FirstOrDefault() != null)
+    {
+        <div id="renderTable"></div>
+    }
+    else
+    {
+        <h2>Brak quizów</h2>
     }
 </div>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <script>
+    @{
+        var quizList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+    }
+ 
+ $(document).ready(function (){
+ 
+         allList("");
+     });
+ 
+ $('#pagination123').keypress(function(e) {
+         let a = [];
+         let k = e.which;
+     
+         for (i = 48; i < 58; i++)
+             a.push(i);
+     
+         if (!(a.indexOf(k)>=0))
+             e.preventDefault();
+     });
+     
+     $('#pagination123').on("cut copy paste",function(e) {
+           e.preventDefault();
+        });
+     
+     function changePageInput(obj){
+             if (parseInt(obj.value)>parseInt(maxPage))
+                 obj.value = maxPage;
+             page = obj.value;
+             redirectToProperList();
+         }
+         
+         let quizList = @(quizList);
+             let selectedquizsList = [];
+             let page = 1;
+             let recordsPerPage = 25;
+             let chosenFilter = 1;
+             let maxPage = 1;
+             var globalList = []; 
+     // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
+         String.prototype.replaceAll = function(str1, str2, ignore) 
+         {
+             return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),
+             (ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+         } 
+         
+     function quizsPerPageChange(){
+             recordsPerPage = parseInt(document.getElementById('quizsPerPagePag').value);
+             page = 1;
+             redirectToProperList();
+         }
+    
+      function delSearch(){
+             document.getElementById("searchBox").value="";
+             searchList("");
+      }
+      
+          
+     function filterButtonClick(option){
+             page = 1;
+             document.getElementById('pagination123').value = 1;    
+             selectedquizsList = [];
+             let res=document.getElementById("searchBox").value.toLowerCase()
+             switch (option){  
+                 case 1:             
+                     allList(res);
+                     break;
+                 case 2:
+                     publicList(res);
+                     break;
+                 case 3:
+                     privateList(res);
+                     break;
+                 case 4:
+                     searchList(res);
+                     break;
+             }
+         }
+      
+         function allList(val){ 
+                 document.getElementById('pagination123').value = page;
+                 document.getElementById('allButton').className = "btn btn-lg btn-dark w-100";  
+                 document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+                 document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                 chosenFilter = 1;
+                 let filteredquizList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
+                 let filteredquizList2 = [];
+                 let initialLength = filteredquizList.length;
+                 for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                     if (filteredquizList[i] != null)
+                         filteredquizList2.push(filteredquizList[i]);
+                 }
+                 globalList=filteredquizList2
+                 generateListHTML(filteredquizList2, initialLength);
+             }
+             
+             function publicList(val){  
+                     document.getElementById('pagination123').value = page;
+                     document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
+                     document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                     chosenFilter = 2;
+                     let prefilteredList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
+                     let filteredquizList = prefilteredList.filter(obj => obj.IsPublic);
+                     let filteredquizList2 = [];
+                     let initialLength = filteredquizList.length;
+                     for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                         if (filteredquizList[i] != null)
+                             filteredquizList2.push(filteredquizList[i]);
+                     }
+                     globalList=filteredquizList2
+                     generateListHTML(filteredquizList2, initialLength);
+                 }
+                 
+             function privateList(val){  
+                      document.getElementById('pagination123').value = page;
+                      document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+                      document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+                      document.getElementById('archiveButton').className =  "btn btn-lg btn-dark w-100";
+                      chosenFilter = 3;
+                      let prefilteredList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
+                      let filteredquizList = prefilteredList.filter(obj => !obj.IsPublic);
+                     let filteredquizList2 = [];
+                     let initialLength = filteredquizList.length;
+                     for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                         if (filteredquizList[i] != null)
+                             filteredquizList2.push(filteredquizList[i]);
+                     }
+                     globalList=filteredquizList2
+                     
+                     generateListHTML(filteredquizList2, initialLength);
+                  }
+             
+                  function searchList(val){
+                    document.getElementById('pagination123').value = page;
+                    
+                    let filteredquizList = globalList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
+                   let filteredquizList2 = [];
+                   let initialLength = filteredquizList.length;
+                   for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                       if (filteredquizList[i] != null)
+                           filteredquizList2.push(filteredquizList[i]);
+                   }
+                   generateListHTML(filteredquizList2, initialLength);
+                   redirectToProperList()  
+                }
+                            
+         function generateListHTML(quizListLoc, initialLength){
+                 $("[data-toggle=\"tooltip\"]").tooltip();
+                 let numberOfPages = parseInt(initialLength/recordsPerPage);
+                 if(initialLength%recordsPerPage !== 0)
+                     numberOfPages++;
+                 if (isNaN(numberOfPages))
+                     numberOfPages = 1;
+                 let innerTextVal =`z ${numberOfPages}`;
+                 maxPage = numberOfPages;
+                 document.getElementById('pagination321').innerText = innerTextVal;
+                 let currentDate = new Date();                 
+                 let html = `<table class="table text-center">
+                     <thead>
+                     <tr>
+                     <th>Nazwa</th>
+                     <th>Publiczny</th>
+                     <th>Właściciel</th>
+                     <th class="d-none d-md-table-cell">Utworzony</th>
+                     <th></th>
+                     </tr>
+                     </thead>
+                     <tbody>`;
+                 quizListLoc.forEach(obj => {
+                     let temp = obj.CreatedAt;
+                     temp = temp.replaceAll("T"," ");
+                     temp = temp.split('.')[0];
+                     html+=`<tr class="tabrow">
+                     <td>${obj.Name}</td>`
+                      if(obj.IsPublic){
+                        html+= `<td>Tak</td>`
+                      }else{
+                          html+= `<td>Nie</td>`
+                      }
+                     html+=`<td><a href="/Admin/UserProfile/${obj.UserId}">${obj.UserName}</a></td>
+                     <td class="d-none d-md-table-cell">${temp}</td>
+                     <td>
+                     <div class="btn-group btn-group-sm p-0 m-0">
+                     <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                        href="/Admin/QuizView/${obj.Id}" data-bs-title="Szczegóły quizu">
+                         <i class="bi bi-eye-fill"></i>
+                     </a>
+                         <a type="button" val="${obj.Id}" class="btn btn-sm btn-danger right-button" onclick="deleteQuiz(this)" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" data-bs-title="Usuń quiz"><i class="bi bi-trash"></i></a>
+            
+                 </div>
+                    </td>`
+
+                 });             
+                 html+=`</tbody>
+                 </table>`;
+                 document.getElementById('renderTable').innerHTML = html;
+             }
+             
+             function nextPage(){
+                     if (page<maxPage){
+                         page++;
+                         redirectToProperList();
+                     }     
+                 }
+                 
+                 function prevPage(){
+                     if (page>1){
+                         page--;
+                         redirectToProperList();
+                     } 
+                 }
+                 
+                 function redirectToProperList(){
+                    let res=document.getElementById("searchBox").value.toLowerCase();
+                     switch(chosenFilter){
+                         case 1: 
+                             allList(res);
+                             break;
+                         case 2: 
+                             publicList(res);
+                             break;    
+                         case 3: 
+                             privateList(res);
+                             break; 
+                         case 4:
+                             searchList(res);
+                             break;
+                     }
+                 }
+                 
+                 function goToFirstPage(){
+                     page = 1;
+                     redirectToProperList();
+                 }
+                 
+                 function goToLastPage(){
+                     page = maxPage;
+                     redirectToProperList();
+                 }
+                 
+                 function confirmFormSubmit(){
+                         let temp = document.getElementById('deleteButtonHidden');
+                         temp.click();
+                     }
+                 
+                 function deleteQuiz(obj){
+                         let value = $(obj).attr("val");
+                         quizId = document.getElementById('Id');
+                         quizId.value = value;
+                         confirmFormSubmit();
+                     }
+                 
     document.getElementById('quiz_collapse').classList.add('show');
     document.getElementById('quiz_collapse_btn').setAttribute( 'aria-expanded', 'true' );
     document.getElementById('quiz_collapse_btn').setAttribute( 'style', 'color:white !important' );
     document.getElementById('quizes_list').setAttribute( 'style', 'color:white !important' );
-
-
-    
-
-    
-        $(document).ready(function(){
-      $("#searchBox").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".quiz_row").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-
-
-        });
-      });
-    });
-    
-    $('.clrBtn').click(function(){
-            $('#searchBox').val('');
-            $(".quiz_row").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf('') > -1)
-
-        });
-        })
 </script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>

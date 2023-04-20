@@ -36,5 +36,15 @@ public class SharedQuizesController : Controller
         return View(payloadDto.Dto);
     }
     
-    
+    [HttpGet]
+    public async Task<IActionResult> SharePage([FromRoute(Name = "id")] long id)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        
+        await _service.ShareQuizInfo(id, this);
+        
+        
+        return View();
+    }
 }

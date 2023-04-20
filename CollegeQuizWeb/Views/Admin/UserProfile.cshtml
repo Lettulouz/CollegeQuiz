@@ -20,7 +20,7 @@
         {
             @if (@ViewBag.UserInfo.AccountStatus == -1)
             {
-                @using (Html.BeginForm("UnbanUser", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+                @using (Html.BeginForm("UnbanUserProf", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
                 {
                     <button type="submit" class="btn btn-dark mid-button" data-bs-toggle="tooltip"
                             data-bs-placement="top" data-bs-title="Odblokuj użytkownika"><i class="bi bi-unlock"></i></button>
@@ -32,7 +32,7 @@
                 <a class="btn btn-danger button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
                    data-bs-title="Zawieś użytkownika" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id"><i class="bi bi-person-fill-lock"></i></a>
             }
-            @using (Html.BeginForm("DelUser", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+            @using (Html.BeginForm("DelUserProf", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
             {
                 <button type="submit" class="btn btn-danger right-button" data-bs-toggle="tooltip"
                         data-bs-placement="top" data-bs-title="Usuń użytkownika"><i class="bi bi-trash"></i></button>
@@ -42,11 +42,25 @@
     </div>
     <hr class="divider mt-0">
     <div class="container-fluid">
+        @if (ViewBag.mailError!=null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewBag.mailError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        @if (ViewBag.emailSent!=null)
+            {
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    @ViewBag.emailSent
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
         <div class="row ">
             <div class="col-auto py-0 my-0">
                 <i class="bi bi-file-person p-0" style=" font-size: 100px;"></i>
             </div>
-            
+
             <div class="col-auto">
                 <div class="row">
                     <h3>Dane użytkownika</h3>
@@ -58,19 +72,27 @@
                         <p>Email: @ViewBag.UserInfo.Email</p>
                     </div>
                     <div class="col-auto">
-                        <p>Status:  @ViewBag.UserInfo.AccountStatus @if (@ViewBag.UserInfo.CurrentStatusExpirationDate != DateTime.MinValue)
-                                             {
-                                                 <a> do @ViewBag.UserInfo.CurrentStatusExpirationDate</a>
-                                             }
+                        <p>Status: @ViewBag.UserInfo.AccountStatus
+                        @if (@ViewBag.UserInfo.CurrentStatusExpirationDate != DateTime.MinValue)
+                        {
+                            <a> do @ViewBag.UserInfo.CurrentStatusExpirationDate</a>
+                        }
 
-                        <p>Konto aktywowane: @if (@ViewBag.UserInfo.IsAccountActivated == true)
-                                             {
-                                                 <a>Tak</a>
-                                             }
-                                             else
-                                             {
-                                                 <a>Nie</a>
-                                             }</p>
+                        <p>Konto aktywowane:
+                            @if (@ViewBag.UserInfo.IsAccountActivated == true)
+                            {
+                                <a>Tak</a>
+                            }
+                            else
+                            {
+                                <a>Nie</a>
+                                <a href="#" onclick="subForm()"> Wyślij link aktywacyjny ponownie</a>
+                                @using (Html.BeginForm("ResendEmail", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+                                {
+                                    <button type="submit" id="resendButton" hidden="hidden"></button>
+                                }
+                            }
+                        </p>
                         <p>Data dołączenia: @ViewBag.UserInfo.CreatedAt</p>
                     </div>
                 </div>
@@ -94,12 +116,17 @@
                         }
                     }
                 </div>
-                </div>
             </div>
-                
+        </div>
+
     </div>
 
     <script>
+    function subForm(){
+        let temp = document.getElementById('resendButton');
+        temp.click();
+    }
+    
     document.getElementById('users_collapse').classList.add('show');
     document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
     document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );

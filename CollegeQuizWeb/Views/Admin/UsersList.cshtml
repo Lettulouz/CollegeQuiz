@@ -1,16 +1,100 @@
-@using CollegeQuizWeb.Entities
-@model dynamic
+@model List<CollegeQuizWeb.Dto.Admin.UserListDto>
 
 @{
-    Layout= "_AdminLayout";
-    ViewData["Title"] = "Lista użytkowników";
+    ViewBag.Title = "Lista użytkowników";
+    Layout = "_AdminLayout";
 }
-<h1 class="text-muted px-2">Lista użytkowników</h1> 
+
+<form method="POST" asp-controller="Admin" asp-action="DelUser">
+
+    <input type="hidden" id="Id" asp-for="@Model[0].Id"/>
+    <button type="submit" hidden="hidden" id="deleteButtonHidden"></button>
+</form>
+
+<form method="POST" asp-controller="Admin" asp-action="UnbanUser">
+
+    <input type="hidden" id="userId" asp-for="@Model[0].Id"/>
+    <button type="submit" hidden="hidden" id="unbanButtonHidden"></button>
+</form>
+
+
+<h1 class="text-muted px-2">Lista Użytkowników</h1> 
 <hr class="divider mt-0">
 
 <div class="container-fluid">
-@if (ViewBag.users != null)
-{
+    <div class="row">
+        <div class="col">
+            <nav aria-label="Buttons">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszyscy</button>
+                    </li>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywni</button>
+                    </li>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Zawieszeni</button>
+                    </li>
+                    <li class="page-item me-2">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="unActiveButton" onclick="filterButtonClick(5)" type="submit">Nieaktywni</button>
+                    </li>
+                    
+                </ul>
+            </nav>
+        </div>
+        <hr class="dropdown-divider m-0"></hr>
+        <div class="row mt-3">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchBox" value onkeyup="filterButtonClick(4)" placeholder="Wyszukaj Użytkownika">
+                    <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                </div>
+            </div>
+            <div class="col">
+                <nav aria-label="Site Pagination">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item me-2">
+                            <select class="form-select justify-content-end" id="usersPerPagePag" onchange="usersPerPageChange()">
+                                <option value="10">10</option>
+                                <option value="25" selected="selected">25</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                            </select>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToFirstPage()">
+                                <i class="bi bi-caret-left-fill"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="prevPage()">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                        </li>
+                        <li class="page-item" style="width: 75px">
+                            <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                        </li>
+                        <li class="page-item" style="width: 75px">
+                            <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="nextPage()">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToLastPage()">
+                                <i class="bi bi-caret-right-fill"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
     @if (ViewBag.userRemoved!=null)
     {
         <div class="alert alert-primary alert-dismissible fade show" role="alert">
@@ -34,109 +118,363 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-    
-    <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <div class="input-group">
-            <input type="text" class="form-control" id="searchBox" placeholder="Wyszukaj użytkownika">
-            <button type="button" class="btn bg-transparent clrBtn" style="margin-left: -40px; z-index: 100;">
-                <i class="bi bi-x"></i>
-            </button>
-            <span class="input-group-text"><i class="bi bi-search"></i></span>
-        </div>
-    </div>
-    @foreach (var user in ViewBag.users)
+    @if (Model.FirstOrDefault() != null)
     {
-
-        <div class='row user-row px-2 py-0'>
-            <div class="user-card col-12 col-lg-5 my-2">
-                <div class="row">
-                    <div class='col-auto text-center '><i class='bi bi-person' style='font-size:50px;'></i>
-                    </div>
-                    <div class='col-9 ps-2  ps-xl-2'>
-                        <div class="row">
-                            <div class='col-auto user-car-header'>
-                                @user.Username
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class='col-lg-9 col-xl-7 '>
-                                <p class="mb-1">@user.FirstName @user.LastName</p>
-                                <p class="mb-1">Email: @user.Email</p>
-                                <p>Status: @user.AccountStatus</p>
-                            </div>
-                            <div class='col-lg-3 p-1 me-2 text-right'>
-                                <div class="btn-group btn-group-sm text-right">
-                                    <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                       data-bs-title="Szczegóły użytkownika" asp-action="UserProfile" asp-controller="Admin" asp-route-id="@user.Id">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                    
-                                    <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                       data-bs-title="Edycja użytkownika"  asp-action="EditUser" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-pencil-square"></i></a>
-                                    @if (@user.AccountStatus == -1)
-                                    {
-                                        @using (Html.BeginForm("UnbanUser", "Admin", new { id = @user.Id }, FormMethod.Post))
-                                        {
-                                            <button type="submit" class="btn btn-sm btn-dark mid-button" data-bs-toggle="tooltip" 
-                                                    data-bs-placement="top" data-bs-title="Odblokuj użytkownika"><i class="bi bi-unlock"></i></button>
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
-                                           data-bs-title="Zawieś użytkownika" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@user.Id"><i class="bi bi-person-fill-lock"></i></a>
-                                    }
-                                    @using (Html.BeginForm("DelUser", "Admin", new { id = @user.Id }, FormMethod.Post))
-                                    {
-                                        <button type="submit" class="btn btn-sm btn-danger right-button" data-bs-toggle="tooltip" 
-                                                data-bs-placement="top" data-bs-title="Usuń użytkownika" ><i class="bi bi-trash"></i></button>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="renderTable"></div>
     }
-}
-else
-{
-    <h2>Brak użytkowników</h2>
-}
+    else
+    {
+        <h2>Brak użytkowników</h2>
+    }
 </div>
 
-
-
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
-    document.getElementById('users_collapse').classList.add('show');
-    document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
-    document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
-    document.getElementById('users_list').setAttribute( 'style', 'color:white !important' );
-
-
-    
-
-    
-        $(document).ready(function(){
-      $("#searchBox").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".user-card").filter(function() {
-          $(this).toggle($(this).parent().text().toLowerCase().indexOf(value) > -1)
-
-
+    @{
+        var userList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+    }
+ 
+ $(document).ready(function (){
+ 
+         allList("");
+         hideButtons();
+     });
+ 
+ $('#pagination123').keypress(function(e) {
+         let a = [];
+         let k = e.which;
+     
+         for (i = 48; i < 58; i++)
+             a.push(i);
+     
+         if (!(a.indexOf(k)>=0))
+             e.preventDefault();
+     });
+     
+     $('#pagination123').on("cut copy paste",function(e) {
+           e.preventDefault();
         });
-      });
-    });
+     
+     function changePageInput(obj){
+             if (parseInt(obj.value)>parseInt(maxPage))
+                 obj.value = maxPage;
+             page = obj.value;
+             redirectToProperList();
+         }
+         
+         let userList = @(userList);
+             let selectedusersList = [];
+             let page = 1;
+             let recordsPerPage = 25;
+             let chosenFilter = 1;
+             let maxPage = 1;
+             var globalList = []; 
+     // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
+         String.prototype.replaceAll = function(str1, str2, ignore) 
+         {
+             return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),
+             (ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+         } 
+         
+     function usersPerPageChange(){
+             recordsPerPage = parseInt(document.getElementById('usersPerPagePag').value);
+             page = 1;
+             redirectToProperList();
+         }
     
-    $('.clrBtn').click(function(){
-            $('#searchBox').val('');
-            $(".user-card").filter(function() {
-          $(this).toggle($(this).parent().text().toLowerCase().indexOf('') > -1)
+      function delSearch(){
+             document.getElementById("searchBox").value="";
+             searchList("");
+      }
+      
+          
+     function filterButtonClick(option){
+             page = 1;
+             document.getElementById('pagination123').value = 1;    
+             selectedusersList = [];
+             let res=document.getElementById("searchBox").value.toLowerCase()
+             switch (option){  
+                 case 1:             
+                     allList(res);
+                     break;
+                 case 2:
+                     ActiveList(res);
+                     break;
+                 case 3:
+                     suspendedList(res);
+                     break;
+                 case 4:
+                     searchList(res);
+                     break;
+                 case 5:
+                      unActiveList(res);
+                      break;
+             }
+         }
+      
+         function allList(val){ 
+                 document.getElementById('pagination123').value = page;
+                 document.getElementById('allButton').className = "btn btn-lg btn-dark w-100";  
+                 document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+                 document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                 document.getElementById('unActiveButton').className = "btn btn-lg btn-secondary w-100";
+                 chosenFilter = 1;
+                 let filtereduserList = userList.filter(function (obj) { return obj.UserName.toLowerCase().includes(val); });
+                 let filtereduserList2 = [];
+                 let initialLength = filtereduserList.length;
+                 for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                     if (filtereduserList[i] != null)
+                         filtereduserList2.push(filtereduserList[i]);
+                 }
+                 globalList=filtereduserList2
+                 generateListHTML(filtereduserList2, initialLength);
+             }
+             
+             function ActiveList(val){  
+                     document.getElementById('pagination123').value = page;
+                     document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
+                     document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('unActiveButton').className = "btn btn-lg btn-secondary w-100";
+                     chosenFilter = 2;
+                     let prefilteredList = userList.filter(function (obj) { return obj.UserName.toLowerCase().includes(val); });
+                     let prefilteredList2 = prefilteredList.filter(obj => obj.IsAccountActivated);
+                     let filtereduserList = prefilteredList2.filter(obj => obj.AccountStatus!==-1);
+                     let filtereduserList2 = [];
+                     let initialLength = filtereduserList.length;
+                     for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                         if (filtereduserList[i] != null)
+                             filtereduserList2.push(filtereduserList[i]);
+                     }
+                     globalList=filtereduserList2
+                     generateListHTML(filtereduserList2, initialLength);
+                 }
+                 
+             function suspendedList(val){  
+                      document.getElementById('pagination123').value = page;
+                      document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+                      document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+                      document.getElementById('archiveButton').className =  "btn btn-lg btn-dark w-100";
+                      document.getElementById('unActiveButton').className = "btn btn-lg btn-secondary w-100";
+                      chosenFilter = 3;
+                      let prefilteredList = userList.filter(function (obj) { return obj.UserName.toLowerCase().includes(val); });
+                      let filtereduserList = prefilteredList.filter(obj => obj.AccountStatus===-1);
+                     let filtereduserList2 = [];
+                     let initialLength = filtereduserList.length;
+                     for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                         if (filtereduserList[i] != null)
+                             filtereduserList2.push(filtereduserList[i]);
+                     }
+                     globalList=filtereduserList2
+                     
+                     generateListHTML(filtereduserList2, initialLength);
+                  }
+             
+                  function searchList(val){
+                    document.getElementById('pagination123').value = page;
+                    
+                    let filtereduserList = globalList.filter(function (obj) { return obj.UserName.toLowerCase().includes(val); });
+                   let filtereduserList2 = [];
+                   let initialLength = filtereduserList.length;
+                   for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                       if (filtereduserList[i] != null)
+                           filtereduserList2.push(filtereduserList[i]);
+                   }
+                   generateListHTML(filtereduserList2, initialLength);
+                   redirectToProperList()  
+                }
+                
+                function unActiveList(val){  
+                     document.getElementById('pagination123').value = page;
+                     document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('unActiveButton').className = "btn btn-lg btn-dark w-100";
+                     chosenFilter = 2;
+                     let prefilteredList = userList.filter(function (obj) { return obj.UserName.toLowerCase().includes(val); });
+                     let filtereduserList = prefilteredList.filter(obj => !obj.IsAccountActivated);
+                     let filtereduserList2 = [];
+                     let initialLength = filtereduserList.length;
+                     for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                         if (filtereduserList[i] != null)
+                             filtereduserList2.push(filtereduserList[i]);
+                     }
+                     globalList=filtereduserList2
+                     generateListHTML(filtereduserList2, initialLength);
+                 }
+                            
+         function generateListHTML(userListLoc, initialLength){
+                 $("[data-toggle=\"tooltip\"]").tooltip();
+                 let numberOfPages = parseInt(initialLength/recordsPerPage);
+                 if(initialLength%recordsPerPage !== 0)
+                     numberOfPages++;
+                 if (isNaN(numberOfPages))
+                     numberOfPages = 1;
+                 let innerTextVal =`z ${numberOfPages}`;
+                 maxPage = numberOfPages;
+                 document.getElementById('pagination321').innerText = innerTextVal;
+                 let currentDate = new Date();                 
+                 let html = `<table class="table text-center">
+                     <thead>
+                     <tr>
+                     <th>Nazwa</th>
+                     <th>Imię</th>
+                     <th class="d-none d-md-table-cell">Email</th>
+                     <th>Status</th>
+                     <th class="d-none d-md-table-cell">Dołączył</th>
+                     <th></th>
+                     </tr>
+                     </thead>
+                     <tbody>`;
+                     let i=0;
+                 userListLoc.forEach(obj => {
+                     let temp = obj.CreatedAt;
+                     temp = temp.replaceAll("T"," ");
+                     temp = temp.split('.')[0];
+                     html+=`<tr class="tabrow">
+                     <td>${obj.UserName}</td>
+                     <td>${obj.FirstName} ${obj.LastName}</td>
+                     <td class="d-none d-md-table-cell">${obj.Email}</td>
+                     <td>${obj.AccountStatus}</td>
+                     <td class="d-none d-md-table-cell">${temp}</td>
+                     <td>
 
-        });
-        })
+                    <div class='listBtn mb-1'>
+                        <button type='button' data-toggle='collapse' class='btn btn-dark d-inline btn-sm' 
+                        data-bs-toggle='collapse' data-bs-target='#btnGrp${i}' aria-expanded='false'>
+                            <i class='bi bi-list'></i>
+                        </button>
+                    </div>
+                    
+                    <div class="dyn" id="btnGrp${i}">
+                     <div class="btn-group btn-group-sm bGroup p-0 m-0" >
+                     <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                        data-bs-title="Szczegóły użytkownika" href="/Admin/UserProfile/${obj.Id}">
+                         <i class="bi bi-eye-fill"></i>
+                     </a>
+                     <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                   data-bs-title="Edycja użytkownika" href="/Admin/EditUser/${obj.Id}">
+                   <i class="bi bi-pencil-square"></i></a>`
+                   if(obj.AccountStatus===-1){
+                       html+=`<a type="button" val="${obj.Id}" class="btn btn-sm btn-dark mid-button" data-bs-toggle="tooltip" 
+                              data-bs-placement="top" data-bs-title="Odblokuj użytkownika" onclick="unbanuser(this)">
+                            <i class="bi bi-unlock"></i></a>`
+                   }else{
+                      html+=`<a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                          data-bs-title="Zawieś użytkownika" href="/Admin/SuspendUser/${obj.Id}">
+                          <i class="bi bi-person-fill-lock"></i></a>`
+                   }
+                                                               
+                      html+=  ` <a type="button" val="${obj.Id}" class="btn btn-sm btn-danger right-button" onclick="deleteuser(this)" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" data-bs-title="Usuń użytkownika"><i class="bi bi-trash"></i></a>
+            
+                 </div>
+                </div>
+                    </td>
+                     </tr>`
+                    i++;
+                 });             
+                 html+=`</tbody>
+                 </table>`;
+                 document.getElementById('renderTable').innerHTML = html;
+                 hideButtons();
+             }
+             
+             function nextPage(){
+                     if (page<maxPage){
+                         page++;
+                         redirectToProperList();
+                     }     
+                 }
+                 
+                 function prevPage(){
+                     if (page>1){
+                         page--;
+                         redirectToProperList();
+                     } 
+                 }
+                 
+                 function redirectToProperList(){
+                    let res=document.getElementById("searchBox").value.toLowerCase();
+                     switch(chosenFilter){
+                         case 1: 
+                             allList(res);
+                             break;
+                         case 2: 
+                             ActiveList(res);
+                             break;    
+                         case 3: 
+                             suspendedList(res);
+                             break; 
+                         case 4:
+                             searchList(res);
+                             break;
+                         case 5:
+                             unActiveList(val)
+                             break;
+                     }
+                 }
+                 
+                 function goToFirstPage(){
+                     page = 1;
+                     redirectToProperList();
+                 }
+                 
+                 function goToLastPage(){
+                     page = maxPage;
+                     redirectToProperList();
+                 }
+                 
+                 function confirmDelFormSubmit(){
+                         let temp = document.getElementById('deleteButtonHidden');
+                         temp.click();
+                     }
+                 
+                 function deleteuser(obj){
+                         let value = $(obj).attr("val");
+                         userId = document.getElementById('Id');
+                         userId.value = value;
+                         confirmDelFormSubmit();
+                     }
+                     
+                 function confirmUnbanFormSubmit(){
+                      let temp = document.getElementById('unbanButtonHidden');
+                      temp.click();
+                  }
+                     
+                 function unbanuser(obj){
+                      let value = $(obj).attr("val");
+                      userId = document.getElementById('userId');
+                      userId.value = value;
+                      confirmUnbanFormSubmit();
+                  }
+                  
+                 function hideButtons(){
+                         if($('main').width()<970){
+                             $(".dyn").addClass("collapse");
+                             $(".bGroup").addClass("btn-group-vertical");
+                             $(".bGroup").removeClass("btn-group");
+                             $(".tabBtn").addClass("d-block");
+                             $(".tabLink").addClass("mt-1");
+                            $(".listBtn").show();
+                         }else{
+                             $(".dyn").removeClass("collapse")
+                             $(".bGroup").removeClass("btn-group-vertical ");
+                             $(".bGroup").addClass("btn-group");
+                             $(".tabBtn").removeClass("d-block");
+                             $(".tabLink").removeClass("mt-1");
+                             $(".listBtn").hide();
+                         }
+                     }
+                 
+                     $(window).resize(function(){
+                         hideButtons();
+                     })
+                 
+        document.getElementById('users_collapse').classList.add('show');
+        document.getElementById('users_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+        document.getElementById('users_collapse_btn').setAttribute( 'style', 'color:white !important' );
+        document.getElementById('users_list').setAttribute( 'style', 'color:white !important' );
 </script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>

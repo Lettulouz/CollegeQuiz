@@ -50,7 +50,7 @@ public static class Lang
     
     public const string QUIZ_SHARED_TOKEN_ERROR = "*Niepoprawny token.";
     public const string QUIZ_SHARED_TOKEN_BAD_ERROR = "*Podany token nie istnieje lub jest nie prawidłowy";
-    public const string QUIZ_SHARED_TOKEN_DUPLICATE_ERROR = "*Podany quiz należy już do ciebie lub został już udostepniony";
+    public const string QUIZ_SHARED_TOKEN_DUPLICATE_ERROR = "*Podany quiz należy już do Ciebie lub został już udostepniony";
     public const string QUIZ_SHARED_TOKEN_SUCCESS= "*Quiz został dodany do twojej listy quizów";
 
     public const string INVALID_COUPON_CODE_ERROR = "Należy podać prawidłowy kupon.";
@@ -97,6 +97,7 @@ public static class Lang
     public const string USER_UPDATED = "Użytkownik {0} został zaktualizowany.";
     
     public const string EMAIL_SENDING_ERROR = "Nieudane wysłanie wiadomości email na adres {0}. Spróbuj ponownie później.";
+    public const string EMAIL_SENT = "Wysłano wiadomość email na adres {0}";
     public const string EMAIL_ACCOUNT_CRETED_INFROMATION = "Tworzenie konta dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_INFROMATION = "Reset hasła dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_SENT = 

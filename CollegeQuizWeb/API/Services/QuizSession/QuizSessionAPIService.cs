@@ -38,7 +38,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         if (quizLobby == null) return new JoinToSessionDto()
         {
             IsGood = false,
-            Message = $"Podany przez Ciebie kod <strong>{token}</strong> nie istnieje lub uległ przedawnieniu."
+            Message = $"Podany kod <strong>{token}</strong> nie istnieje lub uległ przedawnieniu."
         };
         var alreadyJoinedInactive = await _context.QuizSessionPartics
             .Include(p => p.UserEntity)
