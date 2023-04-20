@@ -76,6 +76,22 @@ public class AuthController : Controller
         Response.Redirect("/Quiz/MyQuizes");
     }
     
+    public async Task AdminDEV()
+    {
+        LoginDto obj = new LoginDto();
+        obj.LoginOrEmail = "domipis771@student.polsl.pl";
+        obj.Password = "Haselko1234*";
+        var payloadDto = new LoginDtoPayload(this) { Dto = obj };
+        
+        if (ModelState.IsValid)
+        {
+            await _authService.Login(payloadDto);
+            // return RedirectToAction("Privacy", "Home");
+        }
+        
+        Response.Redirect("/Admin/Index");
+    }
+    
     public async Task LoginDEV2()
     {
         LoginDto obj = new LoginDto();
