@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CollegeQuizWeb.Dto.SharedQuizes.ShareTokenDto
 @{
-    ViewData["Title"] = "Udostępnianie quizu";
+    ViewData["Title"] = "Odbierz udostępniony quiz";
 }
 
 
@@ -25,7 +25,7 @@
                 }
                 <form method="post" asp-action="Share">
                     <div class="form-data">
-                        <label id="mainName">Udostępnij quiz</label>
+                        <label id="mainName">Odbierz udostępniony quiz</label>
                         <div class="forms-inputs mb-4 mt-3">
                             <label for="sharedQuizToken">Kod</label>
                             <input type="text" id="sharedQuizToken" asp-for="ShareToken">
@@ -33,7 +33,7 @@
                             <span class="mx-2 mt-1 errorTextColor" asp-validation-for="ShareToken"></span>
                         </div>
                         <div class="mb-3">
-                            <button class="btn-color-one w-100" type="submit">Udostępnij</button>
+                            <button class="btn-color-one w-100" type="submit">Odbierz</button>
                         </div>
                     </div>
                 </form>
