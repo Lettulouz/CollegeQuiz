@@ -29,52 +29,22 @@
                         </div>
                     </div>
                 </div>
-                @if (((IEnumerable<dynamic>)ViewBag.questions).Count() == 1)
+                @for (int i = 0; i < 4; i++)
                 {
-                    @for (int i = 0; i < 4; i++)
-                    {
-                        <div class="col-6">
-                            <div class="p-3 card">
-                                <div class="p-3 card hstack">
-                                    <div class="me-2 fs-4">@(i + 1)</div>
-                                    <label type="text" class="form-control" placeholder="Treść odpowiedzi">@ViewBag.questions[j].answers[i]</label>
-                                </div>
-                                <div class="form-check mt-2">
-                                    @if (@ViewBag.questions[j].goodAnswers[i] == true)
-                                    {
-                                        <label class="form-check-label">To jest poprawna odpowiedź</label>
-                                    }
-                                </div>
+                    <div class="col-6">
+                        <div class="p-3 card">
+                            <div class="p-3 card hstack">
+                                <div class="me-2 fs-4">@(i + 1)</div>
+                                <label type="text" class="form-control" placeholder="Treść odpowiedzi">@ViewBag.questions[j].answers[i]</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                @if (@ViewBag.questions[j].goodAnswers[i] == true)
+                                {
+                                    <label class="form-check-label">To jest poprawna odpowiedź</label>
+                                }
                             </div>
                         </div>
-                    }
-                }
-                else
-                {
-                    int iteratorQuestion = 1;
-                    @for (int i = 0; i < ((IEnumerable<dynamic>)ViewBag.questions).Count() - 1; i++)
-                    {
-                        @if (@iteratorQuestion >= 5)
-                        {
-                            iteratorQuestion = 1;
-                        }
-                        <div class="col-6">
-                            <div class="p-3 card">
-                                <div class="p-3 card hstack">
-                                    <div class="me-2 fs-4">@(iteratorQuestion++)</div>
-                                    <label type="text" class="form-control" placeholder="Treść odpowiedzi">@ViewBag.questions[j].answers[i]</label>
-                                </div>
-                                <div class="form-check mt-2">
-
-                                    @if (@ViewBag.questions[j].goodAnswers[i] == true)
-                                    {
-                                        <label class="form-check-label">To jest poprawna odpowiedź</label>
-                                    }
-
-                                </div>
-                            </div>
-                        </div>
-                    }
+                    </div>
                 }
             }
         }
