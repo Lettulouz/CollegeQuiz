@@ -101,6 +101,24 @@ public class QuizManagerSessionHub : Hub
             Console.WriteLine(timer);
         }
         cts.Cancel();
+        
+        var currentAnswer = _context.Answers.Include(t => t.QuestionEntity)
+                .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                t.QuestionEntity.QuizId.Equals(quiz.QuizId)).FirstOrDefault();
+
+        var getAllAnswersForUpdate = _context.UsersQuestionsAnswers
+            .Include(t => t.QuizSessionParticEntity)
+            .ThenInclude(t => t.QuizLobbyEntity)
+            .Where(t => t.Question.Equals(question.questionId) &&
+                          t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
+            .OrderBy(t => t.CreatedAt).ToList();
+        
+        foreach (var answer in getAllAnswersForUpdate)
+        {
+            if (question.answers[answer.Answer] == currentAnswer.Name)
+                answer.QuizSessionParticEntity.Score += 1000;
+        }
+        await _context.SaveChangesAsync();
 
         Console.WriteLine("punkt testowy 7");
         var getAllAnswers =

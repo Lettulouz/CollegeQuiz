@@ -160,7 +160,13 @@ const QuestionResultComponent = () => {
         <div className="container">
             {afterQuestionResults.map(m => (
                 <div key={m} className="row mb-2">
-                    <div className="leaderboard text-white px-5" style={{"height" : "100px"}}>{m.Username}, {m.Score}</div>
+                    <div className="leaderboard text-white px-5 col-sm d-flex align-items-center justify-content-center">
+                        <div>{m.Username}</div>
+                    </div>
+
+                    <div className="leaderboard goldleaderboard px-5 col-sm d-flex align-items-center justify-content-center">
+                        <div>{m.Score}</div>
+                    </div>
                 </div>
              ))}
         </div>
@@ -209,9 +215,7 @@ const QuestionCardComponent = props => {
     } = useContext(SessionContext);
     
     const handleClick = answer => {
-        console.log("Arek2017")
         if(isAnswerSet === true) return;
-        console.log("7102kerA")
         fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`, {
             method: 'POST',
             credentials: 'same-origin',
