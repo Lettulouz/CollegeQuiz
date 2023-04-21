@@ -198,6 +198,19 @@ input:-webkit-autofill {
 .card-img-custom {
     border: none;
     border-radius: 50px;
+    transition: transform 0.2s;
+}
+
+.card-img-custom.clicked {
+    transform: scale(0.8);
+}
+
+.card-img-custom:not(.clicked):not(.notClicked):hover {
+    transform: scale(0.9);
+}
+
+.cursor-not-allowed{
+    cursor: not-allowed !important;
 }
 
 .button-card {
@@ -371,3 +384,4 @@ select{
 .leaderboard:before{
 
 }
+

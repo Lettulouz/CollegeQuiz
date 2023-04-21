@@ -160,12 +160,12 @@ const QuestionResultComponent = () => {
         <div className="container">
             {afterQuestionResults.map(m => (
                 <div key={m} className="row mb-2">
-                    <div className="leaderboard text-white px-5 col-sm d-flex align-items-center justify-content-center">
-                        <div>{m.Username}</div>
+                    <div className="leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center">
+                        {m.Username}
                     </div>
 
-                    <div className="leaderboard goldleaderboard px-5 col-sm d-flex align-items-center justify-content-center">
-                        <div>{m.Score}</div>
+                    <div className="leaderboard goldleaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center">
+                        {m.Score}
                     </div>
                 </div>
              ))}
@@ -180,7 +180,7 @@ const QuestionType1Component = () => {
     return (
         <div className="container d-flex">
             <div className="row d-flex justify-content-center">
-                <div className="col-1 p-0">
+                <div className="col-1 px-0">
                     <div className="card card-img-custom">
                         <img src={"/gfx/timer.svg"} alt="image_answer_D"/>
                         <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
@@ -188,7 +188,7 @@ const QuestionType1Component = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-10">
+                <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
                         <img src={"/gfx/1.png"} width="200px" height="200px"/>
@@ -202,7 +202,7 @@ const QuestionType1Component = () => {
                         <QuestionCardComponent number={3}/>
                     </div>
                 </div>
-                <div className="col-1"><LeaveSessionButtonComponent text={"Wyjdź"}/></div>
+                <div className="col-2 px-0"><LeaveSessionButtonComponent text={"Wyjdź"}/></div>
             </div>
         </div>
     );
@@ -213,6 +213,7 @@ const QuestionCardComponent = props => {
     const {
         answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet
     } = useContext(SessionContext);
+    const [clickedIndex, setClickedIndex] = useState(null);
     
     const handleClick = answer => {
         if(isAnswerSet === true) return;
@@ -225,12 +226,17 @@ const QuestionCardComponent = props => {
             },
         }).then(r => r)
         setIsAnswerSet(true);
+        setClickedIndex(answer);
     }
+
     
     return (
         <div className="col-6 d-flex m-0">
-            <div className="card bg-dark text-white card-img-custom" onClick={() => handleClick(props.number)}>
-                <button className="bg-transparent border-0 p-0 m-0" >
+            <div className={`card bg-dark text-white card-img-custom 
+            ${clickedIndex === props.number ? 'clicked' : ''}
+            ${isAnswerSet === true && clickedIndex !== props.number ? 'notClicked' : ''}
+            `}  onClick={() => handleClick(props.number)}>
+                <button className={`bg-transparent border-0 p-0 m-0 cursor-default  ${isAnswerSet === true ? 'cursor-not-allowed' : ''} `}>
                     <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D" />
                     <div
                         className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">

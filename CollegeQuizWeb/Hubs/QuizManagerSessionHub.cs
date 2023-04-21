@@ -99,9 +99,12 @@ public class QuizManagerSessionHub : Hub
                 await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", timer);
             }
             Console.WriteLine(timer);
+            if (timer == 0)
+            {
+                cts.Cancel();
+            }
         }
-        cts.Cancel();
-        
+
         var currentAnswer = _context.Answers.Include(t => t.QuestionEntity)
                 .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
                 t.QuestionEntity.QuizId.Equals(quiz.QuizId)).FirstOrDefault();
