@@ -94,9 +94,12 @@ public class AdminService : IAdminService
             select new
             {
                 Total = _context.Users.Count(s => s.IsAdmin==true),
+                Gold = _context.Users.Count(s => s.AccountStatus == 1 && s.IsAdmin==true),
+                Platinum = _context.Users.Count(s => s.AccountStatus == 2 && s.IsAdmin==true),
+                Suspended = _context.Users.Count(s => s.AccountStatus == -1 && s.IsAdmin==true)
             }).FirstOrDefaultAsync();
 
-        controller.ViewBag.adminStats = adminStats ?? new { Total = 0 };
+        controller.ViewBag.adminStats = adminStats ?? new { Total = 0, Gold = 0, Platinum = 0, Suspended = 0};
         
         var userStats = await (from u in _context.Users
             group u by 1

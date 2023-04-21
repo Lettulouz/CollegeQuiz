@@ -13,6 +13,10 @@
     background-color: #272C31;
 }
 
+.admin-label{
+    display: none;
+}
+
 @media (min-width:1050px){
     body{
         overflow: auto !important;
@@ -27,9 +31,44 @@
     .side-btn{
         display:none;
     }
+    
+    .admin-label{
+        display: inline;
+    }
 
     #adm-main{
         margin-left: var( --offcanvas-width);
+    }
+}
+
+.flex-container{
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-content: stretch !important;
+}
+
+@media (max-width:478px){
+    .flex-item{
+        flex: 1 0 33%;
+    }
+
+  
+    .flex-container > * {
+        margin: 5px;
+    }
+
+    .page-num1{
+        width: 50px !important;
+    }
+
+    .page-num2{
+        width: 60px !important;
+    }
+
+    #usersPerPagePag, #quizsPerPagePag, #couponsPerPagePag{
+        background-image: none;
+        padding: 6px 8px;
     }
 }
 
