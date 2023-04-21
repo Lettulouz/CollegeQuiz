@@ -25,6 +25,9 @@ public class HomeController : Controller
         string? logouUser = HttpContext.Session.GetString(SessionKey.USER_LOGOUT);
         ViewBag.Logout = logouUser!;
         HttpContext.Session.Remove(SessionKey.USER_LOGOUT);
+        string? status = HttpContext.Session.GetString(SessionKey.PAYMENT_TEST);
+        ViewBag.status = status!;
+        HttpContext.Session.Remove(SessionKey.PAYMENT_TEST);
         return View();
     }
 

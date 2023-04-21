@@ -9,7 +9,9 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Home;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Utils;
 using DotNetEnv;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PayU.Client;
@@ -116,6 +118,9 @@ public class HomeService : IHomeService
         try
         {
             orderResponse = await client.PostOrderAsync(request, default(CancellationToken));
+
+           var status= orderResponse.Status.StatusCode;
+           controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, status);
         }
         catch (Exception e)
         {
