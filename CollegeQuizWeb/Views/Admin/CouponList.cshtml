@@ -117,6 +117,7 @@
     $(document).ready(function (){
 
         allList();
+        hideButtons();
     });
     
     $('#pagination123').keypress(function(e) {
@@ -287,6 +288,7 @@
             </tr>
             </thead>
             <tbody>`;
+            let i=0;
         couponListLoc.forEach(obj => {
             let temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
@@ -298,12 +300,23 @@
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
                 html+= `<td class="fit">
+                            
+                            <div class='listBtn mb-1'>
+                                <button type='button' data-toggle='collapse' class='btn btn-dark d-inline btn-sm' 
+                                data-bs-toggle='collapse' data-bs-target='#btnGrp${i}' aria-expanded='false'>
+                                    <i class='bi bi-list'></i>
+                                </button>
+                            </div>
+                            <div class="dyn" id="btnGrp${i}">  
+                            <div class="btn-group btn-group-sm bGroup p-0 m-0" >
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle='collapse' data-bs-target='#c${obj.Coupon}' aria-expanded='false' data-bs-placement="left" 
                              data-bs-title="Pokaż więcej" onclick="showMore(this)"><i class="bi bi-three-dots"></i></a>
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="left" 
                              data-bs-title="Kopiuj do schowka" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
                             <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
                             data-bs-title="Usuń kupon" onclick="deleteCoupon(this)"><i class="bi bi-trash"></i></a>
+                            </div>
+                            </div>
                         </td>`
             }else{
                 html+= `<td></td>`
@@ -327,11 +340,13 @@
                         </div>
                     </td>
                 </tr>`;
+            i++;
         });             
         html+=`</tbody>
         </table>`;
         document.getElementById('renderTable').innerHTML = html;
         reCheckboxes();
+        hideButtons();
     }
     
     function showMore(obj){
@@ -457,6 +472,28 @@
             document.body.removeChild(workElement);
         } else throw 'File saving not supported for this browser';
     }
+    
+    function hideButtons(){
+          if($('main').width()<970){
+              $(".dyn").addClass("collapse");
+              $(".bGroup").addClass("btn-group-vertical");
+              $(".bGroup").removeClass("btn-group");
+              $(".tabBtn").addClass("d-block");
+              $(".tabLink").addClass("mt-1");
+             $(".listBtn").show();
+          }else{
+              $(".dyn").removeClass("collapse")
+              $(".bGroup").removeClass("btn-group-vertical ");
+              $(".bGroup").addClass("btn-group");
+              $(".tabBtn").removeClass("d-block");
+              $(".tabLink").removeClass("mt-1");
+              $(".listBtn").hide();
+          }
+      }
+  
+      $(window).resize(function(){
+          hideButtons();
+      })
     
      document.getElementById('coupon_collapse').classList.add('show');
         document.getElementById('coupon_collapse_btn').setAttribute( 'aria-expanded', 'true' );
