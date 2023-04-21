@@ -35,8 +35,11 @@ public class HomeController : Controller
         return View();
     }
     
-    public async Task<IActionResult> Subscription(int id)
+    public async Task<IActionResult> Subscription(int? id=null)
     {
+        if(id==null)
+            Response.Redirect("/Home");
+        
         ViewBag.TypeOfSubscription = id;
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         var subscriptionPaymentDto = await _homeService.GetUserData(username, this);

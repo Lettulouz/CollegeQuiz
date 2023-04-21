@@ -38,6 +38,8 @@ public class SubscriptionPaymentDto
     public int ForWho { get; set; }
     
     public bool RememberAddressForLater { get; set; }
+    
+    [Required]
     public int SubscriptionType { get; set; }
 }
 
