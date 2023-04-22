@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
+using Fluid.Ast.BinaryExpressions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -114,12 +115,17 @@ public class QuizManagerSessionHub : Hub
             .ThenInclude(t => t.QuizLobbyEntity)
             .Where(t => t.Question.Equals(question.questionId) &&
                           t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
-            .OrderBy(t => t.CreatedAt).ToList();
-        
+            .OrderBy(t => t.CreatedAt).ToList().Take(5);
+        var actuallTime = DateTime.Now;
         foreach (var answer in getAllAnswersForUpdate)
         {
             if (question.answers[answer.Answer] == currentAnswer.Name)
-                answer.QuizSessionParticEntity.Score += 1000;
+            {
+                TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                answer.QuizSessionParticEntity.Score += Convert.ToInt64((1-(timeBetween.TotalSeconds/
+                                                                            restOfTime.TotalSeconds))*1000);
+            }
         }
         await _context.SaveChangesAsync();
 
