@@ -59,7 +59,7 @@ public class HomeController : Controller
     }
 
     
-    
+    [HttpPost]
     public async Task Test123()
     {
         await _homeService.Test2();
