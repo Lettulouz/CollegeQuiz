@@ -43,7 +43,18 @@ public class HomeService : IHomeService
         subscriptionPaymentDto.Email = userEntity.Email;
         subscriptionPaymentDto.Username = username;
         return subscriptionPaymentDto;
-    } 
+    }
+
+    public async Task Test()
+    {
+        SubscriptionTypesEntity test = new();
+        test.Name = "chuj mie szczeli";
+        test.Price = 25;
+        test.CurrentDiscount = 0;
+        test.SiteId = 3;
+        _context.SubsciptionTypes.Add(test);
+        await _context.SaveChangesAsync();
+    }
     
     public async Task<OrderResponse> MakePayment()
     {

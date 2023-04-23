@@ -58,9 +58,9 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    public void Test123()
+    public void Test123(string? test)
     {
-        HttpContext.Response.Redirect("https://www.google.pl");
+        _homeService.Test();
     }
     
     public  IActionResult Sandbox()
