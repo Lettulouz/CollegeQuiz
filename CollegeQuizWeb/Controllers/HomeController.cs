@@ -64,7 +64,9 @@ public class HomeController : Controller
     [HttpPost]
     public async Task Test123()
     {
-        string body = Request.Form.Keys.ToString();
+        string? body = Request.Form.Keys.ToString();
+
+        body ??= "mhm2";
 
         await _homeService.Test(body);
     }
