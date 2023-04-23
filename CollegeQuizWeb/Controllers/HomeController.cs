@@ -59,14 +59,14 @@ public class HomeController : Controller
     }
 
     
-    [HttpGet]
+    
     public async Task Test123()
     {
         await _homeService.Test2();
     }
     
     [HttpGet]
-    public async Task Test123([FromRoute(Name = "id")] string id)
+    public async Task Test1234([FromRoute(Name = "id")] string id)
     {
         await _homeService.Test(id);
     }
