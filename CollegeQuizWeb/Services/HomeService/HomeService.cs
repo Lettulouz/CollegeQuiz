@@ -45,6 +45,17 @@ public class HomeService : IHomeService
         return subscriptionPaymentDto;
     }
 
+    public async Task Test2()
+    {
+        SubscriptionTypesEntity test = new();
+        test.Name = "mhm";
+        test.Price = 25;
+        test.CurrentDiscount = 0;
+        test.SiteId = 3;
+        _context.SubsciptionTypes.Add(test);
+        await _context.SaveChangesAsync();
+    }
+    
     public async Task Test(string test123)
     {
         SubscriptionTypesEntity test = new();
