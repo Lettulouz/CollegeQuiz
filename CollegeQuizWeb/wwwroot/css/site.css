@@ -377,7 +377,7 @@ select{
     height: 100px;
 }
 
-.leaderboard.goldleaderboard{
+.leaderboard.gold-leaderboard{
     background: linear-gradient(90deg, rgba(232,188,90,1) 0%, rgba(255,242,122,1) 50%, rgba(232,188,90,1) 100%);
 }
 
@@ -385,3 +385,34 @@ select{
 
 }
 
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-200%);
+    }
+
+    to {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateY(calc(100vh - 100px));
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}
+
+.animate-left {
+    animation-name: slideInLeft;
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+}
+
+.animate-right {
+    animation-name: slideInRight;
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+}

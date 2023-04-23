@@ -73,7 +73,7 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults
+        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -100,8 +100,8 @@ const MainWindowGameComponent = () => {
             setScreenAction(QUESTION_RESULT_SCREEN);
             const parsedAnswers = JSON.parse(questionAnsw);
             const temp = parsedAnswers.map(q=> q);
-            console.log(temp);
             setAfterQuestionResults(temp);
+            console.log(parsedAnswers);
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -153,22 +153,39 @@ const MainWindowGameComponent = () => {
 
 const QuestionResultComponent = () => {
     const {
-        afterQuestionResults
+        afterQuestionResults, currentQuestionLeader
     } = useContext(SessionContext);
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentIndex(prevIndex => prevIndex + 1);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     return (
-        
         <div className="container">
-            {afterQuestionResults.map(m => (
-                <div key={m} className="row mb-2">
-                    <div className="leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center">
+            {afterQuestionResults.slice(0, currentIndex).map((m, index) => (
+                <div key={index} className="row mb-2">
+                    <div
+                        className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-left' : ''}`}>
                         {m.Username}
                     </div>
 
-                    <div className="leaderboard goldleaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center">
-                        {m.Score}
+                    <div
+                        className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-right' : ''}`}>
+                        {m.Score} + {m.newPoints}
                     </div>
                 </div>
-             ))}
+            ))}
+            <div
+                className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
+                    {currentQuestionLeader}
+                {console.log(currentQuestionLeader)}
+            </div>
         </div>
     );
 }
@@ -265,7 +282,7 @@ const HeaderPanelComponent = () => {
 const JoinToSessionComponent = () => {
     const {
         setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName,
-        setScreenAction, isJoinClicked, setIsJoinClicked
+        setScreenAction, isJoinClicked, setIsJoinClicked, question
     } = useContext(SessionContext);
     
     const [ joinDisabled, setJoinDisabled ] = useState(true);
@@ -279,7 +296,10 @@ const JoinToSessionComponent = () => {
             .then(r => {
                 if (r.isGood) {
                     setQuizName(r.quizName);
-                    setScreenAction(r.screenType);
+                    if(question !== "")
+                        setScreenAction(r.screenType);
+                    else
+                        setScreenAction("WAITING_SCREEN")
                     setIsConnect(true);
                 } else {
                     setIsJoinClicked(false);
@@ -353,6 +373,7 @@ const QuizSessionRootComponent = () => {
     const [ questionNumber, setQuestionNumber ] = useState(null);
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
+    const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -363,7 +384,7 @@ const QuizSessionRootComponent = () => {
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
-            afterQuestionResults, setAfterQuestionResults
+            afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader
         }}>
             {isActive && <>
                 {isConnect ? <>
