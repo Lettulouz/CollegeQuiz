@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Home;
@@ -60,11 +61,12 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    
+    [HttpPost]
     public async Task<IActionResult> ChangePaymentStatus([FromRoute(Name = "id")] string id)
     {
-        string? req=HttpContext.Request.Body.ToString();
-        HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, req!);
+        StreamReader reader = new StreamReader(HttpContext.Request.Body);
+        string req=await reader.ReadToEndAsync();
+        HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, req);
        // if (await _homeService.ChangePaymentStatus(id, this))
        //     return Ok();
         return new EmptyResult();
