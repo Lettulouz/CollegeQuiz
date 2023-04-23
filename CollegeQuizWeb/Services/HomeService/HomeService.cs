@@ -56,8 +56,12 @@ public class HomeService : IHomeService
         await _context.SaveChangesAsync();
     }
     
-    public async Task Test(string test123)
+    public async Task<bool> Test(string test123)
     {
+        if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(test123)))
+        {
+            return true;
+        }
         SubscriptionTypesEntity test = new();
         test.Name = test123;
         test.Price = 25;
@@ -65,6 +69,7 @@ public class HomeService : IHomeService
         test.SiteId = 3;
         _context.SubsciptionTypes.Add(test);
         await _context.SaveChangesAsync();
+        return false;
     }
     
     public async Task<OrderResponse> MakePayment()

@@ -62,10 +62,11 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task<IActionResult> Test123([FromBody] string body)
+    public async Task<IActionResult> Test123([FromRoute(Name = "id")] string id)
     {
-        await _homeService.Test(body);
-        return Ok();
+        if (await _homeService.Test(id))
+            return Ok();
+        return new EmptyResult();
     }
     
     [HttpGet]
