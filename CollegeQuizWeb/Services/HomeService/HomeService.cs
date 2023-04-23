@@ -45,25 +45,14 @@ public class HomeService : IHomeService
         return subscriptionPaymentDto;
     }
 
-    public async Task Test2()
+    public async Task<bool> ChangePaymentStatus(string username)
     {
-        SubscriptionTypesEntity test = new();
-        test.Name = "mhm";
-        test.Price = 25;
-        test.CurrentDiscount = 0;
-        test.SiteId = 3;
-        _context.SubsciptionTypes.Add(test);
-        await _context.SaveChangesAsync();
-    }
-    
-    public async Task<bool> Test(string test123)
-    {
-        if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(test123)))
+        if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(username)))
         {
             return true;
         }
         SubscriptionTypesEntity test = new();
-        test.Name = test123;
+        test.Name = username;
         test.Price = 25;
         test.CurrentDiscount = 0;
         test.SiteId = 3;

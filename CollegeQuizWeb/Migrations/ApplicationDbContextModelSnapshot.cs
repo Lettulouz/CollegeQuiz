@@ -434,6 +434,11 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("order_status");
+
                     b.Property<string>("PayuId")
                         .IsRequired()
                         .HasColumnType("longtext")

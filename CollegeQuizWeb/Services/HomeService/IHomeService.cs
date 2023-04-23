@@ -10,6 +10,5 @@ public interface IHomeService
     Task<OrderResponse> MakePayment();
     Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller);
     Task MakePaymentForSubscription(SubscriptionPaymentDtoPayload subscriptionPaymentDtoPayload);
-    Task<bool> Test(string test123);
-    Task Test2();
+    Task<bool> ChangePaymentStatus(string username);
 }

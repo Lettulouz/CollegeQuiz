@@ -25,5 +25,8 @@ public class SubscriptionPaymentHistoryEntity : AbstractAuditableEntity
     [Required]
     [Column("subscription")]
     public string Subscription { get; set; }
+
+    [Column("order_status")] 
+    public string OrderStatus { get; set; }
     public virtual UserEntity UserEntity { get; set; }
 }

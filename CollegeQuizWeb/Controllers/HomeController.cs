@@ -62,19 +62,13 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task<IActionResult> Test123([FromRoute(Name = "id")] string id)
+    public async Task<IActionResult> ChangePaymentStatus([FromRoute(Name = "id")] string id)
     {
-        if (await _homeService.Test(id))
+        if (await _homeService.ChangePaymentStatus(id))
             return Ok();
         return new EmptyResult();
     }
-    
-    [HttpGet]
-    public async Task Test1234([FromRoute(Name = "id")] string id)
-    {
-        await _homeService.Test(id);
-    }
-    
+
     public  IActionResult Sandbox()
     {
         return View();
