@@ -61,11 +61,12 @@ public class HomeController : Controller
     }
 
     
-    [HttpPost]
     public async Task<IActionResult> ChangePaymentStatus([FromRoute(Name = "id")] string id)
     {
-        if (await _homeService.ChangePaymentStatus(id, this))
-            return Ok();
+        string? req=HttpContext.Request.Body.ToString();
+        HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, req!);
+       // if (await _homeService.ChangePaymentStatus(id, this))
+       //     return Ok();
         return new EmptyResult();
     }
 
