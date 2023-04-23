@@ -62,8 +62,10 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task Test123([FromBody] string body)
+    public async Task Test123()
     {
+        string body = Request.Form.Keys.ToString();
+
         await _homeService.Test(body);
     }
     
