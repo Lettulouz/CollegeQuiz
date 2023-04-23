@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using PayU.Client;
 using PayU.Client.Configurations;
 using PayU.Client.Models;
+using PayU.Client.Models.Transactions;
 using Sprache;
 
 namespace CollegeQuizWeb.Services.HomeService;
@@ -45,19 +46,28 @@ public class HomeService : IHomeService
         return subscriptionPaymentDto;
     }
 
-    public async Task<bool> ChangePaymentStatus(string username)
+    public async Task<bool> ChangePaymentStatus(string username, HomeController controller)
     {
         if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(username)))
         {
+            var findOrder = _context.SubscriptionsPaymentsHistory
+                .Include(u => u.UserEntity)
+                .LastOrDefaultAsync(q => q.UserEntity.Username.Equals(username));
+
+            var orderId=findOrder.Result.PayuId;
+            
+            PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
+            var response = new OrderGetResponse();
+            response = await client.GetOrderAsync(orderId);
+            
+            var transaction = new OrderTransactionResponse();
+            transaction = await client.GetOrderTransactionAsync(orderId);
+
+            var result = response.ToString() +"_________________________________________________________"+transaction + ToString();
+            controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, result);
             return true;
         }
-        SubscriptionTypesEntity test = new();
-        test.Name = username;
-        test.Price = 25;
-        test.CurrentDiscount = 0;
-        test.SiteId = 3;
-        _context.SubsciptionTypes.Add(test);
-        await _context.SaveChangesAsync();
+        
         return false;
     }
     
@@ -136,7 +146,7 @@ public class HomeService : IHomeService
             price.ToString(), products);
         request.ValidityTime = "1800";
         request.Buyer = buyer;
-        request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123/" + userEntity.Username;
+        request.NotifyUrl = "https://dominikpiskor.pl/Home/ChangePaymentStatus/" + userEntity.Username;
         request.ContinueUrl = "https://dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();
         try
@@ -144,7 +154,7 @@ public class HomeService : IHomeService
             orderResponse = await client.PostOrderAsync(request, default(CancellationToken));
 
            var status= orderResponse.Status.StatusCode;
-           controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, status);
+          // controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, status);
         }
         catch (Exception e)
         {
@@ -157,6 +167,7 @@ public class HomeService : IHomeService
         subscriptionPaymentHistoryEntity.PayuId = orderResponse.OrderId;
         subscriptionPaymentHistoryEntity.Price = price;
         subscriptionPaymentHistoryEntity.Subscription = subscriptionTypesEntity.Name;
+        subscriptionPaymentHistoryEntity.OrderStatus = "PENDING";
         _context.SubscriptionsPaymentsHistory.Add(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
 
