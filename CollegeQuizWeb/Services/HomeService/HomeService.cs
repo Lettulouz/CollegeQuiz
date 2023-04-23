@@ -51,11 +51,11 @@ public class HomeService : IHomeService
     {
         if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(username)))
         {
-            var findOrder = _context.SubscriptionsPaymentsHistory
+            var findOrder = await _context.SubscriptionsPaymentsHistory
                 .Include(u => u.UserEntity)
                 .LastOrDefaultAsync(q => q.UserEntity.Username.Equals(username));
 
-            var orderId=findOrder.Result.PayuId;
+            var orderId=findOrder.PayuId;
             
             PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
             var response = new OrderGetResponse();
