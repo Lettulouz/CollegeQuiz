@@ -12,6 +12,7 @@ using CollegeQuizWeb.Jwt;
 using CollegeQuizWeb.Services.AdminService;
 using CollegeQuizWeb.Services.AuthService;
 using CollegeQuizWeb.Services.ChangePasswordService;
+using CollegeQuizWeb.Services.PublicQuizesService;
 using CollegeQuizWeb.Services.QuizService;
 using CollegeQuizWeb.Services.SharedQuizesService;
 using CollegeQuizWeb.Services.UserService;
@@ -45,6 +46,7 @@ ApplicationDbContext.AddDatabaseConfiguration(builder.Services, builder.Configur
 builder.Services.AddScoped<ApplicationDbSeeder>();
 builder.Services.AddScoped<ISmtpService, SmtpService>();
 builder.Services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
+builder.Services.AddScoped<IPublicQuizesService, PublicQuizesService>();
 
 // serwisy kontrolerów MVC
 builder.Services.AddScoped<IHomeService, HomeService>();

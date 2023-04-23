@@ -1,0 +1,57 @@
+@using CollegeQuizWeb.Entities
+@model CollegeQuizWeb.Dto.PublicQuizes.PublicQuizesDto
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Publiczne quizy";
+}
+
+<script>
+function copyToBoard(obj, quizId)
+    {
+        var shareCode = document.getElementById(quizId);
+        if (shareCode.style.display === 'none') {shareCode.style.display = 'block';}
+            let row = $(obj).parent().parent();
+            let valueToCopy = row.find('.copy-class').text();
+            navigator.clipboard.writeText(valueToCopy);
+            let message = `Skopiowano token udostepniający ${valueToCopy} do schowka.`;
+            toastr.success(message);
+    }
+</script>
+
+<div class="mt-3 mb-3">
+    <h3>Publiczne quizy</h3>
+    <form method="post" class="d-flex" asp-action="Quizes">
+        <input class="form-control me-2" type="search" placeholder="Szukaj po nazwie" aria-label="Search" asp-for="Name">
+        <button class="btn btn-outline-success" type="submit">Szukaj</button>
+      </form>
+</div>
+
+@if (ViewBag.Alert != null)
+{
+    <div class="alert @ViewBag.Alert.Type alert-dismissible fade show" role="alert">
+        @Html.Raw(ViewBag.Alert.Content)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="container">
+   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
+           @foreach (var quiz in ViewBag.Quizes)
+           {
+               <div class="col mb-3">
+                   <div class="card card-resize text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
+                       <a class="btn text-decoration-none" asp-action="QuizPage" asp-controller="Quiz" asp-route-id="@quiz.Id">
+                           <div class="card-body">
+                               <h5 class="card-title">@quiz.Name</h5>
+                               <p class="card-text">Twoje miejsce na opis quizu</p>
+                           </div>
+                       </a>
+                       <div class="d-flex justify-content-center clip-clas">
+                           <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)"><p class="m-0 p-0" style="display: none" id="@quiz.Id">@quiz.Token</p><i class="bi bi-share mx-1"></i></a>
+                       </div>
+                   </div>
+               </div>
+           }
+       </div>
+</div>
