@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Home;
@@ -62,14 +63,14 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task Test123([FromRoute(Name = "id")] string id="")
+    public async Task<IActionResult> Test123()
     {
-        await _homeService.Test(id);
         string? body = Request.Form.Keys.ToString();
 
-        body ??= "mhm2";
+        body ??= "ERR";
 
         await _homeService.Test(body);
+        return Ok();
     }
     
     [HttpGet]
