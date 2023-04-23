@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Home;
@@ -8,6 +10,7 @@ using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using Test = System.Web;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -58,9 +61,22 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    public void Test123()
+    
+    [HttpPost]
+    public async Task<IActionResult> Test123()
     {
-        HttpContext.Response.Redirect("https://www.google.pl");
+        string? body = Request.Form.Keys.ToString();
+
+        body ??= "ERR";
+
+        await _homeService.Test(body);
+        return Ok();
+    }
+    
+    [HttpGet]
+    public async Task Test1234([FromRoute(Name = "id")] string id)
+    {
+        await _homeService.Test(id);
     }
     
     public  IActionResult Sandbox()

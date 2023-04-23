@@ -10,4 +10,6 @@ public interface IHomeService
     Task<OrderResponse> MakePayment();
     Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller);
     Task MakePaymentForSubscription(SubscriptionPaymentDtoPayload subscriptionPaymentDtoPayload);
+    Task Test(string test123);
+    Task Test2();
 }

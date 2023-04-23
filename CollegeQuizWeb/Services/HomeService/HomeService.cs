@@ -43,7 +43,29 @@ public class HomeService : IHomeService
         subscriptionPaymentDto.Email = userEntity.Email;
         subscriptionPaymentDto.Username = username;
         return subscriptionPaymentDto;
-    } 
+    }
+
+    public async Task Test2()
+    {
+        SubscriptionTypesEntity test = new();
+        test.Name = "mhm";
+        test.Price = 25;
+        test.CurrentDiscount = 0;
+        test.SiteId = 3;
+        _context.SubsciptionTypes.Add(test);
+        await _context.SaveChangesAsync();
+    }
+    
+    public async Task Test(string test123)
+    {
+        SubscriptionTypesEntity test = new();
+        test.Name = test123;
+        test.Price = 25;
+        test.CurrentDiscount = 0;
+        test.SiteId = 3;
+        _context.SubsciptionTypes.Add(test);
+        await _context.SaveChangesAsync();
+    }
     
     public async Task<OrderResponse> MakePayment()
     {
@@ -107,14 +129,21 @@ public class HomeService : IHomeService
         var remoteIpAddress = GetIpAddress(controller);
         Decimal tempDec = subscriptionTypesEntity.Price * 100;
         int price = (int)tempDec;
+
+        Buyer buyer = new Buyer(userEntity.Email);
+        buyer.FirstName = userEntity.FirstName;
+        buyer.Phone = subscriptionPaymentDto.PhoneNumber;
+        buyer.LastName = userEntity.LastName;
         
         var products = new List<Product>(1);
         products.Add(new Product(subscriptionTypesEntity.Name, price.ToString(), "1"));
         var request = new OrderRequest(remoteIpAddress, 
             ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
             price.ToString(), products);
-        request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123";
-        request.ContinueUrl = "https://dominikpiskor.pl/";
+        request.ValidityTime = "1800";
+        request.Buyer = buyer;
+        request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123/" + userEntity.Username;
+        request.ContinueUrl = "https://dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();
         try
         {
