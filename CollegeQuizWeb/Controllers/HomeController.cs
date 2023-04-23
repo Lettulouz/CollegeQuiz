@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
@@ -8,6 +9,7 @@ using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using Test = System.Web;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -60,9 +62,9 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task Test123()
+    public async Task Test123([FromBody] string body)
     {
-        await _homeService.Test2();
+        await _homeService.Test(body);
     }
     
     [HttpGet]
