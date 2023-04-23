@@ -58,9 +58,11 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    public async Task Test123(string? test)
+    
+    [HttpGet]
+    public async Task Test123([FromRoute(Name = "id")] string? id="")
     {
-        await _homeService.Test();
+        await _homeService.Test(id);
     }
     
     public  IActionResult Sandbox()

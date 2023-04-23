@@ -45,10 +45,10 @@ public class HomeService : IHomeService
         return subscriptionPaymentDto;
     }
 
-    public async Task Test()
+    public async Task Test(string test123)
     {
         SubscriptionTypesEntity test = new();
-        test.Name = "chuj mie szczeli";
+        test.Name = test123;
         test.Price = 25;
         test.CurrentDiscount = 0;
         test.SiteId = 3;
@@ -125,7 +125,7 @@ public class HomeService : IHomeService
             ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
             price.ToString(), products);
         request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123";
-        request.ContinueUrl = "https://dominikpiskor.pl/Home/Test123";
+        request.ContinueUrl = "https://dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();
         try
         {
