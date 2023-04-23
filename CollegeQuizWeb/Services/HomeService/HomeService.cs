@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -62,8 +63,10 @@ public class HomeService : IHomeService
             string restring = response.ToString();
             var transaction = new OrderTransactionResponse();
             transaction = await client.GetOrderTransactionAsync(orderId);
+            
             string transtring = transaction.ToString();
-            var result = restring +"_________________________________________________________"+transtring;
+            //var result = restring +"_________________________________________________________"+transtring;
+            string result = response.Status.StatusCode;
             controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, result);
             return true;
         }
