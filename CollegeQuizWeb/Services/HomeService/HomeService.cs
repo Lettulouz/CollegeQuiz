@@ -49,17 +49,16 @@ public class HomeService : IHomeService
 
     public async Task<bool> ChangePaymentStatus(string username, HomeController controller)
     {
-        if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(username)))
+        if (_context.Users.Any(obj => obj.Username.Equals(username)))
         {
             var findOrder = await _context.SubscriptionsPaymentsHistory
-                .Include(u => u.UserEntity)
+                .Include(u => u.UserEntity).OrderByDescending(q=>q.Id)
                 .LastOrDefaultAsync(q => q.UserEntity.Username.Equals(username));
 
             var orderId=findOrder.PayuId;
             
             PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
-            var response = new OrderGetResponse();
-            response = await client.GetOrderAsync(orderId);
+            var response = await client.GetOrderAsync(orderId);
             string result = response.Status.StatusCode;
             findOrder.OrderStatus = result;
             _context.Update(findOrder);
