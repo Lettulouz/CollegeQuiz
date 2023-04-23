@@ -124,7 +124,7 @@ public class HomeService : IHomeService
         var request = new OrderRequest(remoteIpAddress, 
             ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
             price.ToString(), products);
-        request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123";
+        request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123/" + userEntity.Username;
         request.ContinueUrl = "https://dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();
         try
