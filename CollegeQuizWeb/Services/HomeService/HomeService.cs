@@ -70,7 +70,7 @@ public class HomeService : IHomeService
             controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, result);
             return true;
         }
-        
+        controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, "nie działa");
         return false;
     }
     
