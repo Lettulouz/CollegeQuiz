@@ -59,11 +59,11 @@ public class HomeService : IHomeService
             PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
             var response = new OrderGetResponse();
             response = await client.GetOrderAsync(orderId);
-            
+            string restring = response.ToString();
             var transaction = new OrderTransactionResponse();
             transaction = await client.GetOrderTransactionAsync(orderId);
-
-            var result = response.ToString() +"_________________________________________________________"+transaction + ToString();
+            string transtring = transaction.ToString();
+            var result = restring +"_________________________________________________________"+transtring;
             controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, result);
             return true;
         }
