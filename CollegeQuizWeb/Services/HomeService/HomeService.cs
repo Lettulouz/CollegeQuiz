@@ -125,7 +125,7 @@ public class HomeService : IHomeService
             ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
             price.ToString(), products);
         request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123";
-        request.ContinueUrl = "https://dominikpiskor.pl/";
+        request.ContinueUrl = "https://dominikpiskor.pl/Home/Test123";
         OrderResponse orderResponse = new();
         try
         {

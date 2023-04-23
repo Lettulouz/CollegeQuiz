@@ -58,9 +58,9 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    public void Test123(string? test)
+    public async Task Test123(string? test)
     {
-        _homeService.Test();
+        await _homeService.Test();
     }
     
     public  IActionResult Sandbox()
