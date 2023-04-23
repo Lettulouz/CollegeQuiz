@@ -33,7 +33,7 @@ public class HomeController : Controller
 
     public IActionResult Privacy() => View();
     
-    public  IActionResult Regulation()
+    public IActionResult Regulation()
     {
         return View();
     }
@@ -56,6 +56,11 @@ public class HomeController : Controller
         var payloadDto = new SubscriptionPaymentDtoPayload(this) { Dto = subscriptionPaymentDto };
         await _homeService.MakePaymentForSubscription(payloadDto);
         return View(subscriptionPaymentDto);
+    }
+
+    public void Test123()
+    {
+        HttpContext.Response.Redirect("https://www.google.pl");
     }
     
     public  IActionResult Sandbox()
