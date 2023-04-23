@@ -129,12 +129,19 @@ public class HomeService : IHomeService
         var remoteIpAddress = GetIpAddress(controller);
         Decimal tempDec = subscriptionTypesEntity.Price * 100;
         int price = (int)tempDec;
+
+        Buyer buyer = new Buyer(userEntity.Email);
+        buyer.FirstName = userEntity.FirstName;
+        buyer.Phone = subscriptionPaymentDto.PhoneNumber;
+        buyer.LastName = userEntity.LastName;
         
         var products = new List<Product>(1);
         products.Add(new Product(subscriptionTypesEntity.Name, price.ToString(), "1"));
         var request = new OrderRequest(remoteIpAddress, 
             ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
             price.ToString(), products);
+        request.ValidityTime = "1800";
+        request.Buyer = buyer;
         request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123/" + userEntity.Username;
         request.ContinueUrl = "https://dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();

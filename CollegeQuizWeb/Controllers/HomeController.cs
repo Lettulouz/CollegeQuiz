@@ -62,8 +62,9 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task Test123()
+    public async Task Test123([FromRoute(Name = "id")] string id="")
     {
+        await _homeService.Test(id);
         string? body = Request.Form.Keys.ToString();
 
         body ??= "mhm2";
