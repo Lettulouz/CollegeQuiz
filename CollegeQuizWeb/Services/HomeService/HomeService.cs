@@ -51,21 +51,21 @@ public class HomeService : IHomeService
     {
         if (_context.Users.Any(obj => obj.Username.Equals(username)))
         {
-            var findOrder = await _context.SubscriptionsPaymentsHistory
-                .Include(u => u.UserEntity).OrderByDescending(q=>q.Id)
-                .LastOrDefaultAsync(q => q.UserEntity.Username.Equals(username));
-
-            var orderId=findOrder.PayuId;
-            
-            PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
-            var response = await client.GetOrderAsync(orderId);
-            string result = response.Status.StatusCode;
-            findOrder.OrderStatus = result;
-            _context.Update(findOrder);
-            await _context.SaveChangesAsync();
             return true;
         }
-        controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, "nie działa");
+        var findOrder = await _context.SubscriptionsPaymentsHistory
+            .Include(u => u.UserEntity).OrderByDescending(q=>q.Id)
+            .LastOrDefaultAsync(q => q.UserEntity.Username.Equals(username));
+
+        var orderId=findOrder.PayuId;
+            
+        PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
+        var response = await client.GetOrderAsync(orderId);
+        string result = response.Status.StatusCode;
+        findOrder.OrderStatus = result;
+        _context.Update(findOrder);
+        await _context.SaveChangesAsync();
+
         return false;
     }
     
