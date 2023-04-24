@@ -41,7 +41,7 @@
     </div>
     </div>
     <hr class="divider mt-0">
-    <div class="container-fluid">
+    <div class="container-fluid viewBorder p-2" style="max-width: 720px">
         @if (ViewBag.mailError!=null)
             {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -96,27 +96,54 @@
                         <p>Data dołączenia: @ViewBag.UserInfo.CreatedAt</p>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <h3>Quizy użytkownika</h3>
-                    @if (@ViewBag.UserQuizes != null)
-                    {
-                        @foreach (var quiz in ViewBag.UserQuizes)
-                        {
-                            <a asp-action="QuizView" asp-controller="Admin" asp-route-id="@quiz.Id">@quiz.Name</a>
-                        }
-                    }
-                </div>
-                <div class="row">
-                    <h3>Płatności użytkownika</h3>
-                    @if (@ViewBag.payments != null)
-                    {
-                        @foreach (var payment in ViewBag.payments)
-                        {
-                            <p class="mb-1">@payment.Subscription @payment.CreatedAt</p>
-                        }
-                    }
-                </div>
+               
             </div>
+             <div class="row mb-1">
+                 <h3><a class="dash-list text-decoration-none text-black"
+                        data-bs-toggle="collapse" href="#dashcollapse1" role="button" aria-expanded="true" aria-controls="dashcollapse1">
+                     Quizy użytkownika <span class="bi bi-chevron-down right-icon ms-auto"></span>
+                 </a> </h3>
+                 <div class="collapse collapse show " id="dashcollapse1">
+                     @if (@ViewBag.UserQuizes != null)
+                     {
+                         @foreach (var quiz in ViewBag.UserQuizes)
+                         {
+                             <p class="mb-1 ps-3"><a asp-action="QuizView" asp-controller="Admin" asp-route-id="@quiz.Id">@quiz.Name</a></p>
+                         }
+                     }
+                 </div>
+                            </div>
+                            <div class="row d-flex ">
+                                <h3><a class="dash-list text-decoration-none text-black"
+                                       data-bs-toggle="collapse" href="#dashcollapse2" role="button" aria-expanded="true" aria-controls="dashcollapse2">
+                                    Płatności użytkownika <span class="bi bi-chevron-down right-icon ms-auto"></span>
+                                </a> </h3>
+                                <div class="collapse collapse show" id="dashcollapse2">
+                                    @if (@ViewBag.payments != null)
+                                    {
+                                        <div class=" d-flex justify-content-center flex-column">
+                                            <table class="text-center ">
+                                                <thead>
+                                                <th class="px-2">Rodzaj</th>
+                                                <th class="px-2">Data</th>
+                                                <th class="px-2">Status</th>
+                                                </thead>
+                                                <tbody>
+                                                @foreach (var payment in ViewBag.payments)
+                                                {
+                                                    <tr>
+                                                        <td class="px-2">@payment.Subscription</td>
+                                                        <td class="px-2">@payment.CreatedAt</td>
+                                                        <td class="px-2"> @payment.OrderStatus</td>
+                                                    </tr>
+
+                                                }
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                    }
+                                </div>
+                                </div>
         </div>
 
     </div>

@@ -30,9 +30,7 @@ public class HomeController : Controller
         string? logouUser = HttpContext.Session.GetString(SessionKey.USER_LOGOUT);
         ViewBag.Logout = logouUser!;
         HttpContext.Session.Remove(SessionKey.USER_LOGOUT);
-        string? status = HttpContext.Session.GetString(SessionKey.PAYMENT_TEST);
-        ViewBag.status = status!;
-        HttpContext.Session.Remove(SessionKey.PAYMENT_TEST);
+        
         return View();
     }
 
@@ -88,13 +86,7 @@ public class HomeController : Controller
         return View();
     }
     
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Sandbox2()
-    {
-        var temp = await _homeService.MakePayment();
-        return Redirect(temp.RedirectUri);
-    }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

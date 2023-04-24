@@ -18,7 +18,7 @@
         </div>
     </div>
     <hr class="divider mt-0">
-     <div class="container-fluid">                       
+     <div class="container-fluid viewBorder p-2" style="max-width: 720px">                       
      <div class="row ">
          <div class="col-auto py-0 my-0">
              <i class="bi bi-puzzle-fill p-0" style=" font-size: 100px;"></i>
@@ -37,28 +37,34 @@
                      <p>Utworzono: @ViewBag.quizInfo.CreatedAt</p>
                      <p>Publiczny: @(@ViewBag.quizInfo.IsPublic ? "Tak" : "Nie")</p>
                  </div>
-                 <div class="col-auto">
-                 </div>
-             </div>
-             <div class="row">
-                 <h3>Pytania</h3>
-                 @if (@ViewBag.questions != null)
-                 {
-                     @foreach (var question in ViewBag.questions)
-                     {
-                         <h5>@question.question</h5>
-                         <ul >
-                             @foreach (var answer in @question.answers)
-                             {
-                                 <li class="ms-4">
-                                     @answer
-                                 </li>
-                             }
-                         </ul>
-                     }
-                 }
              </div>
          </div>
-     </div>
+         <div class="row p-0 m-0">
+             <h3 class="ps-3"><a class="dash-list text-decoration-none text-black"
+                    data-bs-toggle="collapse" href="#dashcollapse1" role="button" aria-expanded="true" aria-controls="dashcollapse1">
+                 Pytania <span class="bi bi-chevron-down right-icon ms-auto"></span></a></h3>
+             <div class="collapse collapse show " id="dashcollapse1">
+
+                         @if (@ViewBag.questions != null)
+                         {
+                             @foreach (var question in ViewBag.questions)
+                             {
+                                 <div class="row text-center m-1">
+                                     <h5>@question.question |<a>@question.time_sec</a>s</h5>
+
+                                     @foreach (var answer in @question.answers)
+                                     {
+                                         <div class="col-12 col-sm-6 p-2">
+                                             @answer
+                                         </div>
+                                     }
+                                     <hr/>
+                                 </div>
+                             }
+                         }
+
+                 </div>
+                      </div>
+             </div>
           </div>
      }
