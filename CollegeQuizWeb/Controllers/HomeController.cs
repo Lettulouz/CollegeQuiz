@@ -62,9 +62,10 @@ public class HomeController : Controller
 
     
     [HttpPost]
-    public async Task<IActionResult> ChangePaymentStatus([FromRoute(Name = "id")] string id)
+    public async Task<IActionResult> ChangePaymentStatus()
     {
-        if (await _homeService.ChangePaymentStatus(id))
+        var value1 = Request.Body.ToString();
+        if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
         return new EmptyResult();
     }

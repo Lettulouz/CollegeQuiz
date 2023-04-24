@@ -47,10 +47,6 @@ public class HomeService : IHomeService
 
     public async Task<bool> ChangePaymentStatus(string username)
     {
-        if (_context.SubsciptionTypes.Any(obj => obj.Name.Equals(username)))
-        {
-            return true;
-        }
         SubscriptionTypesEntity test = new();
         test.Name = username;
         test.Price = 25;
@@ -136,7 +132,7 @@ public class HomeService : IHomeService
             price.ToString(), products);
         request.ValidityTime = "1800";
         request.Buyer = buyer;
-        request.NotifyUrl = "https://dominikpiskor.pl/Home/Test123/" + userEntity.Username;
+        request.NotifyUrl = "https://dominikpiskor.pl/Home/ChangePaymentStatus/";
         request.ContinueUrl = "https://dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();
         try
@@ -157,6 +153,7 @@ public class HomeService : IHomeService
         subscriptionPaymentHistoryEntity.PayuId = orderResponse.OrderId;
         subscriptionPaymentHistoryEntity.Price = price;
         subscriptionPaymentHistoryEntity.Subscription = subscriptionTypesEntity.Name;
+        subscriptionPaymentHistoryEntity.OrderStatus = "PENDING";
         _context.SubscriptionsPaymentsHistory.Add(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
 
