@@ -31,6 +31,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<SharedQuizesEntity> SharedQuizes { get; set; }
     public DbSet<UsersQuestionsAnswersEntity> UsersQuestionsAnswers { get; set; }
     public DbSet<ShareTokensEntity> ShareTokensEntities { get; set; }
+    public DbSet<GiftCouponsEntity> GiftCouponsEntities { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -61,6 +62,17 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<SharedQuizesEntity>()
             .HasOne(e => e.UserEntity)
             .WithMany(e => e.SharedQuizesEntities)
+            .HasForeignKey(e => e.UserId);
+        
+        // before model creating, ex. relational mapping
+        modelBuilder.Entity<GiftCouponsEntity>().HasKey(e => new { e.CouponId, e.UserId });
+        modelBuilder.Entity<GiftCouponsEntity>()
+            .HasOne(e => e.CouponEntity)
+            .WithMany(d => d.GiftCouponsEntities)
+            .HasForeignKey(e => e.CouponId);
+        modelBuilder.Entity<GiftCouponsEntity>()
+            .HasOne(e => e.UserEntity)
+            .WithMany(e=> e.GiftCouponsEntities)
             .HasForeignKey(e => e.UserId);
     }
 

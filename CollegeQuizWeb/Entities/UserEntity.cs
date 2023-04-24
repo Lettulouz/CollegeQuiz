@@ -54,4 +54,6 @@ public class UserEntity : AbstractAuditableEntity
     public bool IsAdmin { get; set; }
     
     public virtual ICollection<SharedQuizesEntity> SharedQuizesEntities { get; set; }
+    
+    public virtual ICollection<GiftCouponsEntity> GiftCouponsEntities { get; set; }
 }

@@ -151,6 +151,23 @@ namespace CollegeQuizWeb.Migrations
                     b.ToTable("coupons");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.GiftCouponsEntity", b =>
+                {
+                    b.Property<long>("CouponId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("coupon_id");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("CouponId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("gift_coupons");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.OtaTokenEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -630,6 +647,25 @@ namespace CollegeQuizWeb.Migrations
                     b.Navigation("UserEntity");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.GiftCouponsEntity", b =>
+                {
+                    b.HasOne("CollegeQuizWeb.Entities.CouponEntity", "CouponEntity")
+                        .WithMany("GiftCouponsEntities")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
+                        .WithMany("GiftCouponsEntities")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CouponEntity");
+
+                    b.Navigation("UserEntity");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.OtaTokenEntity", b =>
                 {
                     b.HasOne("CollegeQuizWeb.Entities.UserEntity", "UserEntity")
@@ -753,6 +789,11 @@ namespace CollegeQuizWeb.Migrations
                     b.Navigation("QuizSessionParticEntity");
                 });
 
+            modelBuilder.Entity("CollegeQuizWeb.Entities.CouponEntity", b =>
+                {
+                    b.Navigation("GiftCouponsEntities");
+                });
+
             modelBuilder.Entity("CollegeQuizWeb.Entities.QuizEntity", b =>
                 {
                     b.Navigation("SharedQuizesEntities");
@@ -760,6 +801,8 @@ namespace CollegeQuizWeb.Migrations
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.UserEntity", b =>
                 {
+                    b.Navigation("GiftCouponsEntities");
+
                     b.Navigation("SharedQuizesEntities");
                 });
 #pragma warning restore 612, 618
