@@ -61,14 +61,14 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<IActionResult> ChangePaymentStatus([FromRoute(Name = "id")] string id)
     {
         StreamReader reader = new StreamReader(HttpContext.Request.Body);
         string req=await reader.ReadToEndAsync();
         HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, req);
-       // if (await _homeService.ChangePaymentStatus(id, this))
-       //     return Ok();
+        if (await _homeService.ChangePaymentStatus(id, this))
+            return Ok();
         return new EmptyResult();
     }
 
