@@ -81,10 +81,6 @@ public class HomeController : Controller
        using (var reader = new StreamReader(Request.Body))
        {
            var body = await reader.ReadToEndAsync();
-           if (body.Length > 25)
-           {
-               body = "chuj";
-           }
            await _homeService.ChangePaymentStatus(body);
 
 
