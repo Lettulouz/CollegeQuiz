@@ -54,7 +54,7 @@ public class HomeService : IHomeService
         test.SiteId = 3;
         _context.SubsciptionTypes.Add(test);
         await _context.SaveChangesAsync();
-        return false;
+        return true;
     }
     
     public async Task<OrderResponse> MakePayment()

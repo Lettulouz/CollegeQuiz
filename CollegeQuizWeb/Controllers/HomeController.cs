@@ -70,7 +70,9 @@ public class HomeController : Controller
         //var value1 = HttpContext.Request.Body.Length.ToString();
         StreamReader sr = new(HttpContext.Request.Body);
         var value1 = sr.ReadToEnd();
-        if (value1.Length < 1) value1 = "test2";
+        if (value1.Length > 25)
+            value1 = "chuj";
+        //if (value1.Length < 1) value1 = "test2";
         if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
         return new EmptyResult();
