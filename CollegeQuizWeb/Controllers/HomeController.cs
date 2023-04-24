@@ -65,6 +65,7 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangePaymentStatus()
     {
+        HttpContext.Request.EnableBuffering();
         await _homeService.ChangePaymentStatus("test");
         var value1 = HttpContext.Request.Body.Length.ToString();
         if (value1.Length < 1) value1 = "test2";
