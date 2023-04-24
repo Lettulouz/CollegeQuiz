@@ -61,7 +61,7 @@ public class HomeController : Controller
         return View(subscriptionPaymentDto);
     }
 
-    [HttpGet]
+
     public async Task<IActionResult> ChangePaymentStatus([FromRoute(Name = "id")] string id)
     {
         StreamReader reader = new StreamReader(HttpContext.Request.Body);
