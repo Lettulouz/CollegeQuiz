@@ -68,10 +68,14 @@ public class HomeController : Controller
         HttpContext.Request.EnableBuffering();
         await _homeService.ChangePaymentStatus("test");
         //var value1 = HttpContext.Request.Body.Length.ToString();
-        StreamReader sr = new(HttpContext.Request.Body);
-        var value1 = sr.ReadToEnd();
-        if (value1.Length > 25)
-            value1 = "chuj";
+        var value1 = "chuj2";
+        var body = HttpContext.Request.Body;
+        if (body.Length > 0)
+        {
+            StreamReader sr = new(body);
+            value1 = sr.ReadToEnd();
+        }
+        
         //if (value1.Length < 1) value1 = "test2";
         if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
