@@ -68,30 +68,19 @@ public class HomeController : Controller
     public async Task<IActionResult> ChangePaymentStatus()
     {
         HttpContext.Request.EnableBuffering();
-       /* await _homeService.ChangePaymentStatus("test");
-        //var value1 = HttpContext.Request.Body.Length.ToString();
-        
-        
-        if (value1.Length > 25)
-            value1 = "chuj";
-        //if (value1.Length < 1) value1 = "test2";
-        if (await _homeService.ChangePaymentStatus(value1))
-            return Ok();
-        return new EmptyResult();*/
-       
-       using (var reader = new StreamReader(Request.Body))
+
+        using (var reader = new StreamReader(Request.Body))
        {
            var body = await reader.ReadToEndAsync();
            var order = JObject.Parse(body);
-           var test1 = order["order"]["orderId"].ToString();
-           var test2 = order["order"]["status"].ToString();
-           var test3 = order["order"]["products"][0]["name"].ToString();
-           var testResult = test1 + "|" + test2 + "|" + test3;
-           await _homeService.ChangePaymentStatus(testResult);
-            
-
-           return Ok();
+           var orderId = order["order"]["orderId"].ToString();
+           var orderStatus = order["order"]["status"].ToString();
+           var subscriptionName = order["order"]["products"][0]["name"].ToString();
+           if(await _homeService.ChangePaymentStatus(orderStatus, orderId, subscriptionName))
+               return Ok();
        }
+
+        return new EmptyResult();
     }
 
     public  IActionResult Sandbox()

@@ -45,15 +45,68 @@ public class HomeService : IHomeService
         return subscriptionPaymentDto;
     }
 
-    public async Task<bool> ChangePaymentStatus(string username)
+    public async Task<bool> ChangePaymentStatus(string paymentStatus, string orderId, string subscriptionName)
     {
-        SubscriptionTypesEntity test = new();
-        test.Name = username;
-        test.Price = 25;
-        test.CurrentDiscount = 0;
-        test.SiteId = 3;
-        _context.SubsciptionTypes.Add(test);
+        bool isGift = false;
+
+        SubscriptionPaymentHistoryEntity subscriptionPaymentHistoryEntity =
+            _context.SubscriptionsPaymentsHistory
+                .FirstOrDefault(obj => obj.PayuId.Equals(orderId))!;
+        subscriptionPaymentHistoryEntity.OrderStatus = paymentStatus;
+        _context.Update(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
+
+        if (subscriptionName.Contains("GIFT"))
+            isGift = true;
+        
+        if (paymentStatus.Equals("COMPLETED"))
+        {
+            var userId = 
+                _context.SubscriptionsPaymentsHistory
+                    .FirstOrDefault(o => o.PayuId.Equals(orderId))!.UserId;
+
+            var userEntity = _context.Users.FirstOrDefault(obj => obj.Id.Equals(userId));
+            var username = userEntity.Username;
+            
+            int typeOfSubscription = _context.SubsciptionTypes
+                .FirstOrDefault(obj => subscriptionName.Contains(obj.Name))!.SiteId;
+            
+            if (isGift)
+            {
+                bool isExactTheSame = false;
+                string generatedToken;
+                do
+                {
+                    generatedToken = Utilities.GenerateOtaToken(20);
+                    var token = await _context.OtaTokens
+                        .FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
+                    if (token != null) isExactTheSame = true;
+                } while (isExactTheSame);
+
+                CouponEntity couponEntity = new();
+                couponEntity.Token = generatedToken;
+                couponEntity.ExpiringAt = DateTime.Today.AddDays(30);
+                couponEntity.ExtensionTime = 30;
+                couponEntity.TypeOfSubscription = typeOfSubscription;
+                couponEntity.CustomerName = username;
+
+                _context.Coupons.Add(couponEntity);
+                _context.SaveChanges();
+
+                GiftCouponsEntity giftCouponsEntity = new();
+                giftCouponsEntity.CouponId = couponEntity.Id;
+                giftCouponsEntity.UserId = userId;
+                _context.GiftCouponsEntities.Add(giftCouponsEntity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            userEntity.CurrentStatusExpirationDate = userEntity.CurrentStatusExpirationDate.AddDays(30);
+            userEntity.AccountStatus = typeOfSubscription;
+            _context.Users.Update(userEntity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
         return true;
     }
     
@@ -124,9 +177,15 @@ public class HomeService : IHomeService
         buyer.FirstName = userEntity.FirstName;
         buyer.Phone = subscriptionPaymentDto.PhoneNumber;
         buyer.LastName = userEntity.LastName;
+
+        int forWho = subscriptionPaymentDto.ForWho;
+
+        string forWhoStr = "";
+        if (forWho.Equals(1)) forWhoStr = subscriptionTypesEntity.Name + "SELF";
+        else if (forWho.Equals(2)) forWhoStr = subscriptionTypesEntity.Name + "GIFT";
         
         var products = new List<Product>(1);
-        products.Add(new Product(subscriptionTypesEntity.Name, price.ToString(), "1"));
+        products.Add(new Product(forWhoStr, price.ToString(), "1"));
         var request = new OrderRequest(remoteIpAddress, 
             ConfigLoader.PayuClientId, "Zakup subskypcji Quizazu", "PLN", 
             price.ToString(), products);
@@ -170,8 +229,6 @@ public class HomeService : IHomeService
         IPAddress ipAddress;
         IPAddress.TryParse(ipAddressString, out ipAddress);
 
-        // If we got an IPV6 address, then we need to ask the network for the IPV4 address 
-        // This usually only happens when the browser is on the same machine as the server.
         if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
         {
             ipAddress = System.Net.Dns.GetHostEntry(ipAddress).AddressList
