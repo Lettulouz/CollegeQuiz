@@ -67,6 +67,7 @@ public class HomeController : Controller
     {
         await _homeService.ChangePaymentStatus("test");
         var value1 = HttpContext.Request.Body.Length.ToString();
+        if (value1.Length < 1) value1 = "test2";
         if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
         return new EmptyResult();
