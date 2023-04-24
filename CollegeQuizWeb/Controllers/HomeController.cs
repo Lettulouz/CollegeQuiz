@@ -11,6 +11,7 @@ using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
+using Newtonsoft.Json.Linq;
 using Test = System.Web;
 
 namespace CollegeQuizWeb.Controllers;
@@ -81,8 +82,13 @@ public class HomeController : Controller
        using (var reader = new StreamReader(Request.Body))
        {
            var body = await reader.ReadToEndAsync();
-           await _homeService.ChangePaymentStatus(body);
-
+           var order = JObject.Parse(body);
+           var test1 = order["order"]["orderId"].ToString();
+           var test2 = order["order"]["status"].ToString();
+           var test3 = order["order"]["products"][0]["name"].ToString();
+           var testResult = test1 + "|" + test2 + "|" + test3;
+           await _homeService.ChangePaymentStatus(testResult);
+            
 
            return Ok();
        }
