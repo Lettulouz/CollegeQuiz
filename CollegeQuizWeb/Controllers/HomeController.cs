@@ -65,6 +65,7 @@ public class HomeController : Controller
     public async Task<IActionResult> ChangePaymentStatus()
     {
         var value1 = Request.Body.ToString();
+        value1 ??= "kurwa";
         if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
         return new EmptyResult();

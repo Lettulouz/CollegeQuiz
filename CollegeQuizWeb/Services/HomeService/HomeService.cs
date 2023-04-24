@@ -132,8 +132,8 @@ public class HomeService : IHomeService
             price.ToString(), products);
         request.ValidityTime = "1800";
         request.Buyer = buyer;
-        request.NotifyUrl = "https://dominikpiskor.pl/Home/ChangePaymentStatus/";
-        request.ContinueUrl = "https://dominikpiskor.pl/Home/";
+        request.NotifyUrl = "https://www.dominikpiskor.pl/Home/ChangePaymentStatus";
+        request.ContinueUrl = "https://www.dominikpiskor.pl/Home/";
         OrderResponse orderResponse = new();
         try
         {
@@ -153,6 +153,7 @@ public class HomeService : IHomeService
         subscriptionPaymentHistoryEntity.PayuId = orderResponse.OrderId;
         subscriptionPaymentHistoryEntity.Price = price;
         subscriptionPaymentHistoryEntity.Subscription = subscriptionTypesEntity.Name;
+        subscriptionPaymentHistoryEntity.OrderStatus = "PENDING";
         _context.SubscriptionsPaymentsHistory.Add(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
 
