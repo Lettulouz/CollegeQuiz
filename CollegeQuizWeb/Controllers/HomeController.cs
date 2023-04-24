@@ -10,6 +10,7 @@ using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 using Test = System.Web;
 
 namespace CollegeQuizWeb.Controllers;
@@ -66,20 +67,29 @@ public class HomeController : Controller
     public async Task<IActionResult> ChangePaymentStatus()
     {
         HttpContext.Request.EnableBuffering();
-        await _homeService.ChangePaymentStatus("test");
+       /* await _homeService.ChangePaymentStatus("test");
         //var value1 = HttpContext.Request.Body.Length.ToString();
-        var value1 = "chuj2";
-        var body = HttpContext.Request.Body;
-        if (body.Length > 0)
-        {
-            StreamReader sr = new(body);
-            value1 = sr.ReadToEnd();
-        }
         
+        
+        if (value1.Length > 25)
+            value1 = "chuj";
         //if (value1.Length < 1) value1 = "test2";
         if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
-        return new EmptyResult();
+        return new EmptyResult();*/
+       
+       using (var reader = new StreamReader(Request.Body))
+       {
+           var body = await reader.ReadToEndAsync();
+           if (body.Length > 25)
+           {
+               body = "chuj";
+           }
+           await _homeService.ChangePaymentStatus(body);
+
+
+           return Ok();
+       }
     }
 
     public  IActionResult Sandbox()
