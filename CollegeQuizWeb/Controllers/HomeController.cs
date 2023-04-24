@@ -65,11 +65,12 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangePaymentStatus()
     {
-        var value1 = Request.Body;
+        await _homeService.ChangePaymentStatus("test");
+        var value1 = Request.Body.Length.ToString();
         StreamReader streamReader = new(value1);
         string Arek = streamReader.ReadToEnd();
         Arek ??= "mhm";
-        if (await _homeService.ChangePaymentStatus(Arek))
+        if (await _homeService.ChangePaymentStatus(value1))
             return Ok();
         return new EmptyResult();
     }
