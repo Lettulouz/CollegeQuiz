@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Home;
@@ -64,9 +65,11 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangePaymentStatus()
     {
-        var value1 = Request.Body.ToString();
-        value1 ??= "kurwa";
-        if (await _homeService.ChangePaymentStatus(value1))
+        var value1 = Request.Body;
+        StreamReader streamReader = new(value1);
+        string Arek = streamReader.ReadToEnd();
+        Arek ??= "mhm";
+        if (await _homeService.ChangePaymentStatus(Arek))
             return Ok();
         return new EmptyResult();
     }
