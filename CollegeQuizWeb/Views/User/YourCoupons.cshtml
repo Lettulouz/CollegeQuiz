@@ -1,0 +1,64 @@
+@model dynamic
+
+@{
+    ViewBag.Title = "Twoje kupony";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid" style="max-width: 960px">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="card px-5 py-5 h-100">
+            <label id="mainName">Twoje kupony </label>
+
+            <div class="row  bg-coupons">
+                        
+                <table class="table text-white text-center">
+                    <tr>
+                        <th class="d-none d-sm-table-cell">Kupon</th>
+                        <th>Rodzaj</th>
+                        <th class="d-none d-md-table-cell">Wygasa</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td class="d-none d-sm-table-cell cp-cell">CF1LxbbeLWrTPMdXhPdk</td>
+                        <td>Gold</td>
+                        <td class="d-none d-md-table-cell">1983-04-20 03:08:58</td>
+                        <td><i class="bi bi-clipboard copyButton"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="d-none d-sm-table-cell cp-cell">ORM0jh12xMPchAhTPwmN</td>
+                        <td>Platinum</td>
+                        <td class="d-none d-md-table-cell">2023-05-02 17:09:00</td>
+                        <td><i class="bi bi-clipboard copyButton"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="d-none d-sm-table-cell cp-cell">ZTddQzgoCMFyZ0mkF8Jv</td>
+                        <td>Platinum</td>
+                        <td class="d-none d-md-table-cell">1983-04-20 03:08:58</td>
+                        <td><i class="bi bi-clipboard copyButton"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="d-none d-sm-table-cell cp-cell">uIDUaKikGO7ei42sqbGF</td>
+                        <td>Gold</td>
+                        <td class="d-none d-md-table-cell">2023-05-02 17:09:00</td>
+                        <td><i class="bi bi-clipboard copyButton"></i></td>
+                    </tr>
+
+                </table>
+                <a class="pb-2 text-white"  asp-area="" asp-controller="User" asp-action="AttemptCouponRedeem">Zrealizuj kupon</a>
+                       
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".copyButton").click(function() {
+    var code=$(this).parent().parent().find(".cp-cell").text()
+     navigator.clipboard.writeText(code);
+    toastr.success(`Skopiowano kupon do schowka.`);
+} );
+</script>
+
+
+            

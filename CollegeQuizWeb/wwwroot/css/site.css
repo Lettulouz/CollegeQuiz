@@ -184,6 +184,8 @@ input:-webkit-autofill {
     border: 2px solid #63c4ab;
 }
 
+
+
 .card-add {
     background-color: #63c4ab;
 }
@@ -363,6 +365,10 @@ select{
 
 .bg-profile{
     background-color: #aee5d4
+}
+
+.bg-coupons{
+    background-color: #6edbbe
 }
 
 .leaderboard{

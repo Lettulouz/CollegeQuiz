@@ -22,6 +22,16 @@ public class UserController : Controller
         ViewBag.Username = isLogged;
         return View();
     }
+
+    public async Task<IActionResult> YourCoupons()
+    {
+      //  string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+       // if (loggedUsername == null) return Redirect("/Auth/Login");
+
+        
+        
+        return View();
+    }
     
     public IActionResult AttemptCouponRedeem()
     {
