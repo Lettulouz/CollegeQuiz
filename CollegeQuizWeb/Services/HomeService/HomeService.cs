@@ -153,7 +153,6 @@ public class HomeService : IHomeService
         subscriptionPaymentHistoryEntity.PayuId = orderResponse.OrderId;
         subscriptionPaymentHistoryEntity.Price = price;
         subscriptionPaymentHistoryEntity.Subscription = subscriptionTypesEntity.Name;
-        subscriptionPaymentHistoryEntity.OrderStatus = "PENDING";
         _context.SubscriptionsPaymentsHistory.Add(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
 
