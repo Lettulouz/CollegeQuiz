@@ -40,4 +40,41 @@ public class PublicQuizesService : IPublicQuizesService
         
     }
     
+    public async Task PublicQuizInfo(long id, PublicQuizesController controller)
+    {
+        var quizShareInfo = await _context.Quizes
+            .Where(q => q.IsPublic.Equals(true) && q.Id.Equals(id))
+            .FirstOrDefaultAsync();
+        
+        if (quizShareInfo == null)
+        {
+            controller.Response.Redirect("/PublicQuizes/Quizes");
+        }
+        else
+        {
+            controller.ViewBag.shareQuizInfo = quizShareInfo;
+            
+            controller.ViewBag.questions = await _context.Answers
+                .Include(q => q.QuestionEntity)
+                .Where(q => q.QuestionEntity.QuizId.Equals(quizShareInfo.Id))
+                .Select(q => new
+                {
+                    question = q.QuestionEntity.Name,
+                    answer = q.Name,
+                    goodAnswer = q.IsGood,
+                    time_min = q.QuestionEntity.TimeMin,
+                    time_sec = q.QuestionEntity.TimeSec,
+                })
+                .GroupBy(q=>q.question)
+                .Select(q=>new
+                {
+                    question = q.Key,
+                    answers = q.Select(a => a.answer).ToList(),
+                    goodAnswers = q.Select(a => a.goodAnswer).ToList(),
+                    time_min= q.Sum(a=>a.time_min/4),
+                    time_sec = q.Sum(a=>a.time_sec/4)
+                })
+                .ToListAsync();
+        }
+    }
 }

@@ -33,9 +33,21 @@ public class PublicQuizesController : Controller
     public async Task<IActionResult> Quizes(PublicQuizesDto obj)
     {
         var payloadDto = new PublicDtoPayLoad(this) { Dto = obj };
-
-        ViewBag.Quizes = await _service.FilterQuizes(payloadDto);
-        
+        if (payloadDto.Dto.Name == null)
+        {
+            ViewBag.Quizes = await _service.GetPublicQuizes();
+        }
+        else
+        {
+            ViewBag.Quizes = await _service.FilterQuizes(payloadDto);
+        }
         return View(obj);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> QuizPage([FromRoute(Name = "id")] long id)
+    {
+        await _service.PublicQuizInfo(id, this);
+        return View();
     }
 }

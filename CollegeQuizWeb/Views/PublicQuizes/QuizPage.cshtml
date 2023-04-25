@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = $"Quiz {ViewBag.shareQuizInfo.Name}";
+}
+
+<div class="mt-3 mb-3">
+    <a class="btn btn-color-one w-25" asp-action="Quizes" asp-controller="PublicQuizes">
+        <i class="bi bi-arrow-left"></i> Powrót do quizów
+    </a>
+</div>
+@if (@ViewBag.shareQuizInfo != null)
+{
+    <h2>@ViewBag.shareQuizInfo.Name</h2>
+    <div class="row g-2 mb-4">
+        @if (@ViewBag.questions != null)
+        {
+            @for (int j = 0; j < ((IEnumerable<dynamic>)ViewBag.questions).Count(); j++)
+            {
+                <div class="col-12">
+                    <div class="p-3 card hstack gap-2 mt-3">
+                        <div class="me-2 fs-3">@(j + 1)</div>
+                        <label class="form-control h-100" placeholder="Treść pytania">@ViewBag.questions[j].question</label>
+                        <div>
+                            <label class="mb-1">Czas trwania pytania:</label>
+                            <div class="d-flex mb-5">
+                                <label type="number" class="form-control time-control" placeholder="min">@ViewBag.questions[j].time_min</label>
+                                <span class="mx-2 fw-bold pt-1">:</span>
+                                <label type="number" class="form-control time-control" placeholder="sek">@ViewBag.questions[j].time_sec</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @for (int i = 0; i < 4; i++)
+                {
+                    <div class="col-6">
+                        <div class="p-3 card">
+                            <div class="p-3 card hstack">
+                                <div class="me-2 fs-4">@(i + 1)</div>
+                                <label type="text" class="form-control" placeholder="Treść odpowiedzi">@ViewBag.questions[j].answers[i]</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                @if (@ViewBag.questions[j].goodAnswers[i] == true)
+                                {
+                                    <label class="form-check-label">To jest poprawna odpowiedź</label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+}
