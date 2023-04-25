@@ -9,7 +9,8 @@ const SessionContext = createContext(null);
 
 const LeaveSessionButtonComponent = props => {
     const {
-        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked
+        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked,
+        connection
     } = useContext(SessionContext);
     const modalRef = useRef()
     
@@ -37,6 +38,12 @@ const LeaveSessionButtonComponent = props => {
     
     const showModal = () => new bootstrap.Modal(modalRef.current, { backdrop: 'static', keyboard: false }).show();
     const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
+    
+    useEffect(() => {
+        connection.on("OnDisconectedSession", _ => {
+            hideModal();
+        });
+    }, []);
     
     return (
         <>
