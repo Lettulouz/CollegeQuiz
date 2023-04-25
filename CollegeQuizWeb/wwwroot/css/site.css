@@ -427,12 +427,12 @@ select{
 
 .custom-card-1{
     background-color: #ebffe5;
-    border: 2px solid #bae0af;
+    border: 2px solid #9acf8a;
     border-radius: 5px;
 }
 
 .custom-card-d-1{
-    background: #bae0af !important;
+    background: #9acf8a !important;
     color: white;
     border: 0;
 }
@@ -475,24 +475,24 @@ select{
 
 .custom-card-5{
     background-color: #dffffb;
-    border: 2px solid #b0ede5;
+    border: 2px solid #81d1c6;
     border-radius: 5px;
 }
 
 .custom-card-d-5{
-    background: #b0ede5 !important;
+    background: #81d1c6 !important;
     color: white;
     border: 0;
 }
 
 .custom-card-6{
     background-color: #e0f7ff;
-    border: 2px solid #afe4f9;
+    border: 2px solid #80bdd5;
     border-radius: 5px;
 }
 
 .custom-card-d-6{
-    background: #afe4f9 !important;
+    background: #80bdd5 !important;
     color: white;
     border: 0;
 }
