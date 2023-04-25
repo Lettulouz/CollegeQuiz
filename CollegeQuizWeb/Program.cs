@@ -72,6 +72,13 @@ builder.Services.AddSignalR();
 // JWT
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(corsPolicyBuilder => corsPolicyBuilder.WithOrigins("https://dominikpiskor.pl")
+        .AllowAnyHeader().WithMethods("GET", "POST", "PUT", "PATH", "DELETE")
+        .AllowCredentials());
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var app = builder.Build();
@@ -98,6 +105,7 @@ app.UseReact(config =>
 app.UseStaticFiles();
 
 app.UseSession();
+app.UseCors();
 app.UseRouting();
 
 app.UseAuthorization();

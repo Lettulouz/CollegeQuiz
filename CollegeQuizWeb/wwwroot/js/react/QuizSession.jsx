@@ -323,7 +323,8 @@ const JoinToSessionComponent = () => {
     
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('/quizUserSessionHub')
+            .withUrl('https://dominikpiskor.pl/quizUserSessionHub')
+            .configureLogging(signalR.LogLevel.Trace)
             .build();
         connection.start()
             .then(() => connection.invoke('getConnectionId').then(connId => setConnectionId(connId)))

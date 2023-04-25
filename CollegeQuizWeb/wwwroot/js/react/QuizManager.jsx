@@ -155,7 +155,8 @@ const QuizManagerRootComponent = () => {
     
     useEffect(() => {
         const connectionObj = new signalR.HubConnectionBuilder()
-            .withUrl('/quizManagerSessionHub')
+            .withUrl('https://dominikpiskor.pl/quizManagerSessionHub')
+            .configureLogging(signalR.LogLevel.Trace)
             .build();
         connectionObj.start()
             .then(() => connectionObj.invoke('getConnectionId').then(connId => {
