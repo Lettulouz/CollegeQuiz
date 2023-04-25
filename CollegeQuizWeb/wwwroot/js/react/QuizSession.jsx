@@ -82,6 +82,7 @@ const MainWindowGameComponent = () => {
     useEffect(() => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
             setScreenAction(COUNTING_SCREEN);
+            console.log(counter);
             setCounting(counter);
         });
         connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
@@ -91,9 +92,11 @@ const MainWindowGameComponent = () => {
             setAnswers(parsedAnswers.answers.map(q=> q));
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
+            console.log(answ);
             setIsAnswerSet(false);
         });
         connection.on("QUESTION_TIMER_P2P", counter => {
+            console.log(counter);
             setQuestionTimer(counter);
         });
         connection.on("QUESTION_RESULT_P2P", questionAnsw => {
@@ -104,6 +107,7 @@ const MainWindowGameComponent = () => {
             console.log(parsedAnswers);
         });
         connection.on("OnDisconectedSession", data => {
+            console.log(data);
             setIsJoinClicked(false);
             setIsLeaveClicked(false);
             connection.stop().then(_ => {
