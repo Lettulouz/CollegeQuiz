@@ -1,4 +1,3 @@
-@model dynamic
 
 @{
     ViewBag.Title = "Twoje kupony";
@@ -19,31 +18,15 @@
                         <th class="d-none d-md-table-cell">Wygasa</th>
                         <th></th>
                     </tr>
-                    <tr>
-                        <td class="d-none d-sm-table-cell cp-cell">CF1LxbbeLWrTPMdXhPdk</td>
-                        <td>Gold</td>
-                        <td class="d-none d-md-table-cell">1983-04-20 03:08:58</td>
-                        <td><i class="bi bi-clipboard copyButton"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="d-none d-sm-table-cell cp-cell">ORM0jh12xMPchAhTPwmN</td>
-                        <td>Platinum</td>
-                        <td class="d-none d-md-table-cell">2023-05-02 17:09:00</td>
-                        <td><i class="bi bi-clipboard copyButton"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="d-none d-sm-table-cell cp-cell">ZTddQzgoCMFyZ0mkF8Jv</td>
-                        <td>Platinum</td>
-                        <td class="d-none d-md-table-cell">1983-04-20 03:08:58</td>
-                        <td><i class="bi bi-clipboard copyButton"></i></td>
-                    </tr>
-                    <tr>
-                        <td class="d-none d-sm-table-cell cp-cell">uIDUaKikGO7ei42sqbGF</td>
-                        <td>Gold</td>
-                        <td class="d-none d-md-table-cell">2023-05-02 17:09:00</td>
-                        <td><i class="bi bi-clipboard copyButton"></i></td>
-                    </tr>
-
+                    @foreach (var element in ViewBag.CouponList)
+                    {
+                        <tr>
+                            <td class="d-none d-sm-table-cell cp-cell">@element.Coupon</td>
+                            <td>@element.TypeOfSubscription</td>
+                            <td class="d-none d-md-table-cell">@element.ExpiringAt</td>
+                            <td><i class="bi bi-clipboard copyButton"></i></td>
+                        </tr>
+                    }
                 </table>
                 <a class="pb-2 text-white"  asp-area="" asp-controller="User" asp-action="AttemptCouponRedeem">Zrealizuj kupon</a>
                        
