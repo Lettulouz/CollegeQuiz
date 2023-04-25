@@ -80,11 +80,24 @@
     transform: rotate(90deg);
 }
 
-
+.dash-list .right-icon{
+    display:inline-flex;
+}
+.dash-list[aria-expanded="false"] .right-icon{
+    transform: rotate(270deg);
+}
 
 .sidebar_body::-webkit-scrollbar {
     width: 10px;
 }
+
+.viewBorder{
+    border-style: solid ;
+    border-radius: 25px;
+    border-width: 1px;
+}
+
+
 
 /* Track */
 .sidebar_body::-webkit-scrollbar-track {

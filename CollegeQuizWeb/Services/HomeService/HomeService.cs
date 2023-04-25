@@ -101,7 +101,7 @@ public class HomeService : IHomeService
                 return true;
             }
 
-            userEntity.CurrentStatusExpirationDate = userEntity.CurrentStatusExpirationDate.AddDays(30);
+            userEntity.CurrentStatusExpirationDate = DateTime.Now.AddDays(30);
             userEntity.AccountStatus = typeOfSubscription;
             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
@@ -110,17 +110,7 @@ public class HomeService : IHomeService
         return true;
     }
     
-    public async Task<OrderResponse> MakePayment()
-    {
-        PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
-        
-        var products = new List<Product>(2);
-        products.Add(new Product("Wireless mouse", "15000", "1"));
-        products.Add(new Product("HDMI cable", "6000", "1"));
-        var request = new OrderRequest("127.0.0.1", ConfigLoader.PayuClientId, "RTV market", "PLN", "21000", products);
-        var result = await client.PostOrderAsync(request, default(CancellationToken));
-        return result;
-    }
+
 
     public async Task MakePaymentForSubscription(SubscriptionPaymentDtoPayload subscriptionPaymentDtoPayload)
     {
@@ -199,7 +189,6 @@ public class HomeService : IHomeService
             orderResponse = await client.PostOrderAsync(request, default(CancellationToken));
 
            var status= orderResponse.Status.StatusCode;
-           controller.HttpContext.Session.SetString(SessionKey.PAYMENT_TEST, status);
         }
         catch (Exception e)
         {

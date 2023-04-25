@@ -184,14 +184,18 @@ input:-webkit-autofill {
     border: 2px solid #63c4ab;
 }
 
+
+
 .card-add {
     background-color: #63c4ab;
 }
 
 @media screen and (max-width: 576px) {
     .card-resize {
-        min-width: 450px;
+        
         min-height: 150px;
+        min-width: 100%;
+    
     }
 }
 
@@ -363,6 +367,10 @@ select{
 
 .bg-profile{
     background-color: #aee5d4
+}
+
+.bg-coupons{
+    background-color: #6edbbe
 }
 
 .leaderboard{
