@@ -89,13 +89,18 @@ function copyToBoard(obj, quizId)
 
 <script>
     var cards=$(".color-random")
-  
+          let prevNm=0;
+          let nm =0
     $.each(cards, function(i,card){
-        let nm = Math.floor((Math.random() * 10) + 1);
+        
+        do{
+        nm = Math.floor((Math.random() * 7) + 1);
+        }while(nm===prevNm)
         let customCard="custom-card-"+nm
         let customButton="custom-card-d-"+nm
         $(card).addClass(customCard)
         let btn=$(card).find(".btn-light")
         $(btn).addClass(customButton)
+        prevNm=nm;
     })
 </script>

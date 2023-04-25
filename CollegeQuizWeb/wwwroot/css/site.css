@@ -426,121 +426,85 @@ select{
 }
 
 .custom-card-1{
-    background-color: #dcd6ef;
-    border: 2px solid #6841f2;
+    background-color: #ebffe5;
+    border: 2px solid #bae0af;
     border-radius: 5px;
 }
 
 .custom-card-d-1{
-    background: #6841f2 !important;
+    background: #bae0af !important;
     color: white;
     border: 0;
 }
 
 .custom-card-2{
-    background-color: #efe3f5;
-    border: 2px solid #b753e6;
+    background-color: #b8fcdf;
+    border: 2px solid #80d8b2;
     border-radius: 5px;
 }
 
 .custom-card-d-2{
-    background: #b753e6 !important;
+    background: #80d8b2 !important;
     color: white;
     border: 0;
 }
 
 .custom-card-3{
-    background-color: #bbbffc;
-    border: 2px solid #545de8;
+    background-color: #cbf0eb;
+    border: 2px solid #6fb3ab;
     border-radius: 5px;
 }
 
 .custom-card-d-3{
-    background: #545de8 !important;
+    background: #6fb3ab !important;
     color: white;
     border: 0;
 }
 
 .custom-card-4{
-    background-color: #ceddf7;
-    border: 2px solid #124199;
+    background-color: #ccfff9;
+    border: 2px solid #87e4d9;
     border-radius: 5px;
 }
 
 .custom-card-d-4{
-    background: #124199 !important;
+    background: #87e4d9 !important;
     color: white;
     border: 0;
 }
 
 .custom-card-5{
-    background-color: #e3ebed;
-    border: 2px solid #78979e;
+    background-color: #dffffb;
+    border: 2px solid #b0ede5;
     border-radius: 5px;
 }
 
 .custom-card-d-5{
-    background: #78979e !important;
+    background: #b0ede5 !important;
     color: white;
     border: 0;
 }
 
 .custom-card-6{
-    background-color: #e1f7f7;
-    border: 2px solid #51a6a6;
+    background-color: #e0f7ff;
+    border: 2px solid #afe4f9;
     border-radius: 5px;
 }
 
 .custom-card-d-6{
-    background: #51a6a6 !important;
+    background: #afe4f9 !important;
     color: white;
     border: 0;
 }
 
 .custom-card-7{
-    background-color: #e4fffa;
-    border: 2px solid #68a69b;
+    background-color: #c6e5fa;
+    border: 2px solid #79a8c9;
     border-radius: 5px;
 }
 
 .custom-card-d-7{
-    background: #68a69b !important;
-    color: white;
-    border: 0;
-}
-
-.custom-card-8{
-    background-color: #e1fbf4;
-    border: 2px solid #4bc4a4;
-    border-radius: 5px;
-}
-
-.custom-card-d-8{
-    background: #4bc4a4 !important;
-    color: white;
-    border: 0;
-}
-
-.custom-card-9{
-    background-color: #d9fced;
-    border: 2px solid #3eb07e;
-    border-radius: 5px;
-}
-
-.custom-card-d-9{
-    background: #3eb07e !important;
-    color: white;
-    border: 0;
-}
-
-.custom-card-10{
-    background-color: #e1f5e9;
-    border: 2px solid #30b364;
-    border-radius: 5px;
-}
-
-.custom-card-d-10{
-    background: #30b364 !important;
+    background: #79a8c9 !important;
     color: white;
     border: 0;
 }
