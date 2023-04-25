@@ -416,3 +416,113 @@ select{
     animation-duration: 3s;
     animation-fill-mode: forwards;
 }
+
+.custom-card-1{
+    background-color: #dcd6ef;
+    border: 3px solid #6841f2;
+    border-radius: 5px;
+}
+
+.custom-card-d-1{
+    background: #6841f2;
+    color: white;
+}
+
+.custom-card-2{
+    background-color: #efe3f5;
+    border: 3px solid #b753e6;
+    border-radius: 5px;
+}
+
+.custom-card-d-2{
+    background: #b753e6;
+    color: white;
+}
+
+.custom-card-3{
+    background-color: #bbbffc;
+    border: 3px solid #545de8;
+    border-radius: 5px;
+}
+
+.custom-card-d-3{
+    background: #545de8;
+    color: white;
+}
+
+.custom-card-4{
+    background-color: #ceddf7;
+    border: 3px solid #124199;
+    border-radius: 5px;
+}
+
+.custom-card-d-4{
+    background: #124199;
+    color: white;
+}
+
+.custom-card-5{
+    background-color: #e3ebed;
+    border: 3px solid #78979e;
+    border-radius: 5px;
+}
+
+.custom-card-d-5{
+    background: #78979e;
+    color: white;
+}
+
+.custom-card-6{
+    background-color: #e1f7f7;
+    border: 3px solid #51a6a6;
+    border-radius: 5px;
+}
+
+.custom-card-d-6{
+    background: #51a6a6;
+    color: white;
+}
+
+.custom-card-7{
+    background-color: #e4fffa;
+    border: 3px solid #68a69b;
+    border-radius: 5px;
+}
+
+.custom-card-d-7{
+    background: #68a69b;
+    color: white;
+}
+
+.custom-card-8{
+    background-color: #e1fbf4;
+    border: 3px solid #4bc4a4;
+    border-radius: 5px;
+}
+
+.custom-card-d-8{
+    background: #4bc4a4;
+    color: white;
+}
+
+.custom-card-9{
+    background-color: #d9fced;
+    border: 3px solid #3eb07e;
+    border-radius: 5px;
+}
+
+.custom-card-d-9{
+    background: #3eb07e;
+    color: white;
+}
+
+.custom-card-10{
+    background-color: #e1f5e9;
+    border: 3px solid #30b364;
+    border-radius: 5px;
+}
+
+.custom-card-d-10{
+    background: #30b364;
+    color: white;
+}
