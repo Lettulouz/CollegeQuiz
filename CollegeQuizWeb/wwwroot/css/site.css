@@ -33,6 +33,15 @@ body {
     border-bottom-color: #aee5d4;
 }
 
+.navbar-collapse {
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.navbar-collapse.collapsing {
+    overflow-y: hidden;
+}
+
 .list-border {
     border-radius: 0px 0px 25px 25px;
 }
