@@ -370,7 +370,7 @@ select{
 }
 
 .bg-coupons{
-    background-color: #6edbbe
+    background-color: #63C4AB
 }
 
 .leaderboard{
@@ -437,6 +437,11 @@ select{
     border: 0;
 }
 
+.custom-card-d-1:hover{
+    background: #9acf8a !important;
+    color: #9acf8a;
+}
+
 .custom-card-2{
     background-color: #b8fcdf;
     border: 2px solid #80d8b2;
@@ -447,6 +452,11 @@ select{
     background: #80d8b2 !important;
     color: white;
     border: 0;
+}
+
+.custom-card-d-2:hover{
+    background: #b8fcdf !important;
+    color: #80d8b2;
 }
 
 .custom-card-3{
@@ -461,6 +471,11 @@ select{
     border: 0;
 }
 
+.custom-card-d-3:hover{
+    background: #cbf0eb !important;
+    color: #6fb3ab;
+}
+
 .custom-card-4{
     background-color: #ccfff9;
     border: 2px solid #87e4d9;
@@ -471,6 +486,11 @@ select{
     background: #87e4d9 !important;
     color: white;
     border: 0;
+}
+
+.custom-card-d-4:hover{
+    background: #ccfff9 !important;
+    color: #87e4d9;
 }
 
 .custom-card-5{
@@ -485,6 +505,11 @@ select{
     border: 0;
 }
 
+.custom-card-d-5:hover{
+    background: #dffffb !important;
+    color: #81d1c6;
+}
+
 .custom-card-6{
     background-color: #e0f7ff;
     border: 2px solid #80bdd5;
@@ -497,6 +522,11 @@ select{
     border: 0;
 }
 
+.custom-card-d-6:hover{
+    background: #e0f7ff !important;
+    color: #80bdd5;
+}
+
 .custom-card-7{
     background-color: #c6e5fa;
     border: 2px solid #79a8c9;
@@ -507,4 +537,9 @@ select{
     background: #79a8c9 !important;
     color: white;
     border: 0;
+}
+
+.custom-card-d-7:hover{
+    background: #c6e5fa !important;
+    color: #79a8c9;
 }
