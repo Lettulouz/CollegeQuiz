@@ -5,6 +5,9 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.PublicQuizes;
 using CollegeQuizWeb.Dto.Quiz;
+using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,6 +78,18 @@ public class PublicQuizesService : IPublicQuizesService
                     time_sec = q.Sum(a=>a.time_sec/4)
                 })
                 .ToListAsync();
+        }
+    }
+
+    public async Task Share(string id, PublicQuizesController controller)
+    {
+        string? loggedUsername = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUsername));
+        if (userEntity == null)
+        {
+            controller.HttpContext.Session.Remove(SessionKey.IS_USER_LOGGED);
+            controller.Response.Redirect("/Auth/Login");
+            return;
         }
     }
 }

@@ -30,6 +30,7 @@ public class PublicQuizesController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Quizes(PublicQuizesDto obj)
     {
         var payloadDto = new PublicDtoPayLoad(this) { Dto = obj };
@@ -49,5 +50,10 @@ public class PublicQuizesController : Controller
     {
         await _service.PublicQuizInfo(id, this);
         return View();
+    }
+
+    public async void Share([FromRoute(Name = "id")] string token)
+    {
+        await _service.Share(token, this);
     }
 }
