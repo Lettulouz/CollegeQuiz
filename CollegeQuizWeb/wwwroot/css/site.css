@@ -192,8 +192,10 @@ input:-webkit-autofill {
 
 @media screen and (max-width: 576px) {
     .card-resize {
-        min-width: 450px;
+        
         min-height: 150px;
+        min-width: 100%;
+    
     }
 }
 
