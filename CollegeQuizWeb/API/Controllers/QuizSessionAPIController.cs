@@ -8,15 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace CollegeQuizWeb.API.Controllers;
 
 [Route("api/v1/dotnet/[controller]")]
-public class QuizSessionAPIController : Controller
+public class QuizSessionAPIController : AbstractAPIController
 {
     private readonly IQuizSessionAPIService _service;
-    private readonly IJwtService _jwtService;
     
-    public QuizSessionAPIController(IQuizSessionAPIService service, IJwtService jwtService)
+    public QuizSessionAPIController(IQuizSessionAPIService service, IJwtService jwtService) : base(jwtService)
     {
         _service = service;
-        _jwtService = jwtService;
     }
 
     [HttpPost("[action]/{connectionId}/{token}")]
