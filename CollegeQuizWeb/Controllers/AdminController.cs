@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.IdentityModel.Tokens;
+using CouponListDto = CollegeQuizWeb.Dto.Admin.CouponListDto;
 
 namespace CollegeQuizWeb.Controllers;
 

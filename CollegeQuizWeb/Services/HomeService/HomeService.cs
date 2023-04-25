@@ -182,7 +182,10 @@ public class HomeService : IHomeService
         request.ValidityTime = "1800";
         request.Buyer = buyer;
         request.NotifyUrl = "https://dominikpiskor.pl/Home/ChangePaymentStatus";
-        request.ContinueUrl = "https://dominikpiskor.pl/Home/";
+        if(forWhoStr.Contains("SELF"))
+            request.ContinueUrl = "https://dominikpiskor.pl/User/SubscriptionAfterPaymentSelf";
+        else
+            request.ContinueUrl = "https://dominikpiskor.pl/User/SubscriptionAfterPaymentGift";
         OrderResponse orderResponse = new();
         try
         {
