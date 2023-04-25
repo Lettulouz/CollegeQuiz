@@ -166,7 +166,7 @@ public class QuizManagerSessionHub : Hub
         Console.WriteLine("punkt testowy 8");
 
         await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswer.Name));
-        Thread.Sleep(20000);
+        Thread.Sleep(2000);
         
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
         Console.WriteLine("punkt testowy 9");

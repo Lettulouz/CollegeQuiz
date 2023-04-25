@@ -100,6 +100,7 @@ const MainWindowGameComponent = () => {
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
             setIsAnswerSet(false);
+            setCurrentAnswer("");
         });
         connection.on("QUESTION_TIMER_P2P", counter => {
             setQuestionTimer(counter);
@@ -109,15 +110,12 @@ const MainWindowGameComponent = () => {
             const parsedAnswers = JSON.parse(questionAnsw);
             const temp = parsedAnswers.map(q=> q);
             setAfterQuestionResults(temp);
-
+            console.log(parsedAnswers);
+            console.log(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
             setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
         });
         connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => {
-            console.log("test");
-            var test = JSON.parse(currentAnsw);
-            console.log(test);
-            console.log("test2");
-            setCurrentAnswer(test);
+            setCurrentAnswer(JSON.parse(currentAnsw));
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -174,25 +172,38 @@ const QuestionResultComponent = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const currentIndexRef = useRef(currentIndex);
+
+    useEffect(() => {
+        currentIndexRef.current = currentIndex;
+    }, [currentIndex]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setCurrentIndex(prevIndex => prevIndex + 1);
+            console.log("test2");
+            console.log(currentIndexRef.current);
+            console.log(afterQuestionResults.length);
+            if (currentIndexRef.current <= afterQuestionResults.length) {
+                setCurrentIndex(prevIndex => prevIndex + 1);
+            }
         }, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {
-        if (currentIndex === afterQuestionResults.length) {
+        console.log("test");
+        console.log(currentIndexRef.current);
+        console.log(afterQuestionResults.length);
+        if (currentIndexRef.current >= afterQuestionResults.length) {
             const timeoutId = setTimeout(() => {
                 setShowLeaderboard(true);
-            }, 1000);
+            }, 3000);
 
             return () => clearTimeout(timeoutId);
         }
-    }, [currentIndex, afterQuestionResults.length]);
-    
+    }, [currentIndexRef, afterQuestionResults.length]);
+
 
     return (
         <div className="container">
@@ -209,15 +220,16 @@ const QuestionResultComponent = () => {
                     </div>
                 </div>
             ))}
-            {showLeaderboard  && (
-            <div
-                className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
+            {showLeaderboard === true &&(
+                <div
+                    className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
                     {currentQuestionLeader}
-            </div>
-                )}
+                </div>
+            )}
         </div>
     );
 }
+
 
 const QuestionType1Component = () => {
     const {
@@ -278,11 +290,11 @@ const QuestionCardComponent = props => {
 
     
     return (
-        <div className="col-6 d-flex m-0">
+        <div className={`col-6 d-flex m-0
+             ${currentAnswer !== answers[props.number] && currentAnswer !== "" ? 'incorrectAnswer' : ''}`}>
             <div className={`card bg-dark text-white card-img-custom 
             ${clickedIndex === props.number ? 'clicked' : ''}
             ${isAnswerSet === true && clickedIndex !== props.number ? 'notClicked' : ''}
-            ${currentAnswer !== answers[props.number] || currentAnswer !== "" ? 'incorrectAnswer' : ''}
             `}  onClick={() => handleClick(props.number)}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default  ${isAnswerSet === true ? 'cursor-not-allowed' : ''} `}>
                     <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D" />

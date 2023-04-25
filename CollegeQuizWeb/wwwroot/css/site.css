@@ -211,8 +211,8 @@ input:-webkit-autofill {
     transform: scale(1.05);
 }
 
-.card-img-custom.correctAnswer {
-    opacity: 0.5;
+.incorrectAnswer {
+    opacity: 0.3;
 }
 
 .cursor-not-allowed{
