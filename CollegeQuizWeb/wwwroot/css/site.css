@@ -192,10 +192,8 @@ input:-webkit-autofill {
 
 @media screen and (max-width: 576px) {
     .card-resize {
-        
         min-height: 150px;
         min-width: 100%;
-    
     }
 }
 
@@ -205,12 +203,16 @@ input:-webkit-autofill {
     transition: transform 0.2s;
 }
 
-.card-img-custom.clicked {
+.card-img-custom.notClicked {
     transform: scale(0.8);
 }
 
 .card-img-custom:not(.clicked):not(.notClicked):hover {
-    transform: scale(0.9);
+    transform: scale(1.05);
+}
+
+.card-img-custom.correctAnswer {
+    opacity: 0.5;
 }
 
 .cursor-not-allowed{

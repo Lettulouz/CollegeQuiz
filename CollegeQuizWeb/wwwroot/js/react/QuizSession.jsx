@@ -1,6 +1,14 @@
 import { useLoadableContent } from "./Hooks.jsx";
 import {
-    alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN
+    alertInfo,
+    alertDanger,
+    alertOff,
+    WAITING_SCREEN,
+    getCommonFetchObj,
+    COUNTING_SCREEN,
+    IN_GAME,
+    QUESTION_RESULT_SCREEN,
+    CORRECT_ANSWERS_SCREEN
 } from "./Utils.jsx";
 
 const { useEffect, useState, createContext, useContext, useRef } = React;
@@ -73,7 +81,7 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader
+        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -101,7 +109,15 @@ const MainWindowGameComponent = () => {
             const parsedAnswers = JSON.parse(questionAnsw);
             const temp = parsedAnswers.map(q=> q);
             setAfterQuestionResults(temp);
-            console.log(parsedAnswers);
+
+            setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
+        });
+        connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => {
+            console.log("test");
+            var test = JSON.parse(currentAnsw);
+            console.log(test);
+            console.log("test2");
+            setCurrentAnswer(test);
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -112,7 +128,7 @@ const MainWindowGameComponent = () => {
             });
         });
     }, []);
-
+    
     const renderComponentSection = () => {
         switch(screenAction) {
             case WAITING_SCREEN: return (
@@ -157,6 +173,7 @@ const QuestionResultComponent = () => {
     } = useContext(SessionContext);
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -165,6 +182,17 @@ const QuestionResultComponent = () => {
 
         return () => clearInterval(intervalId);
     }, []);
+
+    useEffect(() => {
+        if (currentIndex === afterQuestionResults.length) {
+            const timeoutId = setTimeout(() => {
+                setShowLeaderboard(true);
+            }, 1000);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [currentIndex, afterQuestionResults.length]);
+    
 
     return (
         <div className="container">
@@ -177,15 +205,16 @@ const QuestionResultComponent = () => {
 
                     <div
                         className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-right' : ''}`}>
-                        {m.Score} + {m.newPoints}
+                        {m.Score} + ({m.newPoints})
                     </div>
                 </div>
             ))}
+            {showLeaderboard  && (
             <div
                 className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
                     {currentQuestionLeader}
-                {console.log(currentQuestionLeader)}
             </div>
+                )}
         </div>
     );
 }
@@ -228,12 +257,13 @@ const QuestionType1Component = () => {
 
 const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet
+        answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet, 
+        currentAnswer
     } = useContext(SessionContext);
     const [clickedIndex, setClickedIndex] = useState(null);
     
     const handleClick = answer => {
-        if(isAnswerSet === true) return;
+        if(isAnswerSet === true || currentAnswer !== "") return;
         fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`, {
             method: 'POST',
             credentials: 'same-origin',
@@ -252,6 +282,7 @@ const QuestionCardComponent = props => {
             <div className={`card bg-dark text-white card-img-custom 
             ${clickedIndex === props.number ? 'clicked' : ''}
             ${isAnswerSet === true && clickedIndex !== props.number ? 'notClicked' : ''}
+            ${currentAnswer !== answers[props.number] || currentAnswer !== "" ? 'incorrectAnswer' : ''}
             `}  onClick={() => handleClick(props.number)}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default  ${isAnswerSet === true ? 'cursor-not-allowed' : ''} `}>
                     <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D" />
@@ -374,6 +405,7 @@ const QuizSessionRootComponent = () => {
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
     const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
+    const [ currentAnswer, setCurrentAnswer ] = useState("");
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -384,7 +416,8 @@ const QuizSessionRootComponent = () => {
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
-            afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader
+            afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
+            currentAnswer, setCurrentAnswer
         }}>
             {isActive && <>
                 {isConnect ? <>
