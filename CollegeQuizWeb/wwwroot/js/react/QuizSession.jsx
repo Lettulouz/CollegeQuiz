@@ -16,7 +16,7 @@ const LeaveSessionButtonComponent = props => {
     const leaveRoom = () => {
         if (isLeaveClicked) return;
         setIsLeaveClicked(true);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
@@ -82,7 +82,6 @@ const MainWindowGameComponent = () => {
     useEffect(() => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
             setScreenAction(COUNTING_SCREEN);
-            console.log(counter);
             setCounting(counter);
         });
         connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
@@ -92,11 +91,9 @@ const MainWindowGameComponent = () => {
             setAnswers(parsedAnswers.answers.map(q=> q));
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
-            console.log(answ);
             setIsAnswerSet(false);
         });
         connection.on("QUESTION_TIMER_P2P", counter => {
-            console.log(counter);
             setQuestionTimer(counter);
         });
         connection.on("QUESTION_RESULT_P2P", questionAnsw => {
@@ -104,10 +101,8 @@ const MainWindowGameComponent = () => {
             const parsedAnswers = JSON.parse(questionAnsw);
             const temp = parsedAnswers.map(q=> q);
             setAfterQuestionResults(temp);
-            console.log(parsedAnswers);
         });
         connection.on("OnDisconectedSession", data => {
-            console.log(data);
             setIsJoinClicked(false);
             setIsLeaveClicked(false);
             connection.stop().then(_ => {
@@ -185,10 +180,8 @@ const QuestionResultComponent = () => {
                     </div>
                 </div>
             ))}
-            <div
-                className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
-                    {currentQuestionLeader}
-                {console.log(currentQuestionLeader)}
+            <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
+                {currentQuestionLeader}
             </div>
         </div>
     );
@@ -232,7 +225,7 @@ const QuestionType1Component = () => {
 
 const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet
+        answers, answerLetter, answerSVG, connectionId, questionNumber, isAnswerSet, setIsAnswerSet
     } = useContext(SessionContext);
     const [clickedIndex, setClickedIndex] = useState(null);
     
@@ -272,7 +265,6 @@ const QuestionCardComponent = props => {
 
 const HeaderPanelComponent = () => {
     const { screenAction } = useContext(SessionContext);
-    console.log(screenAction)
     return (
         <>
             {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && 
@@ -295,7 +287,7 @@ const JoinToSessionComponent = () => {
         e.preventDefault();
         if (isJoinClicked) return;
         setIsJoinClicked(true);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
@@ -323,8 +315,7 @@ const JoinToSessionComponent = () => {
     
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('https://dominikpiskor.pl/quizUserSessionHub')
-            .configureLogging(signalR.LogLevel.Trace)
+            .withUrl('/quizUserSessionHub')
             .build();
         connection.start()
             .then(() => connection.invoke('getConnectionId').then(connId => setConnectionId(connId)))

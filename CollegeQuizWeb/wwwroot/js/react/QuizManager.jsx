@@ -5,7 +5,7 @@ const { useEffect, useState, createContext, useContext } = React;
 const SessionContext = createContext(null);
 
 const QR_CODE_BLOB = document.getElementById('inject-qr-code-blob').innerText;
-const SESS_TOKEN = document.getElementById('inject-sess-code').innerText;
+const SESS_TOKEN = document.getElementById('inject-sess-code').innerText.toUpperCase();
 
 const QuizManagerLeftContentComponent = () => {
     const { connection, allParticipants, setAllParticipants } = useContext(SessionContext);
@@ -155,8 +155,7 @@ const QuizManagerRootComponent = () => {
     
     useEffect(() => {
         const connectionObj = new signalR.HubConnectionBuilder()
-            .withUrl('https://dominikpiskor.pl/quizManagerSessionHub')
-            .configureLogging(signalR.LogLevel.Trace)
+            .withUrl('/quizManagerSessionHub')
             .build();
         connectionObj.start()
             .then(() => connectionObj.invoke('getConnectionId').then(connId => {
