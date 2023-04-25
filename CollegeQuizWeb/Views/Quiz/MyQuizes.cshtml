@@ -31,7 +31,7 @@ function copyToBoard(obj, quizId)
         @foreach (var quiz in ViewBag.Quizes)
         {
             <div class="col mb-3">
-                <div class="card card-resize text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
+                <div class="card card-resize color-random text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
                     <div class="d-flex justify-content-end pt-3 mx-3">
                         <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quiz.Id">
                             <i class="bi bi-plus-circle"></i>
@@ -69,7 +69,7 @@ function copyToBoard(obj, quizId)
         @foreach (var quizes in ViewBag.QuizesShared)
         {
             <div class="col mb-3">
-                <div class="card card-resize text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
+                <div class="card card-resize color-random text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
                     <div class="d-flex justify-content-end pt-3 mx-3">
                         <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quizes.Id">
                             <i class="bi bi-plus-circle"></i>
@@ -86,3 +86,16 @@ function copyToBoard(obj, quizId)
         }
     </div>
 </div>
+
+<script>
+    var cards=$(".color-random")
+  
+    $.each(cards, function(i,card){
+        let nm = Math.floor((Math.random() * 10) + 1);
+        let customCard="custom-card-"+nm
+        let customButton="custom-card-d-"+nm
+        $(card).addClass(customCard)
+        let btn=$(card).find(".btn-light")
+        $(btn).addClass(customButton)
+    })
+</script>

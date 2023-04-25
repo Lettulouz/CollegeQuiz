@@ -427,110 +427,120 @@ select{
 
 .custom-card-1{
     background-color: #dcd6ef;
-    border: 3px solid #6841f2;
+    border: 2px solid #6841f2;
     border-radius: 5px;
 }
 
 .custom-card-d-1{
-    background: #6841f2;
+    background: #6841f2 !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-2{
     background-color: #efe3f5;
-    border: 3px solid #b753e6;
+    border: 2px solid #b753e6;
     border-radius: 5px;
 }
 
 .custom-card-d-2{
-    background: #b753e6;
+    background: #b753e6 !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-3{
     background-color: #bbbffc;
-    border: 3px solid #545de8;
+    border: 2px solid #545de8;
     border-radius: 5px;
 }
 
 .custom-card-d-3{
-    background: #545de8;
+    background: #545de8 !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-4{
     background-color: #ceddf7;
-    border: 3px solid #124199;
+    border: 2px solid #124199;
     border-radius: 5px;
 }
 
 .custom-card-d-4{
-    background: #124199;
+    background: #124199 !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-5{
     background-color: #e3ebed;
-    border: 3px solid #78979e;
+    border: 2px solid #78979e;
     border-radius: 5px;
 }
 
 .custom-card-d-5{
-    background: #78979e;
+    background: #78979e !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-6{
     background-color: #e1f7f7;
-    border: 3px solid #51a6a6;
+    border: 2px solid #51a6a6;
     border-radius: 5px;
 }
 
 .custom-card-d-6{
-    background: #51a6a6;
+    background: #51a6a6 !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-7{
     background-color: #e4fffa;
-    border: 3px solid #68a69b;
+    border: 2px solid #68a69b;
     border-radius: 5px;
 }
 
 .custom-card-d-7{
-    background: #68a69b;
+    background: #68a69b !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-8{
     background-color: #e1fbf4;
-    border: 3px solid #4bc4a4;
+    border: 2px solid #4bc4a4;
     border-radius: 5px;
 }
 
 .custom-card-d-8{
-    background: #4bc4a4;
+    background: #4bc4a4 !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-9{
     background-color: #d9fced;
-    border: 3px solid #3eb07e;
+    border: 2px solid #3eb07e;
     border-radius: 5px;
 }
 
 .custom-card-d-9{
-    background: #3eb07e;
+    background: #3eb07e !important;
     color: white;
+    border: 0;
 }
 
 .custom-card-10{
     background-color: #e1f5e9;
-    border: 3px solid #30b364;
+    border: 2px solid #30b364;
     border-radius: 5px;
 }
 
 .custom-card-d-10{
-    background: #30b364;
+    background: #30b364 !important;
     color: white;
+    border: 0;
 }
