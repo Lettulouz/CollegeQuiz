@@ -33,15 +33,6 @@ body {
     border-bottom-color: #aee5d4;
 }
 
-.navbar-collapse {
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-}
-
-.navbar-collapse.collapsing {
-    overflow-y: hidden;
-}
-
 .list-border {
     border-radius: 0px 0px 25px 25px;
 }
@@ -69,6 +60,9 @@ a.navbar-brand {
 }
 
 @media screen and (min-width: 992px) {
+    .nav-link:not(:hover) {
+        border-radius: 25px 25px 25px 25px;
+    }
     .nav-link:hover {
         color: #f9fef8;
         border-bottom: 2px solid #aee5d4;
@@ -77,9 +71,13 @@ a.navbar-brand {
     }
 }
 
-@media screen and (min-width: 992px) {
-    .nav-link:not(:hover) {
-        border-radius: 25px 25px 25px 25px;
+@media screen and (max-width: 992px) {
+    .navbar-collapse {
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    .navbar-collapse.collapsing {
+        overflow-y: hidden;
     }
 }
 
@@ -193,18 +191,14 @@ input:-webkit-autofill {
     border: 2px solid #63c4ab;
 }
 
-
-
 .card-add {
     background-color: #63c4ab;
 }
 
 @media screen and (max-width: 576px) {
     .card-resize {
-        
         min-height: 150px;
         min-width: 100%;
-    
     }
 }
 
