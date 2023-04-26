@@ -211,6 +211,7 @@ public class UserService : IUserService
             String priceString = priceH + "." + priceL;
             paymentHistoryDto.Price = priceString;
             paymentHistoryDto.OrderStatus = payment.OrderStatus;
+            paymentHistoryDto.Date = payment.CreatedAt;
             paymentHistoryListDtos.Add(paymentHistoryDto);
         }
         return paymentHistoryListDtos;

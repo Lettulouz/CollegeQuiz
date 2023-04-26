@@ -11,4 +11,6 @@ public class PaymentHistoryDto
     public string TypeOfSubscription { get; set; }
     
     public string OrderStatus { get; set; }
+    
+    public DateTime Date { get; set; }
 }
