@@ -21,7 +21,7 @@
                         </div>
                         <div class="row ">
                             <div class="col-auto ">
-                                <h4 >Dane użytkownika</h4>
+                                <h4 ><b>Dane użytkownika</b></h4>
                             </div>
                             <div class="col-auto py-0 my-0">
                                 <a class="btn button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edycja użytkownika" asp-action="EditUser" asp-controller="" asp-route-id="">
@@ -33,11 +33,11 @@
                             <div class="col-auto">
                                 <div class="row">
                                     <div class="col-auto">
-                                        <p>Nazwa: @Model.Username</p>
-                                        <p>Imię: @Model.FirstName @Model.LastName</p>
-                                        <p>Email: @Model.Email</p>
-                                        <p>Status: @Model.AccountStatus</p>
-                                        <p>Data dołączenia: @Model.CreatedAt</p>
+                                        <p><b>Nazwa: </b>@Model.Username</p>
+                                        <p><b>Imię:</b> @Model.FirstName @Model.LastName</p>
+                                        <p><b>Email:</b> @Model.Email</p>
+                                        <p><b>Status: </b>@Model.AccountStatus</p>
+                                        <p><b>Data dołączenia:</b> @Model.CreatedAt</p>
                                     </div>
                                 </div>
                             </div>
