@@ -88,7 +88,8 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer
+        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
+        setIsLast
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -120,6 +121,7 @@ const MainWindowGameComponent = () => {
             console.log(parsedAnswers);
             console.log(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
             setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
+            setIsLast(parsedAnswers.isLast);
         });
         connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => {
             setCurrentAnswer(JSON.parse(currentAnsw));
@@ -205,12 +207,12 @@ const QuestionResultComponent = () => {
         if (currentIndexRef.current >= afterQuestionResults.length) {
             const timeoutId = setTimeout(() => {
                 setShowLeaderboard(true);
-            }, 3000);
+            }, 2000);
 
             return () => clearTimeout(timeoutId);
         }
-    }, [currentIndexRef, afterQuestionResults.length]);
-
+    }, [currentIndexRef.current]);
+    
 
     return (
         <div className="container">
@@ -220,17 +222,16 @@ const QuestionResultComponent = () => {
                         className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-left' : ''}`}>
                         {m.Username}
                     </div>
-
                     <div
-                        className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-right' : ''}`}>
+                        className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-down' : ''}`}>
                         {m.Score} + {m.newPoints}
                     </div>
                 </div>
             ))}
             {showLeaderboard === true &&(
-            <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
-                {currentQuestionLeader}
-            </div>
+                <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${afterQuestionResults[0].isLast === true ? 'animate-down' : ''}`}>
+                    {currentQuestionLeader}
+                </div>
             )}
         </div>
     );
@@ -422,6 +423,7 @@ const QuizSessionRootComponent = () => {
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
     const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
     const [ currentAnswer, setCurrentAnswer ] = useState("");
+    const [ isLast, setIsLast ] = useState(false);
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -433,7 +435,7 @@ const QuizSessionRootComponent = () => {
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
             afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
-            currentAnswer, setCurrentAnswer
+            currentAnswer, setCurrentAnswer, isLast, setIsLast
         }}>
             {isActive && <>
                 {isConnect ? <>

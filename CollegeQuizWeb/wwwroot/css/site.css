@@ -410,7 +410,7 @@ select{
     }
 }
 
-@keyframes slideInRight {
+@keyframes slideInDown {
     from {
         transform: translateY(calc(100vh - 100px));
     }
@@ -426,8 +426,8 @@ select{
     animation-fill-mode: forwards;
 }
 
-.animate-right {
-    animation-name: slideInRight;
+.animate-down {
+    animation-name: slideInDown;
     animation-duration: 3s;
     animation-fill-mode: forwards;
 }
