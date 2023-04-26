@@ -55,7 +55,7 @@
                     <a class="dropdown-item mt-1 top-context-item" asp-area="" asp-controller="Quiz" asp-action="MyQuizes">
                         Moje quizy
                     </a>
-                    <a class="dropdown-item mt-1 " asp-area="" asp-controller="User" asp-action="Index">
+                    <a class="dropdown-item mt-1 " asp-area="" asp-controller="User" asp-action="Profile">
                         Profil użytkownika
                     </a>
                     @if (Context.Session.GetString(SessionKey.IS_USER_ADMIN) == "True")

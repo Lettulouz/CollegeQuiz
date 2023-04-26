@@ -19,23 +19,23 @@
     <div class="row">
         <div class="col">
             <nav aria-label="Buttons">
-                <ul class="pagination justify-content-start flex-container">
-                    <li class="page-item me-2 flex-item">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item me-2">
                         <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
                     </li>
-                    <li class="page-item me-2 flex-item">
+                    <li class="page-item me-2">
                         <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
                     </li>
-                    <li class="page-item me-2 flex-item">
+                    <li class="page-item me-2">
                         <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
                     </li>
-                    <li class="page-item me-2 flex-item2">
+                    <li class="page-item me-2">
                         <a class="btn btn-lg btn-warning justify-content-center mx-0 " style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
                             data-bs-placement="top" data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
                             <i class="bi bi-printer-fill"></i>
                         </a>
                     </li>
-                    <li class="page-item me-2 flex-item2">
+                    <li class="page-item me-2">
                         <a class="btn btn-lg btn-danger justify-content-center mx-0" style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
                         data-bs-placement="top" data-bs-title="Usuń zaznaczone" onclick="deleteButtonClicked()">
                             <i class="bi bi-trash"></i>
@@ -45,10 +45,10 @@
             </nav>
         </div>
         <hr class="dropdown-divider m-0"></hr>
-        <div class="row mt-3 mx-0 px-0">
+        <div class="row mt-3">
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="searchBox" onkeyup="searchList()" placeholder="Wyszukaj odbiorcę">
+                        <input type="text" class="form-control" id="searchBox" onkeyup="filterButtonClick(4)" placeholder="Wyszukaj odbiorcę">
                         <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
                             <i class="bi bi-x"></i>
                         </button>
@@ -75,10 +75,10 @@
                                 <i class="bi bi-arrow-left"></i>
                             </button>
                         </li>
-                        <li class="page-item page-num1" style="width: 75px">
+                        <li class="page-item" style="width: 75px">
                             <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
                         </li>
-                        <li class="page-item page-num2" style="width: 75px">
+                        <li class="page-item" style="width: 75px">
                             <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
                         </li>
                         <li class="page-item">
@@ -116,8 +116,7 @@
     
     $(document).ready(function (){
 
-        allList();
-        hideButtons();
+        allList("");
     });
     
     $('#pagination123').keypress(function(e) {
@@ -160,6 +159,7 @@
     let recordsPerPage = 25;
     let chosenFilter = 1;
     let maxPage = 1;
+    var globalList = []; 
     
     // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
     String.prototype.replaceAll = function(str1, str2, ignore) 
@@ -174,45 +174,37 @@
         redirectToProperList();
     }
     
-    function searchList(){
-        var value = $(this).val().toLowerCase();
-        
-        $("#hidInfo").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-        
-        
-    }
-    
-    function delSearch(){
-        $('#searchBox').val('');
-        searchList();
-    }
+   
         
     function filterButtonClick(option){
         page = 1;
         document.getElementById('pagination123').value = 1;    
         selectedCouponsList = [];
+        let res=document.getElementById("searchBox").value.toLowerCase()
         switch (option){
             case 1:             
-                allList();
+                allList(res);
                 break;
             case 2:
-                activeList();
+                activeList(res);
                 break;
             case 3:
-                archiveList();
+                archiveList(res);
                 break;
+            case 4:
+                searchList(res);
+            break;
         }
     }
     
-    function archiveList(){
+    function archiveList(val){//to do
         document.getElementById('pagination123').value = page;
         document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-dark w-100";
         chosenFilter = 3;
-        let filteredCouponList = couponList.filter(obj => obj.IsUsed == 1);
+        let filteredCouponList4 = couponList.filter(function (obj) { return obj.CustomerName.toLowerCase().includes(val); });
+        let filteredCouponList = filteredCouponList4.filter(obj => obj.IsUsed == 1);
         let filteredCouponList2 = [];
         let currentDate = new Date();
         couponList.forEach(obj=> {
@@ -224,17 +216,19 @@
         for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
             if (filteredCouponList[i] != null)
                 filteredCouponList2.push(filteredCouponList[i]);
-        }    
+        }  
+        globalList=filteredCouponList2
         generateListHTML(filteredCouponList2, initialLength);
     }
     
-    function activeList(){  
+    function activeList(val){  //to do
         document.getElementById('pagination123').value = page;
         document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
         chosenFilter = 2;
-        let filteredCouponList = couponList.filter(obj => obj.IsUsed == 0);
+        let filteredCouponList4 = couponList.filter(function (obj) { return obj.CustomerName.toLowerCase().includes(val); });
+        let filteredCouponList = filteredCouponList4.filter(obj => obj.IsUsed == 0);
         let filteredCouponList2 = [];
         let filteredCouponList3 = [];
         let currentDate = new Date();
@@ -243,28 +237,53 @@
                 filteredCouponList2.push(obj);
         });
         let initialLength = filteredCouponList2.length;
+        
         for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
             if (filteredCouponList2[i] != null)
                 filteredCouponList3.push(filteredCouponList2[i]);
         }
+        globalList=filteredCouponList3
         generateListHTML(filteredCouponList3, initialLength);
     }
     
-    function allList(){ 
+    function allList(val){ 
         document.getElementById('pagination123').value = page;
         document.getElementById('allButton').className = "btn btn-lg btn-dark w-100";  
         document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
         chosenFilter = 1;
+        
+        let filteredCouponList2 = couponList.filter(function (obj) { return obj.CustomerName.toLowerCase().includes(val); });
         let filteredCouponList = [];
-        let initialLength = couponList.length;
+        let initialLength = filteredCouponList2.length;
         for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
-            if (couponList[i] != null)
-                filteredCouponList.push(couponList[i]);
+            if (filteredCouponList2[i] != null)
+                filteredCouponList.push(filteredCouponList2[i]);
         }
+        globalList=filteredCouponList
         generateListHTML(filteredCouponList, initialLength);
+
     }
     
+     function searchList(val){
+            document.getElementById('pagination123').value = page;
+                                
+            let filteredCouponList2 = globalList.filter(function (obj) { return obj.CustomerName.toLowerCase().includes(val); });
+            let filteredCouponList = [];
+            let initialLength = filteredCouponList2.length;
+            for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                  if (filteredCouponList2[i] != null)
+                  filteredCouponList.push(filteredCouponList2[i]);
+            }
+            generateListHTML(filteredCouponList, initialLength);
+            redirectToProperList()                
+        }
+        
+        function delSearch(){
+            document.getElementById("searchBox").value="";
+            searchList("");
+        }
+        
     function generateListHTML(couponListLoc, initialLength){
         $("[data-toggle=\"tooltip\"]").tooltip();
         let numberOfPages = parseInt(initialLength/recordsPerPage);
@@ -288,7 +307,6 @@
             </tr>
             </thead>
             <tbody>`;
-            let i=0;
         couponListLoc.forEach(obj => {
             let temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
@@ -300,26 +318,16 @@
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
                 html+= `<td class="fit">
-                            
-                            <div class='listBtn mb-1'>
-                                <button type='button' data-toggle='collapse' class='btn btn-dark d-inline btn-sm' 
-                                data-bs-toggle='collapse' data-bs-target='#btnGrp${i}' aria-expanded='false'>
-                                    <i class='bi bi-list'></i>
-                                </button>
-                            </div>
-                            <div class="dyn" id="btnGrp${i}">  
-                            <div class="btn-group btn-group-sm bGroup p-0 m-0" >
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle='collapse' data-bs-target='#c${obj.Coupon}' aria-expanded='false' data-bs-placement="left" 
                              data-bs-title="Pokaż więcej" onclick="showMore(this)"><i class="bi bi-three-dots"></i></a>
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="left" 
                              data-bs-title="Kopiuj do schowka" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
                             <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
                             data-bs-title="Usuń kupon" onclick="deleteCoupon(this)"><i class="bi bi-trash"></i></a>
-                            </div>
-                            </div>
                         </td>`
             }else{
-                html+= `<td></td>`
+                html+= `<td>
+                       </td>`
             }           
             html+=`</tr>
                 <tr>
@@ -340,13 +348,11 @@
                         </div>
                     </td>
                 </tr>`;
-            i++;
         });             
         html+=`</tbody>
         </table>`;
         document.getElementById('renderTable').innerHTML = html;
         reCheckboxes();
-        hideButtons();
     }
     
     function showMore(obj){
@@ -426,15 +432,19 @@
     }
     
     function redirectToProperList(){
+        let val=document.getElementById("searchBox").value.toLowerCase();
         switch(chosenFilter){
             case 1: 
-                allList();
+                allList(val);
                 break;
             case 2: 
-                activeList();
+                activeList(val);
                 break;    
             case 3: 
-                archiveList();
+                archiveList(val);
+                break; 
+            case 4: 
+                searchList(val);
                 break; 
         }
     }
@@ -473,31 +483,5 @@
         } else throw 'File saving not supported for this browser';
     }
     
-    function hideButtons(){
-          if($('main').width()<970){
-              $(".dyn").addClass("collapse");
-              $(".bGroup").addClass("btn-group-vertical");
-              $(".bGroup").removeClass("btn-group");
-              $(".tabBtn").addClass("d-block");
-              $(".tabLink").addClass("mt-1");
-             $(".listBtn").show();
-          }else{
-              $(".dyn").removeClass("collapse")
-              $(".bGroup").removeClass("btn-group-vertical ");
-              $(".bGroup").addClass("btn-group");
-              $(".tabBtn").removeClass("d-block");
-              $(".tabLink").removeClass("mt-1");
-              $(".listBtn").hide();
-          }
-      }
-  
-      $(window).resize(function(){
-          hideButtons();
-      })
-    
-     document.getElementById('coupon_collapse').classList.add('show');
-        document.getElementById('coupon_collapse_btn').setAttribute( 'aria-expanded', 'true' );
-        document.getElementById('coupon_collapse_btn').setAttribute( 'style', 'color:white !important' );
-        document.getElementById('cp_list').setAttribute( 'style', 'color:white !important' );
 </script>
 <noscript>Sorry, your browser does not support JavaScript!</noscript>
