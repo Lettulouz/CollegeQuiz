@@ -1,16 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Smtp;
+using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using CouponListDto = CollegeQuizWeb.Dto.User.CouponListDto;
 
 namespace CollegeQuizWeb.Services.UserService;
 
@@ -165,6 +171,26 @@ public class UserService : IUserService
         }
         return couponListDtos;
     }
+    
+    public async Task<ProfileDto> UserInfo(string isLogged)
+    {
+        var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(isLogged));
+
+        ProfileDto UserDto = new ProfileDto()
+        {
+            FirstName = userInfo.FirstName,
+            LastName = userInfo.LastName,
+            CreatedAt = userInfo.CreatedAt,
+            Email = userInfo.Email,
+            AccountStatus = userInfo.AccountStatus,
+            Username = userInfo.Username
+        };
+
+        return UserDto;
+    }
+    
+    
+    
     
     public async Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username)
     {

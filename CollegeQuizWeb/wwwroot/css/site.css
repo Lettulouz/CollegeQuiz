@@ -60,6 +60,9 @@ a.navbar-brand {
 }
 
 @media screen and (min-width: 992px) {
+    .nav-link:not(:hover) {
+        border-radius: 25px 25px 25px 25px;
+    }
     .nav-link:hover {
         color: #f9fef8;
         border-bottom: 2px solid #aee5d4;
@@ -68,9 +71,13 @@ a.navbar-brand {
     }
 }
 
-@media screen and (min-width: 992px) {
-    .nav-link:not(:hover) {
-        border-radius: 25px 25px 25px 25px;
+@media screen and (max-width: 992px) {
+    .navbar-collapse {
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    .navbar-collapse.collapsing {
+        overflow-y: hidden;
     }
 }
 
@@ -184,18 +191,14 @@ input:-webkit-autofill {
     border: 2px solid #63c4ab;
 }
 
-
-
 .card-add {
     background-color: #63c4ab;
 }
 
 @media screen and (max-width: 576px) {
     .card-resize {
-        
         min-height: 150px;
         min-width: 100%;
-    
     }
 }
 
@@ -205,12 +208,16 @@ input:-webkit-autofill {
     transition: transform 0.2s;
 }
 
-.card-img-custom.clicked {
+.card-img-custom.notClicked {
     transform: scale(0.8);
 }
 
 .card-img-custom:not(.clicked):not(.notClicked):hover {
-    transform: scale(0.9);
+    transform: scale(1.05);
+}
+
+.incorrectAnswer {
+    opacity: 0.3;
 }
 
 .cursor-not-allowed{
@@ -403,7 +410,7 @@ select{
     }
 }
 
-@keyframes slideInRight {
+@keyframes slideInDown {
     from {
         transform: translateY(calc(100vh - 100px));
     }
@@ -419,8 +426,8 @@ select{
     animation-fill-mode: forwards;
 }
 
-.animate-right {
-    animation-name: slideInRight;
+.animate-down {
+    animation-name: slideInDown;
     animation-duration: 3s;
     animation-fill-mode: forwards;
 }
@@ -437,6 +444,13 @@ select{
     border: 0;
 }
 
+.custom-card-d-1:hover{
+    background: #ebffe5 !important;
+    color: #9acf8a;
+    outline: 2px solid #9acf8a !important;
+    outline-offset: -2px;
+}
+
 .custom-card-2{
     background-color: #b8fcdf;
     border: 2px solid #80d8b2;
@@ -447,6 +461,13 @@ select{
     background: #80d8b2 !important;
     color: white;
     border: 0;
+}
+
+.custom-card-d-2:hover{
+    background: #b8fcdf !important;
+    color: #80d8b2;
+    outline: 2px solid #80d8b2 !important;
+    outline-offset: -2px;
 }
 
 .custom-card-3{
@@ -461,6 +482,13 @@ select{
     border: 0;
 }
 
+.custom-card-d-3:hover{
+    background: #cbf0eb !important;
+    color: #6fb3ab;
+    outline: 2px solid #6fb3ab !important;
+    outline-offset: -2px;
+}
+
 .custom-card-4{
     background-color: #ccfff9;
     border: 2px solid #87e4d9;
@@ -471,6 +499,14 @@ select{
     background: #87e4d9 !important;
     color: white;
     border: 0;
+}
+
+.custom-card-d-4:hover{
+    background: #ccfff9 !important;
+    color: #87e4d9;
+    outline: 2px solid #87e4d9 !important;
+    outline-offset: -2px;
+    
 }
 
 .custom-card-5{
@@ -485,6 +521,13 @@ select{
     border: 0;
 }
 
+.custom-card-d-5:hover{
+    background: #dffffb !important;
+    color: #81d1c6;
+    outline: 2px solid #81d1c6 !important;
+    outline-offset: -2px;
+}
+
 .custom-card-6{
     background-color: #e0f7ff;
     border: 2px solid #80bdd5;
@@ -497,6 +540,13 @@ select{
     border: 0;
 }
 
+.custom-card-d-6:hover{
+    background: #e0f7ff !important;
+    color: #80bdd5;
+    outline: 2px solid #80bdd5 !important;
+    outline-offset: -2px;
+}
+
 .custom-card-7{
     background-color: #c6e5fa;
     border: 2px solid #79a8c9;
@@ -507,4 +557,11 @@ select{
     background: #79a8c9 !important;
     color: white;
     border: 0;
+}
+
+.custom-card-d-7:hover{
+    background: #c6e5fa !important;
+    color: #79a8c9;
+    outline: 2px solid #79a8c9 !important;
+    outline-offset: -2px;
 }

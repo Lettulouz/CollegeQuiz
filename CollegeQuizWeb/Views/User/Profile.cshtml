@@ -1,0 +1,49 @@
+@using Microsoft.AspNetCore.Identity
+@using CollegeQuizWeb.Utils
+@using Microsoft.AspNetCore.Http
+@model CollegeQuizWeb.Dto.User.ProfileDto
+@{
+    ViewData["Title"] = "Profil użytkownika";
+}
+
+    <div class="container mt-5 mb-1">
+        <div class="row d-flex justify-content-center mt-5">
+            <div class="col-12 col-md-6 mb-5">
+                <div class="card px-5 py-5 h-100" id="form1">
+
+                    <label id="mainName">Profil użytkownika </label>
+                    <div class="container-fluid bg-profile">
+                        <div class="row ">
+                            <div class="col-auto py-0 my-0">
+                                <i class="bi bi-file-person p-0" style=" font-size: 200px;"></i>
+                            </div>
+
+                        </div>
+                        <div class="row ">
+                            <div class="col-auto ">
+                                <h4 ><b>Dane użytkownika</b></h4>
+                            </div>
+                            <div class="col-auto py-0 my-0">
+                                <a class="btn button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edycja użytkownika" asp-action="EditUser" asp-controller="" asp-route-id="">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-auto">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <p><b>Nazwa: </b>@Model.Username</p>
+                                        <p><b>Imię:</b> @Model.FirstName @Model.LastName</p>
+                                        <p><b>Email:</b> @Model.Email</p>
+                                        <p><b>Status: </b>@Model.AccountStatus</p>
+                                        <p><b>Data dołączenia:</b> @Model.CreatedAt</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

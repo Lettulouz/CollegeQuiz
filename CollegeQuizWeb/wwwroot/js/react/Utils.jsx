@@ -6,6 +6,8 @@ export const WAITING_SCREEN = "WAITING_SCREEN";
 export const COUNTING_SCREEN = "COUNTING_SCREEN";
 export const IN_GAME = "IN_GAME";
 export const QUESTION_RESULT_SCREEN = "QUESTION_RESULT_SCREEN";
+export const CORRECT_ANSWERS_SCREEN = "CORRECT_ANSWERS_SCREEN";
+
 
 export const getCommonFetchObj = method => ({
     method,

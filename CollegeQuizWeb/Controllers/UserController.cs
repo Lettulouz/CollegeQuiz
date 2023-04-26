@@ -17,11 +17,14 @@ public class UserController : Controller
         _userService = userService;
     }
     
-    public IActionResult Index()
+    public async Task<IActionResult> Profile()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         ViewBag.Username = isLogged;
-        return View();
+        
+        var val = await _userService.UserInfo(isLogged);
+
+        return View(val);
     }
 
     public async Task<IActionResult> YourCoupons()
@@ -71,4 +74,6 @@ public class UserController : Controller
         await _userService.AttemptCouponRedeem(payloadDto);
         return View(payloadDto.Dto);
     }
+    
+    
 }

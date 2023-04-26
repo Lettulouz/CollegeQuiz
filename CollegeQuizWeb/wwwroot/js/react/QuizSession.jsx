@@ -1,6 +1,14 @@
 import { useLoadableContent } from "./Hooks.jsx";
 import {
-    alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN
+    alertInfo,
+    alertDanger,
+    alertOff,
+    WAITING_SCREEN,
+    getCommonFetchObj,
+    COUNTING_SCREEN,
+    IN_GAME,
+    QUESTION_RESULT_SCREEN,
+    CORRECT_ANSWERS_SCREEN
 } from "./Utils.jsx";
 
 const { useEffect, useState, createContext, useContext, useRef } = React;
@@ -9,14 +17,15 @@ const SessionContext = createContext(null);
 
 const LeaveSessionButtonComponent = props => {
     const {
-        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked
+        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked,
+        connection
     } = useContext(SessionContext);
     const modalRef = useRef()
     
     const leaveRoom = () => {
         if (isLeaveClicked) return;
         setIsLeaveClicked(true);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
@@ -37,6 +46,12 @@ const LeaveSessionButtonComponent = props => {
     
     const showModal = () => new bootstrap.Modal(modalRef.current, { backdrop: 'static', keyboard: false }).show();
     const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
+    
+    useEffect(() => {
+        connection.on("OnDisconectedSession", _ => {
+            hideModal();
+        });
+    }, []);
     
     return (
         <>
@@ -73,7 +88,8 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader
+        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
+        setIsLast
     } = useContext(SessionContext);
     const [ counting, setCounting ] = useState(5);
     const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
@@ -92,6 +108,7 @@ const MainWindowGameComponent = () => {
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
             setIsAnswerSet(false);
+            setCurrentAnswer("");
         });
         connection.on("QUESTION_TIMER_P2P", counter => {
             setQuestionTimer(counter);
@@ -102,6 +119,12 @@ const MainWindowGameComponent = () => {
             const temp = parsedAnswers.map(q=> q);
             setAfterQuestionResults(temp);
             console.log(parsedAnswers);
+            console.log(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
+            setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
+            setIsLast(parsedAnswers.isLast);
+        });
+        connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => {
+            setCurrentAnswer(JSON.parse(currentAnsw));
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -157,14 +180,39 @@ const QuestionResultComponent = () => {
     } = useContext(SessionContext);
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const currentIndexRef = useRef(currentIndex);
+
+    useEffect(() => {
+        currentIndexRef.current = currentIndex;
+    }, [currentIndex]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setCurrentIndex(prevIndex => prevIndex + 1);
+            console.log("test2");
+            console.log(currentIndexRef.current);
+            console.log(afterQuestionResults.length);
+            if (currentIndexRef.current <= afterQuestionResults.length) {
+                setCurrentIndex(prevIndex => prevIndex + 1);
+            }
         }, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
+
+    useEffect(() => {
+        console.log("test");
+        console.log(currentIndexRef.current);
+        console.log(afterQuestionResults.length);
+        if (currentIndexRef.current >= afterQuestionResults.length) {
+            const timeoutId = setTimeout(() => {
+                setShowLeaderboard(true);
+            }, 2000);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [currentIndexRef.current]);
+    
 
     return (
         <div className="container">
@@ -174,18 +222,17 @@ const QuestionResultComponent = () => {
                         className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-left' : ''}`}>
                         {m.Username}
                     </div>
-
                     <div
-                        className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-right' : ''}`}>
+                        className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-down' : ''}`}>
                         {m.Score} + {m.newPoints}
                     </div>
                 </div>
             ))}
-            <div
-                className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
+            {showLeaderboard === true &&(
+                <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${afterQuestionResults[0].isLast === true ? 'animate-down' : ''}`}>
                     {currentQuestionLeader}
-                {console.log(currentQuestionLeader)}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -228,12 +275,13 @@ const QuestionType1Component = () => {
 
 const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet
+        answers, answerLetter, answerSVG, connectionId, questionNumber, isAnswerSet, setIsAnswerSet,
+        currentAnswer
     } = useContext(SessionContext);
     const [clickedIndex, setClickedIndex] = useState(null);
     
     const handleClick = answer => {
-        if(isAnswerSet === true) return;
+        if(isAnswerSet === true || currentAnswer !== "") return;
         fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`, {
             method: 'POST',
             credentials: 'same-origin',
@@ -248,7 +296,8 @@ const QuestionCardComponent = props => {
 
     
     return (
-        <div className="col-6 d-flex m-0">
+        <div className={`col-6 d-flex m-0
+             ${currentAnswer !== answers[props.number] && currentAnswer !== "" ? 'incorrectAnswer' : ''}`}>
             <div className={`card bg-dark text-white card-img-custom 
             ${clickedIndex === props.number ? 'clicked' : ''}
             ${isAnswerSet === true && clickedIndex !== props.number ? 'notClicked' : ''}
@@ -268,7 +317,6 @@ const QuestionCardComponent = props => {
 
 const HeaderPanelComponent = () => {
     const { screenAction } = useContext(SessionContext);
-    console.log(screenAction)
     return (
         <>
             {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && 
@@ -291,7 +339,7 @@ const JoinToSessionComponent = () => {
         e.preventDefault();
         if (isJoinClicked) return;
         setIsJoinClicked(true);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
@@ -374,6 +422,8 @@ const QuizSessionRootComponent = () => {
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
     const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
+    const [ currentAnswer, setCurrentAnswer ] = useState("");
+    const [ isLast, setIsLast ] = useState(false);
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -384,7 +434,8 @@ const QuizSessionRootComponent = () => {
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
-            afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader
+            afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
+            currentAnswer, setCurrentAnswer, isLast, setIsLast
         }}>
             {isActive && <>
                 {isConnect ? <>

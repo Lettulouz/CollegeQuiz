@@ -5,7 +5,7 @@ const { useEffect, useState, createContext, useContext } = React;
 const SessionContext = createContext(null);
 
 const QR_CODE_BLOB = document.getElementById('inject-qr-code-blob').innerText;
-const SESS_TOKEN = document.getElementById('inject-sess-code').innerText;
+const SESS_TOKEN = document.getElementById('inject-sess-code').innerText.toUpperCase();
 
 const QuizManagerLeftContentComponent = () => {
     const { connection, allParticipants, setAllParticipants } = useContext(SessionContext);
@@ -13,6 +13,7 @@ const QuizManagerLeftContentComponent = () => {
     
     useEffect(() => {
         connection.on('GetAllParticipants', data => {
+            console.log(data);
             setAllParticipants(JSON.parse(data));
         });
         fetch(`/api/v1/dotnet/QuizSessionAPI/GetLobbyData/${SESS_TOKEN}`, getCommonFetchObj('POST'))
@@ -109,7 +110,7 @@ const QuizManagerRightContentComponent = () => {
     return (
         <div className="col-lg-3 px-0 mb-2 mb-lg-0 order-lg-0 order-2">
             <div className="card px-3 py-3 h-100">
-                {counting !== 0 && allParticipants.Connected.length > 0 && 
+                {counting !== 0 && 
                     <button className="btn btn-info mt-1 mx-1" onClick={startQuiz}>
                     {counting !== 5 ? `Zaczyna się za ${counting}...` : 'Rozpocznij'}
                 </button>}
