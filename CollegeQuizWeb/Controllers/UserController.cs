@@ -33,6 +33,15 @@ public class UserController : Controller
         return View();
     }
     
+    public async Task<IActionResult> PaymentHistory()
+    {
+        var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        var dtoList = _userService.GetPaymentHistoryList(this, username);
+        ViewBag.PaymentHistoryList = dtoList.Result;
+
+        return View();
+    }
+    
     public IActionResult AttemptCouponRedeem()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);

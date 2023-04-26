@@ -1,0 +1,33 @@
+@{
+    ViewBag.Title = "Historia płatności";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid" style="max-width: 960px">
+    <div class="row d-flex justify-content-center mt-5">
+        <div class="card px-5 py-5 h-100">
+            <label id="mainName">Twoje kupony </label>
+
+            <div class="row bg-coupons">
+                        
+                <table class="table text-white text-center">
+                    <tr>
+                        <th>ID transakcji</th>
+                        <th class="d-none d-sm-table-cell">Typ</th>
+                        <th class="d-none d-md-table-cell">Cena</th>
+                        <th>Status</th>
+                    </tr>
+                    @foreach (var element in ViewBag.PaymentHistoryList)
+                    {
+                        <tr>
+                            <td>@element.Id</td>
+                            <td class="d-none d-md-table-cell">@element.TypeOfSubscription</td>
+                            <td class="d-none d-md-table-cell">@element.Price</td>
+                            <td>@element.OrderStatus</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

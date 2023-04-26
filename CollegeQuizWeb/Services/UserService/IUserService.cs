@@ -10,4 +10,5 @@ public interface IUserService
 {
     Task AttemptCouponRedeem(AttemptCouponRedeemPayloadDto obj);
     Task<List<CouponListDto>> GetYourCouponsList(UserController userController, string username);
+    Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username);
 }

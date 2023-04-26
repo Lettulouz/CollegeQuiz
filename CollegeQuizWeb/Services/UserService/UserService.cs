@@ -165,4 +165,28 @@ public class UserService : IUserService
         }
         return couponListDtos;
     }
+    
+    public async Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username)
+    {
+        var userId = _context.Users.FirstOrDefault(o => o.Username.Equals(username)).Id;
+        var paymentHistoryList =
+            _context.SubscriptionsPaymentsHistory
+                .Where(o => o.UserId.Equals(userId))
+                .OrderBy(o => o.CreatedAt);
+
+        List<PaymentHistoryDto> paymentHistoryListDtos = new();
+        foreach (var payment in paymentHistoryList)
+        {
+            PaymentHistoryDto paymentHistoryDto = new();
+            paymentHistoryDto.Id = payment.Id;
+            paymentHistoryDto.TypeOfSubscription = payment.Subscription;
+            int priceH = (int)payment.Price/100;
+            int priceL = (int)payment.Price%100;
+            String priceString = priceH + "." + priceL;
+            paymentHistoryDto.Price = priceString;
+            paymentHistoryDto.OrderStatus = payment.OrderStatus;
+            paymentHistoryListDtos.Add(paymentHistoryDto);
+        }
+        return paymentHistoryListDtos;
+    }
 }
