@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -140,5 +141,28 @@ public class UserService : IUserService
             controller.HttpContext.Session.SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE, "alert-danger");
             controller.Response.Redirect("/User/AttemptCouponRedeem");
         }
+    }
+
+    public async Task<List<CouponListDto>> GetYourCouponsList(UserController userController, string username)
+    {
+        var coupons =
+            _context.GiftCouponsEntities
+                .Include(q => q.CouponEntity)
+                .Include(q => q.UserEntity)
+                .Where(q => q.UserEntity.Username.Equals(username))
+                .Select(o=> o.CouponEntity)
+                .ToList();
+
+        List<CouponListDto> couponListDtos = new();
+        foreach (var coupon in coupons)
+        {
+            CouponListDto couponListDto = new();
+            couponListDto.Coupon = coupon.Token;
+            couponListDto.IsUsed = coupon.IsUsed;
+            couponListDto.TypeOfSubscription = coupon.TypeOfSubscription;
+            couponListDto.ExpiringAt = coupon.ExpiringAt;
+            couponListDtos.Add(couponListDto);
+        }
+        return couponListDtos;
     }
 }

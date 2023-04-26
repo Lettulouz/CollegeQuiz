@@ -29,6 +29,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
     public async Task<JoinToSessionDto> JoinRoom(string loggedUsername, string connectionId, string token)
     {
+        token = token.ToUpper();
         var quizLobby = await _context.QuizLobbies
             .Include(l => l.QuizEntity)
             .FirstOrDefaultAsync(l => l.Code.Equals(token, StringComparison.InvariantCultureIgnoreCase) 
@@ -103,6 +104,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
     public async Task<SimpleResponseDto> LeaveRoom(string loggedUsername, string connectionId, string token)
     {
+        token = token.ToUpper();
         var quizSessionPart = await _context.QuizSessionPartics
             .Include(q => q.UserEntity)
             .Include(p => p.QuizLobbyEntity)
@@ -136,6 +138,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
     public async Task<JoinToSessionDto> EstabilishedHostRoom(string loggedUsername, string connectionId, string token)
     {
+        token = token.ToUpper();
         var isHost = await _context.QuizLobbies
             .Include(p => p.UserEntity)
             .FirstOrDefaultAsync(p => p.UserEntity.Username.Equals(loggedUsername) && p.Code.Equals(token));
@@ -159,6 +162,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
     public async Task<QuizLobbyInfoDto> GetLobbyData(string loggedUsername, string token)
     {
+        token = token.ToUpper();
         var lobbyData = await _context.QuizLobbies
             .Include(l => l.QuizEntity)
             .Include(l => l.UserEntity)

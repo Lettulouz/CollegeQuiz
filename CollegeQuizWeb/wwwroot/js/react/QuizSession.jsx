@@ -17,14 +17,15 @@ const SessionContext = createContext(null);
 
 const LeaveSessionButtonComponent = props => {
     const {
-        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked
+        token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked,
+        connection
     } = useContext(SessionContext);
     const modalRef = useRef()
     
     const leaveRoom = () => {
         if (isLeaveClicked) return;
         setIsLeaveClicked(true);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+        fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {
@@ -45,6 +46,12 @@ const LeaveSessionButtonComponent = props => {
     
     const showModal = () => new bootstrap.Modal(modalRef.current, { backdrop: 'static', keyboard: false }).show();
     const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
+    
+    useEffect(() => {
+        connection.on("OnDisconectedSession", _ => {
+            hideModal();
+        });
+    }, []);
     
     return (
         <>
@@ -126,7 +133,7 @@ const MainWindowGameComponent = () => {
             });
         });
     }, []);
-    
+
     const renderComponentSection = () => {
         switch(screenAction) {
             case WAITING_SCREEN: return (
@@ -216,20 +223,18 @@ const QuestionResultComponent = () => {
 
                     <div
                         className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-right' : ''}`}>
-                        {m.Score} + ({m.newPoints})
+                        {m.Score} + {m.newPoints}
                     </div>
                 </div>
             ))}
             {showLeaderboard === true &&(
-                <div
-                    className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
-                    {currentQuestionLeader}
-                </div>
+            <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center`}>
+                {currentQuestionLeader}
+            </div>
             )}
         </div>
     );
 }
-
 
 const QuestionType1Component = () => {
     const {
@@ -269,7 +274,7 @@ const QuestionType1Component = () => {
 
 const QuestionCardComponent = props => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber, token, isAnswerSet, setIsAnswerSet, 
+        answers, answerLetter, answerSVG, connectionId, questionNumber, isAnswerSet, setIsAnswerSet,
         currentAnswer
     } = useContext(SessionContext);
     const [clickedIndex, setClickedIndex] = useState(null);
@@ -311,7 +316,6 @@ const QuestionCardComponent = props => {
 
 const HeaderPanelComponent = () => {
     const { screenAction } = useContext(SessionContext);
-    console.log(screenAction)
     return (
         <>
             {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && 
@@ -334,7 +338,7 @@ const JoinToSessionComponent = () => {
         e.preventDefault();
         if (isJoinClicked) return;
         setIsJoinClicked(true);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token}`, getCommonFetchObj('POST'))
+        fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
             .then(r => r.json())
             .then(r => {
                 if (r.isGood) {

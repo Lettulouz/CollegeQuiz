@@ -4,6 +4,7 @@ using CollegeQuizWeb.Services.UserService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.ClearScript.JavaScript;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -25,11 +26,10 @@ public class UserController : Controller
 
     public async Task<IActionResult> YourCoupons()
     {
-      //  string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-       // if (loggedUsername == null) return Redirect("/Auth/Login");
+        var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        var dtoList = _userService.GetYourCouponsList(this, username);
+        ViewBag.CouponList = dtoList.Result;
 
-        
-        
         return View();
     }
     
@@ -41,6 +41,16 @@ public class UserController : Controller
         HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM);
         HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE);
         ViewBag.Username = isLogged;
+        return View();
+    }
+
+    public IActionResult SubscriptionAfterPaymentSelf()
+    {
+        return View();
+    }
+    
+    public IActionResult SubscriptionAfterPaymentGift()
+    {
         return View();
     }
     

@@ -1,20 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
-using System.Collections.Generic;
 using CollegeQuizWeb.DbConfig;
-using CollegeQuizWeb.Dto.Quiz;
-using CollegeQuizWeb.Entities;
-using Fluid.Ast.BinaryExpressions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Sprache;
 
 namespace CollegeQuizWeb.Hubs;
 
@@ -33,6 +25,7 @@ public class QuizManagerSessionHub : Hub
 
     public async Task<int> INIT_GAME_SEQUENCER_P2P(int counter, string token)
     {
+        token = token.ToUpper();
         await Clients.Group(token).SendAsync("INIT_GAME_SEQUENCER_P2P", counter);
         await _hubUserContext.Clients.Group(token).SendAsync("INIT_GAME_SEQUENCER_P2P", counter);
         
@@ -49,6 +42,7 @@ public class QuizManagerSessionHub : Hub
     
     public async Task START_GAME_P2P(string token)
     {
+        token = token.ToUpper();
         Console.WriteLine("punkt testowy 1");
         var quiz = await _context.QuizLobbies
             .Include(q => q.QuizEntity)

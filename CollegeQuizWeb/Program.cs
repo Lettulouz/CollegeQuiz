@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CollegeQuizWeb.API.Services.Auth;
 using CollegeQuizWeb.API.Services.Quiz;
 using CollegeQuizWeb.API.Services.QuizSession;
+using CollegeQuizWeb.API.Services.User;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.DbConfig;
@@ -61,6 +62,7 @@ builder.Services.AddScoped<ISharedQuizesService, SharedQuizesService>();
 builder.Services.AddScoped<IQuizAPIService, QuizAPIService>();
 builder.Services.AddScoped<IQuizSessionAPIService, QuizSessionAPIService>();
 builder.Services.AddScoped<IAuthAPIService, AuthAPIService>();
+builder.Services.AddScoped<IUserAPIService, UserApiService>();
 
 // swagger, only dev
 builder.Services.AddEndpointsApiExplorer();
@@ -71,6 +73,13 @@ builder.Services.AddSignalR();
 
 // JWT
 builder.Services.AddScoped<IJwtService, JwtService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(corsPolicyBuilder => corsPolicyBuilder.WithOrigins("https://dominikpiskor.pl")
+        .AllowAnyHeader().WithMethods("GET", "POST", "PUT", "PATH", "DELETE")
+        .AllowCredentials());
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,6 +107,7 @@ app.UseReact(config =>
 app.UseStaticFiles();
 
 app.UseSession();
+app.UseCors();
 app.UseRouting();
 
 app.UseAuthorization();
