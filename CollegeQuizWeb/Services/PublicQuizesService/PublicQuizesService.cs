@@ -81,7 +81,7 @@ public class PublicQuizesService : IPublicQuizesService
         }
     }
 
-    public async Task Share(string id, PublicQuizesController controller)
+    public async Task Share(string token, PublicQuizesController controller)
     {
         string? loggedUsername = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUsername));
@@ -90,6 +90,39 @@ public class PublicQuizesService : IPublicQuizesService
             controller.HttpContext.Session.Remove(SessionKey.IS_USER_LOGGED);
             controller.Response.Redirect("/Auth/Login");
             return;
+        }
+        var tokenHelper = await _context.ShareTokensEntities.FirstOrDefaultAsync(s => s.Token.Equals(token));
+        var chechShareId =
+            _context.ShareTokensEntities.Include(t => t.QuizEntity)
+                .ThenInclude(u => u.UserEntity)
+                .FirstOrDefault(u => u.QuizEntity.UserId.Equals(userEntity.Id) && u.Token.Equals(token));
+
+        var checkDuplicate =
+            await _context.SharedQuizes.FirstOrDefaultAsync(s =>
+                s.UserId.Equals(userEntity.Id) && s.QuizId.Equals(tokenHelper.QuizId));
+
+
+        if (chechShareId == null && checkDuplicate == null)
+        {
+            SharedQuizesEntity sharedQuizesEntity = new SharedQuizesEntity()
+            {
+                QuizId = tokenHelper.QuizId,
+                UserId = userEntity.Id
+            };
+
+            await _context.SharedQuizes.AddAsync(sharedQuizesEntity);
+            await _context.SaveChangesAsync();
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM,
+                Lang.QUIZ_SHARED_TOKEN_SUCCESS);
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM_TYPE, "alert-success");
+            controller.Response.Redirect("/PublicQuizes/Quizes");
+        }
+        else
+        {
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM,
+                Lang.QUIZ_SHARED_TOKEN_DUPLICATE_ERROR);
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM_TYPE, "alert-danger");
+            controller.Response.Redirect("/PublicQuizes/Quizes");
         }
     }
 }

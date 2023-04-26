@@ -6,13 +6,26 @@
     ViewData["Title"] = "Publiczne quizy";
 }
 
-
+@if (ViewBag.AlertMessage != null)
+{
+    <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+        @Html.Raw(ViewBag.AlertMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (ViewBag.TokenMessage != null)
+{
+    <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+        @Html.Raw(ViewBag.TokenMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 <div class="mt-3 mb-3">
     <h3>Publiczne quizy</h3>
     <form method="post" class="d-flex" asp-action="Quizes">
         <input class="form-control me-2" type="search" placeholder="Szukaj po nazwie" aria-label="Search" asp-for="Name">
         <button class="btn btn-outline-success" type="submit">Szukaj</button>
-      </form>
+    </form>
 </div>
 
 @if (ViewBag.Alert != null)
@@ -35,9 +48,9 @@
                             <p class="card-text">Twoje miejsce na opis quizu</p>
                         </div>
                     </a>
-                <div class="d-flex justify-content-center clip-clas">
+                    <div class="d-flex justify-content-center clip-clas">
                         <a class="btn btn-light text-center copy-class"
-                                id="@quiz.Id" asp-route-id="@quiz.Token" asp-action="Share" asp-controller="PublicQuizes">
+                           id="@quiz.Id" asp-route-id="@quiz.Token" asp-action="Share" asp-controller="PublicQuizes">
                             <i class="bi bi-share mx-1"></i>
                         </a>
                     </div>

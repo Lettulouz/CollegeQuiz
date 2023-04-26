@@ -22,6 +22,12 @@ public class PublicQuizesController : Controller
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
+        
+        ViewBag.TokenMessage = HttpContext.Session.GetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM);
+        ViewBag.Type = HttpContext.Session.GetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM_TYPE);
+        HttpContext.Session.Remove(SessionKey.QUIZ_CODE_MESSAGE_REDEEM);
+        HttpContext.Session.Remove(SessionKey.QUIZ_CODE_MESSAGE_REDEEM_TYPE);
+
 
         ViewBag.Alert = Utilities.getSessionPropertyAndRemove(HttpContext, SessionKey.MY_QUIZES_ALERT)!;
         ViewBag.Quizes = await _service.GetPublicQuizes();
@@ -52,7 +58,7 @@ public class PublicQuizesController : Controller
         return View();
     }
 
-    public async void Share([FromRoute(Name = "id")] string token)
+    public async Task Share([FromRoute(Name = "id")] string token)
     {
         await _service.Share(token, this);
     }
