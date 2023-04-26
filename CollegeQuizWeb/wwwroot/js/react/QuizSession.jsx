@@ -167,9 +167,7 @@ const MainWindowGameComponent = () => {
 };
 
 const QuestionResultComponent = () => {
-    const {
-        afterQuestionResults, currentQuestionLeader
-    } = useContext(SessionContext);
+    const { afterQuestionResults, currentQuestionLeader } = useContext(SessionContext);
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
