@@ -447,8 +447,10 @@ select{
 }
 
 .custom-card-d-1:hover{
-    background: #9acf8a !important;
+    background: #ebffe5 !important;
     color: #9acf8a;
+    outline: 2px solid #9acf8a !important;
+    outline-offset: -2px;
 }
 
 .custom-card-2{
@@ -466,6 +468,8 @@ select{
 .custom-card-d-2:hover{
     background: #b8fcdf !important;
     color: #80d8b2;
+    outline: 2px solid #80d8b2 !important;
+    outline-offset: -2px;
 }
 
 .custom-card-3{
@@ -483,6 +487,8 @@ select{
 .custom-card-d-3:hover{
     background: #cbf0eb !important;
     color: #6fb3ab;
+    outline: 2px solid #6fb3ab !important;
+    outline-offset: -2px;
 }
 
 .custom-card-4{
@@ -500,6 +506,9 @@ select{
 .custom-card-d-4:hover{
     background: #ccfff9 !important;
     color: #87e4d9;
+    outline: 2px solid #87e4d9 !important;
+    outline-offset: -2px;
+    
 }
 
 .custom-card-5{
@@ -517,6 +526,8 @@ select{
 .custom-card-d-5:hover{
     background: #dffffb !important;
     color: #81d1c6;
+    outline: 2px solid #81d1c6 !important;
+    outline-offset: -2px;
 }
 
 .custom-card-6{
@@ -534,6 +545,8 @@ select{
 .custom-card-d-6:hover{
     background: #e0f7ff !important;
     color: #80bdd5;
+    outline: 2px solid #80bdd5 !important;
+    outline-offset: -2px;
 }
 
 .custom-card-7{
@@ -551,4 +564,6 @@ select{
 .custom-card-d-7:hover{
     background: #c6e5fa !important;
     color: #79a8c9;
+    outline: 2px solid #79a8c9 !important;
+    outline-offset: -2px;
 }
