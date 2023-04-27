@@ -110,8 +110,6 @@ public class HomeService : IHomeService
         return true;
     }
     
-
-
     public async Task MakePaymentForSubscription(SubscriptionPaymentDtoPayload subscriptionPaymentDtoPayload)
     {
         var controller = subscriptionPaymentDtoPayload.ControllerReference;

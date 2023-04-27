@@ -58,6 +58,9 @@
                     <a class="dropdown-item mt-1 " asp-area="" asp-controller="User" asp-action="Profile">
                         Profil użytkownika
                     </a>
+                    <a class="dropdown-item mt-1 " asp-area="" asp-controller="User" asp-action="PaymentHistory">
+                        Historia płatności
+                    </a>
                     @if (Context.Session.GetString(SessionKey.IS_USER_ADMIN) == "True")
                     {
                         <a class="dropdown-item mt-1" asp-area="" asp-controller="Admin" asp-action="Index">
