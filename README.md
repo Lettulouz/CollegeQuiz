@@ -31,7 +31,7 @@ Website that is being created for college project. It will let players to play t
 
 **Mail templates**: Bootstrap email, Liquid
 
-**Web animations**: GSAP Animation Library
+**Web animations**: anime.js animation library
 
 ## License
 
