@@ -7,4 +7,5 @@ public interface IQuizAPIService
 {
     Task<SimpleResponseDto> AddQuizQuestions(long quizId, AggregateQuestionsReqDto dtos, string loggedUsername);
     Task<AggregateQuestionsReqDto> GetQuizQuestions(long quizId, string loggedUsername);
+    Task<SimpleResponseDto> UpdateQuizName(long quizId, string newQuizName, string loggedUsername);
 }

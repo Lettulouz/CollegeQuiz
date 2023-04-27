@@ -130,7 +130,8 @@ public class QuizService : IQuizService
         }
         return new QuizDetailsDto()
         {
-            Name = quizEntity.Name
+            Name = quizEntity.Name,
+            Id = quizEntity.Id
         };
     }
     

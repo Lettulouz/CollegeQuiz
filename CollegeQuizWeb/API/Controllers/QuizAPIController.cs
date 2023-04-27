@@ -40,4 +40,17 @@ public class QuizAPIController : Controller
         }
         return Json(await _service.AddQuizQuestions(id, dto, loggedUsername));
     }
+    
+    [HttpPost("[action]/{id}/{newName}")]
+    public async Task<JsonResult> ChangeQuizName([FromRoute] long id, [FromRoute] string newName,
+        [FromBody] AggregateQuestionsReqDto dto)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null)
+        {
+            Response.StatusCode = 401;
+            return Json(new {});
+        }
+        return Json(await _service.UpdateQuizName(id, newName, loggedUsername));
+    }
 }
