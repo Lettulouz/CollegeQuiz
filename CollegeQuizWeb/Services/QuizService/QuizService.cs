@@ -13,6 +13,7 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
@@ -94,7 +95,12 @@ public class QuizService : IQuizService
             .ThenInclude(q =>q.UserEntity)
             .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin))
             .Select(q => new MyQuizDto()
-                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
+            {
+                Name = q.QuizEntity.Name,
+                Id = q.QuizEntity.Id,
+                Token = q.Token,
+                CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
+            })
             .ToListAsync();
     }
     
@@ -105,7 +111,11 @@ public class QuizService : IQuizService
         return await _context.SharedQuizes
             .Where(x => x.UserId.Equals(userEntity.Id))
             .Select(q => new MyQuizSharedDto()
-                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id})
+            {
+                Name = q.QuizEntity.Name,
+                Id = q.QuizEntity.Id,
+                CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
+            })
             .ToListAsync();
     }
 
@@ -124,11 +134,15 @@ public class QuizService : IQuizService
         };
     }
     
-    public async Task CreateQuizCode(QuizController controller, string loggedUsername, long quizId)
+    public async Task<bool> CreateQuizCode(QuizController controller, string loggedUsername, long quizId)
     {
         long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(loggedUsername))!.Id;
         var test = await _context.QuizLobbies
             .FirstOrDefaultAsync(q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId));
+
+        int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
+        if (countOfQuestions == 0) return true;
+        
         string generatedCode;
         do
         {
@@ -147,7 +161,7 @@ public class QuizService : IQuizService
             _context.QuizLobbies.Update(test);
             await _context.SaveChangesAsync();
             controller.ViewBag.Code = generatedCode;
-            return;
+            return false;
         }
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
@@ -161,6 +175,7 @@ public class QuizService : IQuizService
         await _context.QuizLobbies.AddAsync(codeQuiz);
         await _context.SaveChangesAsync();
         controller.ViewBag.Code = generatedCode;
+        return false;
     }
 
     public Bitmap GenerateQRCode(QuizController controller, string code)

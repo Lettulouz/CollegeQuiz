@@ -13,6 +13,6 @@ public interface IQuizService
     Task<List<MyQuizDto>> GetMyQuizes(string userLogin);
     Task<List<MyQuizSharedDto>> GetMyShareQuizes(string userLogin);
     Task<QuizDetailsDto> GetQuizDetails(string userLogin, long quizId, QuizController controller);
-    Task CreateQuizCode(QuizController controller, string loggedUsername, long quizId);
+    Task<bool> CreateQuizCode(QuizController controller, string loggedUsername, long quizId);
     Bitmap GenerateQRCode(QuizController controller, string code);
 }
