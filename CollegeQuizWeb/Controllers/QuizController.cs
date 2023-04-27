@@ -88,6 +88,16 @@ public class QuizController : Controller
         if (loggedUsername == null) return Redirect("/Auth/Login");
         return View();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> DeleteQuiz([FromRoute(Name = "id")] long quizId)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+
+        await _service.DeleteQuiz(quizId, loggedUsername, this);
+        return Redirect("/Quiz/MyQuizes");
+    }
     
     [HttpGet] public IActionResult InGameQuestion() => View();
 }

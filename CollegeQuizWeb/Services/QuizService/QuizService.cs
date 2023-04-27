@@ -188,4 +188,31 @@ public class QuizService : IQuizService
         return qrCode.GetGraphic(50,Color.Black, Color.White,
             bitmap, 20, 1);
     }
+
+    public async Task DeleteQuiz(long quizId, string loggedUsername, Controller controller)
+    {
+        string responseMessage, viewBagType;
+
+        var deletedQuiz = await _context.Quizes
+            .Include(q => q.UserEntity)
+            .FirstOrDefaultAsync(q => q.UserEntity.Username.Equals(loggedUsername) && q.Id.Equals(quizId));
+        if (deletedQuiz == null)
+        {
+            responseMessage = Lang.DELETE_QUIZ_NOT_FOUND;
+            viewBagType = "alert-danger";
+        }
+        else
+        {
+            responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_QUIZ, deletedQuiz.Name);
+            viewBagType = "alert-success";
+            _context.Quizes.Remove(deletedQuiz);
+            await _context.SaveChangesAsync();
+        }
+        AlertDto alertDto2 = new AlertDto()
+        {
+            Type = viewBagType,
+            Content = responseMessage
+        };
+        controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
+    }
 }

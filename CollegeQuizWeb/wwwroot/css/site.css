@@ -278,6 +278,25 @@ select{
     border: none;
 }
 
+.btn-danger-glass {
+    border: 2px solid rgba(220, 53, 69, .5);
+    background-color: rgba(220, 53, 69, .5);
+}
+.btn-danger-glass:hover {
+    border: 2px solid rgba(220, 53, 69, 1);
+    background-color: transparent;
+}
+.btn-danger-glass-icon {
+    color: white;
+}
+.btn-danger-glass:hover .btn-danger-glass-icon {
+    color: rgba(220, 53, 69, 1);
+}
+
+.btn-color-one.fit-content {
+    height: fit-content;
+}
+
 .btn-color-one:hover {
     background-color: #64B7A2;
 }

@@ -125,6 +125,8 @@ public static class Lang
     public const string ADDRESS1_IS_REQUIRED = "*Pole Adres 1 jest wymagane.";
     public const string ADDRESS1_TOO_LONG = "*Pole Adres 1 nie może przekraczać 40 znaków.";
     public const string ADDRESS1_TOO_SHORT = "*Pole Adres 1 nie może być krótsze niż 3 znaki.";
-    
 
+    public const string DELETE_QUIZ_NOT_FOUND = 
+        "Quiz nie istnieje lub nie jest przypisany do Twojego konta. Możesz usunąc tylko quizy, które są przypisane do Twojego konta.";
+    public const string SUCCESSFULL_DELETED_QUIZ = "Quiz <strong>{0}</strong> został pomyślnie usunięty.";
 }
