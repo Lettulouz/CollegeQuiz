@@ -16,86 +16,85 @@
 
 <h1 class="text-muted px-3">Lista kuponów</h1>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            <nav aria-label="Buttons">
-                <ul class="pagination justify-content-start">
-                    <li class="page-item me-2">
-                        <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
-                    </li>
-                    <li class="page-item me-2">
-                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
-                    </li>
-                    <li class="page-item me-2">
-                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
-                    </li>
-                    <li class="page-item me-2">
-                        <a class="btn btn-lg btn-warning justify-content-center mx-0 " style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
-                            data-bs-placement="top" data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
-                            <i class="bi bi-printer-fill"></i>
-                        </a>
-                    </li>
-                    <li class="page-item me-2">
-                        <a class="btn btn-lg btn-danger justify-content-center mx-0" style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
-                        data-bs-placement="top" data-bs-title="Usuń zaznaczone" onclick="deleteButtonClicked()">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <hr class="dropdown-divider m-0"></hr>
-        <div class="row mt-3">
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="searchBox" onkeyup="filterButtonClick(4)" placeholder="Wyszukaj odbiorcę">
-                        <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                </div>
-            <div class="col">
-                <nav aria-label="Site Pagination">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item me-2">
-                            <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
-                                <option value="10">10</option>
-                                <option value="25" selected="selected">25</option>
-                                <option value="100">100</option>
-                                <option value="500">500</option>
-                            </select>
+    <div class="col">
+                <nav aria-label="Buttons">
+                    <ul class="pagination justify-content-start flex-container">
+                        <li class="page-item me-2 flex-item">
+                            <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
                         </li>
-                        <li class="page-item">
-                            <button class="page-link" onclick="goToFirstPage()">
-                                <i class="bi bi-caret-left-fill"></i>
-                            </button>
+                        <li class="page-item me-2 flex-item">
+                            <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
                         </li>
-                        <li class="page-item">
-                            <button class="page-link" onclick="prevPage()">
-                                <i class="bi bi-arrow-left"></i>
-                            </button>
+                        <li class="page-item me-2 flex-item">
+                            <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
                         </li>
-                        <li class="page-item" style="width: 75px">
-                            <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                        <li class="page-item me-2 flex-item2">
+                            <a class="btn btn-lg btn-warning justify-content-center mx-0 " style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
+                                data-bs-placement="top" data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
+                                <i class="bi bi-printer-fill"></i>
+                            </a>
                         </li>
-                        <li class="page-item" style="width: 75px">
-                            <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
-                        </li>
-                        <li class="page-item">
-                            <button class="page-link" onclick="nextPage()">
-                                <i class="bi bi-arrow-right"></i>
-                            </button>
-                        </li>
-                        <li class="page-item">
-                            <button class="page-link" onclick="goToLastPage()">
-                                <i class="bi bi-caret-right-fill"></i>
-                            </button>
+                        <li class="page-item me-2 flex-item2">
+                            <a class="btn btn-lg btn-danger justify-content-center mx-0" style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
+                            data-bs-placement="top" data-bs-title="Usuń zaznaczone" onclick="deleteButtonClicked()">
+                                <i class="bi bi-trash"></i>
+                            </a>
                         </li>
                     </ul>
                 </nav>
             </div>
-        </div>
-    </div>
+        <hr class="dropdown-divider m-0"></hr>
+        <div class="row mt-3">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                               <div class="input-group">
+                                   <input type="text" class="form-control" id="searchBox" onkeyup="filterButtonClick(4)" placeholder="Wyszukaj odbiorcę">
+                                   <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
+                                       <i class="bi bi-x"></i>
+                                   </button>
+                               </div>
+                           </div>
+                       <div class="col">
+                           <nav aria-label="Site Pagination">
+                               <ul class="pagination justify-content-end">
+                                   <li class="page-item me-2">
+                                       <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
+                                           <option value="10">10</option>
+                                           <option value="25" selected="selected">25</option>
+                                           <option value="100">100</option>
+                                           <option value="500">500</option>
+                                       </select>
+                                   </li>
+                                   <li class="page-item">
+                                       <button class="page-link" onclick="goToFirstPage()">
+                                           <i class="bi bi-caret-left-fill"></i>
+                                       </button>
+                                   </li>
+                                   <li class="page-item">
+                                       <button class="page-link" onclick="prevPage()">
+                                           <i class="bi bi-arrow-left"></i>
+                                       </button>
+                                   </li>
+                                   <li class="page-item page-num1" style="width: 75px">
+                                       <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                                   </li>
+                                   <li class="page-item page-num2" style="width: 75px">
+                                       <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                                   </li>
+                                   <li class="page-item">
+                                       <button class="page-link" onclick="nextPage()">
+                                           <i class="bi bi-arrow-right"></i>
+                                       </button>
+                                   </li>
+                                   <li class="page-item">
+                                       <button class="page-link" onclick="goToLastPage()">
+                                           <i class="bi bi-caret-right-fill"></i>
+                                       </button>
+                                   </li>
+                               </ul>
+                           </nav>
+                       </div>
+                   </div>
+               
 
     @if (Model.Item2.FirstOrDefault() != null)
     {
@@ -117,6 +116,7 @@
     $(document).ready(function (){
 
         allList("");
+        hideButtons();
     });
     
     $('#pagination123').keypress(function(e) {
@@ -307,6 +307,7 @@
             </tr>
             </thead>
             <tbody>`;
+            let i=0;
         couponListLoc.forEach(obj => {
             let temp = obj.ExpiringAt;
             temp = temp.replaceAll("T"," ");
@@ -318,12 +319,22 @@
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
             if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
                 html+= `<td class="fit">
+                        <div class='listBtn mb-1'>
+                            <button type='button' data-toggle='collapse' class='btn btn-dark d-inline btn-sm' 
+                            data-bs-toggle='collapse' data-bs-target='#btnGrp${i}' aria-expanded='false'>
+                                <i class='bi bi-list'></i>
+                            </button>
+                        </div>
+                        <div class="dyn" id="btnGrp${i}">  
+                        <div class="btn-group btn-group-sm bGroup p-0 m-0" >
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle='collapse' data-bs-target='#c${obj.Coupon}' aria-expanded='false' data-bs-placement="left" 
                              data-bs-title="Pokaż więcej" onclick="showMore(this)"><i class="bi bi-three-dots"></i></a>
                             <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="left" 
                              data-bs-title="Kopiuj do schowka" onclick="copyToClipBoardButtonClick(this)"><i class="bi bi-clipboard"></i></a>
                             <a class="btn btn-sm btn-danger" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
                             data-bs-title="Usuń kupon" onclick="deleteCoupon(this)"><i class="bi bi-trash"></i></a>
+                            </div>
+                            </div>
                         </td>`
             }else{
                 html+= `<td>
@@ -348,11 +359,13 @@
                         </div>
                     </td>
                 </tr>`;
+            i++;
         });             
         html+=`</tbody>
         </table>`;
         document.getElementById('renderTable').innerHTML = html;
         reCheckboxes();
+        hideButtons();
     }
     
     function showMore(obj){
@@ -482,6 +495,28 @@
             document.body.removeChild(workElement);
         } else throw 'File saving not supported for this browser';
     }
+    
+    function hideButtons(){
+              if($('main').width()<970){
+                  $(".dyn").addClass("collapse");
+                  $(".bGroup").addClass("btn-group-vertical");
+                  $(".bGroup").removeClass("btn-group");
+                  $(".tabBtn").addClass("d-block");
+                  $(".tabLink").addClass("mt-1");
+                 $(".listBtn").show();
+              }else{
+                  $(".dyn").removeClass("collapse")
+                  $(".bGroup").removeClass("btn-group-vertical ");
+                  $(".bGroup").addClass("btn-group");
+                  $(".tabBtn").removeClass("d-block");
+                  $(".tabLink").removeClass("mt-1");
+                  $(".listBtn").hide();
+              }
+          }
+      
+          $(window).resize(function(){
+              hideButtons();
+          })
     
 </script>
 <noscript>Sorry, your browser does not support JavaScript!</noscript>
