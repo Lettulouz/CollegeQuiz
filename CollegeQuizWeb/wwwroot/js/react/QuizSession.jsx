@@ -168,58 +168,55 @@ const MainWindowGameComponent = () => {
 
 const QuestionResultComponent = () => {
     const { afterQuestionResults, currentQuestionLeader } = useContext(SessionContext);
-
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [showLeaderboard, setShowLeaderboard] = useState(false);
-    const currentIndexRef = useRef(currentIndex);
-
+    
+    const containerUsernamesRef = useRef(null);
+    const containerScoresRef = useRef(null);
+    const leaderRef = useRef(null);
+    const timeline = gsap.timeline();
+    
     useEffect(() => {
-        currentIndexRef.current = currentIndex;
-    }, [currentIndex]);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            console.log("test2");
-            console.log(currentIndexRef.current);
-            console.log(afterQuestionResults.length);
-            if (currentIndexRef.current <= afterQuestionResults.length) {
-                setCurrentIndex(prevIndex => prevIndex + 1);
-            }
-        }, 1000);
-
-        return () => clearInterval(intervalId);
+        if (!afterQuestionResults[0].isLast) return;
+        timeline
+            .fromTo(containerUsernamesRef.current.children,
+                { x: -80, opacity: 0, ease: Expo.easeInOut, duration: 1.2, stagger: .5, delay: .2 },
+                { x: 0, opacity: 1, stagger: .5 },
+            )
+            .fromTo(containerScoresRef.current.children,
+                { x: 80, opacity: 0, ease: Expo.easeInOut, duration: 1.2, stagger: .5, delay: .2 },
+                { x: 0, opacity: 1, stagger: .5 },
+                "<"
+            )
+            .fromTo(leaderRef.current,
+                { y: 80, opacity: 0, ease: Expo.easeInOut, duration: 1.2 },
+                { y: 0, opacity: 1 },
+                ">",
+            );
     }, []);
-
-    useEffect(() => {
-        console.log("test");
-        console.log(currentIndexRef.current);
-        console.log(afterQuestionResults.length);
-        if (currentIndexRef.current >= afterQuestionResults.length) {
-            const timeoutId = setTimeout(() => {
-                setShowLeaderboard(true);
-            }, 2000);
-
-            return () => clearTimeout(timeoutId);
-        }
-    }, [currentIndexRef.current]);
     
     return (
         <div className="container">
-            {afterQuestionResults.slice(0, currentIndex).map((m, index) => (
-                <div key={index} className="row mb-2">
-                    <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast && 'animate-left'}`}>
-                        {m.Username}
-                    </div>
-                    <div className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast && 'animate-down'}`}>
-                        {m.Score} + {m.newPoints}
-                    </div>
+            <div className="row mb-2">
+                <div className="col-md-6" ref={containerUsernamesRef}>
+                    {afterQuestionResults.map(m => (
+                        <div className="leaderboard text-white fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                             key={m.Username}>
+                            {m.Username}
+                        </div>
+                    ))}
                 </div>
-            ))}
-            {showLeaderboard && (
-                <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${afterQuestionResults[0].isLast && 'animate-down'}`}>
-                    {currentQuestionLeader}
+                <div className="col-md-6" ref={containerScoresRef}>
+                    {afterQuestionResults.map(m => (
+                        <div className="leaderboard gold-leaderboard fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                             key={m.Username}>
+                            {m.Score} + {m.newPoints}
+                        </div>
+                    ))}
                 </div>
-            )}
+            </div>
+            <div className="leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                 ref={leaderRef}>
+               {currentQuestionLeader}
+            </div>
         </div>
     );
 }
