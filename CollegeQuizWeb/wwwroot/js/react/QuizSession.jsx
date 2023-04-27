@@ -172,25 +172,28 @@ const QuestionResultComponent = () => {
     const containerUsernamesRef = useRef(null);
     const containerScoresRef = useRef(null);
     const leaderRef = useRef(null);
-    const timeline = gsap.timeline();
+    const timeline = anime.timeline({ easing: 'easeOutExpo' });
     
     useEffect(() => {
         if (!afterQuestionResults[0].isLast) return;
         timeline
-            .fromTo(containerUsernamesRef.current.children,
-                { x: -80, opacity: 0, ease: Expo.easeInOut, duration: 1.2, stagger: .5, delay: .2 },
-                { x: 0, opacity: 1, stagger: .5 },
-            )
-            .fromTo(containerScoresRef.current.children,
-                { x: 80, opacity: 0, ease: Expo.easeInOut, duration: 1.2, stagger: .5, delay: .2 },
-                { x: 0, opacity: 1, stagger: .5 },
-                "<"
-            )
-            .fromTo(leaderRef.current,
-                { y: 80, opacity: 0, ease: Expo.easeInOut, duration: 1.2 },
-                { y: 0, opacity: 1 },
-                ">",
-            );
+            .add({
+                targets: containerUsernamesRef.current.children,
+                translateX: [ -80, 0 ],
+                opacity: { value: [ 0, 1 ], easing: 'linear' },
+                delay: anime.stagger(100),
+            })
+            .add({
+                targets: containerScoresRef.current.children,
+                translateX: [ 80, 0 ],
+                opacity: { value: [ 0, 1 ], easing: 'linear' },
+                delay: anime.stagger(100),
+            }, "-=800")
+            .add({
+                targets: leaderRef.current,
+                translateY: [ 80, 0 ],
+                opacity: { value: [ 0, 1 ], easing: 'linear' },
+            }, "-=800");
     }, []);
     
     return (
