@@ -19,7 +19,7 @@ function copyToBoard(obj, quizId)
         var shareCode = document.getElementById(quizId);
         if (shareCode.style.display === 'none') {shareCode.style.display = 'block';}
             let row = $(obj).parent().parent();
-            let valueToCopy = row.find('.copy-class').text();
+            let valueToCopy = row.find('.copy-class').text().replaceAll(" ","").replaceAll("\n",""); // Miłosz nie patrz pls
             navigator.clipboard.writeText(valueToCopy);
             let message = `Skopiowano token udostepniający ${valueToCopy} do schowka.`;
             toastr.success(message);
@@ -44,7 +44,9 @@ function copyToBoard(obj, quizId)
                         </div>
                     </a>
                     <div class="d-flex justify-content-center clip-clas">
-                        <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)"><p class="m-0 p-0" style="display: none" id="@quiz.Id">@quiz.Token</p><i class="bi bi-share mx-1"></i></a>
+                        <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)">
+                            <p class="m-0 p-0" style="display: none" id="@quiz.Id">@quiz.Token</p><i class="bi bi-share mx-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
