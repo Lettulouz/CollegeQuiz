@@ -1,13 +1,6 @@
 import { useLoadableContent } from "./Hooks.jsx";
 import {
-    alertInfo,
-    alertDanger,
-    alertOff,
-    WAITING_SCREEN,
-    getCommonFetchObj,
-    COUNTING_SCREEN,
-    IN_GAME,
-    QUESTION_RESULT_SCREEN,
+    alertInfo, alertDanger, alertOff, WAITING_SCREEN, getCommonFetchObj, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN,
     CORRECT_ANSWERS_SCREEN
 } from "./Utils.jsx";
 
@@ -15,12 +8,15 @@ const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const SessionContext = createContext(null);
 
+const ANSWER_LETTERS = [ "A", "B", "C", "D" ];
+const ANSWER_SVGS = [ "/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg", "/gfx/tealCard.svg" ];
+
 const LeaveSessionButtonComponent = props => {
     const {
         token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked,
         connection
     } = useContext(SessionContext);
-    const modalRef = useRef()
+    const modalRef = useRef();
     
     const leaveRoom = () => {
         if (isLeaveClicked) return;
@@ -67,12 +63,10 @@ const LeaveSessionButtonComponent = props => {
                             mógł/mogła do niej ponownie dołączyć.
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn-color-one bg-danger text-white" data-bs-dismiss="modal"
-                                onClick={leaveRoom}>
+                            <button type="button" className="btn-color-one bg-danger text-white" data-bs-dismiss="modal" onClick={leaveRoom}>
                                 Opuść sesję
                             </button>
-                            <button type="button" className="btn-color-one" data-bs-dismiss="modal"
-                                onClick={hideModal}>
+                            <button type="button" className="btn-color-one" data-bs-dismiss="modal" onClick={hideModal}>
                                 Zamknij okno
                             </button>
                         </div>
@@ -87,13 +81,12 @@ const LeaveSessionButtonComponent = props => {
 const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
-        setIsLeaveClicked, answers, setAnswers, question, setQuestion, questionTimer, setQuestionTimer,
+        setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer,
         setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
         setIsLast
     } = useContext(SessionContext);
-    const [ counting, setCounting ] = useState(5);
-    const [ questionDataJSON, setQuestionDataJSON ] = useState([]);
     
+    const [ counting, setCounting ] = useState(5);
     
     useEffect(() => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
@@ -116,8 +109,7 @@ const MainWindowGameComponent = () => {
         connection.on("QUESTION_RESULT_P2P", questionAnsw => {
             setScreenAction(QUESTION_RESULT_SCREEN);
             const parsedAnswers = JSON.parse(questionAnsw);
-            const temp = parsedAnswers.map(q=> q);
-            setAfterQuestionResults(temp);
+            setAfterQuestionResults(parsedAnswers);
             console.log(parsedAnswers);
             console.log(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
             setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
@@ -175,78 +167,71 @@ const MainWindowGameComponent = () => {
 };
 
 const QuestionResultComponent = () => {
-    const {
-        afterQuestionResults, currentQuestionLeader
-    } = useContext(SessionContext);
-
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [showLeaderboard, setShowLeaderboard] = useState(false);
-    const currentIndexRef = useRef(currentIndex);
-
-    useEffect(() => {
-        currentIndexRef.current = currentIndex;
-    }, [currentIndex]);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            console.log("test2");
-            console.log(currentIndexRef.current);
-            console.log(afterQuestionResults.length);
-            if (currentIndexRef.current <= afterQuestionResults.length) {
-                setCurrentIndex(prevIndex => prevIndex + 1);
-            }
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    useEffect(() => {
-        console.log("test");
-        console.log(currentIndexRef.current);
-        console.log(afterQuestionResults.length);
-        if (currentIndexRef.current >= afterQuestionResults.length) {
-            const timeoutId = setTimeout(() => {
-                setShowLeaderboard(true);
-            }, 2000);
-
-            return () => clearTimeout(timeoutId);
-        }
-    }, [currentIndexRef.current]);
+    const { afterQuestionResults, currentQuestionLeader } = useContext(SessionContext);
     
-
+    const containerUsernamesRef = useRef(null);
+    const containerScoresRef = useRef(null);
+    const leaderRef = useRef(null);
+    const timeline = anime.timeline({ easing: 'easeOutExpo' });
+    
+    useEffect(() => {
+        if (!afterQuestionResults[0].isLast) return;
+        timeline
+            .add({
+                targets: containerUsernamesRef.current.children,
+                translateX: [ -80, 0 ],
+                opacity: { value: [ 0, 1 ], easing: 'linear' },
+                delay: anime.stagger(100),
+            })
+            .add({
+                targets: containerScoresRef.current.children,
+                translateX: [ 80, 0 ],
+                opacity: { value: [ 0, 1 ], easing: 'linear' },
+                delay: anime.stagger(100),
+            }, "-=800")
+            .add({
+                targets: leaderRef.current,
+                translateY: [ 80, 0 ],
+                opacity: { value: [ 0, 1 ], easing: 'linear' },
+            }, "-=800");
+    }, []);
+    
     return (
         <div className="container">
-            {afterQuestionResults.slice(0, currentIndex).map((m, index) => (
-                <div key={index} className="row mb-2">
-                    <div
-                        className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-left' : ''}`}>
-                        {m.Username}
-                    </div>
-                    <div
-                        className={`leaderboard gold-leaderboard fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${m.isLast === true ? 'animate-down' : ''}`}>
-                        {m.Score} + {m.newPoints}
-                    </div>
+            <div className="row mb-2">
+                <div className="col-md-6" ref={containerUsernamesRef}>
+                    {afterQuestionResults.map(m => (
+                        <div className="leaderboard text-white fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                             key={m.Username}>
+                            {m.Username}
+                        </div>
+                    ))}
                 </div>
-            ))}
-            {showLeaderboard === true &&(
-                <div className={`leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center ${afterQuestionResults[0].isLast === true ? 'animate-down' : ''}`}>
-                    {currentQuestionLeader}
+                <div className="col-md-6" ref={containerScoresRef}>
+                    {afterQuestionResults.map(m => (
+                        <div className="leaderboard gold-leaderboard fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                             key={m.Username}>
+                            {m.Score} + {m.newPoints}
+                        </div>
+                    ))}
                 </div>
-            )}
+            </div>
+            <div className="leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                 ref={leaderRef}>
+               {currentQuestionLeader}
+            </div>
         </div>
     );
 }
 
 const QuestionType1Component = () => {
-    const {
-        question, questionTimer
-    } = useContext(SessionContext);
+    const { question, questionTimer } = useContext(SessionContext);
     return (
         <div className="container d-flex">
             <div className="row d-flex justify-content-center">
                 <div className="col-1 px-0">
                     <div className="card card-img-custom">
-                        <img src={"/gfx/timer.svg"} alt="image_answer_D"/>
+                        <img src="/gfx/timer.svg" alt="image_answer_D"/>
                         <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
                             <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
                         </div>
@@ -255,7 +240,7 @@ const QuestionType1Component = () => {
                 <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
-                        <img src={"/gfx/1.png"} width="200px" height="200px"/>
+                        <img src="/gfx/1.png" width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
                         <QuestionCardComponent number={0}/>
@@ -266,48 +251,41 @@ const QuestionType1Component = () => {
                         <QuestionCardComponent number={3}/>
                     </div>
                 </div>
-                <div className="col-2 px-0"><LeaveSessionButtonComponent text={"Wyjdź"}/></div>
+                <div className="col-2 px-0">
+                    <LeaveSessionButtonComponent text="Wyjdź"/>
+                </div>
             </div>
         </div>
     );
 }
 
 
-const QuestionCardComponent = props => {
+const QuestionCardComponent = ({ number }) => {
     const {
-        answers, answerLetter, answerSVG, connectionId, questionNumber, isAnswerSet, setIsAnswerSet,
-        currentAnswer
+        answers, connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer
     } = useContext(SessionContext);
     const [clickedIndex, setClickedIndex] = useState(null);
     
     const handleClick = answer => {
-        if(isAnswerSet === true || currentAnswer !== "") return;
-        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`, {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(r => r)
+        if(isAnswerSet || currentAnswer !== "") return;
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`,
+            getCommonFetchObj("POST")).then(r => r)
         setIsAnswerSet(true);
         setClickedIndex(answer);
     }
-
+    
+    const incClassAns = () => currentAnswer !== answers[number] && currentAnswer !== "" ? 'incorrectAnswer' : '';
+    const isClicked = () => isAnswerSet && clickedIndex !== number && 'notClicked';
     
     return (
-        <div className={`col-6 d-flex m-0
-             ${currentAnswer !== answers[props.number] && currentAnswer !== "" ? 'incorrectAnswer' : ''}`}>
-            <div className={`card bg-dark text-white card-img-custom 
-            ${clickedIndex === props.number ? 'clicked' : ''}
-            ${isAnswerSet === true && clickedIndex !== props.number ? 'notClicked' : ''}
-            `}  onClick={() => handleClick(props.number)}>
-                <button className={`bg-transparent border-0 p-0 m-0 cursor-default  ${isAnswerSet === true ? 'cursor-not-allowed' : ''} `}>
-                    <img src={answerSVG[props.number]} className="card-img" alt="image_answer_D" />
-                    <div
-                        className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
-                        <h5 className="card-title text-center">Odpowiedź {answerLetter[props.number]}</h5>
-                        <p className="card-text text-center">{answers[props.number]}</p>
+        <div className={`col-6 d-flex m-0 ${incClassAns()}`}>
+            <div className={`card bg-dark text-white card-img-custom ${clickedIndex === number && 'clicked'} ${isClicked()}`}
+                 onClick={() => handleClick(number)}>
+                <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${isAnswerSet && 'cursor-not-allowed'} `}>
+                    <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
+                    <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                        <h5 className="card-title text-center">Odpowiedź {ANSWER_LETTERS[number]}</h5>
+                        <p className="card-text text-center">{answers[number]}</p>
                     </div>
                 </button>
             </div>
@@ -344,10 +322,7 @@ const JoinToSessionComponent = () => {
             .then(r => {
                 if (r.isGood) {
                     setQuizName(r.quizName);
-                    if(question !== "")
-                        setScreenAction(r.screenType);
-                    else
-                        setScreenAction("WAITING_SCREEN")
+                    setScreenAction(question !== "" ? r.screenType : WAITING_SCREEN);
                     setIsConnect(true);
                 } else {
                     setIsJoinClicked(false);
@@ -368,6 +343,7 @@ const JoinToSessionComponent = () => {
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
             .withUrl('/quizUserSessionHub')
+            .withAutomaticReconnect()
             .build();
         connection.start()
             .then(() => connection.invoke('getConnectionId').then(connId => setConnectionId(connId)))
@@ -413,9 +389,6 @@ const QuizSessionRootComponent = () => {
     const [ isLeaveClicked, setIsLeaveClicked ] = useState(false);
     const [ quizStarted, setQuizStarted ] = useState(false);
     const [ answers, setAnswers ] = useState([]);
-    const [ answerLetter, setAnswerLetter ] = useState(["A", "B", "C", "D"]);
-    const [ answerSVG, setAnswerSVG ] 
-        = useState(["/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg", "/gfx/tealCard.svg"]);
     const [ question, setQuestion ] = useState('');
     const [ questionTimer, setQuestionTimer ] = useState(null);
     const [ questionNumber, setQuestionNumber ] = useState(null);
@@ -432,7 +405,7 @@ const QuizSessionRootComponent = () => {
         <SessionContext.Provider value={{
             connection, setConnection, isConnect,  setIsConnect, connectionId, setConnectionId, token, setToken, alert, setAlert,
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
-            setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, answerLetter, answerSVG, question, 
+            setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
             afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
             currentAnswer, setCurrentAnswer, isLast, setIsLast

@@ -13,7 +13,6 @@ const QuizManagerLeftContentComponent = () => {
     
     useEffect(() => {
         connection.on('GetAllParticipants', data => {
-            console.log(data);
             setAllParticipants(JSON.parse(data));
         });
         fetch(`/api/v1/dotnet/QuizSessionAPI/GetLobbyData/${SESS_TOKEN}`, getCommonFetchObj('POST'))
@@ -92,25 +91,21 @@ const QuizManagerRightContentComponent = () => {
         const interval = setInterval(() => {
             connection.invoke('INIT_GAME_SEQUENCER_P2P', i, SESS_TOKEN).then(r => setCounting(r));
             if (i === 0) {
-                console.log(i);
+                setAlert(alertInfo('GRA WŁAŚNIE SIĘ ROZPOCZĘŁA!'));
+                setTimeout(() => setAlert(alertOff()), 3000);
                 clearInterval(interval);
-                connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => {
-                    setAlert(alertInfo('GRA WŁAŚNIE SIĘ ROZPOCZĘŁA!'));
-                    setTimeout(() => setAlert(alertOff()), 3000);
-                });
+                connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => _);
             }
             --i;
         }, 1000);
     };
 
-    const temp = () => {
-        connection.invoke('START_GAME_P2P', SESS_TOKEN);
-    }
+    const temp = () => connection.invoke('START_GAME_P2P', SESS_TOKEN);
     
     return (
         <div className="col-lg-3 px-0 mb-2 mb-lg-0 order-lg-0 order-2">
             <div className="card px-3 py-3 h-100">
-                {counting !== 0 && 
+                {allParticipants.Connected.length > 0 && counting !== 0 && 
                     <button className="btn btn-info mt-1 mx-1" onClick={startQuiz}>
                     {counting !== 5 ? `Zaczyna się za ${counting}...` : 'Rozpocznij'}
                 </button>}
@@ -156,6 +151,7 @@ const QuizManagerRootComponent = () => {
     useEffect(() => {
         const connectionObj = new signalR.HubConnectionBuilder()
             .withUrl('/quizManagerSessionHub')
+            .withAutomaticReconnect()
             .build();
         connectionObj.start()
             .then(() => connectionObj.invoke('getConnectionId').then(connId => {

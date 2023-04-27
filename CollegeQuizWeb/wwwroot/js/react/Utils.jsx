@@ -8,7 +8,6 @@ export const IN_GAME = "IN_GAME";
 export const QUESTION_RESULT_SCREEN = "QUESTION_RESULT_SCREEN";
 export const CORRECT_ANSWERS_SCREEN = "CORRECT_ANSWERS_SCREEN";
 
-
 export const getCommonFetchObj = method => ({
     method,
     credentials: 'same-origin',

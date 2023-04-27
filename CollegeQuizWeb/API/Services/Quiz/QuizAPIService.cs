@@ -25,7 +25,7 @@ public class QuizAPIService : IQuizAPIService
         if (quizEntity == null) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = "Nie znaleziono quizu."
+            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
         };
         // usunięcie poprzednich pytań
         var prevQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizEntity.Id));
@@ -49,7 +49,7 @@ public class QuizAPIService : IQuizAPIService
                     Message = "Podane wartości czasu nie są liczbami."
                 };
             }
-            if (sec < 10 || sec > 59) return new SimpleResponseDto()
+            if (sec < 5 || sec > 59) return new SimpleResponseDto()
             {
                 IsGood = false,
                 Message = "Wartość sekund nie może być mniejsza od 10 i większa od 59."
@@ -132,5 +132,36 @@ public class QuizAPIService : IQuizAPIService
             dto.Aggregate.Add(questionsReqDto);
         }
         return dto;
+    }
+
+    public async Task<SimpleResponseDto> UpdateQuizName(long quizId, string newQuizName, string loggedUsername)
+    {
+        var quizEntity = await _context.Quizes.Include(q => q.UserEntity)
+            .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(loggedUsername));
+        if (quizEntity == null) return new SimpleResponseDto()
+        {
+            IsGood = false,
+            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
+        };
+        int countOfSameName = _context.Quizes.Include(q => q.UserEntity)
+            .Where(q => q.Name.Equals(newQuizName, StringComparison.OrdinalIgnoreCase)
+                        && q.UserEntity.Id.Equals(quizEntity.UserEntity.Id) && q.Id != quizId)
+            .Count();
+        if (countOfSameName != 0) return new SimpleResponseDto()
+        {
+            IsGood = false,
+            Message = $"Quiz o nazwie <strong>{newQuizName}</strong> istnieje już na Twoim koncie. Podaj inną nazwę."
+        };
+        string prevName = quizEntity.Name;
+        quizEntity.Name = newQuizName;
+        _context.Quizes.Update(quizEntity);
+        await _context.SaveChangesAsync();
+        
+        return new SimpleResponseDto()
+        {
+            IsGood = true,
+            Message = $"Nazwa quizu o nazwie <strong>{prevName}</strong> została pomyślnie " +
+                      $"zmieniona na <strong>{newQuizName}</strong>",
+        };
     }
 }

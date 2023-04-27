@@ -3,12 +3,10 @@
 }
 
 <div class="mt-3 mb-3">
-    <a class="btn btn-color-one w-25" asp-action="MyQuizes" asp-controller="Quiz">
-        <i class="bi bi-arrow-left"></i> Powrót do quizów
+    <a class="btn btn-color-one fit-content text-white w-100 my-1" asp-action="MyQuizes" asp-controller="Quiz">
+        <i class="bi bi-arrow-left me-2"></i> Powrót do quizów
     </a>
 </div>
-
-<h2>@ViewBag.QuizData.Name</h2>
 
 <div class="position-relative">
     <div class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner"
@@ -16,7 +14,8 @@
         <div class="spinner-border load-spinner-circle mt-4" role="status">
         </div>
     </div>
-    <div class="mt-3" id="addQuizQuestionsRoot"></div>
+    <div class="mt-3" id="addQuizQuestionsRoot" data-quiz-name="@ViewBag.QuizData.Name"
+         data-quiz-id="@ViewBag.QuizData.Id"></div>
 </div>
 
 <script type="module" src="@Url.Content("~/js/react/QuizQuestions.jsx")"></script>

@@ -13,6 +13,7 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
@@ -94,7 +95,12 @@ public class QuizService : IQuizService
             .ThenInclude(q =>q.UserEntity)
             .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin))
             .Select(q => new MyQuizDto()
-                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
+            {
+                Name = q.QuizEntity.Name,
+                Id = q.QuizEntity.Id,
+                Token = q.Token,
+                CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
+            })
             .ToListAsync();
     }
     
@@ -105,7 +111,11 @@ public class QuizService : IQuizService
         return await _context.SharedQuizes
             .Where(x => x.UserId.Equals(userEntity.Id))
             .Select(q => new MyQuizSharedDto()
-                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id})
+            {
+                Name = q.QuizEntity.Name,
+                Id = q.QuizEntity.Id,
+                CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
+            })
             .ToListAsync();
     }
 
@@ -120,15 +130,20 @@ public class QuizService : IQuizService
         }
         return new QuizDetailsDto()
         {
-            Name = quizEntity.Name
+            Name = quizEntity.Name,
+            Id = quizEntity.Id
         };
     }
     
-    public async Task CreateQuizCode(QuizController controller, string loggedUsername, long quizId)
+    public async Task<bool> CreateQuizCode(QuizController controller, string loggedUsername, long quizId)
     {
         long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(loggedUsername))!.Id;
         var test = await _context.QuizLobbies
             .FirstOrDefaultAsync(q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId));
+
+        int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
+        if (countOfQuestions == 0) return true;
+        
         string generatedCode;
         do
         {
@@ -147,7 +162,7 @@ public class QuizService : IQuizService
             _context.QuizLobbies.Update(test);
             await _context.SaveChangesAsync();
             controller.ViewBag.Code = generatedCode;
-            return;
+            return false;
         }
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
@@ -161,6 +176,7 @@ public class QuizService : IQuizService
         await _context.QuizLobbies.AddAsync(codeQuiz);
         await _context.SaveChangesAsync();
         controller.ViewBag.Code = generatedCode;
+        return false;
     }
 
     public Bitmap GenerateQRCode(QuizController controller, string code)
@@ -172,5 +188,32 @@ public class QuizService : IQuizService
         var bitmap = svgDocument.Draw();
         return qrCode.GetGraphic(50,Color.Black, Color.White,
             bitmap, 20, 1);
+    }
+
+    public async Task DeleteQuiz(long quizId, string loggedUsername, Controller controller)
+    {
+        string responseMessage, viewBagType;
+
+        var deletedQuiz = await _context.Quizes
+            .Include(q => q.UserEntity)
+            .FirstOrDefaultAsync(q => q.UserEntity.Username.Equals(loggedUsername) && q.Id.Equals(quizId));
+        if (deletedQuiz == null)
+        {
+            responseMessage = Lang.DELETE_QUIZ_NOT_FOUND;
+            viewBagType = "alert-danger";
+        }
+        else
+        {
+            responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_QUIZ, deletedQuiz.Name);
+            viewBagType = "alert-success";
+            _context.Quizes.Remove(deletedQuiz);
+            await _context.SaveChangesAsync();
+        }
+        AlertDto alertDto2 = new AlertDto()
+        {
+            Type = viewBagType,
+            Content = responseMessage
+        };
+        controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
     }
 }

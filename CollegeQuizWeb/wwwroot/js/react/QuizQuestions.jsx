@@ -1,8 +1,12 @@
 import { useLoadableContent } from "./Hooks.jsx";
-import {getCommonFetchObj, alertOff, alertInfo, alertDanger, getCommonFetchObjWithBody} from "./Utils.jsx";
+import { getCommonFetchObj, alertOff, alertInfo, alertDanger, getCommonFetchObjWithBody } from "./Utils.jsx";
 const { useEffect, useState, createContext, useContext } = React;
 
 const QuestionsContext = createContext(null);
+const MainContext = createContext(null);
+
+let QUIZ_NAME = document.getElementById("addQuizQuestionsRoot").dataset.quizName;
+const QUIZ_ID = document.getElementById("addQuizQuestionsRoot").dataset.quizId;
 
 const QuizAnswerComponent = ({ id, answer }) => {
     const { q, onSetQuestionAnswer, onChangeCorrectAnswer } = useContext(QuestionsContext);
@@ -27,6 +31,47 @@ const QuizAnswerComponent = ({ id, answer }) => {
                 </div>
             </div>
         </div>
+    );
+};
+
+const QuizChangeNameComponent = () => {
+    const { setAlert } = useContext(MainContext);
+    const [ quizName, setQuizName ] = useState(QUIZ_NAME);
+    
+    const changeQuizName = e => {
+        e.preventDefault();
+        fetch(`/api/v1/dotnet/QuizAPI/ChangeQuizName/${QUIZ_ID}/${quizName}`, getCommonFetchObj('POST'))
+            .then(r => r.json())
+            .then(r => {
+                if (r.isGood) {
+                    setAlert(alertInfo(r.message));
+                    QUIZ_NAME = quizName;
+                } else {
+                    setAlert(alertDanger(r.message));
+                }
+            })
+            .catch(e => {
+                if (e === undefined) return;
+                setAlert(alertDanger('Wystąpił nieznany błąd'));
+            });
+    };
+    
+    return (
+        <>
+            <div className="hstack gap-3 w-100 mb-3">
+                <form onSubmit={changeQuizName} className="hstack gap-2 w-100">
+                    <input type="text" className="form-control" value={quizName} onChange={e => setQuizName(e.target.value)}/>
+                    <button type="submit" className="btn btn-color-one fit-content">
+                        <i className="bi bi-check-lg text-white"></i>
+                    </button>
+                    <button type="button" className="btn btn-color-one fit-content" onClick={() => setQuizName(QUIZ_NAME)}
+                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
+                       <i className="bi bi-arrow-counterclockwise text-white"></i>
+
+                    </button>
+                </form>
+            </div>
+        </>
     );
 };
 
@@ -157,7 +202,7 @@ const AddQuizQuestionsRoot = () => {
         setIsSended(true);
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
+        fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
             .then(r => {
                 setIsSended(false);
                 window.scrollTo(0, 0);
@@ -180,7 +225,7 @@ const AddQuizQuestionsRoot = () => {
         const loadableSpinner = document.getElementById('react-loadable-spinner-content');
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObj('GET')).then(r => {
+        fetch(`/api/v1/dotnet/QuizAPI/GetQuizQuestions/${id}`, getCommonFetchObj('GET')).then(r => {
             loadableSpinner.style.cssText = 'display:none !important';
             setActiveCallback();
             return r.json()
@@ -195,7 +240,7 @@ const AddQuizQuestionsRoot = () => {
     useEffect(() => {
         const anyBad = questions.filter(q => {
             return q.text.length <= 2 || q.answers.filter(a => a.text.length >= 1).length !== q.answers.length ||
-                q.timeMin.length === 0 || q.timeMin.length === 0;
+                q.timeMin.length === 0 || q.timeSec.length === 0;
         });
         setAllGood(anyBad.length === 0);
     }, [ questions ]);
@@ -210,12 +255,13 @@ const AddQuizQuestionsRoot = () => {
     ));
     
     return (
-        <>
+        <MainContext.Provider value={{ setAlert }}>
             {isActive && <>
                 {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
                     <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
                     <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>
                 </div>}
+                <QuizChangeNameComponent/>
                 {generateQuestionsComponents}
                 <button onClick={onAddNewQuestion} className="btn btn-color-one w-100 mt-2">
                     Dodaj nowe pytanie
@@ -224,7 +270,7 @@ const AddQuizQuestionsRoot = () => {
                     Zaktualizuj pytania quizu
                 </button>}
             </>}
-        </>
+        </MainContext.Provider>
     );
 };
 

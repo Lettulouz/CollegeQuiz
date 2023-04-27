@@ -17,8 +17,8 @@ public class QuizAPIController : Controller
         _service = service;
     }
 
-    [HttpGet("quiz-questions")]
-    public async Task<JsonResult> GetQuizQuestions([FromQuery] long id)
+    [HttpGet("[action]/{id}")]
+    public async Task<JsonResult> GetQuizQuestions([FromRoute] long id)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null)
@@ -29,8 +29,8 @@ public class QuizAPIController : Controller
         return Json(await _service.GetQuizQuestions(id, loggedUsername));
     }
     
-    [HttpPost("quiz-questions")]
-    public async Task<JsonResult> AddQuizQuestions([FromQuery] long id, [FromBody] AggregateQuestionsReqDto dto)
+    [HttpPost("[action]/{id}")]
+    public async Task<JsonResult> AddQuizQuestions([FromRoute] long id, [FromBody] AggregateQuestionsReqDto dto)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null)
@@ -39,5 +39,18 @@ public class QuizAPIController : Controller
             return Json(new {});
         }
         return Json(await _service.AddQuizQuestions(id, dto, loggedUsername));
+    }
+    
+    [HttpPost("[action]/{id}/{newName}")]
+    public async Task<JsonResult> ChangeQuizName([FromRoute] long id, [FromRoute] string newName,
+        [FromBody] AggregateQuestionsReqDto dto)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null)
+        {
+            Response.StatusCode = 401;
+            return Json(new {});
+        }
+        return Json(await _service.UpdateQuizName(id, newName, loggedUsername));
     }
 }

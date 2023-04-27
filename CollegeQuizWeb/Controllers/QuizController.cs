@@ -71,7 +71,8 @@ public class QuizController : Controller
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
 
-        await _service.CreateQuizCode(this, loggedUsername, quizId);
+        if (await _service.CreateQuizCode(this, loggedUsername, quizId)) return Redirect("/Quiz/MyQuizes");
+        
         Bitmap test = _service.GenerateQRCode(this, ViewBag.Code);
         MemoryStream ms = new MemoryStream();
         test.Save(ms, ImageFormat.Jpeg);
@@ -86,6 +87,16 @@ public class QuizController : Controller
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DeleteQuiz([FromRoute(Name = "id")] long quizId)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+
+        await _service.DeleteQuiz(quizId, loggedUsername, this);
+        return Redirect("/Quiz/MyQuizes");
     }
     
     [HttpGet] public IActionResult InGameQuestion() => View();
