@@ -91,12 +91,10 @@ const QuizManagerRightContentComponent = () => {
         const interval = setInterval(() => {
             connection.invoke('INIT_GAME_SEQUENCER_P2P', i, SESS_TOKEN).then(r => setCounting(r));
             if (i === 0) {
-                console.log(i);
+                setAlert(alertInfo('GRA WŁAŚNIE SIĘ ROZPOCZĘŁA!'));
+                setTimeout(() => setAlert(alertOff()), 3000);
                 clearInterval(interval);
-                connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => {
-                    setAlert(alertInfo('GRA WŁAŚNIE SIĘ ROZPOCZĘŁA!'));
-                    setTimeout(() => setAlert(alertOff()), 3000);
-                });
+                connection.invoke('START_GAME_P2P', SESS_TOKEN).then(_ => _);
             }
             --i;
         }, 1000);
