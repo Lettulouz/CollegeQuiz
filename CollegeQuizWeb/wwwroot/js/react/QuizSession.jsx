@@ -16,7 +16,7 @@ const LeaveSessionButtonComponent = props => {
         token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked,
         connection
     } = useContext(SessionContext);
-    const modalRef = useRef()
+    const modalRef = useRef();
     
     const leaveRoom = () => {
         if (isLeaveClicked) return;

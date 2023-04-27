@@ -157,7 +157,7 @@ const AddQuizQuestionsRoot = () => {
         setIsSended(true);
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
+        fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
             .then(r => {
                 setIsSended(false);
                 window.scrollTo(0, 0);
@@ -180,7 +180,7 @@ const AddQuizQuestionsRoot = () => {
         const loadableSpinner = document.getElementById('react-loadable-spinner-content');
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/quizapi/quiz-questions?id=${id}`, getCommonFetchObj('GET')).then(r => {
+        fetch(`/api/v1/dotnet/QuizAPI/GetQuizQuestions/${id}`, getCommonFetchObj('GET')).then(r => {
             loadableSpinner.style.cssText = 'display:none !important';
             setActiveCallback();
             return r.json()
@@ -195,7 +195,7 @@ const AddQuizQuestionsRoot = () => {
     useEffect(() => {
         const anyBad = questions.filter(q => {
             return q.text.length <= 2 || q.answers.filter(a => a.text.length >= 1).length !== q.answers.length ||
-                q.timeMin.length === 0 || q.timeMin.length === 0;
+                q.timeMin.length === 0 || q.timeSec.length === 0;
         });
         setAllGood(anyBad.length === 0);
     }, [ questions ]);

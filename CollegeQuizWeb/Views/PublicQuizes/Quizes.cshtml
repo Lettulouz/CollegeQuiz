@@ -1,4 +1,3 @@
-@using CollegeQuizWeb.Entities
 @model CollegeQuizWeb.Dto.PublicQuizes.PublicQuizesDto
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -45,7 +44,6 @@
                     <a class="btn text-decoration-none" asp-action="QuizPage" asp-controller="PublicQuizes" asp-route-id="@quiz.Id">
                         <div class="card-body">
                             <h5 class="card-title">@quiz.Name</h5>
-                            <p class="card-text">Twoje miejsce na opis quizu</p>
                         </div>
                     </a>
                     <div class="d-flex justify-content-center clip-clas">

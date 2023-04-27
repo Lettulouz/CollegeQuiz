@@ -40,21 +40,22 @@ function copyToBoard(obj, quizId)
                     <a class="btn text-decoration-none" asp-action="QuizPage" asp-controller="Quiz" asp-route-id="@quiz.Id">
                         <div class="card-body">
                             <h5 class="card-title">@quiz.Name</h5>
-                            <p class="card-text">Twoje miejsce na opis quizu</p>
                         </div>
                     </a>
                     <div class="d-flex justify-content-center clip-clas">
-                        <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)"><p class="m-0 p-0" style="display: none" id="@quiz.Id">@quiz.Token</p><i class="bi bi-share mx-1"></i></a>
+                        <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)">
+                            <p class="m-0 p-0" style="display: none" id="@quiz.Id">@quiz.Token</p><i class="bi bi-share mx-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         }
         <div class="col justify-content-center align-items-center text-center mt-3">
-            <a class="btn-color-two w-100 text-decoration-none" asp-action="AddQuiz" asp-controller="Quiz">
-                <div class="card card-add card-resize text-bg-success mb-3 h-100" style="max-width: 18rem; min-height: 163px">
+            <a class="w-100 text-decoration-none bg-transparent border-2" asp-action="AddQuiz" asp-controller="Quiz">
+                <div class="card card-add card-resize mb-3 h-100" style="max-width: 18rem; min-height: 163px">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <i class="bi bi-plus-circle fs-1 mb-2"></i>
                         <h5 class="card-title">Dodaj Quiz</h5>
-                        <p class="card-text">Dodaj nowy quiz</p>
                     </div>
                 </div>
             </a>
@@ -78,7 +79,6 @@ function copyToBoard(obj, quizId)
                     <a class="btn text-decoration-none" asp-action="SharePage" asp-controller="SharedQuizes" asp-route-id="@quizes.Id">
                         <div class="card-body">
                             <h5 class="card-title">@quizes.Name</h5>
-                            <p class="card-text">Twoje miejsce na opis quizu</p>
                         </div>
                     </a>
                 </div>

@@ -192,7 +192,16 @@ input:-webkit-autofill {
 }
 
 .card-add {
-    background-color: #63c4ab;
+    background-color: rgba(174, 229, 212, .2);
+    border: 3px dashed #63c4ab;
+    color: #63c4ab;
+}
+
+.color-random {
+    transition: .2s;
+}
+.color-random:hover {
+    transform: translateY(-7px);
 }
 
 @media screen and (max-width: 576px) {

@@ -25,7 +25,7 @@ public class QuizAPIService : IQuizAPIService
         if (quizEntity == null) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = "Nie znaleziono quizu."
+            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
         };
         // usunięcie poprzednich pytań
         var prevQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizEntity.Id));
@@ -49,7 +49,7 @@ public class QuizAPIService : IQuizAPIService
                     Message = "Podane wartości czasu nie są liczbami."
                 };
             }
-            if (sec < 10 || sec > 59) return new SimpleResponseDto()
+            if (sec < 5 || sec > 59) return new SimpleResponseDto()
             {
                 IsGood = false,
                 Message = "Wartość sekund nie może być mniejsza od 10 i większa od 59."

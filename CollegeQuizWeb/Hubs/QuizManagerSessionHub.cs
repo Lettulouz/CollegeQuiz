@@ -152,7 +152,7 @@ public class QuizManagerSessionHub : Hub
                {
                    obj.UserEntity.Username,
                    obj.Score,
-                   isLast =  (quiz.CurrentQuestion + 1 == questions.Count()),
+                   isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
                    newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
                }).OrderByDescending(obj=>obj.Score).Take(5).ToList();
        
