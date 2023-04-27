@@ -33,6 +33,8 @@ Website that is being created for college project. It will let players to play t
 
 **Web animations**: anime.js animation library
 
+**Server and SignalR broker provider**: MS Azure
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
