@@ -593,3 +593,29 @@ select{
     outline: 2px solid #79a8c9 !important;
     outline-offset: -2px;
 }
+
+
+.subscription-cards{
+    min-width: 100%;
+}
+
+@media (min-width: 992px) {
+    .subscription-cards{
+        padding-left: 70px;
+        padding-right: 70px
+    }
+    
+    
+}
+
+@media (max-width: 992px) {
+    .user-profile{
+        width: 75% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .user-profile{
+        width: 100% !important;
+    }
+}
