@@ -63,8 +63,8 @@ public class AuthController : Controller
     public async Task LoginDEV()
     {
         LoginDto obj = new LoginDto();
-        obj.LoginOrEmail = "domipis771@student.polsl.pl";
-        obj.Password = "Haselko1234*";
+        obj.LoginOrEmail = "kontotestowe1";
+        obj.Password = "Kontotestowe1@";
         var payloadDto = new LoginDtoPayload(this) { Dto = obj };
         
         if (ModelState.IsValid)
@@ -79,8 +79,8 @@ public class AuthController : Controller
     public async Task AdminDEV()
     {
         LoginDto obj = new LoginDto();
-        obj.LoginOrEmail = "domipis771@student.polsl.pl";
-        obj.Password = "Haselko1234*";
+        obj.LoginOrEmail = "kontotestowe1";
+        obj.Password = "Kontotestowe1@";
         var payloadDto = new LoginDtoPayload(this) { Dto = obj };
         
         if (ModelState.IsValid)
@@ -95,8 +95,8 @@ public class AuthController : Controller
     public async Task LoginDEV2()
     {
         LoginDto obj = new LoginDto();
-        obj.LoginOrEmail = "juanpablo2";
-        obj.Password = "Admin123@";
+        obj.LoginOrEmail = "kontotestowe2";
+        obj.Password = "Kontotestowe1@";
         var payloadDto = new LoginDtoPayload(this) { Dto = obj };
         
         if (ModelState.IsValid)
@@ -111,8 +111,8 @@ public class AuthController : Controller
     public async Task LoginDEV3()
     {
         LoginDto obj = new LoginDto();
-        obj.LoginOrEmail = "george123";
-        obj.Password = "Test123@";
+        obj.LoginOrEmail = "kontotestowe3";
+        obj.Password = "Kontotestowe1@";
         var payloadDto = new LoginDtoPayload(this) { Dto = obj };
         
         if (ModelState.IsValid)
