@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using CollegeQuizWeb.DbConfig;
 
 namespace CollegeQuizWeb.Entities;
 
 [Table("gift_coupons")]
-public class GiftCouponsEntity
+public class GiftCouponsEntity : AbstractAuditableEntity
 {
     [Column("coupon_id")]
     public long CouponId { get; set; }

@@ -32,6 +32,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<UsersQuestionsAnswersEntity> UsersQuestionsAnswers { get; set; }
     public DbSet<ShareTokensEntity> ShareTokensEntities { get; set; }
     public DbSet<GiftCouponsEntity> GiftCouponsEntities { get; set; }
+    public DbSet<QuestionTypeEntity> QuestionTypeEntities { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     

@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using CollegeQuizWeb.DbConfig;
 
 namespace CollegeQuizWeb.Entities;
 
 [Table("shared_quizes")]
-public class SharedQuizesEntity
+public class SharedQuizesEntity : AbstractAuditableEntity
 {
     [Column("quiz_id")]
     public long QuizId { get; set; }

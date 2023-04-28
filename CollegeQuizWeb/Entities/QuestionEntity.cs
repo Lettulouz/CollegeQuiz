@@ -26,6 +26,10 @@ public class QuestionEntity : AbstractAuditableEntity
     [ForeignKey(nameof(QuizEntity))]
     [Column("quiz_id")]
     public long QuizId { get; set; }
-    
+
+    [ForeignKey(nameof(QuestionTypeEntity))]
+    [Column("question_type_id")]
+    public int QuestionType { get; set; }
     public virtual QuizEntity QuizEntity { get; set; }
+    public virtual QuestionTypeEntity QuestionTypeEntity { get; set; }
 }

@@ -161,6 +161,18 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
                     b.HasKey("CouponId", "UserId");
 
                     b.HasIndex("UserId");
@@ -228,6 +240,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int")
+                        .HasColumnName("question_type_id");
+
                     b.Property<long>("QuizId")
                         .HasColumnType("bigint")
                         .HasColumnName("quiz_id");
@@ -246,9 +262,36 @@ namespace CollegeQuizWeb.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QuestionType");
+
                     b.HasIndex("QuizId");
 
                     b.ToTable("questions");
+                });
+
+            modelBuilder.Entity("CollegeQuizWeb.Entities.QuestionTypeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("site_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("question_types");
                 });
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.QuizEntity", b =>
@@ -400,6 +443,18 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("QuizId", "UserId");
 
@@ -679,11 +734,19 @@ namespace CollegeQuizWeb.Migrations
 
             modelBuilder.Entity("CollegeQuizWeb.Entities.QuestionEntity", b =>
                 {
+                    b.HasOne("CollegeQuizWeb.Entities.QuestionTypeEntity", "QuestionTypeEntity")
+                        .WithMany()
+                        .HasForeignKey("QuestionType")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CollegeQuizWeb.Entities.QuizEntity", "QuizEntity")
                         .WithMany()
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("QuestionTypeEntity");
 
                     b.Navigation("QuizEntity");
                 });
