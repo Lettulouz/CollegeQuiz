@@ -4,6 +4,7 @@ const { useEffect, useState, createContext, useContext } = React;
 
 const QuestionsContext = createContext(null);
 const MainContext = createContext(null);
+const QUESTION_TYPES = ["SINGLE_FOUR_ANSWERS","TRUE_FALSE","MULTIPLE_FOUR_ANSWER"];
 
 let QUIZ_NAME = document.getElementById("addQuizQuestionsRoot").dataset.quizName;
 const QUIZ_ID = document.getElementById("addQuizQuestionsRoot").dataset.quizId;
@@ -94,22 +95,31 @@ const QuizQuestionComponent = () => {
     return (
         <div className="row g-2 mb-4">
             <div className="col-12">
-                <div className="p-3 card hstack gap-2">
-                    <div className="me-2 fs-3">{q.id}</div>
-                    <textarea className="form-control h-100" placeholder="Treść pytania" value={q.text}
-                        onChange={e => onSetQuestionTitle(e.target.value, q.id)}></textarea>
+                <div className="p-3 card">
                     <div>
-                        <label className="mb-1">Czas trwania pytania:</label>
-                        <div className="d-flex">
-                            <input type="number" className="form-control time-control" placeholder="min" min="0" max="999"
-                                maxLength="3" value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
-                            <span className="mx-2 fw-bold pt-1">:</span>
-                            <input type="number" className="form-control time-control" placeholder="sek" min="0" max="59"
-                                maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
-                        </div>
+                        <select className="form-control">
+                            {QUESTION_TYPES.map(t=>(
+                                <option key={t} value={t}>{t}</option>
+                            ))}
+                        </select>
                     </div>
-                    {q.id > 1 && <button className="btn btn-danger text-white ms-2"
-                                         onClick={() => onRemoveQuestion(q.id)}>X</button>}
+                    <div className="hstack gap-2">
+                        <div className="me-2 fs-3">{q.id}</div>
+                        <textarea className="form-control h-100" placeholder="Treść pytania" value={q.text}
+                                  onChange={e => onSetQuestionTitle(e.target.value, q.id)}></textarea>
+                        <div>
+                            <label className="mb-1">Czas trwania pytania:</label>
+                            <div className="d-flex">
+                                <input type="number" className="form-control time-control" placeholder="min" min="0" max="999"
+                                       maxLength="3" value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
+                                <span className="mx-2 fw-bold pt-1">:</span>
+                                <input type="number" className="form-control time-control" placeholder="sek" min="0" max="59"
+                                       maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
+                            </div>
+                        </div>
+                        {q.id > 1 && <button className="btn btn-danger text-white ms-2"
+                                             onClick={() => onRemoveQuestion(q.id)}>X</button>}
+                    </div>
                 </div>
             </div>
             {answersComponents}
@@ -123,6 +133,7 @@ const initialQuestions = [
         text: '',
         timeMin: '',
         timeSec: '',
+        type: 'SINGLE_FOUR_ANSWERS',
         answers: [
             { id: 1, text: '', isCorrect: true },
             { id: 2, text: '', isCorrect: false },
@@ -183,6 +194,7 @@ const AddQuizQuestionsRoot = () => {
             text: '',
             timeMin: '',
             timeSec: '',
+            type: 'SINGLE_FOUR_ANSWERS',
             answers: [
                 { id: 1, text: '', isCorrect: true },
                 { id: 2, text: '', isCorrect: false },
