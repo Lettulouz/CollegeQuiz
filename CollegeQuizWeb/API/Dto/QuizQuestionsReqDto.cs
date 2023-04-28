@@ -8,6 +8,7 @@ public class QuizQuestionsReqDto
     public string Text { get; set; }
     public string TimeMin { get; set; }
     public string TimeSec { get; set; }
+    public string Type { get; set; }
     public List<AnswerDto> Answers { get; set; }
 }
 

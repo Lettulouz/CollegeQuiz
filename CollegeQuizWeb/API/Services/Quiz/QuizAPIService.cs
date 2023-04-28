@@ -105,7 +105,9 @@ public class QuizAPIService : IQuizAPIService
         AggregateQuestionsReqDto dto = new AggregateQuestionsReqDto();
         dto.Aggregate = new List<QuizQuestionsReqDto>();
         
-        var questions = _context.Questions.Where(q => q.QuizId == quizEntity.Id);
+        var questions = _context.Questions
+            .Include(q => q.QuestionTypeEntity)
+            .Where(q => q.QuizId == quizEntity.Id);
         foreach (var question in questions)
         {
             var answers = _context.Answers.Where(a => a.QuestionId == question.Id);
@@ -127,6 +129,7 @@ public class QuizAPIService : IQuizAPIService
                 Text = question.Name,
                 TimeMin = question.TimeMin.ToString(),
                 TimeSec = question.TimeSec.ToString(),
+                Type = question.QuestionTypeEntity.Name,
                 Answers = answerDtos
             };
             dto.Aggregate.Add(questionsReqDto);
