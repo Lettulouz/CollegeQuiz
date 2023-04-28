@@ -33,6 +33,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ShareTokensEntity> ShareTokensEntities { get; set; }
     public DbSet<GiftCouponsEntity> GiftCouponsEntities { get; set; }
     public DbSet<QuestionTypeEntity> QuestionTypeEntities { get; set; }
+    
+    public DbSet<QuizCategoryEntity> QuizCategoryEntities { get; set; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -73,8 +75,20 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.CouponId);
         modelBuilder.Entity<GiftCouponsEntity>()
             .HasOne(e => e.UserEntity)
-            .WithMany(e=> e.GiftCouponsEntities)
+            .WithMany(e => e.GiftCouponsEntities)
             .HasForeignKey(e => e.UserId);
+        
+        
+        modelBuilder.Entity<QuizCategoryEntity>().HasKey(qe => new { qe.QuizId, qe.CategoryId });
+        modelBuilder.Entity<QuizCategoryEntity>()
+            .HasOne(qe => qe.QuizEntity)
+            .WithMany(q => q.QuizCategoryEntities)
+            .HasForeignKey(qe => qe.QuizId);
+
+        modelBuilder.Entity<QuizCategoryEntity>()
+            .HasOne(qe => qe.CategoryEntity)
+            .WithMany(q => q.QuizCategoryEntities)
+            .HasForeignKey(qe => qe.CategoryId);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
