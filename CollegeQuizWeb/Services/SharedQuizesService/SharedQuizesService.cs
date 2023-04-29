@@ -110,8 +110,8 @@ public class SharedQuizesService : ISharedQuizesService
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
                     goodAnswers = q.Select(a => a.goodAnswer).ToList(),
-                    time_min= q.Select(a=>a.time_min).Distinct(),
-                    time_sec = q.Select(a=>a.time_sec).Distinct()
+                    time_min= q.Select(a=>a.time_min).FirstOrDefault(),
+                    time_sec = q.Select(a=>a.time_sec).FirstOrDefault()
                 })
                 .ToListAsync();
         }
