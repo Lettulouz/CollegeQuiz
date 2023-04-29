@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using CollegeQuizWeb.DbConfig;
 
 namespace CollegeQuizWeb.Entities;
 
