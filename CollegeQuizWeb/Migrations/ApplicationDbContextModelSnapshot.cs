@@ -34,6 +34,26 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_good");
 
+                    b.Property<bool>("IsRange")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_range");
+
+                    b.Property<int>("Max")
+                        .HasColumnType("int")
+                        .HasColumnName("max");
+
+                    b.Property<int>("MaxCounted")
+                        .HasColumnType("int")
+                        .HasColumnName("max_counted");
+
+                    b.Property<int>("Min")
+                        .HasColumnType("int")
+                        .HasColumnName("min");
+
+                    b.Property<int>("MinCounted")
+                        .HasColumnType("int")
+                        .HasColumnName("min_counted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -42,6 +62,10 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<long>("QuestionId")
                         .HasColumnType("bigint")
                         .HasColumnName("question_id");
+
+                    b.Property<int>("Step")
+                        .HasColumnType("int")
+                        .HasColumnName("step");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")

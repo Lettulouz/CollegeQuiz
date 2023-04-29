@@ -72,12 +72,33 @@ public class QuizAPIService : IQuizAPIService
             };
             foreach (var answer in question.Answers)
             {
-                AnswerEntity answerEntity = new AnswerEntity()
+                AnswerEntity answerEntity;
+                if (question.Type.Equals("RANGE"))
                 {
-                    Name = answer.Text,
-                    IsGood = answer.IsCorrect,
-                    QuestionEntity = questionEntity
-                };
+                    answerEntity = new AnswerEntity()
+                    {
+                        Name = answer.Text,
+                        IsGood = answer.IsCorrect,
+                        IsRange = true,
+                        Min = answer.Min,
+                        Max = answer.Max,
+                        MinCounted = answer.MinCounted,
+                        MaxCounted = answer.MaxCounted,
+                        Step = answer.Step,
+                        QuestionEntity = questionEntity
+                    };
+                }
+                else
+                {
+                    answerEntity = new AnswerEntity()
+                    {
+                        Name = answer.Text,
+                        IsGood = answer.IsCorrect,
+                        IsRange = false,
+                        QuestionEntity = questionEntity
+                    };
+                }
+
                 await _context.Answers.AddAsync(answerEntity);
             }
             await _context.Questions.AddAsync(questionEntity);
@@ -115,12 +136,33 @@ public class QuizAPIService : IQuizAPIService
             int idx = 0;
             foreach (var answer in answers)
             {
-                AnswerDto answerDto = new AnswerDto()
+                AnswerDto answerDto;
+                if (answer.IsRange)
                 {
-                    Id = ++idx,
-                    Text = answer.Name,
-                    IsCorrect = answer.IsGood
-                };
+                    answerDto = new AnswerDto()
+                    {
+                        Id = ++idx,
+                        Text = answer.Name,
+                        IsCorrect = answer.IsGood,
+                        IsRange = answer.IsRange,
+                        Min = answer.Min,
+                        Max = answer.Max,
+                        MinCounted = answer.MinCounted,
+                        MaxCounted = answer.MaxCounted,
+                        Step = answer.Step
+                    };
+                }
+                else
+                {
+                    answerDto = new AnswerDto()
+                    {
+                        Id = ++idx,
+                        Text = answer.Name,
+                        IsCorrect = answer.IsGood,
+                        IsRange = answer.IsRange
+                    };
+                }
+                
                 answerDtos.Add(answerDto);
             }
             QuizQuestionsReqDto questionsReqDto = new QuizQuestionsReqDto()
