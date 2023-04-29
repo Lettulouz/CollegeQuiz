@@ -7,7 +7,7 @@ namespace CollegeQuizWeb.Entities;
 public class QuestionTypeEntity : AbstractAuditableEntity
 {
     [Column("site_id")]
-    public int Type_Id { get; set; }
+    public int TypeId { get; set; }
     
     [Column("name")]
     public string Name { get; set; }

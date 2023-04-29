@@ -30,6 +30,11 @@ public class UserController : Controller
         return View(val);
     }
 
+    public async Task<IActionResult> EditProfile()
+    {
+        return View();
+    }
+
     public async Task<IActionResult> YourCoupons()
     {
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
