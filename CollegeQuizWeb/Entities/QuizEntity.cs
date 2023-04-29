@@ -22,4 +22,6 @@ public class QuizEntity : AbstractAuditableEntity
     
     public virtual UserEntity UserEntity { get; set; }
     public virtual ICollection<SharedQuizesEntity> SharedQuizesEntities { get; set; }
+    
+    public virtual ICollection<QuizCategoryEntity> QuizCategoryEntities { get; set; }
 }

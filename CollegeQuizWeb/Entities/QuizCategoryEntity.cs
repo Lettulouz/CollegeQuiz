@@ -3,15 +3,15 @@ using CollegeQuizWeb.DbConfig;
 
 namespace CollegeQuizWeb.Entities;
 
-[Table("shared_quizes")]
-public class SharedQuizesEntity
+[Table("quiz_categories")]
+public class QuizCategoryEntity
 {
     [Column("quiz_id")]
     public long QuizId { get; set; }
     
-    [Column("user_id")]
-    public long UserId { get; set; }
+    [Column("category_id")]
+    public long CategoryId { get; set; }
     
     public virtual QuizEntity QuizEntity { get; set; }
-    public virtual UserEntity UserEntity { get; set; }
+    public virtual CategoryEntity CategoryEntity { get; set; }
 }

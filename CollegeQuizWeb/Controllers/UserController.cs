@@ -19,6 +19,9 @@ public class UserController : Controller
     
     public async Task<IActionResult> Profile()
     {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         ViewBag.Username = isLogged;
         
