@@ -183,15 +183,12 @@ public class UserService : IUserService
             CreatedAt = userInfo.CreatedAt,
             Email = userInfo.Email,
             AccountStatus = userInfo.AccountStatus,
-            Username = userInfo.Username
+            Username = userInfo.Username,
+            Password = userInfo.Password
         };
 
         return UserDto;
     }
-    
-    
-    
-    
     public async Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username)
     {
         var userId = _context.Users.FirstOrDefault(o => o.Username.Equals(username)).Id;

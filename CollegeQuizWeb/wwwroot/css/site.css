@@ -270,6 +270,12 @@ select{
     outline: none;
     border: 2px solid #000
 }
+.btn-color-one-short{
+    color: #19452e;
+    background-color: #63c4ab;
+    border: none;
+}
+
 
 .btn-color-one {
     height: 50px;
@@ -298,6 +304,10 @@ select{
 }
 
 .btn-color-one:hover {
+    background-color: #64B7A2;
+}
+
+.btn-color-one-short:hover {
     background-color: #64B7A2;
 }
 
