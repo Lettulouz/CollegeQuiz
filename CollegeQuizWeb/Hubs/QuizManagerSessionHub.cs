@@ -56,7 +56,14 @@ public class QuizManagerSessionHub : Hub
             {
                 questionId = q.QuestionEntity.Index,
                 question = q.QuestionEntity.Name,
+                question_type = q.QuestionEntity.QuestionTypeEntity.TypeId,
                 answers = q.Name,
+                is_range = q.IsRange,
+                step = q.Step,
+                min = q.Min,
+                max = q.Max,
+                min_counted = q.MinCounted,
+                max_counted = q.MaxCounted,
                 time_min = q.QuestionEntity.TimeMin,
                 time_sec = q.QuestionEntity.TimeSec
             })
@@ -65,8 +72,15 @@ public class QuizManagerSessionHub : Hub
             {
                 questionId = q.Select(a => a.questionId).Distinct().FirstOrDefault(),
                 question = q.Select(a => a.question).Distinct().FirstOrDefault(),
+                questionType = q.Select(a => a.question_type).Distinct().FirstOrDefault(),
                 answers = q.Select(a => a.answers).ToList(),
-                time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum()
+                time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum(),
+                is_range = q.Select(a => a.is_range).Distinct().FirstOrDefault(),
+                step = q.Select(a => a.step).Distinct().FirstOrDefault(),
+                min = q.Select(a => a.min).Distinct().FirstOrDefault(),
+                max = q.Select(a => a.max).Distinct().FirstOrDefault(),
+                min_counted = q.Select(a => a.min_counted).Distinct().FirstOrDefault(),
+                max_counted = q.Select(a => a.max_counted).Distinct().FirstOrDefault()
             }).ToListAsync();
         
         Console.WriteLine("punkt testowy 3");
