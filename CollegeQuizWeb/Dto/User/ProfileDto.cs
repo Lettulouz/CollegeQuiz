@@ -14,5 +14,7 @@ public class ProfileDto
     
     public int AccountStatus { get; set; }
     
+    public string? Password { get; set; }
+    
     public DateTime CreatedAt { get; set; }
 }
