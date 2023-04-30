@@ -8,8 +8,9 @@ const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const SessionContext = createContext(null);
 
-const ANSWER_LETTERS = [ "A", "B", "C", "D" ];
-const ANSWER_SVGS = [ "/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg", "/gfx/tealCard.svg" ];
+const ANSWER_LETTERS = [ "A", "B", "C", "D", "E", "F" ];
+const ANSWER_SVGS = [ "/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg", 
+    "/gfx/tealCard.svg", "/gfx/oliveCard.svg", "/gfx/darkgreenCard.svg" ];
 
 const LeaveSessionButtonComponent = props => {
     const {
@@ -83,7 +84,7 @@ const MainWindowGameComponent = () => {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer,
         setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
-        setIsLast
+        setIsLast, setAnswerSett, answerSett, questionType, setQuestionType
     } = useContext(SessionContext);
     
     const [ counting, setCounting ] = useState(5);
@@ -97,7 +98,18 @@ const MainWindowGameComponent = () => {
         connection.on("QUESTION_P2P", answ=>{
             const parsedAnswers = JSON.parse(answ);
             setQuestion(parsedAnswers.question);
+            setAnswerSett(
+                {
+                    step: parsedAnswers.step, 
+                    min: parsedAnswers.min, 
+                    max: parsedAnswers.max, 
+                    min_counted: parsedAnswers.min_counted, 
+                    max_counted: parsedAnswers.max_counted
+                }
+            );
             setAnswers(parsedAnswers.answers.map(q=> q));
+            console.log(parsedAnswers.answers.map(q=> q));
+            setQuestionType(parsedAnswers.questionType);
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
             setIsAnswerSet(false);
@@ -153,9 +165,15 @@ const MainWindowGameComponent = () => {
             case QUESTION_RESULT_SCREEN: return (
                 <QuestionResultComponent/>
             );
-            default: return (
-                <QuestionType1Component/>
-            );
+            default:
+
+                switch(questionType){
+                    case 1: return <QuestionType1Component/>;
+                    case 2: return <QuestionType2Component/>;
+                    case 3: return <QuestionType3Component/>;
+                    case 4: return <QuestionType4Component/>;
+                    case 5: return <QuestionType5Component/>;
+                }
         }
     };
     
@@ -224,6 +242,8 @@ const QuestionResultComponent = () => {
     );
 }
 
+
+// 4 ANSWERS, ONE CORRECT
 const QuestionType1Component = () => {
     const { question, questionTimer } = useContext(SessionContext);
     return (
@@ -259,6 +279,161 @@ const QuestionType1Component = () => {
     );
 }
 
+
+// TRUE/FALSE
+const QuestionType2Component = () => {
+    const { question, questionTimer } = useContext(SessionContext);
+    return (
+        <div className="container d-flex">
+            <div className="row d-flex justify-content-center">
+                <div className="col-1 px-0">
+                    <div className="card card-img-custom">
+                        <img src="/gfx/timer.svg" alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-9">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <h3>{question}</h3>
+                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={0}/>
+                        <QuestionCardComponent number={1}/>
+                    </div>
+                </div>
+                <div className="col-2 px-0">
+                    <LeaveSessionButtonComponent text="Wyjdź"/>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// FOUR ANSWERS, MANY CORRECT
+const QuestionType3Component = () => {
+    const { question, questionTimer } = useContext(SessionContext);
+    return (
+        <div className="container d-flex">
+            <div className="row d-flex justify-content-center">
+                <div className="col-1 px-0">
+                    <div className="card card-img-custom">
+                        <img src="/gfx/timer.svg" alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-9">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <h3>{question}</h3>
+                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={0}/>
+                        <QuestionCardComponent number={1}/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={2}/>
+                        <QuestionCardComponent number={3}/>
+                    </div>
+                </div>
+                <div className="col-2 px-0">
+                    <LeaveSessionButtonComponent text="Wyjdź"/>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// SIX ANSWERS, ONE CORRECT
+const QuestionType4Component = () => {
+    const { question, questionTimer } = useContext(SessionContext);
+    return (
+        <div className="container d-flex">
+            <div className="row d-flex justify-content-center">
+                <div className="col-1 px-0">
+                    <div className="card card-img-custom">
+                        <img src="/gfx/timer.svg" alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-9">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <h3>{question}</h3>
+                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={0}/>
+                        <QuestionCardComponent number={1}/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={2}/>
+                        <QuestionCardComponent number={3}/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <QuestionCardComponent number={4}/>
+                        <QuestionCardComponent number={5}/>
+                    </div>
+                </div>
+                <div className="col-2 px-0">
+                    <LeaveSessionButtonComponent text="Wyjdź"/>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+
+// RANGE
+const QuestionType5Component = () => {
+    const { question, questionTimer } = useContext(SessionContext);
+    useEffect(() => {
+        var stepsSlider = document.getElementById('steps-slider');
+
+        noUiSlider.create(stepsSlider, {
+            start: [0, 100],
+            connect: true,
+            range: {
+                'min': [0, 10],
+                'max':100
+            }
+        });
+
+        stepsSlider.noUiSlider.on('update', function (values, handle) {
+        });
+    }, []);
+    return (
+        <div className="container d-flex">
+            <div className="row d-flex justify-content-center">
+                <div className="col-1 px-0">
+                    <div className="card card-img-custom">
+                        <img src="/gfx/timer.svg" alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-9">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <h3>{question}</h3>
+                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <div id="steps-slider"></div>
+                    </div>
+                </div>
+                <div className="col-2 px-0">
+                    <LeaveSessionButtonComponent text="Wyjdź"/>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 const QuestionCardComponent = ({ number }) => {
     const {
@@ -389,7 +564,9 @@ const QuizSessionRootComponent = () => {
     const [ isLeaveClicked, setIsLeaveClicked ] = useState(false);
     const [ quizStarted, setQuizStarted ] = useState(false);
     const [ answers, setAnswers ] = useState([]);
+    const [ answerSett, setAnswerSett ] = useState ({step: "", min: "", max: "", min_counted: "", max_counted: ""});
     const [ question, setQuestion ] = useState('');
+    const [ questionType, setQuestionType ] = useState(null);
     const [ questionTimer, setQuestionTimer ] = useState(null);
     const [ questionNumber, setQuestionNumber ] = useState(null);
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
@@ -408,7 +585,7 @@ const QuizSessionRootComponent = () => {
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
             afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
-            currentAnswer, setCurrentAnswer, isLast, setIsLast
+            currentAnswer, setCurrentAnswer, isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType
         }}>
             {isActive && <>
                 {isConnect ? <>

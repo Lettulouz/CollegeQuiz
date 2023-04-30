@@ -55,13 +55,20 @@ public class QuizAPIService : IQuizAPIService
                 Message = "Wartość sekund nie może być mniejsza od 10 i większa od 59."
             };
             if (min < 0) min = 0;
+            var questionType = await _context.QuestionTypeEntities.FirstOrDefaultAsync(t => t.Name.Equals(question.Type));
+            if (questionType == null) return new SimpleResponseDto()
+            {
+                IsGood = false,
+                Message = "Nie znaleziono typu pytania."
+            };
             QuestionEntity questionEntity = new QuestionEntity()
             {
                 Index = question.Id,
                 Name = question.Text,
                 TimeMin = min,
                 TimeSec = sec,
-                QuizEntity = quizEntity
+                QuizEntity = quizEntity,
+                QuestionTypeEntity = questionType
             };
             // sprawdzenie, czy odpowiedzi nie są takie same
             var flattedAnswers = question.Answers.Select(a => a.Text).ToList();

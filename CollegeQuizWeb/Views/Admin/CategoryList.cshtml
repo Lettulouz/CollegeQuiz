@@ -1,0 +1,321 @@
+@model List<CollegeQuizWeb.Dto.Admin.CategoryListDto>
+
+@{
+    ViewBag.Title = "Lista kategorii";
+    Layout = "_AdminLayout";
+}
+
+<h1 class="text-muted px-2">Lista kategorii</h1> 
+<hr class="divider mt-0">
+
+<form method="POST" asp-controller="Admin" asp-action="DelCategory">
+
+    <input type="hidden" id="Id" asp-for="@Model[0].CategoryId"/>
+    <button type="submit" hidden="hidden" id="deleteButtonHidden"></button>
+</form>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="row mt-3 mx-0 px-0">
+            <div class="col">
+                <nav aria-label="Site Pagination">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item me-2">
+                            <select class="form-select justify-content-end" id="quizsPerPagePag" onchange="quizsPerPageChange()">
+                                <option value="10">10</option>
+                                <option value="25" selected="selected">25</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                            </select>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link " onclick="goToFirstPage()">
+                                <i class="bi bi-caret-left-fill"></i>
+                            </button>
+                        </li>
+                        <li class="page-item ">
+                            <button class="page-link " onclick="prevPage()">
+                                <i class="bi bi-arrow-left"></i>
+                            </button>
+                        </li>
+                        <li class="page-item page-num1" style="width: 75px">
+                            <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                        </li>
+                        <li class="page-item page-num2" style="width: 75px">
+                            <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="nextPage()">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="goToLastPage()">
+                                <i class="bi bi-caret-right-fill"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    @if (ViewBag.categoryRemoved != null)
+    {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            @ViewBag.categoryRemoved
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (Model.FirstOrDefault() != null)
+    {
+        <div id="renderTable"></div>
+    }
+    else
+    {
+        <h2>Brak kategorii</h2>
+    }
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    @{
+        var categoryList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+    }
+ 
+ $(document).ready(function (){
+ 
+         allList("");
+         hideButtons();
+     });
+ 
+ $('#pagination123').keypress(function(e) {
+         let a = [];
+         let k = e.which;
+     
+         for (i = 48; i < 58; i++)
+             a.push(i);
+     
+         if (!(a.indexOf(k)>=0))
+             e.preventDefault();
+     });
+     
+     $('#pagination123').on("cut copy paste",function(e) {
+           e.preventDefault();
+        });
+     
+     function changePageInput(obj){
+             if (parseInt(obj.value)>parseInt(maxPage))
+                 obj.value = maxPage;
+             page = obj.value;
+             redirectToProperList();
+         }
+         
+         let quizList = @(categoryList);
+             let selectedquizsList = [];
+             let page = 1;
+             let recordsPerPage = 25;
+             let chosenFilter = 1;
+             let maxPage = 1;
+             var globalList = []; 
+     // https://stackoverflow.com/questions/2116558/fastest-method-to-replace-all-instances-of-a-character-in-a-string
+         String.prototype.replaceAll = function(str1, str2, ignore) 
+         {
+             return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),
+             (ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+         } 
+         
+     function quizsPerPageChange(){
+             recordsPerPage = parseInt(document.getElementById('quizsPerPagePag').value);
+             page = 1;
+             redirectToProperList();
+         }
+    
+      function delSearch(){
+             document.getElementById("searchBox").value="";
+             searchList("");
+      }
+      
+          
+     function filterButtonClick(option){
+             page = 1;
+             document.getElementById('pagination123').value = 1;    
+             selectedquizsList = [];
+             let res=document.getElementById("searchBox").value.toLowerCase()
+             switch (option){  
+                 case 1:             
+                     allList(res);
+                     break;
+                 case 2:
+                     publicList(res);
+                     break;
+                 case 3:
+                     privateList(res);
+                     break;
+                 case 4:
+                     searchList(res);
+                     break;
+             }
+         }
+      
+         function allList(val){ 
+                 document.getElementById('pagination123').value = page;
+                 chosenFilter = 1;
+                 let filteredquizList = quizList;
+                 let filteredquizList2 = [];
+                 let initialLength = filteredquizList.length;
+                 for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                     if (filteredquizList[i] != null)
+                         filteredquizList2.push(filteredquizList[i]);
+                 }
+                 globalList=filteredquizList2
+                 generateListHTML(filteredquizList2, initialLength);
+             }
+             
+         function searchList(val){
+            document.getElementById('pagination123').value = page;
+            
+           let filteredquizList = globalList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
+           let filteredquizList2 = [];
+           let initialLength = filteredquizList.length;
+           for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+               if (filteredquizList[i] != null)
+                   filteredquizList2.push(filteredquizList[i]);
+           }
+           generateListHTML(filteredquizList2, initialLength);
+           redirectToProperList()  
+        }
+                            
+         function generateListHTML(quizListLoc, initialLength){
+                 $("[data-toggle=\"tooltip\"]").tooltip();
+                 let numberOfPages = parseInt(initialLength/recordsPerPage);
+                 if(initialLength%recordsPerPage !== 0)
+                     numberOfPages++;
+                 if (isNaN(numberOfPages))
+                     numberOfPages = 1;
+                 let innerTextVal =`z ${numberOfPages}`;
+                 maxPage = numberOfPages;
+                 document.getElementById('pagination321').innerText = innerTextVal;
+                 let currentDate = new Date();                 
+                 let html = `<table class="table text-center">
+                     <thead>
+                     <tr>
+                     <th>Nazwa</th>
+                     <th></th>
+                     </tr>
+                     </thead>
+                     <tbody>`;
+                      let i=0;
+                 quizListLoc.forEach(obj => {
+                     html+=`<tr class="tabrow">
+                     <td>${obj.CategoryName}</td>`
+                     
+                     html+=`
+                     <td>
+
+                    <div class='listBtn mb-1'>
+                        <button type='button' data-toggle='collapse' class='btn btn-dark d-inline btn-sm' 
+                        data-bs-toggle='collapse' data-bs-target='#btnGrp${i}' aria-expanded='false'>
+                            <i class='bi bi-list'></i>
+                        </button>
+                    </div>
+                      <div class="dyn" id="btnGrp${i}">  
+                     <div class="btn-group btn-group-sm bGroup p-0 m-0">
+                     
+                         <a type="button" val="${obj.CategoryId}" class="btn btn-sm btn-danger right-button" onclick="deleteCategory(this)" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" data-bs-title="Usuń quiz"><i class="bi bi-trash"></i></a>
+            
+                 </div>
+                 </div>
+                    </td>
+                    </tr>`
+                    i++;
+                 });             
+                 html+=`</tbody>
+                 </table>`;
+                 document.getElementById('renderTable').innerHTML = html;
+                 hideButtons();
+             }
+             
+             function nextPage(){
+                     if (page<maxPage){
+                         page++;
+                         redirectToProperList();
+                     }     
+                 }
+                 
+                 function prevPage(){
+                     if (page>1){
+                         page--;
+                         redirectToProperList();
+                     } 
+                 }
+                 
+                 function redirectToProperList(){
+                    let res=document.getElementById("searchBox").value.toLowerCase();
+                     switch(chosenFilter){
+                         case 1: 
+                             allList(res);
+                             break;
+                         case 2: 
+                             publicList(res);
+                             break;    
+                         case 3: 
+                             privateList(res);
+                             break; 
+                         case 4:
+                             searchList(res);
+                             break;
+                     }
+                 }
+                 
+                 function goToFirstPage(){
+                     page = 1;
+                     redirectToProperList();
+                 }
+                 
+                 function goToLastPage(){
+                     page = maxPage;
+                     redirectToProperList();
+                 }
+                 
+                 function confirmFormSubmit(){
+                         let temp = document.getElementById('deleteButtonHidden');
+                         temp.click();
+                     }
+                 
+                 function deleteCategory(obj){
+                         let value = $(obj).attr("val");
+                         quizId = document.getElementById('Id');
+                         quizId.value = value;
+                         confirmFormSubmit();
+                     }
+                     
+                     function hideButtons(){
+                              if($('main').width()<970){
+                                  $(".dyn").addClass("collapse");
+                                  $(".bGroup").addClass("btn-group-vertical");
+                                  $(".bGroup").removeClass("btn-group");
+                                  $(".tabBtn").addClass("d-block");
+                                  $(".tabLink").addClass("mt-1");
+                                 $(".listBtn").show();
+                              }else{
+                                  $(".dyn").removeClass("collapse")
+                                  $(".bGroup").removeClass("btn-group-vertical ");
+                                  $(".bGroup").addClass("btn-group");
+                                  $(".tabBtn").removeClass("d-block");
+                                  $(".tabLink").removeClass("mt-1");
+                                  $(".listBtn").hide();
+                              }
+                          }
+                      
+                          $(window).resize(function(){
+                              hideButtons();
+                          })
+                 
+    document.getElementById('quiz_collapse').classList.add('show');
+    document.getElementById('quiz_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+    document.getElementById('quiz_collapse_btn').setAttribute( 'style', 'color:white !important' );
+    document.getElementById('categories_list').setAttribute( 'style', 'color:white !important' );
+</script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>

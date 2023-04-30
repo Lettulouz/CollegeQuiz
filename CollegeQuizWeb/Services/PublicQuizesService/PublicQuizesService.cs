@@ -74,8 +74,8 @@ public class PublicQuizesService : IPublicQuizesService
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
                     goodAnswers = q.Select(a => a.goodAnswer).ToList(),
-                    time_min= q.Sum(a=>a.time_min/4),
-                    time_sec = q.Sum(a=>a.time_sec/4)
+                    time_min= q.Select(a=>a.time_min).FirstOrDefault(),
+                    time_sec = q.Select(a=>a.time_sec).FirstOrDefault()
                 })
                 .ToListAsync();
         }
