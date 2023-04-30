@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CollegeQuizWeb.Utils;
 
 namespace CollegeQuizWeb.API.Dto;
 
@@ -15,4 +16,6 @@ public class QuizQuestionsReqDto
 public class AggregateQuestionsReqDto
 {
     public List<QuizQuestionsReqDto> Aggregate { get; set; }
+    public List<QuizMode> AvailableModes { get; set; }
+    public string PermissionModesMessage { get; set; }
 }

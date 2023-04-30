@@ -12,18 +12,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
-<script>
-function copyToBoard(obj, quizId)
-    {
-        var shareCode = document.getElementById(quizId);
-        if (shareCode.style.display === 'none') {shareCode.style.display = 'block';}
-            let row = $(obj).parent().parent();
-            let valueToCopy = row.find('.copy-class').text().replaceAll(" ","").replaceAll("\n",""); // Miłosz nie patrz pls
-            navigator.clipboard.writeText(valueToCopy);
-            let message = `Skopiowano token udostepniający ${valueToCopy} do schowka.`;
-            toastr.success(message);
-    }
-</script>
 
 <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
@@ -102,18 +90,46 @@ function copyToBoard(obj, quizId)
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
         @foreach (var quizes in ViewBag.QuizesShared)
         {
+            <div class="modal fade" id="deleteSharedQuiz-@quizes.Id" tabIndex="-1" aria-hidden="false" data-bs-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5">Usuwanie udostępnionego quizu</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body fw-normal">
+                            Czy na pewno chcesz usunąć udostępniony quiz o nazwie <strong>@quizes.Name</strong>?
+                            Operacji nie można cofnąć.
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-color-one bg-danger text-white" asp-action="DeleteSharedQuiz"
+                               asp-controller="Quiz" asp-route-id="@quizes.Id">
+                                Usuń udostępniony quiz
+                            </a>
+                            <button type="button" class="btn-color-one" data-bs-dismiss="modal">
+                                Zamknij okno
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col mb-3">
                 <div class="card card-resize color-random text-bg-success mb-3 h-100 mt-3" style="max-width: 18rem;">
                     <div class="d-flex justify-content-between pt-3 mx-3">
                         <p class="card-text">
                             Ilość pytań: @quizes.CountOfQuestions
                         </p>
-                        @if (@quizes.CountOfQuestions != 0)
-                        {
-                            <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quizes.Id">
-                                <i class="bi bi-plus-circle"></i>
-                            </a>
-                        }
+                        <div class="hstack gap-2">
+                            <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteSharedQuiz-@quizes.Id">
+                                <i class="bi bi-trash3 btn-danger-glass-icon"></i>
+                            </button>
+                            @if (@quizes.CountOfQuestions != 0)
+                            {
+                                <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quizes.Id">
+                                    <i class="bi bi-plus-circle"></i>
+                                </a>
+                            }
+                        </div>
                     </div>
                     <a class="btn text-decoration-none" asp-action="SharePage" asp-controller="SharedQuizes" asp-route-id="@quizes.Id">
                         <div class="card-body">

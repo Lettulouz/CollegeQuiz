@@ -121,10 +121,24 @@ public class QuizService : IQuizService
 
     public async Task<QuizDetailsDto> GetQuizDetails(string userLogin, long quizId, QuizController controller)
     {
-        var quizEntity = await _context.Quizes.Include(q => q.UserEntity)
+        var quizEntity = await _context.Quizes
+            .Include(q => q.UserEntity)
             .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(userLogin));
         if (quizEntity == null)
         {
+            controller.Response.Redirect("/Quiz/MyQuizes");
+            return new QuizDetailsDto();
+        }
+        var quizLobby = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.QuizId.Equals(quizId));
+        if (quizLobby != null && quizLobby.IsEstabilished)
+        {
+            AlertDto alertDto2 = new AlertDto()
+            {
+                Type = "alert-danger",
+                Content = Lang.DISABLE_EDITABLE_QUIZ
+            };
+            controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
             controller.Response.Redirect("/Quiz/MyQuizes");
             return new QuizDetailsDto();
         }
@@ -155,7 +169,7 @@ public class QuizService : IQuizService
             if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
             
             await _hubContext.Clients.Group(test.Code).SendAsync("OnDisconectedSession", "Host zakończył sesję.");
-            test.InGameScreen = "WAITING";
+            test.InGameScreen = "WAITING_SCREEN";
             test.Code = generatedCode;
             test.IsEstabilished = false;
             test.HostConnId = string.Empty;
@@ -167,7 +181,7 @@ public class QuizService : IQuizService
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
             Code = generatedCode,
-            InGameScreen = "WAITING",
+            InGameScreen = "WAITING_SCREEN",
             UserHostId = userId,
             QuizId = quizId,
             HostConnId = string.Empty,
@@ -197,17 +211,65 @@ public class QuizService : IQuizService
         var deletedQuiz = await _context.Quizes
             .Include(q => q.UserEntity)
             .FirstOrDefaultAsync(q => q.UserEntity.Username.Equals(loggedUsername) && q.Id.Equals(quizId));
-        if (deletedQuiz == null)
+        var quizLobby = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.QuizId.Equals(quizId));
+        if (quizLobby != null && quizLobby.IsEstabilished)
         {
-            responseMessage = Lang.DELETE_QUIZ_NOT_FOUND;
+            responseMessage = Lang.DISABLE_REMOVABLE_QUIZ;
             viewBagType = "alert-danger";
         }
         else
         {
-            responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_QUIZ, deletedQuiz.Name);
-            viewBagType = "alert-success";
-            _context.Quizes.Remove(deletedQuiz);
-            await _context.SaveChangesAsync();
+            if (deletedQuiz == null)
+            {
+                responseMessage = Lang.DELETE_QUIZ_NOT_FOUND;
+                viewBagType = "alert-danger";
+            }
+            else
+            {
+                responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_QUIZ, deletedQuiz.Name);
+                viewBagType = "alert-success";
+                _context.Quizes.Remove(deletedQuiz);
+                await _context.SaveChangesAsync();
+            }   
+        }
+        AlertDto alertDto2 = new AlertDto()
+        {
+            Type = viewBagType,
+            Content = responseMessage
+        };
+        controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
+    }
+
+    public async Task DeleteSharedQuiz(long quizId, string loggedUsername, Controller controller)
+    {
+        string responseMessage, viewBagType;
+        
+        var deletingSharedQuiz = await _context.SharedQuizes
+            .Include(q => q.UserEntity)
+            .Include(q => q.QuizEntity)
+            .FirstOrDefaultAsync(q => q.UserEntity.Username.Equals(loggedUsername) && q.QuizId.Equals(quizId));
+        if (deletingSharedQuiz == null)
+        {
+            responseMessage = Lang.DELETE_SHARED_QUIZ_NOT_FOUND;
+            viewBagType = "alert-danger";
+        }
+        else
+        {
+            var quizLobby = await _context.QuizLobbies
+                .FirstOrDefaultAsync(q => q.QuizId.Equals(quizId) && q.UserHostId.Equals(deletingSharedQuiz.UserEntity.Id));
+            if (quizLobby != null && quizLobby.IsEstabilished)
+            {
+                responseMessage = Lang.DISABLE_DELETE_SHARED_QUIZ;
+                viewBagType = "alert-danger";
+            }
+            else
+            {
+                responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_SHARED_QUIZ, deletingSharedQuiz.QuizEntity.Name);
+                viewBagType = "alert-success";
+                _context.SharedQuizes.Remove(deletingSharedQuiz);
+                await _context.SaveChangesAsync();
+            }   
         }
         AlertDto alertDto2 = new AlertDto()
         {

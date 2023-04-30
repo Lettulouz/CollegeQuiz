@@ -1,16 +1,9 @@
 import { useLoadableContent } from "./Hooks.jsx";
 import { getCommonFetchObj, alertOff, alertInfo, alertDanger, getCommonFetchObjWithBody } from "./Utils.jsx";
-const { useEffect, useState, createContext, useContext, useRef } = React;
+const { useEffect, useState, createContext, useContext } = React;
 
 const QuestionsContext = createContext(null);
 const MainContext = createContext(null);
-const QUESTION_TYPES = [
-    { title: "4 odpowiedzi, jedna prawidłowa", slug: "SINGLE_FOUR_ANSWERS", },
-    { title: "Prawda fałsz", slug: "TRUE_FALSE" },
-    { title: "4 odpowiedzi, wiele prawidłowych", slug: "MULTIPLE_FOUR_ANSWERS" },
-    { title: "6 odpowiedzi, jedna prawidłowa", slug: "SINGLE_SIX_ANSWERS" },
-    { title: "Zakres", slug: "RANGE" },
-];
 
 let QUIZ_NAME = document.getElementById("addQuizQuestionsRoot").dataset.quizName;
 const QUIZ_ID = document.getElementById("addQuizQuestionsRoot").dataset.quizId;
@@ -18,6 +11,7 @@ const QUIZ_ID = document.getElementById("addQuizQuestionsRoot").dataset.quizId;
 const QuizChangeNameComponent = () => {
     const { setAlert } = useContext(MainContext);
     const [ quizName, setQuizName ] = useState(QUIZ_NAME);
+    const [ quizNameInvalid, setQuizNameInvalid ] = useState(false);
 
     const changeQuizName = e => {
         e.preventDefault();
@@ -37,18 +31,21 @@ const QuizChangeNameComponent = () => {
             });
     };
 
+    useEffect(() => {
+        setQuizNameInvalid(quizName.length < 3); 
+    }, [ quizName ]);
+    
     return (
         <>
             <div className="hstack gap-3 w-100 mb-3">
                 <form onSubmit={changeQuizName} className="hstack gap-2 w-100">
                     <input type="text" className="form-control" value={quizName} onChange={e => setQuizName(e.target.value)}/>
-                    <button type="submit" className="btn btn-color-one fit-content">
+                    <button type="submit" className="btn btn-color-one fit-content" disabled={quizNameInvalid}>
                         <i className="bi bi-check-lg text-white"></i>
                     </button>
                     <button type="button" className="btn btn-color-one fit-content" onClick={() => setQuizName(QUIZ_NAME)}
                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip on top">
                         <i className="bi bi-arrow-counterclockwise text-white"></i>
-
                     </button>
                 </form>
             </div>
@@ -143,7 +140,7 @@ const QuizSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers }) => {
                         <input type="checkbox" className="form-check-input" id={questionId} name={groupId}
                                checked={answer.isCorrect} onChange={e => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, e.target.checked)}/>
                     </> : <>
-                        <input type="radio" className="form-check-input" id={questionId} name={groupId}
+                        <input type="radio" className="form-check-input form-check-input-radio" id={questionId} name={groupId}
                                checked={answer.isCorrect} onChange={() => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, true)}/>
                     </>}
                     <label htmlFor={questionId} className="form-check-label">
@@ -157,12 +154,10 @@ const QuizSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers }) => {
 
 const QuizQuestionComponent = () => {
     const {
-        q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds, onSetQuestionType,
-        onChangeQuestionType
+        q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds, onSetQuestionType, availableModes
     } = useContext(QuestionsContext);
     
-    const generateOptions = QUESTION_TYPES.map(o => <option key={o.slug} value={o.slug}>{o.title}</option>);
-    const isMount = useRef(false);
+    const generateOptions = availableModes.map(o => <option key={o.slug} value={o.slug}>{o.title}</option>);
     
     const answersComponents = q.answers.map((answer, idx) => (
         <QuizSingleGoodAnswerComponent
@@ -170,12 +165,6 @@ const QuizQuestionComponent = () => {
             isMultipleAnswers={q.type === "MULTIPLE_FOUR_ANSWERS"}
         />
     ));
-    
-    useEffect(() => {
-        if (isMount.current) onChangeQuestionType(q.id, q.type);
-    }, [ q.type ])
-    
-    useEffect(() => { isMount.current = true }, []);
     
     useEffect(() => {
         if (q.timeMin.length > 3) onSetMinutes(q.id, q.timeMin.slice(0, 3));
@@ -210,8 +199,7 @@ const QuizQuestionComponent = () => {
                                        maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
                             </div>
                         </div>
-                        {q.id > 1 && <button className="btn btn-danger text-white ms-2"
-                                             onClick={() => onRemoveQuestion(q.id)}>X</button>}
+                        <button className="btn btn-danger text-white ms-2" onClick={() => onRemoveQuestion(q.id)}>X</button>
                     </div>
                 </div>
             </div>
@@ -224,7 +212,7 @@ const initialQuestions = [
     {
         id: 1,
         text: '',
-        timeMin: '',
+        timeMin: '0',
         timeSec: '',
         type: 'SINGLE_FOUR_ANSWERS',
         answers: [
@@ -243,11 +231,14 @@ const AddQuizQuestionsRoot = () => {
     const [ isActive, setActiveCallback ] = useLoadableContent();
     const [ isSended, setIsSended ] = useState(false);
     const [ isNotValid, setIsNotValid ] = useState(false);
+    const [ availableModes, setAvailableModes ] = useState([]);
+    const [ infoModesAlert, setInfoModesAlert ] = useState('');
     
     const onSetQuestionType = (type, questionId) => {
         const qst = [ ...questions ];
         const idx = qst.findIndex(q => q.id === questionId);
         qst[idx].type = type;
+        onChangeQuestionType(questionId, type);
         setQuestions(qst);
     };
     
@@ -295,7 +286,7 @@ const AddQuizQuestionsRoot = () => {
         setQuestions([ ...questions, {
             id: questions.length + 1,
             text: '',
-            timeMin: '',
+            timeMin: '0',
             timeSec: '',
             type: 'SINGLE_FOUR_ANSWERS',
             answers: [
@@ -382,6 +373,8 @@ const AddQuizQuestionsRoot = () => {
             return r.json()
         }).then(r => { 
             if (r.aggregate.length !== 0) setQuestions(r.aggregate);
+            setAvailableModes(r.availableModes);
+            setInfoModesAlert(r.permissionModesMessage);
         }).catch(e => {
             if (e === undefined) return;
             setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
@@ -401,7 +394,7 @@ const AddQuizQuestionsRoot = () => {
     const generateQuestionsComponents = questions.map((q, idx) => (
         <QuestionsContext.Provider key={idx} value={{
             q, setQuestions, onSetQuestionAnswer, onChangeCorrectAnswer, onSetQuestionTitle, onRemoveQuestion,
-            onSetMinutes, onSetSeconds, onSetQuestionType, onChangeQuestionType, onSetRangeProp, setIsNotValid
+            onSetMinutes, onSetSeconds, onSetQuestionType, onSetRangeProp, setIsNotValid, availableModes
         }}>
             <QuizQuestionComponent/>
         </QuestionsContext.Provider>
@@ -410,6 +403,14 @@ const AddQuizQuestionsRoot = () => {
     return (
         <MainContext.Provider value={{ setAlert }}>
             {isActive && <>
+                <div className="alert alert-warning">
+                    Aby zaktualizowac nazwę quizu, musi się składać ono z przynajmniej 3 znaków. Aby poprawnie
+                    dodać/zaktualizować pytania, każde pole musi zostać wypełnione przynajmniej dwoma znakami
+                    a w przypadku odpowiedzi, musi być przynajmniej jedna zaznaczona.
+                </div>
+                <div className="alert alert-info">
+                    <span dangerouslySetInnerHTML={{ __html: infoModesAlert }}></span>
+                </div>
                 {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
                     <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
                     <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>

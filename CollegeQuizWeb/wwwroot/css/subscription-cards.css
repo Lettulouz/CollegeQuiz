@@ -1,0 +1,91 @@
+.payments-card-standard,
+.payments-card-premium {
+    z-index: 0;
+    min-height: 65vh;
+    border-radius: 5px;
+    background-color: rgb(247, 254, 245, .8);
+}
+
+.payments-card-standard {
+    transform: translateX(10px) scale(0.9);
+    border: 2px solid #63c4ab;
+}
+
+.payments-card-middle {
+    background-color: #e1c97b;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
+    z-index: 1;
+    min-height: 65vh;
+}
+
+.payments-card-premium {
+    transform: translateX(-10px) scale(0.9);
+    border: 2px solid #81d9dd;
+}
+
+.payments-card-button {
+    background-color: #63c4ab;
+    color: #f7fef5;
+}
+.payments-card-button:disabled {
+    opacity: .6;
+}
+.payments-card-button:hover {
+    background-color: #3a8a7f;
+    color: #f7fef5;
+}
+.payments-card-button.premium {
+    background-color: #81d9dd;
+    color: #383838;
+}
+.payments-card-button.premium:hover {
+    background-color: #6db5b7;
+    color: #f7fef5;
+}
+
+.payments-card-middle-button {
+    background-color: #f7fef5;
+    color: #63c4ab;
+    border: 2px solid #f7fef5;
+}
+.payments-card-middle-button:hover {
+    background-color: transparent;
+    color: #f7fef5;
+}
+
+.payments-card-standard div h2 {
+    color: #63c4ab;
+}
+.payments-card-middle div h2 {
+    color: #f7fef5;
+}
+.payments-card-premium div h2 {
+    color:  #81d9dd;
+}
+
+.card-price {
+    color: #545454;
+}
+
+.card-list {
+    color: #545454;
+}
+
+.card-description {
+    line-height: 1.2;
+    color: #545454;
+}
+
+.card-list li {
+    line-height: 1.2;
+}
+
+@media screen and (max-width: 767px) {
+    .payments-card-standard,
+    .payments-card-middle,
+    .payments-card-premium {
+        min-height: initial;
+        transform: none;
+    }
+}

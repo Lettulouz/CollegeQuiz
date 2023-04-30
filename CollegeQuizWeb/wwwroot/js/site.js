@@ -11,6 +11,19 @@ function showModal() {
     if (modal !== null) new bootstrap.Modal(modal, {}).show();
 }
 
+function copyToBoard(obj, quizId)
+{
+    var shareCode = document.getElementById(quizId);
+    if (shareCode.style.display === 'none') {
+        shareCode.style.display = 'block';
+    }
+    const row = $(obj).parent().parent();
+    const valueToCopy = row.find('.copy-class').text().replaceAll(" ","").replaceAll("\n",""); // Miłosz nie patrz pls
+    navigator.clipboard.writeText(valueToCopy);
+    const message = `Skopiowano token udostepniający ${valueToCopy} do schowka.`;
+    toastr.success(message);
+}
+
 function onLoad() {
     
     showModal();
