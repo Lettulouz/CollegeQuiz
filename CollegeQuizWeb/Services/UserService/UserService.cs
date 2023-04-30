@@ -25,12 +25,17 @@ public class UserService : IUserService
     private readonly ILogger<UserService> _logger;
     
     private readonly ApplicationDbContext _context;
+    private readonly IPasswordHasher<UserEntity> _passwordHasher;
 
-    public UserService(ILogger<UserService> logger, ApplicationDbContext context)
+    public UserService(ILogger<UserService> logger, ApplicationDbContext context,
+        IPasswordHasher<UserEntity> passwordHasher)
     {
         _logger = logger;
         _context = context;
+        _passwordHasher = passwordHasher;
     }
+
+
 
     public async Task AttemptCouponRedeem(AttemptCouponRedeemPayloadDto obj)
     {
@@ -189,6 +194,84 @@ public class UserService : IUserService
 
         return UserDto;
     }
+    
+    public async Task<EditProfileDto> GetUserData(string isLogged)
+    {
+        var userData = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(isLogged));
+        
+        EditProfileDto UserDto = new EditProfileDto()
+        {
+            FirstName = userData.FirstName,
+            LastName = userData.LastName,
+            Username = userData.Username
+        };
+
+        return UserDto;
+    }
+
+    public async Task UpdateProfile(EditProfileDtoPayload obj, string loggedUser)
+    {
+        UserController controller = obj.ControllerReference;
+        
+        var userEntity=await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUser));
+
+        userEntity.FirstName = obj.Dto.FirstName;
+        userEntity.LastName = obj.Dto.LastName;
+        userEntity.Username = obj.Dto.Username;
+
+        if (!UsernameBelongsToUser(userEntity.Id,obj.Dto.Username))
+        {
+            controller.ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
+        }
+
+        if (obj.Dto.OldPassword != null)
+        {
+            if (_passwordHasher.VerifyHashedPassword(userEntity, userEntity.Password, obj.Dto.OldPassword) !=
+                PasswordVerificationResult.Success)
+            {
+                controller.ModelState.AddModelError("OldPassword", Lang.INVALID_PASSWORD);
+            }
+        }
+        else
+        {
+            controller.ModelState.AddModelError("OldPassword", Lang.PASSWORD_REQUIRED);
+        }
+        
+        if (obj.Dto.NewPassword != null)
+        {
+            Regex passCheck = new Regex(RegexApp.MIN_ONE_UPPER_LOWER_NUM_SPEC);
+            if (obj.Dto.NewPassword.Length<8||obj.Dto.NewPassword.Length>25)
+            {
+                controller.ModelState.AddModelError("ConfirmPassword", Lang.PASS_LEN_ERROR);
+            }
+            if (passCheck.IsMatch(obj.Dto.NewPassword))
+            {
+                if (obj.Dto.NewPassword == obj.Dto.ConfirmPassword)
+                {
+                    userEntity.Password = _passwordHasher.HashPassword(userEntity, obj.Dto.NewPassword);
+                }
+                else
+                {
+                    controller.ModelState.AddModelError("ConfirmPassword", Lang.DIFFERENT_PASSWORDS);
+                }
+            }
+            else
+            {
+                controller.ModelState.AddModelError("ConfirmPassword", Lang.PASSWORD_REGEX_ERROR);
+            }
+        }
+
+        
+
+        if (!controller.ModelState.IsValid) return;
+        
+        _context.Update(userEntity);
+        await _context.SaveChangesAsync();
+
+        controller.HttpContext.Session.SetString(SessionKey.ACCOUNT_UPDATED, Lang.PROFILE_UPDATED);
+        controller.Response.Redirect("/User/Profile");
+    }
+    
     public async Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username)
     {
         var userId = _context.Users.FirstOrDefault(o => o.Username.Equals(username)).Id;
@@ -212,5 +295,22 @@ public class UserService : IUserService
             paymentHistoryListDtos.Add(paymentHistoryDto);
         }
         return paymentHistoryListDtos;
+    }
+    
+    bool UsernameBelongsToUser(long? id, string username)
+    {
+        var user = _context.Users.FirstOrDefault(o => o.Username.Equals(username));
+        if (user == null)
+        {
+            return true;
+        }
+        if (user.Id == id)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

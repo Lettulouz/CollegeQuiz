@@ -36,6 +36,8 @@ public static class Lang
         "*Hasło powinno zawierać co najmniej jedną dużą literę, jedną małą literę, " +
         "jedną cyfrę oraz jeden znak specjalny.";
 
+    public const string DIFFERENT_PASSWORDS = "*Podano różne hasła";
+
     public const string USERNAME_OR_EMAIL_REQUIRED = "*Pole Login lub E-mail jest wymagane.";
     public const string USERNAME_OR_EMAIL_INVALID_CHARS = "*Pole Login lub E-mail zawiera niedozwolone znaki.";
     public const string PASSWORD_REQUIRED = "*Pole Hasło jest wymagane.";
@@ -139,4 +141,6 @@ public static class Lang
     public const string DELETE_QUIZ_NOT_FOUND = 
         "Quiz nie istnieje lub nie jest przypisany do Twojego konta. Możesz usunąc tylko quizy, które są przypisane do Twojego konta.";
     public const string SUCCESSFULL_DELETED_QUIZ = "Quiz <strong>{0}</strong> został pomyślnie usunięty.";
+
+    public const string PROFILE_UPDATED = "Pomyślnie zaktualizowano twój profil";
 }

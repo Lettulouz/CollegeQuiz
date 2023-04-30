@@ -25,16 +25,42 @@ public class UserController : Controller
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         ViewBag.Username = isLogged;
         
+        string? UpdateAlert = HttpContext.Session.GetString(SessionKey.ACCOUNT_UPDATED);
+        HttpContext.Session.Remove(SessionKey.ACCOUNT_UPDATED);
+        ViewBag.UpdateAlert = UpdateAlert;
+        
         var val = await _userService.UserInfo(isLogged);
 
         return View(val);
     }
 
+    [HttpGet]
     public async Task<IActionResult> EditProfile()
     {
-        return View();
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+
+        var userProfile = await _userService.GetUserData(loggedUsername);
+        
+        return View(userProfile);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> EditProfile(EditProfileDto obj)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return Redirect("/Auth/Login");
+        
+        var payloadDto = new EditProfileDtoPayload(this) { Dto = obj };
+        if (ModelState.IsValid)
+        {
+            await _userService.UpdateProfile(payloadDto,loggedUsername);
+        }
+        
+        return View(obj);
+    }
+    
+    
     public async Task<IActionResult> YourCoupons()
     {
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
