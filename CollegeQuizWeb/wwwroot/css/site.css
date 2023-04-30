@@ -217,16 +217,17 @@ input:-webkit-autofill {
     transition: transform 0.2s;
 }
 
-.card-img-custom.notClicked {
+.card-img-custom.clicked {
     transform: scale(0.8);
 }
 
 .card-img-custom:not(.clicked):not(.notClicked):hover {
-    transform: scale(1.05);
+    transform: scale(0.9);
 }
 
 .incorrectAnswer {
-    opacity: 0.3;
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
 }
 
 .cursor-not-allowed{
