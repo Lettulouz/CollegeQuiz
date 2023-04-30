@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollegeQuizWeb.API.Services.Quiz;
@@ -40,6 +41,15 @@ public class QuizAPIService : IQuizAPIService
         };
         foreach (var question in dto.Aggregate)
         {
+            if (!QuizModes.CheckIfUserHasPermissions(question.Type, quizEntity.UserEntity.AccountStatus))
+            {
+                return new SimpleResponseDto()
+                {
+                    IsGood = false,
+                    Message = $"Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór " +
+                              $"trybu <strong>{QuizModes.GetValueFromSlug(question.Type)}</strong> rozgrywki."
+                };
+            }
             int min, sec;
             if (!int.TryParse(question.TimeMin, out min) || !int.TryParse(question.TimeSec, out sec)) 
             {
@@ -169,7 +179,6 @@ public class QuizAPIService : IQuizAPIService
                         IsRange = answer.IsRange
                     };
                 }
-                
                 answerDtos.Add(answerDto);
             }
             QuizQuestionsReqDto questionsReqDto = new QuizQuestionsReqDto()
@@ -183,6 +192,8 @@ public class QuizAPIService : IQuizAPIService
             };
             dto.Aggregate.Add(questionsReqDto);
         }
+        dto.AvailableModes = QuizModes.GetModesForUserPacket(quizEntity.UserEntity.AccountStatus);
+        dto.PermissionModesMessage = QuizModes.GetPermissionsMessage(quizEntity.UserEntity.AccountStatus);
         return dto;
     }
 

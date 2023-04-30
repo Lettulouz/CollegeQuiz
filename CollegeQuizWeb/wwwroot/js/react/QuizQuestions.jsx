@@ -4,13 +4,6 @@ const { useEffect, useState, createContext, useContext } = React;
 
 const QuestionsContext = createContext(null);
 const MainContext = createContext(null);
-const QUESTION_TYPES = [
-    { title: "4 odpowiedzi, jedna prawidłowa", slug: "SINGLE_FOUR_ANSWERS", },
-    { title: "Prawda fałsz", slug: "TRUE_FALSE" },
-    { title: "4 odpowiedzi, wiele prawidłowych", slug: "MULTIPLE_FOUR_ANSWERS" },
-    { title: "6 odpowiedzi, jedna prawidłowa", slug: "SINGLE_SIX_ANSWERS" },
-    { title: "Zakres", slug: "RANGE" },
-];
 
 let QUIZ_NAME = document.getElementById("addQuizQuestionsRoot").dataset.quizName;
 const QUIZ_ID = document.getElementById("addQuizQuestionsRoot").dataset.quizId;
@@ -161,10 +154,10 @@ const QuizSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers }) => {
 
 const QuizQuestionComponent = () => {
     const {
-        q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds, onSetQuestionType
+        q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds, onSetQuestionType, availableModes
     } = useContext(QuestionsContext);
     
-    const generateOptions = QUESTION_TYPES.map(o => <option key={o.slug} value={o.slug}>{o.title}</option>);
+    const generateOptions = availableModes.map(o => <option key={o.slug} value={o.slug}>{o.title}</option>);
     
     const answersComponents = q.answers.map((answer, idx) => (
         <QuizSingleGoodAnswerComponent
@@ -206,8 +199,7 @@ const QuizQuestionComponent = () => {
                                        maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
                             </div>
                         </div>
-                        {q.id > 1 && <button className="btn btn-danger text-white ms-2"
-                                             onClick={() => onRemoveQuestion(q.id)}>X</button>}
+                        <button className="btn btn-danger text-white ms-2" onClick={() => onRemoveQuestion(q.id)}>X</button>
                     </div>
                 </div>
             </div>
@@ -239,6 +231,8 @@ const AddQuizQuestionsRoot = () => {
     const [ isActive, setActiveCallback ] = useLoadableContent();
     const [ isSended, setIsSended ] = useState(false);
     const [ isNotValid, setIsNotValid ] = useState(false);
+    const [ availableModes, setAvailableModes ] = useState([]);
+    const [ infoModesAlert, setInfoModesAlert ] = useState('');
     
     const onSetQuestionType = (type, questionId) => {
         const qst = [ ...questions ];
@@ -379,6 +373,8 @@ const AddQuizQuestionsRoot = () => {
             return r.json()
         }).then(r => { 
             if (r.aggregate.length !== 0) setQuestions(r.aggregate);
+            setAvailableModes(r.availableModes);
+            setInfoModesAlert(r.permissionModesMessage);
         }).catch(e => {
             if (e === undefined) return;
             setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
@@ -398,7 +394,7 @@ const AddQuizQuestionsRoot = () => {
     const generateQuestionsComponents = questions.map((q, idx) => (
         <QuestionsContext.Provider key={idx} value={{
             q, setQuestions, onSetQuestionAnswer, onChangeCorrectAnswer, onSetQuestionTitle, onRemoveQuestion,
-            onSetMinutes, onSetSeconds, onSetQuestionType, onSetRangeProp, setIsNotValid
+            onSetMinutes, onSetSeconds, onSetQuestionType, onSetRangeProp, setIsNotValid, availableModes
         }}>
             <QuizQuestionComponent/>
         </QuestionsContext.Provider>
@@ -411,6 +407,9 @@ const AddQuizQuestionsRoot = () => {
                     Aby zaktualizowac nazwę quizu, musi się składać ono z przynajmniej 3 znaków. Aby poprawnie
                     dodać/zaktualizować pytania, każde pole musi zostać wypełnione przynajmniej dwoma znakami
                     a w przypadku odpowiedzi, musi być przynajmniej jedna zaznaczona.
+                </div>
+                <div className="alert alert-info">
+                    <span dangerouslySetInnerHTML={{ __html: infoModesAlert }}></span>
                 </div>
                 {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between`} role="alert">
                     <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
