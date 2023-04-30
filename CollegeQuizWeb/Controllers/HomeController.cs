@@ -37,6 +37,11 @@ public class HomeController : Controller
 
     public IActionResult Privacy() => View();
     
+    public IActionResult Help()
+    {
+        return View();
+    }
+    
     public IActionResult Regulation()
     {
         return View();

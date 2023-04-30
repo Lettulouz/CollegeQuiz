@@ -19,6 +19,12 @@ public static class Lang
     public const string USERNAME_TOO_LONG_ERROR = "*Podany login jest za długi.";
     public const string USERNAME_REGEX_ERROR = "*W loginie powinny znaleźć się tylko małe litery oraz cyfry.";
     
+    public const string CATEGORYNAME_MUST_BE_UNIQUE = "*Podana kategoria już istnieje.";
+    public const string CATEGORYNAME_IS_REQUIRED_ERROR = "*Pole kategoria jest wymagane.";
+    public const string CATEGORYNAME_TOO_SHORT_ERROR = "*Podana kategoria jest za krótka.";
+    public const string CATEGORYNAME_TOO_LONG_ERROR = "*Podana kategoria jest za długa.";
+    public const string CATEGORYNAME_REGEX_ERROR = "*W kategorii powinny znaleźć się tylko małe litery oraz cyfry.";
+    
     public const string EMAIL_IS_REQUIRED_ERROR = "*Pole Email jest wymagane.";
     public const string EMAIL_INCORRECT_ERROR = "*Wpisana treść nie jest emailem.";
     public const string EMAIL_TOO_LONG_ERROR = "*Podana treść nie spełnia założeń emaila.";
@@ -64,7 +70,9 @@ public static class Lang
         "*Należy podać prawidłową ilość kuponów.";
     public const string INVALID_COUPON_SUBSCRIPTION_TIME_ERROR = 
         "*Należy wybrać jeden z możliwych typów subskrypcji.";
-    
+   public const string CATEGORIES_GENERATED_INFO_STRING =
+        "Stworzono kategorię <strong>{0}</strong.";
+        
     public const string COUPONS_GENERATED_INFO_STRING =
         "Wygenerowano <strong>{0}</strong> kluczy dla subkypcji ważnych do <strong>{1}</strong> " +
         "aktywujących subskypcję typu <strong>{2}</strong> na <strong>{3}</strong> dni.</br>";
@@ -111,6 +119,8 @@ public static class Lang
     public const string QUIZ_ALREADY_EXISTS = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.";
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
 
+    public const string CATEGORY_REMOVED = "Kategoria {0} została usunięta";
+    
     public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
     public const string QUIZ_NOT_EXIST = "Quiz nie istnieje";
     // subscription payment
@@ -129,4 +139,13 @@ public static class Lang
     public const string DELETE_QUIZ_NOT_FOUND = 
         "Quiz nie istnieje lub nie jest przypisany do Twojego konta. Możesz usunąc tylko quizy, które są przypisane do Twojego konta.";
     public const string SUCCESSFULL_DELETED_QUIZ = "Quiz <strong>{0}</strong> został pomyślnie usunięty.";
+
+    public const string DISABLE_EDITABLE_QUIZ =
+        "Edycja quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwa.";
+    public const string DISABLE_REMOVABLE_QUIZ = "Usunięcie quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwe.";
+    
+    public const string DELETE_SHARED_QUIZ_NOT_FOUND = "Udostępniony quiz nie istnieje lub nie jest przypisany do Twojego konta.";
+    public const string SUCCESSFULL_DELETED_SHARED_QUIZ = "Udostępniony quiz <strong>{0}</strong> został pomyślnie usunięty.";
+    public const string DISABLE_DELETE_SHARED_QUIZ =
+        "Usunięcie udostępnionego quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwe.";
 }

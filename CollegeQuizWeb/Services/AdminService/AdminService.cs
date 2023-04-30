@@ -39,13 +39,13 @@ public class AdminService : IAdminService
     
     public async Task<List<UserListDto>> GetUsers()
     {
-       var users = await _context.Users.Where(u=>u.IsAdmin==false).ToListAsync();
-       
-       List<UserListDto> DtoList = new();
-       
-       foreach (var userData in users)
-       {
-           UserListDto userModel = new();
+        var users = await _context.Users.Where(u => u.IsAdmin == false).ToListAsync();
+
+        List<UserListDto> DtoList = new();
+
+        foreach (var userData in users)
+        {
+            UserListDto userModel = new();
 
            userModel.Id = userData.Id;
            userModel.FirstName = userData.FirstName;
@@ -293,7 +293,7 @@ public class AdminService : IAdminService
         
         
     }
-    
+
     public async Task DelUser(long id, AdminController controller, string loggedUser)
     {
         var user = _context.Users.Find(id);
@@ -640,6 +640,25 @@ public class AdminService : IAdminService
         return DtoList;
     }
     
+    public async Task<List<CategoryListDto>> GetCategoryList()
+    {
+        var categories = await _context.Categories.ToListAsync();
+
+        List<CategoryListDto> DtoList2 = new();
+
+        foreach (var categoryData in categories)
+        {
+            CategoryListDto categoryModel = new();
+
+            categoryModel.CategoryId = categoryData.CategoryId;
+            categoryModel.CategoryName = categoryData.Category;
+            
+            DtoList2.Add(categoryModel);
+        }
+
+        return DtoList2;
+    }
+    
     public async Task DelQuiz(long id, AdminController controller)
     {
         var quiz = _context.Quizes.Find(id);
@@ -653,6 +672,19 @@ public class AdminService : IAdminService
         controller.Response.Redirect("/Admin/QuizList");
     }
 
+    public async Task DelCategory(long id, AdminController controller)
+    {
+        var category = _context.Categories.Find(id);
+        if (category != null)
+        {
+            String message = string.Format(Lang.CATEGORY_REMOVED, category.Category);
+            _context.Remove(category);
+            await _context.SaveChangesAsync();
+            controller.HttpContext.Session.SetString(SessionKey.CATEGORY_REMOVED, message);
+        }
+        controller.Response.Redirect("/Admin/CategoryList");
+    }
+    
     public async Task QuizInfo(long id, AdminController controller)
     {
         var quizInfo = await _context.Quizes.Include(u=>u.UserEntity)
@@ -682,7 +714,7 @@ public class AdminService : IAdminService
                 {
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
-                    time_sec = q.Sum(a=>a.time_min*60+a.time_sec)
+                    time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault()
                 }).ToListAsync();
             //controller.ViewBag.UserQuizes = await _context.Quizes
             //    .Where(q => q.UserId.Equals(id)).ToListAsync();
@@ -729,6 +761,31 @@ public class AdminService : IAdminService
         await _context.SaveChangesAsync();
         
 
+    }
+    
+    public async Task CreateCategory(CategoryListDtoPayload obj)
+    {
+        var controller = obj.ControllerReference;
+        var name = obj.Dto.CategoryName;
+        
+        List<CategoryEntity> listOfGeneratedCategories = new();
+        string message;
+        message = string.Format(Lang.CATEGORIES_GENERATED_INFO_STRING, name);
+        
+        if ( _context.Categories.FirstOrDefault(o => o.Category.Equals(obj.Dto.CategoryName)) != null)
+            controller.ModelState.AddModelError("CategoryName", Lang.CATEGORYNAME_MUST_BE_UNIQUE);
+
+        if (!controller.ModelState.IsValid) return;
+        CategoryEntity categoryEntity = new();
+        categoryEntity.Category = name;
+        
+        message += name;
+        message += "</br>";
+        listOfGeneratedCategories.Add(categoryEntity);
+        
+        controller.ViewBag.GeneratedCategoryMessage = message;
+        await _context.AddRangeAsync(listOfGeneratedCategories);
+        await _context.SaveChangesAsync();
     }
     public async Task<List<CouponDto>> GetCoupons()
     {
