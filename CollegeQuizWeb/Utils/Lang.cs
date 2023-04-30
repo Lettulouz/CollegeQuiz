@@ -137,6 +137,7 @@ public static class Lang
     public const string ADDRESS1_TOO_SHORT = "*Pole Adres 1 nie może być krótsze niż 3 znaki.";
 
     public const string PROFILE_UPDATED = "Pomyślnie zaktualizowano twój profil";
+    public const string DIFFERENT_PASSWORDS = "*Podano różne hasła";
     
     public const string DELETE_QUIZ_NOT_FOUND = 
         "Quiz nie istnieje lub nie jest przypisany do Twojego konta. Możesz usunąc tylko quizy, które są przypisane do Twojego konta.";
