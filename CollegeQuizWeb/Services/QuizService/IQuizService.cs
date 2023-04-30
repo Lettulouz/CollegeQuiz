@@ -17,4 +17,5 @@ public interface IQuizService
     Task<bool> CreateQuizCode(QuizController controller, string loggedUsername, long quizId);
     Bitmap GenerateQRCode(QuizController controller, string code);
     Task DeleteQuiz(long quizId, string loggedUsername, Controller controller);
+    Task DeleteSharedQuiz(long quizId, string loggedUsername, Controller controller);
 }

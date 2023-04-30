@@ -240,4 +240,42 @@ public class QuizService : IQuizService
         };
         controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
     }
+
+    public async Task DeleteSharedQuiz(long quizId, string loggedUsername, Controller controller)
+    {
+        string responseMessage, viewBagType;
+        
+        var deletingSharedQuiz = await _context.SharedQuizes
+            .Include(q => q.UserEntity)
+            .Include(q => q.QuizEntity)
+            .FirstOrDefaultAsync(q => q.UserEntity.Username.Equals(loggedUsername) && q.QuizId.Equals(quizId));
+        if (deletingSharedQuiz == null)
+        {
+            responseMessage = Lang.DELETE_SHARED_QUIZ_NOT_FOUND;
+            viewBagType = "alert-danger";
+        }
+        else
+        {
+            var quizLobby = await _context.QuizLobbies
+                .FirstOrDefaultAsync(q => q.QuizId.Equals(quizId) && q.UserHostId.Equals(deletingSharedQuiz.UserEntity.Id));
+            if (quizLobby != null && quizLobby.IsEstabilished)
+            {
+                responseMessage = Lang.DISABLE_DELETE_SHARED_QUIZ;
+                viewBagType = "alert-danger";
+            }
+            else
+            {
+                responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_SHARED_QUIZ, deletingSharedQuiz.QuizEntity.Name);
+                viewBagType = "alert-success";
+                _context.SharedQuizes.Remove(deletingSharedQuiz);
+                await _context.SaveChangesAsync();
+            }   
+        }
+        AlertDto alertDto2 = new AlertDto()
+        {
+            Type = viewBagType,
+            Content = responseMessage
+        };
+        controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
+    }
 }
