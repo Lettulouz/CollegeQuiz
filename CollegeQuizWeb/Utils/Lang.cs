@@ -139,4 +139,13 @@ public static class Lang
     public const string DELETE_QUIZ_NOT_FOUND = 
         "Quiz nie istnieje lub nie jest przypisany do Twojego konta. Możesz usunąc tylko quizy, które są przypisane do Twojego konta.";
     public const string SUCCESSFULL_DELETED_QUIZ = "Quiz <strong>{0}</strong> został pomyślnie usunięty.";
+
+    public const string DISABLE_EDITABLE_QUIZ =
+        "Edycja quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwa.";
+    public const string DISABLE_REMOVABLE_QUIZ = "Usunięcie quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwe.";
+    
+    public const string DELETE_SHARED_QUIZ_NOT_FOUND = "Udostępniony quiz nie istnieje lub nie jest przypisany do Twojego konta.";
+    public const string SUCCESSFULL_DELETED_SHARED_QUIZ = "Udostępniony quiz <strong>{0}</strong> został pomyślnie usunięty.";
+    public const string DISABLE_DELETE_SHARED_QUIZ =
+        "Usunięcie udostępnionego quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwe.";
 }

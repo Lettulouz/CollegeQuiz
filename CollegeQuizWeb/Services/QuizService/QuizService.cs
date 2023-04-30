@@ -121,10 +121,24 @@ public class QuizService : IQuizService
 
     public async Task<QuizDetailsDto> GetQuizDetails(string userLogin, long quizId, QuizController controller)
     {
-        var quizEntity = await _context.Quizes.Include(q => q.UserEntity)
+        var quizEntity = await _context.Quizes
+            .Include(q => q.UserEntity)
             .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(userLogin));
         if (quizEntity == null)
         {
+            controller.Response.Redirect("/Quiz/MyQuizes");
+            return new QuizDetailsDto();
+        }
+        var quizLobby = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.QuizId.Equals(quizId));
+        if (quizLobby != null && quizLobby.IsEstabilished)
+        {
+            AlertDto alertDto2 = new AlertDto()
+            {
+                Type = "alert-danger",
+                Content = Lang.DISABLE_EDITABLE_QUIZ
+            };
+            controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
             controller.Response.Redirect("/Quiz/MyQuizes");
             return new QuizDetailsDto();
         }
@@ -197,17 +211,27 @@ public class QuizService : IQuizService
         var deletedQuiz = await _context.Quizes
             .Include(q => q.UserEntity)
             .FirstOrDefaultAsync(q => q.UserEntity.Username.Equals(loggedUsername) && q.Id.Equals(quizId));
-        if (deletedQuiz == null)
+        var quizLobby = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.QuizId.Equals(quizId));
+        if (quizLobby != null && quizLobby.IsEstabilished)
         {
-            responseMessage = Lang.DELETE_QUIZ_NOT_FOUND;
+            responseMessage = Lang.DISABLE_REMOVABLE_QUIZ;
             viewBagType = "alert-danger";
         }
         else
         {
-            responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_QUIZ, deletedQuiz.Name);
-            viewBagType = "alert-success";
-            _context.Quizes.Remove(deletedQuiz);
-            await _context.SaveChangesAsync();
+            if (deletedQuiz == null)
+            {
+                responseMessage = Lang.DELETE_QUIZ_NOT_FOUND;
+                viewBagType = "alert-danger";
+            }
+            else
+            {
+                responseMessage = String.Format(Lang.SUCCESSFULL_DELETED_QUIZ, deletedQuiz.Name);
+                viewBagType = "alert-success";
+                _context.Quizes.Remove(deletedQuiz);
+                await _context.SaveChangesAsync();
+            }   
         }
         AlertDto alertDto2 = new AlertDto()
         {
