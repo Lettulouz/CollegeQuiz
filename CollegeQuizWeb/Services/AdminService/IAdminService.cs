@@ -16,8 +16,10 @@ public interface IAdminService
     Task<List<UserListDto>> GetAdmins();
 
     Task<List<QuizListDto>> GetQuizList();
+    Task<List<CategoryListDto>> GetCategoryList();
     Task QuizInfo(long id, AdminController controller);
     Task DelQuiz(long id, AdminController controller);
+    Task DelCategory(long id, AdminController controller);
     Task<AddUserDto> GetUserData(long id, AdminController controller);
     Task UserInfo(long id, AdminController controller);
     Task UpdateUser(AddUserDtoPayload obj, string loggedUser);
@@ -29,6 +31,7 @@ public interface IAdminService
     Task ResendEmail(long id, AdminController controller);
 
     Task CreateCoupons(CouponDtoPayload obj);
+    Task CreateCategory(CategoryListDtoPayload obj);
     Task<List<CouponDto>> GetCoupons();
     Task DeleteCoupon(string couponToDelete, AdminController controller);
 }

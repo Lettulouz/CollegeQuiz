@@ -290,8 +290,20 @@ public class AdminController : Controller
         return View(quizList);
     }
     
- 
-    
+    [HttpGet]
+    public async Task<IActionResult> CategoryList()
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        string? categoryRemoved = HttpContext.Session.GetString(SessionKey.CATEGORY_REMOVED);
+        HttpContext.Session.Remove(SessionKey.CATEGORY_REMOVED);
+        ViewBag.categoryRemoved = categoryRemoved!;
+        
+        var categoryList = await _adminService.GetCategoryList();
+        return View(categoryList);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task DelQuiz(List<QuizListDto> list)
@@ -299,6 +311,15 @@ public class AdminController : Controller
         var id = list[0].Id;
 
         await _adminService.DelQuiz(id, this);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task DelCategory(List<CategoryListDto> list)
+    {
+        var id = list[0].CategoryId;
+
+        await _adminService.DelCategory(id, this);
     }
     
     [HttpPost]
@@ -315,6 +336,29 @@ public class AdminController : Controller
     {
         var payloadDto = new CouponDtoPayload(this) {Dto = couponDto};
         await _adminService.CreateCoupons(payloadDto);
+        return View(payloadDto.Dto);
+    }
+    
+    [HttpGet]
+    public IActionResult AddCategory()
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddCategory(CategoryListDto categoryListDto)
+    {
+        var payloadDto = new CategoryListDtoPayload(this) {Dto = categoryListDto};
+
+        if (ModelState.IsValid)
+        {
+            await _adminService.CreateCategory(payloadDto);
+        }
+
         return View(payloadDto.Dto);
     }
 }

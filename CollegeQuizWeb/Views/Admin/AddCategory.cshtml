@@ -1,0 +1,41 @@
+@model CollegeQuizWeb.Dto.Admin.CategoryListDto
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+       
+@{
+   Layout= "_AdminLayout";
+   ViewData["Title"] = "Dodawanie kategorii";
+}
+<h1 class="text-muted px-2">Dodawanie kategorii</h1> 
+   <hr class="divider mt-0">
+
+<div class="container" style="max-width:960px;">
+    @if (ViewBag.GeneratedCategoryMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @Html.Raw(ViewBag.GeneratedCategoryMessage)
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <form method="post" asp-controller="Admin" asp-action="AddCategory">
+        <div class="row mb-0">
+           <div class="col-6 col-sm-12">
+               <div class="form-floating">
+                   <input type="text" class="form-control" id="CategoryName" asp-for="CategoryName">
+                   <label>Nazwa kategorii</label>
+               </div>
+                <span asp-validation-for="CategoryName" class="mx-2 mt-1 errorTextColor"></span>
+            </div>
+        </div>
+        <div class="row p-2 mt-3">
+            <button class="btn btn-lg btn-primary w-100" name="couponSubmit" type="submit">Dodaj</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.getElementById('quiz_collapse').classList.add('show');
+    document.getElementById('quiz_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+    document.getElementById('quiz_collapse_btn').setAttribute( 'style', 'color:white !important' );
+    document.getElementById('categories_add').setAttribute( 'style', 'color:white !important' );
+</script>
