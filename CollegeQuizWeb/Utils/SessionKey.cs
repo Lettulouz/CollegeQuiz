@@ -16,6 +16,7 @@ public class SessionKey
     public const string USER_SUSPENDED = "USER_SUSPENDED+SESS";
     public const string ADMIN_ERROR = "ADMIN_ERROR+SESS";
     public const string QUIZ_REMOVED = "QUIZ_REMOVED+SESS";
+    public const string CATEGORY_REMOVED = "CATEGORY_REMOVED+SESS";
     public const string QUIZ_CODE_MESSAGE_REDEEM = "QUIZ_CODE_MESSAGE_REDEEM+SESS";
     public const string QUIZ_CODE_MESSAGE_REDEEM_TYPE = "QUIZ_CODE_MESSAGE_REDEEM_TYPE+SESS";
     public const string EMAIL_SENT = "EMAIL_SENT+SESS";
