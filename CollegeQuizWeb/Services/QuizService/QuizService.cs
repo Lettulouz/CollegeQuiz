@@ -169,7 +169,7 @@ public class QuizService : IQuizService
             if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
             
             await _hubContext.Clients.Group(test.Code).SendAsync("OnDisconectedSession", "Host zakończył sesję.");
-            test.InGameScreen = "WAITING";
+            test.InGameScreen = "WAITING_SCREEN";
             test.Code = generatedCode;
             test.IsEstabilished = false;
             test.HostConnId = string.Empty;
@@ -181,7 +181,7 @@ public class QuizService : IQuizService
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
         {
             Code = generatedCode,
-            InGameScreen = "WAITING",
+            InGameScreen = "WAITING_SCREEN",
             UserHostId = userId,
             QuizId = quizId,
             HostConnId = string.Empty,
