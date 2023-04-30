@@ -143,7 +143,7 @@ const QuizSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers }) => {
                         <input type="checkbox" className="form-check-input" id={questionId} name={groupId}
                                checked={answer.isCorrect} onChange={e => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, e.target.checked)}/>
                     </> : <>
-                        <input type="radio" className="form-check-input" id={questionId} name={groupId}
+                        <input type="radio" className="form-check-input form-check-input-radio" id={questionId} name={groupId}
                                checked={answer.isCorrect} onChange={() => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, true)}/>
                     </>}
                     <label htmlFor={questionId} className="form-check-label">
