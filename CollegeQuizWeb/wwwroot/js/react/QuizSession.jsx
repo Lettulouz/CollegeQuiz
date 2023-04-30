@@ -389,6 +389,52 @@ const QuestionType4Component = () => {
 }
 
 
+// RANGE
+const QuestionType5Component = () => {
+    const { question, questionTimer } = useContext(SessionContext);
+    useEffect(() => {
+        var stepsSlider = document.getElementById('steps-slider');
+
+        noUiSlider.create(stepsSlider, {
+            start: [0, 100],
+            connect: true,
+            range: {
+                'min': [0, 10],
+                'max':100
+            }
+        });
+
+        stepsSlider.noUiSlider.on('update', function (values, handle) {
+        });
+    }, []);
+    return (
+        <div className="container d-flex">
+            <div className="row d-flex justify-content-center">
+                <div className="col-1 px-0">
+                    <div className="card card-img-custom">
+                        <img src="/gfx/timer.svg" alt="image_answer_D"/>
+                        <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                            <p className="card-title text-center m-0 text-prim-color fs-5 fw-bold">{questionTimer}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-9">
+                    <div className="card px-3 py-3 d-flex align-items-center text-break">
+                        <h3>{question}</h3>
+                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                    </div>
+                    <div className="row d-flex mt-3 px-3">
+                        <div id="steps-slider"></div>
+                    </div>
+                </div>
+                <div className="col-2 px-0">
+                    <LeaveSessionButtonComponent text="Wyjdź"/>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const QuestionCardComponent = ({ number }) => {
     const {
         answers, connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer

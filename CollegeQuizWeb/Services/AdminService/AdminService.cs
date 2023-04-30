@@ -714,7 +714,7 @@ public class AdminService : IAdminService
                 {
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
-                    time_sec = q.Sum(a=>a.time_min*60+a.time_sec)
+                    time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault()
                 }).ToListAsync();
             //controller.ViewBag.UserQuizes = await _context.Quizes
             //    .Where(q => q.UserId.Equals(id)).ToListAsync();
