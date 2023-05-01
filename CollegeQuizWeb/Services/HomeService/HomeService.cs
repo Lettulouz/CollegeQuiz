@@ -129,7 +129,7 @@ public class HomeService : IHomeService
                 daysToAdd = (int) (calculateRemainingTime / 2);
             else
                 daysToAdd = (int) (calculateRemainingTime / 2) + 1;
-            userEntity.CurrentStatusExpirationDate = userEntity.CurrentStatusExpirationDate.AddDays(30+daysToAdd);
+            userEntity.CurrentStatusExpirationDate = DateTime.Now.AddDays(30+daysToAdd);
             userEntity.AccountStatus = typeOfSubscription;
             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
