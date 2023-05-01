@@ -61,23 +61,29 @@ const QuizRangeAnswerComponent = ({ id }) => {
     const [ minCountedInvalid, setMinCountedInvalid ] = useState('');
     const [ countedOutOfRange, setCountedOutOfRange ] = useState('');
     const [ stepIsInvalid, setStepIsInvalid ] = useState('');
+    const [ isInvalidCorrectAns, setIsCorrectInvalid ] = useState('');
     
     useEffect(() => {
         const minMax = answerR.min > answerR.max;
         const minMaxCounted = answerR.minCounted > answerR.maxCounted;
         const countedOutOfRange = answerR.minCounted > answerR.max || answerR.minCounted < answerR.min ||
             answerR.maxCounted < answerR.min || answerR.maxCounted > answerR.max;
-        const stepIsInvalid = (answerR.min % answerR.step !== 0 || answerR.max % answerR.step !== 0 ||
-            answerR.minCounted % answerR.step !== 0 || answerR.maxCounted % answerR.step !== 0 ||
+        const stepIsInvalid = 
+            ((answerR.min - answerR.correctAns) % answerR.step !== 0 || 
+            (answerR.max - answerR.correctAns) % answerR.step !== 0 ||
+            (answerR.minCounted - answerR.correctAns) % answerR.step !== 0 ||
+            (answerR.maxCounted - answerR.correctAns) % answerR.step !== 0 ||
             answerR.step > answerR.max || answerR.step < answerR.min) && answerR.step !== 1;
-
+        const correctAnsIsInvalid = answerR.correctAns > answerR.max || answerR.correctAns < answerR.min;
+        
         setMinInvalid(minMax ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setMinCountedInvalid(minMaxCounted ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setCountedOutOfRange(countedOutOfRange ? "Wartość punktowana wykracza poza zakres" : "");
         setStepIsInvalid(stepIsInvalid ? "Wartość step musi być dzielnikiem pozostałych wartości" : "");
+        setIsCorrectInvalid(correctAnsIsInvalid ? "Nieprawidłowa wartość prawidłowej odpowiedzi" : "");
         
-        setIsNotValid(minMax || minMaxCounted || countedOutOfRange || stepIsInvalid);
-    }, [ answerR.max, answerR.min, answerR.step, answerR.minCounted, answerR.maxCounted ]);
+        setIsNotValid(minMax || minMaxCounted || countedOutOfRange || stepIsInvalid || correctAnsIsInvalid);
+    }, [ answerR.max, answerR.min, answerR.step, answerR.minCounted, answerR.maxCounted, answerR.correctAns ]);
     
     return (
         <div className="col-12">
@@ -101,14 +107,21 @@ const QuizRangeAnswerComponent = ({ id }) => {
                             <input value={answerR.max} type="number" className="form-control" id="maxId"
                                    onChange={e => onSetRangeProp(id, e, "max")} min={0}/>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <label htmlFor="minCountedId" className="form-label">Min punktowane</label>
                             <input value={answerR.minCounted} type="number"
                                    className={`form-control ${(countedOutOfRange || minCountedInvalid) && 'is-invalid'}`}
                                    id="minCountedId" onChange={e => onSetRangeProp(id, e, "minCounted")} min={0}/>
                             <div className="invalid-feedback">{minCountedInvalid}</div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
+                            <label htmlFor="correctAnsId" className="form-label">Prawidłowa odpowiedź</label>
+                            <input value={answerR.correctAns} type="number"
+                                   className={`form-control ${(isInvalidCorrectAns) && 'is-invalid'}`}
+                                   id="correctAnsId" onChange={e => onSetRangeProp(id, e, "correctAns")} min={0}/>
+                            <div className="invalid-feedback">{isInvalidCorrectAns}</div>
+                        </div>
+                        <div className="col-md-4">
                             <label htmlFor="maxCounterId" className="form-label">Maks punktowane</label>
                             <input value={answerR.maxCounted} type="number" className={`form-control ${countedOutOfRange && 'is-invalid'}`}
                                    id="maxCounterId" onChange={e => onSetRangeProp(id, e, "maxCounted")} min={0}/>
@@ -216,10 +229,10 @@ const initialQuestions = [
         timeSec: '',
         type: 'SINGLE_FOUR_ANSWERS',
         answers: [
-            { id: 1, text: '', isCorrect: true, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
-            { id: 2, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
-            { id: 3, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
-            { id: 4, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
+            { id: 1, text: '', isCorrect: true, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
+            { id: 2, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
+            { id: 3, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
+            { id: 4, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
         ],
     },
 ];
@@ -290,16 +303,16 @@ const AddQuizQuestionsRoot = () => {
             timeSec: '',
             type: 'SINGLE_FOUR_ANSWERS',
             answers: [
-                { id: 1, text: '', isCorrect: true, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
-                { id: 2, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
-                { id: 3, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 },
-                { id: 4, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 }
+                { id: 1, text: '', isCorrect: true, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
+                { id: 2, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
+                { id: 3, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
+                { id: 4, text: '', isCorrect: false, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 }
             ]
         }]);
     };
 
     const generateAnswerObject = (id, isCorrect) => (
-        { id: id + 1, text: '', isCorrect, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 }
+        { id: id + 1, text: '', isCorrect, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 }
     );
     
     const onChangeQuestionType = (questionId, type) => {
@@ -312,7 +325,7 @@ const AddQuizQuestionsRoot = () => {
                 break;
             case "RANGE":
                 qst[idx].answers = [
-                    { id: 1, text: '', isCorrect: true, isRange: true, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0 }
+                    { id: 1, text: '', isCorrect: true, isRange: true, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 }
                 ];
                 break;
             case "SINGLE_SIX_ANSWERS":

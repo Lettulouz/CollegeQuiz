@@ -16,4 +16,5 @@ public class AnswerDto
     public int Min { get; set; }
     
     public int Max { get; set; }
+    public int CorrectAns { get; set; }
 }

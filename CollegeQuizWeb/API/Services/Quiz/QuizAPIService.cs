@@ -6,6 +6,7 @@ using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollegeQuizWeb.API.Services.Quiz;
@@ -94,7 +95,7 @@ public class QuizAPIService : IQuizAPIService
                 {
                     answerEntity = new AnswerEntity()
                     {
-                        Name = answer.Text,
+                        Name = "RANGE",
                         IsGood = answer.IsCorrect,
                         IsRange = true,
                         Min = answer.Min,
@@ -102,7 +103,8 @@ public class QuizAPIService : IQuizAPIService
                         MinCounted = answer.MinCounted,
                         MaxCounted = answer.MaxCounted,
                         Step = answer.Step,
-                        QuestionEntity = questionEntity
+                        QuestionEntity = questionEntity,
+                        CorrectAnswer = answer.CorrectAns,
                     };
                 }
                 else
@@ -115,7 +117,6 @@ public class QuizAPIService : IQuizAPIService
                         QuestionEntity = questionEntity
                     };
                 }
-
                 await _context.Answers.AddAsync(answerEntity);
             }
             await _context.Questions.AddAsync(questionEntity);
@@ -166,7 +167,8 @@ public class QuizAPIService : IQuizAPIService
                         Max = answer.Max,
                         MinCounted = answer.MinCounted,
                         MaxCounted = answer.MaxCounted,
-                        Step = answer.Step
+                        Step = answer.Step,
+                        CorrectAns = answer.CorrectAnswer,
                     };
                 }
                 else
