@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollegeQuizWeb.API.Services.Quiz;
@@ -13,7 +19,11 @@ namespace CollegeQuizWeb.API.Services.Quiz;
 public class QuizAPIService : IQuizAPIService
 {
     private readonly ApplicationDbContext _context;
-
+    
+    public readonly static string[] ACCEPTABLE_IMAGE_TYPES = { "image/jpeg", "image/png", "image/jpg" };
+    public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
+    public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
+    
     public QuizAPIService(ApplicationDbContext context)
     {
         _context = context;
@@ -94,7 +104,7 @@ public class QuizAPIService : IQuizAPIService
                 {
                     answerEntity = new AnswerEntity()
                     {
-                        Name = answer.Text,
+                        Name = "RANGE",
                         IsGood = answer.IsCorrect,
                         IsRange = true,
                         Min = answer.Min,
@@ -102,7 +112,8 @@ public class QuizAPIService : IQuizAPIService
                         MinCounted = answer.MinCounted,
                         MaxCounted = answer.MaxCounted,
                         Step = answer.Step,
-                        QuestionEntity = questionEntity
+                        QuestionEntity = questionEntity,
+                        CorrectAnswer = answer.CorrectAns,
                     };
                 }
                 else
@@ -115,7 +126,6 @@ public class QuizAPIService : IQuizAPIService
                         QuestionEntity = questionEntity
                     };
                 }
-
                 await _context.Answers.AddAsync(answerEntity);
             }
             await _context.Questions.AddAsync(questionEntity);
@@ -128,7 +138,7 @@ public class QuizAPIService : IQuizAPIService
         };
     }
 
-    public async Task<AggregateQuestionsReqDto> GetQuizQuestions(long quizId, string loggedUsername)
+    public async Task<AggregateQuestionsReqDto> GetQuizQuestions(long quizId, string loggedUsername, Controller controller)
     {
         var quizEntity = await _context.Quizes
             .Include(q => q.UserEntity)
@@ -166,7 +176,8 @@ public class QuizAPIService : IQuizAPIService
                         Max = answer.Max,
                         MinCounted = answer.MinCounted,
                         MaxCounted = answer.MaxCounted,
-                        Step = answer.Step
+                        Step = answer.Step,
+                        CorrectAns = answer.CorrectAnswer,
                     };
                 }
                 else
@@ -181,6 +192,13 @@ public class QuizAPIService : IQuizAPIService
                 }
                 answerDtos.Add(answerDto);
             }
+            string imageUrl =
+                $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{question.Index}";
+            string fullPath = $"{FOLDER_PATH}/{quizId}/question{question.Index}.jpg";
+            if (!File.Exists(fullPath))
+            {
+                imageUrl = string.Empty;
+            }
             QuizQuestionsReqDto questionsReqDto = new QuizQuestionsReqDto()
             {
                 Id = question.Index,
@@ -188,7 +206,8 @@ public class QuizAPIService : IQuizAPIService
                 TimeMin = question.TimeMin.ToString(),
                 TimeSec = question.TimeSec.ToString(),
                 Type = question.QuestionTypeEntity.Name,
-                Answers = answerDtos
+                Answers = answerDtos,
+                ImageUrl = imageUrl,
             };
             dto.Aggregate.Add(questionsReqDto);
         }
@@ -225,6 +244,61 @@ public class QuizAPIService : IQuizAPIService
             IsGood = true,
             Message = $"Nazwa quizu o nazwie <strong>{prevName}</strong> została pomyślnie " +
                       $"zmieniona na <strong>{newQuizName}</strong>",
+        };
+    }
+
+    public async Task<QuizImagesResDto> UpdateQuizImages(long quizId, List<IFormFile?> uploads, string loggedUsername,
+        Controller controller)
+    {
+        var quizEntity = await _context.Quizes.Include(q => q.UserEntity)
+            .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(loggedUsername));
+        if (quizEntity == null) return new QuizImagesResDto()
+        {
+            IsGood = false,
+            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
+        };
+        string dir = $"{FOLDER_PATH}/{quizId}";
+        DirectoryInfo directoryInfo = new DirectoryInfo(dir);
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        foreach (var file in directoryInfo.GetFiles())
+        {
+            file.Delete();
+        }
+        List<QuizImage> quizImages = new List<QuizImage>();
+        foreach (var upload in uploads)
+        {
+            if (upload == null || upload.Length == 0) return new QuizImagesResDto()
+            {
+                IsGood = true,
+                Message = $"Wystąpił problem z załadowaniem grafiki."
+            };
+            if (Array.IndexOf(ACCEPTABLE_IMAGE_TYPES, upload.ContentType) == -1) return new QuizImagesResDto()
+            {
+                IsGood = true,
+                Message = $"Akceptowane rozszerzenia pliku to <strong>{string.Join(", ", ACCEPTABLE_IMAGE_TYPES)}</strong."
+            };
+            string index = Regex.Match(upload.FileName, @"\d+").Value;
+            string fullPath = $"{FOLDER_PATH}/{quizId}/question{index}.jpg";
+            
+            MemoryStream memoryStream = new MemoryStream();
+            await upload.CopyToAsync(memoryStream);
+            Image image = Image.FromStream(memoryStream);
+            image = new Bitmap(image, new Size(500, 500));
+            image.Save(fullPath, ImageFormat.Jpeg);
+            image.Dispose();
+            memoryStream.Close();
+            
+            string url = $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{index}";
+            quizImages.Add(new QuizImage(){ Id = int.Parse(index), Url = url });
+        }
+        return new QuizImagesResDto()
+        {
+            IsGood = true,
+            QuizImages = quizImages,
+            Message = $"Quiz o nazwie <strong>{quizEntity.Name}</strong> został pomyślnie zaktualizowany."
         };
     }
 }

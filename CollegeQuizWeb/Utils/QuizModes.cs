@@ -47,9 +47,9 @@ public static class QuizModes
         string accountMode = string.Empty;
         switch (userAccountState)
         {
-            case 0: accountMode = "podstawowego (poziom 0)"; break;
-            case 1: accountMode = "płatnego (poziom 1)"; break;
-            case 2: accountMode = "płatnego (poziom 1)"; break;
+            case 0: accountMode = "podstawowego (FREE)"; break;
+            case 1: accountMode = "płatnego (GOLD)"; break;
+            case 2: accountMode = "płatnego (PLATINUM)"; break;
         }
         var modes = string.Join(", ", GetModesForUserPacket(userAccountState).Select(e => GetValueFromSlug(e.Slug)));
         return $"Posiadasz konto z pakietu <strong>{accountMode}</strong>. Umożliwia ono tworzenie następujących typów pytań " +

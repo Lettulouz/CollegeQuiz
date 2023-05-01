@@ -132,6 +132,16 @@ a.navbar-brand {
     color: #3a8a7f;
 }
 
+.border-image {
+    border: 2px solid #3a8a7f;
+    width: 200px;
+    padding: 5px !important;
+    transition: .2s;
+}
+.border-image:hover {
+    transform: translateY(-5px);
+}
+
 /*
 Stylowanie treści strony głównej
  */
@@ -147,10 +157,18 @@ Stylowanie treści strony głównej
     font-size: x-large;
     width: 300px;
 }
-
 .click-me:hover {
     background-color: #3a8a7f;
     color: #f9fef8;
+}
+
+.click-me.darken {
+    color: #f9fef8 !important;
+    background-color: #3a8a7f;
+}
+.click-me.darken:hover {
+    background-color: #63c4ab;
+    color: #3a8a7f;
 }
 
 /*

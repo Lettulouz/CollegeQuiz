@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Sprache;
 
 namespace CollegeQuizWeb.Hubs;
 
@@ -33,7 +34,7 @@ public class QuizManagerSessionHub : Hub
         
         var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l => l.Code.Equals(token));
         if (lobby == null) return counter;
-       
+
         if (counter == 0) lobby.InGameScreen = "IN_GAME";
         else lobby.InGameScreen = "COUNTING_SCREEN";
         
@@ -51,6 +52,13 @@ public class QuizManagerSessionHub : Hub
             .FirstOrDefaultAsync(q => q.Code.Equals(token));
 
         Console.WriteLine("punkt testowy 2");
+
+        string basePatch = "https://dominikpiskor.pl";
+        HttpContext? context = Context.GetHttpContext();
+        if (context != null)
+        {
+            basePatch = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
+        }
         var questions = await _context.Answers
             .Include(q => q.QuestionEntity)
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
@@ -82,7 +90,8 @@ public class QuizManagerSessionHub : Hub
                 min = q.Select(a => a.min).Distinct().FirstOrDefault(),
                 max = q.Select(a => a.max).Distinct().FirstOrDefault(),
                 min_counted = q.Select(a => a.min_counted).Distinct().FirstOrDefault(),
-                max_counted = q.Select(a => a.max_counted).Distinct().FirstOrDefault()
+                max_counted = q.Select(a => a.max_counted).Distinct().FirstOrDefault(),
+                image_url = GetImageUrl(q.Select(a => a.questionId).Distinct().FirstOrDefault(), basePatch, quiz.QuizId),
             }).ToListAsync();
         
         Console.WriteLine("punkt testowy 3");
@@ -162,10 +171,7 @@ public class QuizManagerSessionHub : Hub
                     }
                 }
             }
-
-
             await _context.SaveChangesAsync();
-
 
             Console.WriteLine("punkt testowy 7");
             var topUsers =
@@ -179,13 +185,11 @@ public class QuizManagerSessionHub : Hub
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
                     }).OrderByDescending(obj => obj.Score).Take(5).ToList();
 
-
             Console.WriteLine("punkt testowy 8");
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             Thread.Sleep(2000);
-
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
@@ -213,7 +217,6 @@ public class QuizManagerSessionHub : Hub
                 .Where(t => t.Question.Equals(question.questionId) &&
                             t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
                 .OrderBy(t => t.CreatedAt).ToList();
-
             
             IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
             var actuallTime = DateTime.Now;
@@ -248,7 +251,6 @@ public class QuizManagerSessionHub : Hub
                 }
                 else
                 {
-                    
                     if (min >= currentAnswers[0].AnswerMinCounted && max <= currentAnswers[0].AnswerMaxCounted)
                     {
                         int amountOfNumbers = ((max - min) / currentAnswers[0].AnswerStep)+1;
@@ -282,10 +284,7 @@ public class QuizManagerSessionHub : Hub
                     }
                 }
             }
-
-
             await _context.SaveChangesAsync();
-
 
             Console.WriteLine("punkt testowy 7");
             var topUsers =
@@ -299,18 +298,15 @@ public class QuizManagerSessionHub : Hub
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
                     }).OrderByDescending(obj => obj.Score).Take(5).ToList();
 
-
             Console.WriteLine("punkt testowy 8");
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             Thread.Sleep(2000);
 
-
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
         }
-
         Console.WriteLine("punkt testowy 9");
         quiz.CurrentQuestion++;
         _context.QuizLobbies.Update(quiz);
@@ -318,7 +314,9 @@ public class QuizManagerSessionHub : Hub
         Console.WriteLine("punkt testowy 10");
     }
 
-    private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,  List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier, bool continueStreak, int additionalPoints)
+    private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,
+        List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier,
+        bool continueStreak, int additionalPoints)
     {
         TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
         TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
@@ -354,6 +352,17 @@ public class QuizManagerSessionHub : Hub
         
         if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
         await _context.SaveChangesAsync();
+    }
+
+    private static string GetImageUrl(int questionId, string basePatch, long quizId)
+    {
         
+        string fullPath = $"{Directory.GetCurrentDirectory()}/_Uploads/QuizImages/{quizId}/question{questionId}.jpg";
+        string imageUrl = $"{basePatch}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{questionId}";
+        if (!File.Exists(fullPath))
+        {
+            imageUrl = string.Empty;
+        }
+        return imageUrl;
     }
 }

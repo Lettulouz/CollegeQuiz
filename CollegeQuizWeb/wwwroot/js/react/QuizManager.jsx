@@ -70,7 +70,7 @@ const QuizManagerCenterComponent = () => {
                 </div>
                 <div className="col-3">
                     <a className="btn btn-lg btn-dark w-100 h-100 text-white" type="button" data-bs-toggle="tooltip"
-                       data-bs-placement="left" data-bs-title="Kopiuj do schowka" onClick={copyToClipboard}>
+                        data-bs-placement="left" data-bs-title="Kopiuj do schowka" onClick={copyToClipboard}>
                         <i className="bi bi-clipboard"></i>
                     </a>
                 </div>
@@ -175,8 +175,18 @@ const QuizManagerRootComponent = () => {
                     <QuizManagerLeftContentComponent/>
                     <QuizManagerCenterComponent/>
                     <QuizManagerRightContentComponent/>
-                </div> : <div className="text-center">
+                </div> : <div className="text-center" style={{ marginTop: 300 }}>
                     <button className="btn click-me mx-auto mt-5" onClick={estabilishedRoomConnection}>Stwórz nowy pokój</button>
+                    <div className="hstack gap-3 align-items-center w-100 mx-auto my-5" style={{ maxWidth: 800 }}>
+                        <hr className="flex-fill"/>
+                        <span>LUB</span>
+                        <hr className="flex-fill"/>
+                    </div>
+                    <div className="hstack gap-3 justify-content-center">
+                        <a className="btn click-me darken" href="/Quiz/MyQuizes">
+                            Wróć do listy quizów
+                        </a>
+                    </div>
                 </div>}
             </div>}
         </SessionContext.Provider>

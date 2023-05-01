@@ -26,3 +26,24 @@ export const getCommonFetchObjWithBody = (method, body) => ({
     },
     body: JSON.stringify(body)
 });
+
+export const getCommonFetchObjWithFormData = (method, formData) => ({
+    method,
+    credentials: 'same-origin',
+    body: formData
+});
+
+export const getCropperConfig = () => ({
+    aspectRatio: 1,
+    viewMode: 1,
+    dragMode: 'move',
+    autoCropArea: 1,
+    cropBoxMovable: true,
+    cropBoxResizable: true,
+    scalable: true,
+    restore: false,
+    minContainerWidth: 700,
+    minContainerHeight: 500,
+    minCanvasWidth: 700,
+    minCanvasHeight: 500,
+});

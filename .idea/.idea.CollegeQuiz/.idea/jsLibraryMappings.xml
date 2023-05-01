@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{animejs, bootstrap-icons, microsoft-signalr, noUiSlider, nouislider, react, react-dom, remarkable, toastr, toastr.js}" />
+    <file url="PROJECT" libraries="{animejs, bootstrap-icons, cropper, croppie, jquery-jcrop, microsoft-signalr, noUiSlider, nouislider, react, react-cropper, react-dom, remarkable, toastr, toastr.js, wnumb}" />
   </component>
 </project>
