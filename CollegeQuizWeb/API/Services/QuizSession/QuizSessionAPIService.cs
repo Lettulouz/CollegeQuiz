@@ -178,9 +178,9 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
     public async Task SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
-        // int questionNum, answerNum;
-        // if (answerId.Length.Equals(0)) return;
-        //
+        int questionNum, answerNum;
+        if (answerId.Length.Equals(0)) return;
+        
         // if (answerId[0].Equals('r'))
         // {
         //     if (!Int32.TryParse(questionId, out questionNum)) return;

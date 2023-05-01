@@ -99,8 +99,8 @@ public class QuizSessionAPIController : AbstractAPIController
     [HttpPost("[action]/{connectionId}/{questionId}/{answerId}")]
     public async Task<IActionResult> SendAnswerJwt(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
-        //var user = await _jwtService.ValidateToken(this);
-        //if (user == null) return Forbid();
+        var user = await _jwtService.ValidateToken(this);
+        if (user == null) return Forbid();
         
         await _service.SendAnswer(connectionId, questionId, answerId, isMultiAnswer);
         return Ok();
