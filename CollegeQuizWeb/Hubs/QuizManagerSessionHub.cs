@@ -121,6 +121,13 @@ public class QuizManagerSessionHub : Hub
                     await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", timer);
                 }
                 Console.WriteLine(timer);
+                var amountOfParticipants = _context.QuizSessionPartics.Include(q=> q.QuizLobbyEntity)
+                    .Where(x => x.QuizLobbyId.Equals(x.QuizLobbyEntity.Id) && x.QuizLobbyEntity.Code.Equals(token)).Count();
+                var amountOfUniqueAnswers = _context.UsersQuestionsAnswers
+                    .Where(x => x.QuizSessionParticEntity.QuizLobbyEntity.QuizId.Equals(quiz.QuizId) && x.QuizSessionParticEntity.IsActive == true)
+                    .GroupBy(t => t.QuizSessionParticEntity.ParticipantId).Count();
+                if (amountOfUniqueAnswers >= amountOfParticipants)
+                    timer = 0;
                 if (timer == 0)
                 {
                     cts.Cancel();
