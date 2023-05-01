@@ -338,7 +338,7 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
-                    b.Property<int>("Type_Id")
+                    b.Property<int>("TypeId")
                         .HasColumnType("int")
                         .HasColumnName("site_id");
 
@@ -730,6 +730,11 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<int>("Question")
                         .HasColumnType("int")
                         .HasColumnName("question");
+
+                    b.Property<string>("Range")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("range_answer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")

@@ -13,4 +13,7 @@ public interface IUserService
     Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username);
     
     Task<ProfileDto> UserInfo(string isLogged);
+    Task<EditProfileDto> GetUserData(string isLogged);
+
+    Task UpdateProfile(EditProfileDtoPayload obj, string loggedUser);
 }

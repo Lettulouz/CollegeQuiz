@@ -84,7 +84,7 @@ const MainWindowGameComponent = () => {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer,
         setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
-        setIsLast, setAnswerSett, answerSett, questionType, setQuestionType
+        setIsLast, setAnswerSett, answerSett, questionType, setQuestionType, answRange, setAnswRange
     } = useContext(SessionContext);
     
     const [ counting, setCounting ] = useState(5);
@@ -107,6 +107,10 @@ const MainWindowGameComponent = () => {
                     max_counted: parsedAnswers.max_counted
                 }
             );
+            setAnswRange({
+                min: parsedAnswers.min,
+                max: parsedAnswers.max
+            });
             setAnswers(parsedAnswers.answers.map(q=> q));
             console.log(parsedAnswers.answers.map(q=> q));
             setQuestionType(parsedAnswers.questionType);
@@ -392,20 +396,37 @@ const QuestionType4Component = () => {
 
 // RANGE
 const QuestionType5Component = () => {
+    const {
+        connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer, answerSett, answRange, setAnswRange
+    } = useContext(SessionContext);
     const { question, questionTimer } = useContext(SessionContext);
+    const stepsSlider = useRef(null);
+    const handleClick = () => {
+        if(isAnswerSet || currentAnswer !== "") return;
+        
+        const answer = "r" + parseInt(answRange.min) + "," + parseInt(answRange.max);
+        console.log(answer);
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`,
+            getCommonFetchObj("POST")).then(r => r)
+        console.log("test");
+        setIsAnswerSet(true);
+    }
+    
     useEffect(() => {
-        var stepsSlider = document.getElementById('steps-slider');
 
-        noUiSlider.create(stepsSlider, {
-            start: [0, 100],
+        noUiSlider.create(stepsSlider.current, {
+            start: [answerSett.min, answerSett.max],
+            behaviour: 'drag',
             connect: true,
+            tooltips: [wNumb({decimals: 0}), wNumb({decimals: 0})],
             range: {
-                'min': [0, 10],
-                'max':100
+                'min': [answerSett.min, answerSett.step],
+                'max' :answerSett.max
             }
         });
 
-        stepsSlider.noUiSlider.on('update', function (values, handle) {
+        stepsSlider.current.noUiSlider.on('update', function (values, handle) {
+            setAnswRange({min: values[0], max: values[1]});
         });
     }, []);
     return (
@@ -424,8 +445,17 @@ const QuestionType5Component = () => {
                         <h3>{question}</h3>
                         <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
                     </div>
+                    <div className="row d-flex mt-6 px-3">
+                        <div ref={stepsSlider}></div>
+                    </div>
                     <div className="row d-flex mt-3 px-3">
-                        <div id="steps-slider"></div>
+                        <div className="col-12 d-flex m-0 justify-content-center text-center">
+                            <div onClick={() => handleClick()}>
+                                <button className={`btn btn-success border-0 w-100 m-0 text-white rounded cursor-default ${isAnswerSet && 'cursor-not-allowed'} `}>
+                                    Zatwierdź
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="col-2 px-0">
@@ -606,6 +636,7 @@ const QuizSessionRootComponent = () => {
     const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
     const [ currentAnswer, setCurrentAnswer ] = useState([]);
     const [ isLast, setIsLast ] = useState(false);
+    const [ answRange, setAnswRange ] = useState({min: "", max: ""});
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
     useEffect(() => setActiveCallback(), []);
@@ -617,7 +648,7 @@ const QuizSessionRootComponent = () => {
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
             afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
-            currentAnswer, setCurrentAnswer, isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType
+            currentAnswer, setCurrentAnswer, isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange
         }}>
             {isActive && <>
                 {isConnect ? <>

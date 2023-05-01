@@ -6,7 +6,15 @@
     ViewData["Title"] = "Profil użytkownika";
 }
 
-    <div class="container mt-5 mb-1">
+@if (ViewBag.UpdateAlert != null)
+                {
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        @ViewBag.UpdateAlert
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+<div class="container mt-5 mb-1">
         <div class="row d-flex justify-content-center mt-5">
             <div class="col-12 col-md-6 mb-5 user-profile">
                 <div class="card px-5 py-5 h-100" id="form1">

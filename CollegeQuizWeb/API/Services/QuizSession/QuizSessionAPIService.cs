@@ -178,12 +178,61 @@ public class QuizSessionAPIService : IQuizSessionAPIService
     public async Task SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
         int questionNum, answerNum;
-        if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
+        if (answerId.Length.Equals(0))
             return;
+        if (answerId[0].Equals('r'))
+        {
+            if (!Int32.TryParse(questionId, out questionNum))
+                return;
+            string answerRange = answerId.TrimStart('r');
+            var connetionIdInDb = _context.QuizSessionPartics
+                .FirstOrDefault(obj => obj.ConnectionId.Equals(connectionId));
 
-        var connetionIdInDb = _context.QuizSessionPartics
-            .FirstOrDefault(obj => obj.ConnectionId.Equals(connectionId));
+            if (connetionIdInDb == null)
+                return;
 
+            var answerInDb =
+                _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p =>
+                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                    .ToList();
+
+            if (!answerInDb.Count.Equals(0))
+                return;
+        
+            UsersQuestionsAnswersEntity usersAnswersEntity = new();
+            usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
+            usersAnswersEntity.Question = questionNum;
+            usersAnswersEntity.Range = answerRange;
+
+            _context.Add(usersAnswersEntity);
+            
+        }
+        else
+        {
+            if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
+                return;
+            var connetionIdInDb = _context.QuizSessionPartics
+                .FirstOrDefault(obj => obj.ConnectionId.Equals(connectionId));
+
+            if (connetionIdInDb == null)
+                return;
+
+            var answerInDb =
+                _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p =>
+                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                    .ToList();
+
+            if (!answerInDb.Count.Equals(0))
+                return;
+        
+            UsersQuestionsAnswersEntity usersAnswersEntity = new();
+            usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
+            usersAnswersEntity.Question = questionNum;
+            usersAnswersEntity.Answer = answerNum;
         if (connetionIdInDb == null)
             return;
         
@@ -218,7 +267,10 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         usersAnswersEntity.Question = questionNum;
         usersAnswersEntity.Answer = answerNum;
 
-        _context.Add(usersAnswersEntity);
+            _context.Add(usersAnswersEntity);
+        }
+
+       
         await _context.SaveChangesAsync();
     }
 }

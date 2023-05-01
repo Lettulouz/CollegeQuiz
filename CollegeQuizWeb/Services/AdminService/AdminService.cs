@@ -317,6 +317,12 @@ public class AdminService : IAdminService
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
         }
+        else
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+            return;
+        }
         if (isAdmin)
         {
             controller.Response.Redirect("/Admin/AdminList");
@@ -338,6 +344,12 @@ public class AdminService : IAdminService
             _context.Update(user);
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
+        }
+        else
+        {
+            controller.HttpContext.Session.SetString(SessionKey.USER_NOT_EXIST, Lang.USER_NOT_EXIST);
+            controller.Response.Redirect("/Admin");
+            return;
         }
         if (user.IsAdmin)
         {

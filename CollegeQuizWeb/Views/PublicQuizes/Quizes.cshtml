@@ -59,19 +59,18 @@
 </div>
 
 <script>
-    var cards=$(".color-random")
-          let prevNm=0;
-          let nm =0
-    $.each(cards, function(i,card){
-        
-        do{
-        nm = Math.floor((Math.random() * 7) + 1);
-        }while(nm===prevNm)
-        let customCard="custom-card-"+nm
-        let customButton="custom-card-d-"+nm
-        $(card).addClass(customCard)
-        let btn=$(card).find(".btn-light")
-        $(btn).addClass(customButton)
-        prevNm=nm;
+    const cards = $(".color-random");
+    let prevNm = 0;
+    let nm = 0;
+    $.each(cards, function(i,card) {    
+        do {
+            nm = Math.floor((Math.random() * 7) + 1);
+        } while(nm === prevNm)
+        const customCard="custom-card-" + nm;
+        const customButton="custom-card-d-" + nm;
+        $(card).addClass(customCard);
+        let btn = $(card).find(".btn-light");
+        $(btn).addClass(customButton);
+        prevNm = nm;
     })
 </script>

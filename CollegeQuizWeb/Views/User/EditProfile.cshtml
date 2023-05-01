@@ -1,4 +1,4 @@
-@model CollegeQuizWeb.Dto.User.ProfileDto
+@model CollegeQuizWeb.Dto.User.EditProfileDto
 @{
     ViewData["Title"] = "Profil użytkownika";
 }
@@ -7,45 +7,64 @@
     <div class="row d-flex justify-content-center mt-5">
         <div class="col-12 col-md-6 mb-5 user-profile">
             <div class="card px-5 py-5 h-100" id="form1">
-
                 <label id="mainName">Edycja profilu użytkownika </label>
                 <div class="container-fluid bg-profile">
+                    <form method="post" autocomplete="off" asp-controller="User" asp-action="EditProfile">
                     <div class="row mt-4 mb-4">
                         <div class="col-12">
                             <div class="row">
                                 <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-10">
+                                        </div>
+                                        <div class="col-2 ">
+                                            <a class="btn button-link btn-color-one-short" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Wyjdź" asp-controller="User" asp-action="Profile">
+                                                <i class="bi bi-x"></i> </a>
+                                        </div>
+                                    </div>
                                     <div class="row mb-2 ">
                                         <div class="col-12">
                                             <b>Nazwa: </b><input type="text" class="form-control" id="UserName" asp-for="Username" placeholder="Nazwa">
+                                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="Username"></span>
                                         </div>
                                     </div>
                                     <div class="row mb-2 ">
-                                        <div class="col-6">
+                                        <div class="col-12 col-md-6">
                                             <b>Imię:</b> <input type="text" class="form-control" id="FirstName" asp-for="FirstName" placeholder="Imię">
+                                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="FirstName"></span>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-12 col-md-6">
                                             <b>Nazwisko:</b><input type="text" class="form-control" id="LastName" asp-for="LastName" placeholder="Nazwisko">
+                                            <span class="ms-1 mt-1 errorTextColor" asp-validation-for="LastName"></span>
                                         </div>
                                     </div>
                                     <div class="row mb-2 ">
                                         <div class="col-12">
-                                            <b>Email:</b> <input type="text" class="form-control" id="Email" asp-for="Email" placeholder="Email">
+                                            <b>Nowe Hasło:</b> <input type="password" class="form-control" id="NewPassword" asp-for="NewPassword" placeholder="Nowe Hasło">
                                         </div>
-                                    </div>   
+                                    </div>
+                                    <div class="row mb-2 ">
+                                        <div class="col-12">
+                                            <b>Potwierdź Hasło:</b> <input type="password" class="form-control" id="ConfirmPassword" asp-for="ConfirmPassword" placeholder="Potwierdź Hasło">
+                                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="ConfirmPassword"></span>
+                                            </div>
+                                    </div>
                                     <div class="row mb-4 ">
                                         <div class="col-12">
-                                            <b>Hasło:</b> <input type="text" class="form-control" id="Password" asp-for="Password" placeholder="Hasło">
+                                            <b>Aktualne Hasło:</b> <input type="password" class="form-control" id="OldPassword" asp-for="OldPassword" placeholder="Aktualne Hasło">
+                                            <span class="mx-2 mt-1 errorTextColor" asp-validation-for="OldPassword"></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 text-center">
-                            <a class="btn button-link btn-color-one-short" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Zapisz profil" asp-controller="User" asp-action="Profile">
+                            <button type="submit" class="btn btn-color-one-short btn-lg float-end" name="senduser" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Zapisz profil">
                                 <i class="bi bi-check"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
