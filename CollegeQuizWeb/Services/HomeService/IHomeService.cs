@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.Dto.Home;
+using CollegeQuizWeb.Entities;
 using PayU.Client.Models;
 
 namespace CollegeQuizWeb.Services.HomeService;
