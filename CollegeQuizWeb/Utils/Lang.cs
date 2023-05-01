@@ -70,16 +70,14 @@ public static class Lang
         "*Należy podać prawidłową ilość kuponów.";
     public const string INVALID_COUPON_SUBSCRIPTION_TIME_ERROR = 
         "*Należy wybrać jeden z możliwych typów subskrypcji.";
-   public const string CATEGORIES_GENERATED_INFO_STRING =
-        "Stworzono kategorię <strong>{0}</strong.";
-        
+    
     public const string COUPONS_GENERATED_INFO_STRING =
         "Wygenerowano <strong>{0}</strong> kluczy dla subkypcji ważnych do <strong>{1}</strong> " +
         "aktywujących subskypcję typu <strong>{2}</strong> na <strong>{3}</strong> dni.</br>";
 
     public const string COUPON_ACTIVATED_MESSAGE = "Sukces! Do Twojego konta przypisano właśnie subskrybcję " + 
-        "typu <strong>{0}</strong> na <strong>{1}</strong> dni. " +
-        "Aktualna subskrypcja będzie ważna jeszcze <strong>{2}</strong> dni, do <strong>{3}</strong>.";
+                                                   "typu <strong>{0}</strong> na <strong>{1}</strong> dni. " +
+                                                   "Aktualna subskrypcja będzie ważna jeszcze <strong>{2}</strong> dni, do <strong>{3}</strong>.";
     
     public const string COUPON_ACTIVATED_WITH_COMPENSATION_MESSAGE = 
         "Sukces! Do Twojego konta przypisano właśnie subskrybcję zmieniającą Twoje konto na status <strong>{0}" +
@@ -89,6 +87,14 @@ public static class Lang
 
     public const string COUPON_CODE_LOWER_LEVEL_ERROR =
         "Nie można aktywować kuponu z subskrypcją niższą niż obecnie posiadana!";
+
+    
+    
+    
+   public const string CATEGORIES_GENERATED_INFO_STRING =
+        "Stworzono kategorię <strong>{0}</strong.";
+        
+    
     
     public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
     public const string USER_DELETED = "*Użytkownik {0} został usunięty.";
@@ -135,6 +141,12 @@ public static class Lang
     public const string ADDRESS1_IS_REQUIRED = "*Pole Adres 1 jest wymagane.";
     public const string ADDRESS1_TOO_LONG = "*Pole Adres 1 nie może przekraczać 40 znaków.";
     public const string ADDRESS1_TOO_SHORT = "*Pole Adres 1 nie może być krótsze niż 3 znaki.";
+    
+    public const string SUBSCRIPTION_IS_ACTIVE = "Wygląda na to, że posiadasz już aktywną subskrypcję, " +
+                                                 "dokonanie przedłużenia ważności konta premium jest możliwe na 7 dni " +
+                                                 "przed zakończeniem ważności poprzedniej.";
+    
+    public const string SUBSCRIPTION_IS_LOWER = "Nie można kupić subskrypcji typu niższego niż aktualnie posiadany.";
 
     public const string PROFILE_UPDATED = "Pomyślnie zaktualizowano twój profil";
     public const string DIFFERENT_PASSWORDS = "*Podano różne hasła";

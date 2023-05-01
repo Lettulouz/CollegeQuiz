@@ -1,6 +1,17 @@
 @model CollegeQuizWeb.Dto.Home.SubscriptionPaymentDto
 
 <div class="container">
+    @if (ViewBag.SubscriptionMessage != null)
+    {
+        <div class="row d-flex justify-content-center">
+            <div class="col-9">
+                <div class="alert @ViewBag.Type alert-dismissible fade show" role="alert">
+                    @Html.Raw(ViewBag.SubscriptionMessage)
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
     <form method="post" asp-action="Subscription" asp-controller="Home">
         <div class="row d-flex justify-content-center">
             <div class="col-9">
