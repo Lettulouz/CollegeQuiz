@@ -93,38 +93,38 @@ const QuizRangeAnswerComponent = ({ id }) => {
                         <div className="col-md-4 mb-2">
                             <label htmlFor="minId" className="form-label">Min</label>
                             <input value={answerR.min} type="number" className={`form-control ${minInvalid && 'is-invalid'}`}
-                                   id="minId" onChange={e => onSetRangeProp(id, e, "min")} min={0}/>
+                                id="minId" onChange={e => onSetRangeProp(id, e, "min")} min={0}/>
                             <div className="invalid-feedback">{minInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="stepId" className="form-label">Step(sister)</label>
                             <input value={answerR.step} type="number" className={`form-control ${stepIsInvalid && 'is-invalid'}`}
-                                   id="stepId" onChange={e => onSetRangeProp(id, e, "step")} min={0}/>
+                                id="stepId" onChange={e => onSetRangeProp(id, e, "step")} min={0}/>
                             <div className="invalid-feedback">{stepIsInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="maxId" className="form-label">Maks</label>
                             <input value={answerR.max} type="number" className="form-control" id="maxId"
-                                   onChange={e => onSetRangeProp(id, e, "max")} min={0}/>
+                                onChange={e => onSetRangeProp(id, e, "max")} min={0}/>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="minCountedId" className="form-label">Min punktowane</label>
                             <input value={answerR.minCounted} type="number"
-                                   className={`form-control ${(countedOutOfRange || minCountedInvalid) && 'is-invalid'}`}
-                                   id="minCountedId" onChange={e => onSetRangeProp(id, e, "minCounted")} min={0}/>
+                                className={`form-control ${(countedOutOfRange || minCountedInvalid) && 'is-invalid'}`}
+                                id="minCountedId" onChange={e => onSetRangeProp(id, e, "minCounted")} min={0}/>
                             <div className="invalid-feedback">{minCountedInvalid}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="correctAnsId" className="form-label">Prawidłowa odpowiedź</label>
                             <input value={answerR.correctAns} type="number"
-                                   className={`form-control ${(isInvalidCorrectAns) && 'is-invalid'}`}
-                                   id="correctAnsId" onChange={e => onSetRangeProp(id, e, "correctAns")} min={0}/>
+                                className={`form-control ${(isInvalidCorrectAns) && 'is-invalid'}`}
+                                id="correctAnsId" onChange={e => onSetRangeProp(id, e, "correctAns")} min={0}/>
                             <div className="invalid-feedback">{isInvalidCorrectAns}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="maxCounterId" className="form-label">Maks punktowane</label>
                             <input value={answerR.maxCounted} type="number" className={`form-control ${countedOutOfRange && 'is-invalid'}`}
-                                   id="maxCounterId" onChange={e => onSetRangeProp(id, e, "maxCounted")} min={0}/>
+                                id="maxCounterId" onChange={e => onSetRangeProp(id, e, "maxCounted")} min={0}/>
                             <div className="invalid-feedback">{countedOutOfRange}</div>
                         </div>
                     </div>
@@ -146,15 +146,15 @@ const QuizSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers }) => {
                 <div className="p-3 card hstack">
                     <div className="me-2 fs-4">{answer.id}</div>
                     <input type="text" className="form-control" placeholder={`Treść odpowiedzi ${id}`}
-                           onChange={e => onSetQuestionAnswer(e.target.value, q.id, answer.id)} value={answer.text}/>
+                        onChange={e => onSetQuestionAnswer(e.target.value, q.id, answer.id)} value={answer.text}/>
                 </div>
                 <div className="form-check mt-2">
                     {isMultipleAnswers ? <>
                         <input type="checkbox" className="form-check-input" id={questionId} name={groupId}
-                               checked={answer.isCorrect} onChange={e => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, e.target.checked)}/>
+                            checked={answer.isCorrect} onChange={e => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, e.target.checked)}/>
                     </> : <>
                         <input type="radio" className="form-check-input form-check-input-radio" id={questionId} name={groupId}
-                               checked={answer.isCorrect} onChange={() => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, true)}/>
+                            checked={answer.isCorrect} onChange={() => onChangeCorrectAnswer(q.id, answer.id, isMultipleAnswers, true)}/>
                     </>}
                     <label htmlFor={questionId} className="form-check-label">
                         {q.type === "TRUE_FALSE" ? id === 1 ? "Prawda" : "Fałsz" : "To jest poprawna odpowiedź"}
