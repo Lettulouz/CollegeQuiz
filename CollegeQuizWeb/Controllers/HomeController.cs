@@ -55,6 +55,10 @@ public class HomeController : Controller
         ViewBag.TypeOfSubscription = id;
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         var subscriptionPaymentDto = await _homeService.GetUserData(username, this);
+        ViewBag.SubscriptionMessage = HttpContext.Session.GetString(SessionKey.SUBSCRIPTION_MESSAGE)!;
+        ViewBag.Type = HttpContext.Session.GetString(SessionKey.SUBSCRIPTION_MESSAGE_TYPE)!;
+        HttpContext.Session.Remove(SessionKey.SUBSCRIPTION_MESSAGE);
+        HttpContext.Session.Remove(SessionKey.SUBSCRIPTION_MESSAGE_TYPE);
         return View(subscriptionPaymentDto);
     }
     

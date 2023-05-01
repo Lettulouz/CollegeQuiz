@@ -82,6 +82,17 @@ public class UserService : IUserService
                 coupon.IsUsed = true;
                 
                 string message = "";
+                
+                if (userEntity.CurrentStatusExpirationDate.AddDays(-7) > DateTime.Now)
+                {
+                    controller.HttpContext.Session
+                        .SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM, Lang.SUBSCRIPTION_IS_ACTIVE);
+                    controller.HttpContext.Session.SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE,
+                        "alert-danger");
+                    controller.Response.Redirect("/User/AttemptCouponRedeem");
+                    return;
+                }
+                
                 if (userEntity.AccountStatus == 0)
                 {
                     userEntity.AccountStatus = coupon.TypeOfSubscription;

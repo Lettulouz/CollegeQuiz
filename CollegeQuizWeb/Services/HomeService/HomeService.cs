@@ -12,6 +12,7 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
 using DotNetEnv;
 using Microsoft.AspNetCore.Http;
+using Microsoft.ClearScript.JavaScript;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PayU.Client;
@@ -34,14 +35,34 @@ public class HomeService : IHomeService
 
     public async Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller)
     {
-        UserEntity? userEntity = await _context.Users.FirstOrDefaultAsync(obj => obj.Username.Equals(username));
+        UserEntity? userEntity = _context.Users.FirstOrDefault(obj => obj.Username.Equals(username));
         if(userEntity == null){controller.Response.Redirect("/Home");return new SubscriptionPaymentDto();}
 
+        ClientAddressEntity? clientAddressEntity =
+            _context.ClientsAddresses.FirstOrDefault(x => x.UserEntity.Username.Equals(username));
+        
         SubscriptionPaymentDto subscriptionPaymentDto = new SubscriptionPaymentDto();
         subscriptionPaymentDto.FirstName = userEntity.FirstName;
         subscriptionPaymentDto.LastName = userEntity.LastName;
         subscriptionPaymentDto.Email = userEntity.Email;
         subscriptionPaymentDto.Username = username;
+        if (clientAddressEntity != null)
+        {
+            subscriptionPaymentDto.PhoneNumber = clientAddressEntity.PhoneNumber;
+            subscriptionPaymentDto.Country = clientAddressEntity.Country;
+            subscriptionPaymentDto.State = clientAddressEntity.State;
+            subscriptionPaymentDto.Address1 = clientAddressEntity.Address1;
+            subscriptionPaymentDto.Address2 = clientAddressEntity.Address2;
+        }
+        else
+        {
+            subscriptionPaymentDto.PhoneNumber = "";
+            subscriptionPaymentDto.Country = "";
+            subscriptionPaymentDto.State = "";
+            subscriptionPaymentDto.Address1 = "";
+            subscriptionPaymentDto.Address2 = "";
+        }
+        
         return subscriptionPaymentDto;
     }
 
@@ -101,7 +122,14 @@ public class HomeService : IHomeService
                 return true;
             }
 
-            userEntity.CurrentStatusExpirationDate = DateTime.Now.AddDays(30);
+            int daysToAdd = 0;
+            var calculateRemainingTime =
+                (userEntity.CurrentStatusExpirationDate - DateTime.Today).TotalDays;
+            if (calculateRemainingTime % 2 == 0)
+                daysToAdd = (int) (calculateRemainingTime / 2);
+            else
+                daysToAdd = (int) (calculateRemainingTime / 2) + 1;
+            userEntity.CurrentStatusExpirationDate = DateTime.Now.AddDays(30+daysToAdd);
             userEntity.AccountStatus = typeOfSubscription;
             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
@@ -109,7 +137,7 @@ public class HomeService : IHomeService
         }
         return true;
     }
-    
+
     public async Task MakePaymentForSubscription(SubscriptionPaymentDtoPayload subscriptionPaymentDtoPayload)
     {
         var controller = subscriptionPaymentDtoPayload.ControllerReference;
@@ -126,20 +154,24 @@ public class HomeService : IHomeService
             controller.Response.Redirect("/Home");
             return;
         }
+
         if (subscriptionPaymentDto.RememberAddressForLater)
         {
-            ClientAddressEntity? checkIfAddressExists = new();
-            checkIfAddressExists =
+            ClientAddressEntity clientAddressEntity =
                 _context.ClientsAddresses.FirstOrDefault(obj => obj.UserEntity.Equals(userEntity));
-
-            ClientAddressEntity clientAddressEntity = new();
+            bool isAddressNull = true;
+            if (clientAddressEntity != null)
+                isAddressNull = false;
+            else
+                clientAddressEntity = new();
             clientAddressEntity.UserEntity = userEntity;
             clientAddressEntity.PhoneNumber = subscriptionPaymentDto.PhoneNumber;
             clientAddressEntity.Country = subscriptionPaymentDto.Country;
             clientAddressEntity.State = subscriptionPaymentDto.State;
             clientAddressEntity.Address1 = subscriptionPaymentDto.Address1;
             clientAddressEntity.Address2 = subscriptionPaymentDto.Address2;
-            if (checkIfAddressExists != null)
+            
+            if (!isAddressNull)
                 _context.ClientsAddresses.Update(clientAddressEntity);
             else
                 _context.ClientsAddresses.Add(clientAddressEntity);
@@ -153,8 +185,7 @@ public class HomeService : IHomeService
             controller.Response.Redirect("/Home");
             return;
         }
-        
-        
+
         PayUClient client = new PayUClient(ConfigLoader.PayUClientSettings);
 
         var remoteIpAddress = GetIpAddress(controller);
@@ -171,7 +202,30 @@ public class HomeService : IHomeService
         string forWhoStr = "";
         if (forWho.Equals(1)) forWhoStr = subscriptionTypesEntity.Name + "SELF";
         else if (forWho.Equals(2)) forWhoStr = subscriptionTypesEntity.Name + "GIFT";
+
+        if (forWho.Equals(1) && userEntity.AccountStatus>subscriptionPaymentDto.SubscriptionType)
+        {
+            controller.HttpContext.Session
+                .SetString(SessionKey.SUBSCRIPTION_MESSAGE, Lang.SUBSCRIPTION_IS_LOWER);
+            controller.HttpContext.Session.SetString(SessionKey.SUBSCRIPTION_MESSAGE_TYPE,
+                "alert-danger");
+            controller.Response.Redirect("/Home/Subscription/" + subscriptionPaymentDto.SubscriptionType);
+            return;
+        }
         
+        if (forWho.Equals(1) && 
+            userEntity.AccountStatus.Equals(subscriptionPaymentDto.SubscriptionType) && 
+            userEntity.CurrentStatusExpirationDate.AddDays(-7) > DateTime.Now)
+        {
+            controller.HttpContext.Session
+                .SetString(SessionKey.SUBSCRIPTION_MESSAGE, Lang.SUBSCRIPTION_IS_ACTIVE);
+            controller.HttpContext.Session.SetString(SessionKey.SUBSCRIPTION_MESSAGE_TYPE,
+                "alert-danger");
+            string url = subscriptionTypesEntity.SiteId.ToString();
+            controller.Response.Redirect("/Home/Subscription/" + url);
+            return;
+        }
+
         var products = new List<Product>(1);
         products.Add(new Product(forWhoStr, price.ToString(), "1"));
         var request = new OrderRequest(remoteIpAddress, 

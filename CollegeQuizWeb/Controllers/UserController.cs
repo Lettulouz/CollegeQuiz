@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Services.UserService;
@@ -82,8 +83,8 @@ public class UserController : Controller
     public IActionResult AttemptCouponRedeem()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        ViewBag.CouponMessage = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM);
-        ViewBag.Type = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE);
+        ViewBag.CouponMessage = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM)!;
+        ViewBag.Type = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE)!;
         HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM);
         HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE);
         ViewBag.Username = isLogged;
@@ -92,13 +93,14 @@ public class UserController : Controller
 
     public IActionResult SubscriptionAfterPaymentSelf()
     {
-        return View();
+        return View("SubscriptionPages/SubscriptionAfterPaymentSelf");
     }
     
     public IActionResult SubscriptionAfterPaymentGift()
     {
-        return View();
+        return View("SubscriptionPages/SubscriptionAfterPaymentGift");
     }
+    
     
     [HttpPost]
     [ValidateAntiForgeryToken]

@@ -33,6 +33,8 @@ Website that is being created for college project. It will let players to play t
 
 **Web animations**: anime.js animation library
 
+**Image resizer js library**: CropperJS
+
 **Server and SignalR broker provider**: MS Azure
 
 ## License

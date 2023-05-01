@@ -31,7 +31,7 @@ public class CouponEntity : AbstractAuditableEntity
     
     [StringLength(80)]
     [Column("customer_name")]
-    public string CustomerName { get; set; }
+    public string? CustomerName { get; set; }
     
     public virtual ICollection<GiftCouponsEntity> GiftCouponsEntities { get; set; }
 }

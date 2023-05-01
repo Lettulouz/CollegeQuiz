@@ -12,6 +12,8 @@ public class SessionKey
     public const string USER_NOT_EXIST = "USER_NOT_EXIST+SESS"; 
     public const string COUPON_CODE_MESSAGE_REDEEM = "COUPON_CODE_MESSAGE_REDEEM+SESS";
     public const string COUPON_CODE_MESSAGE_REDEEM_TYPE = "COUPON_CODE_MESSAGE_REDEEM_TYPE+SESS";
+    public const string SUBSCRIPTION_MESSAGE = "SUBSCRIPTION_MESSAGE+SESS";
+    public const string SUBSCRIPTION_MESSAGE_TYPE = "SUBSCRIPTION_MESSAGE_TYPE+SESS";
     public const string USER_REMOVED = "USER_REMOVED+SESS";
     public const string USER_SUSPENDED = "USER_SUSPENDED+SESS";
     public const string ADMIN_ERROR = "ADMIN_ERROR+SESS";
