@@ -395,6 +395,18 @@ select{
     border-radius: 15px 25px 25px 25px;
 }
 
+#mainName2 {
+    position: absolute;
+    top: -23px;
+    left: 25px;
+    background-color: #63c4ab;
+    padding: 5px 10px;
+    font-size: 20px;
+    font-weight: bolder;
+    border-radius: 25px 25px 25px 25px;
+    color: white;
+}
+
 .errorTextColor {
     color: indianred;
 }
@@ -497,7 +509,7 @@ select{
 }
 
 .custom-card-1{
-    background-color: #ebffe5;
+    background-color: #ebffe5E6;
     border: 2px solid #9acf8a;
     border-radius: 5px;
 }
@@ -516,7 +528,7 @@ select{
 }
 
 .custom-card-2{
-    background-color: #b8fcdf;
+    background-color: #b8fcdfE6;
     border: 2px solid #80d8b2;
     border-radius: 5px;
 }
@@ -535,7 +547,7 @@ select{
 }
 
 .custom-card-3{
-    background-color: #cbf0eb;
+    background-color: #cbf0ebE6;
     border: 2px solid #6fb3ab;
     border-radius: 5px;
 }
@@ -554,7 +566,7 @@ select{
 }
 
 .custom-card-4{
-    background-color: #ccfff9;
+    background-color: #ccfff9E6;
     border: 2px solid #87e4d9;
     border-radius: 5px;
 }
@@ -574,7 +586,7 @@ select{
 }
 
 .custom-card-5{
-    background-color: #dffffb;
+    background-color: #dffffbE6;
     border: 2px solid #81d1c6;
     border-radius: 5px;
 }
@@ -593,7 +605,7 @@ select{
 }
 
 .custom-card-6{
-    background-color: #e0f7ff;
+    background-color: #e0f7ffE6;
     border: 2px solid #80bdd5;
     border-radius: 5px;
 }
@@ -612,7 +624,7 @@ select{
 }
 
 .custom-card-7{
-    background-color: #c6e5fa;
+    background-color: #c6e5faE6;
     border: 2px solid #79a8c9;
     border-radius: 5px;
 }
