@@ -123,9 +123,13 @@ public class QuizManagerSessionHub : Hub
         }
 
 
-        var currentAnswer = _context.Answers.Include(t => t.QuestionEntity)
+        var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
                 .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
-                t.QuestionEntity.QuizId.Equals(quiz.QuizId)).FirstOrDefault();
+                t.QuestionEntity.QuizId.Equals(quiz.QuizId))
+                .Select(q=>new
+                {
+                    AnswerName = q.Name
+                }).ToList();
 
         var getAllAnswersForUpdate = _context.UsersQuestionsAnswers
             .Include(t => t.QuizSessionParticEntity)
@@ -139,24 +143,34 @@ public class QuizManagerSessionHub : Hub
         var actuallTime = DateTime.Now;
         foreach (var answer in getAllAnswersForUpdate)
         {
-            if (question.answers[answer.Answer] == currentAnswer.Name)
+            foreach (var currentAnswer in currentAnswers)
             {
-                TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
-                TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
-                var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
-                                                      restOfTime.TotalSeconds)) * 1000 *
-                                                (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02));
-                newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
-                answer.QuizSessionParticEntity.Score += wonPoints;
-                answer.QuizSessionParticEntity.CurrentStreak += 1;
-            }
-            else
-            {
-                answer.QuizSessionParticEntity.CurrentStreak = 0;
-                newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, 0);
+                if (question.answers[answer.Answer] == currentAnswer.AnswerName)
+                {
+                    TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                    TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                    var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
+                                                          restOfTime.TotalSeconds)) * 1000 *
+                                                    (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02));
+                    if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+                        newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += wonPoints;
+                    else
+                        newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
+                    //answer.QuizSessionParticEntity.Score += wonPoints;
+                    //answer.QuizSessionParticEntity.CurrentStreak += 1;
+                }
+                else
+                {
+                    answer.QuizSessionParticEntity.CurrentStreak = 0;
+                    if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+                        newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += 0;
+                    else
+                        newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, 0);
+                }
             }
         }
         await _context.SaveChangesAsync();
+        
         
         Console.WriteLine("punkt testowy 7");
         var topUsers =
@@ -173,7 +187,7 @@ public class QuizManagerSessionHub : Hub
 
         Console.WriteLine("punkt testowy 8");
 
-        await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswer.Name));
+        await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
         Thread.Sleep(2000);
         
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));

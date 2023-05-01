@@ -175,7 +175,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         };
     }
 
-    public async Task SendAnswer(string connectionId, string questionId, string answerId)
+    public async Task SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
         int questionNum, answerNum;
         if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
@@ -186,17 +186,33 @@ public class QuizSessionAPIService : IQuizSessionAPIService
 
         if (connetionIdInDb == null)
             return;
-
-        var answerInDb =
-            _context.UsersQuestionsAnswers
-                .Include(p => p.QuizSessionParticEntity)
-                .Where(p =>
-                    p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
-                .ToList();
-
-        if (!answerInDb.Count.Equals(0))
-            return;
         
+        if (isMultiAnswer)
+        {
+            var answerInDb =
+                _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p =>
+                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId)
+                        && p.Answer.Equals(answerId))
+                    .ToList();
+            
+            if (!answerInDb.Count.Equals(0))
+                return;
+        }
+        else
+        {
+            var answerInDb =
+                _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p =>
+                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                    .ToList();
+            
+            if (!answerInDb.Count.Equals(0))
+                return;
+        }
+
         UsersQuestionsAnswersEntity usersAnswersEntity = new();
         usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
         usersAnswersEntity.Question = questionNum;

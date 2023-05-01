@@ -218,7 +218,7 @@ input:-webkit-autofill {
 }
 
 .card-img-custom.clicked {
-    transform: scale(0.8);
+    transform: scale(0.85);
 }
 
 .card-img-custom:not(.clicked):not(.notClicked):hover {

@@ -83,8 +83,8 @@ public class QuizSessionAPIController : AbstractAPIController
         return Json(await _service.GetLobbyData(loggedUsername, token));
     }
     
-    [HttpPost("[action]/{connectionId}/{questionId}/{answerId}")]
-    public async Task<IActionResult> SendAnswer(string connectionId, string questionId, string answerId)
+    [HttpPost("[action]/{connectionId}/{questionId}/{answerId}/{isMultiAnswer}")]
+    public async Task<IActionResult> SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null)
@@ -92,17 +92,17 @@ public class QuizSessionAPIController : AbstractAPIController
             Response.StatusCode = 401;
             return Forbid();
         }
-        await _service.SendAnswer(connectionId, questionId, answerId);
+        await _service.SendAnswer(connectionId, questionId, answerId, isMultiAnswer);
         return Ok();
     }
 
-    [HttpPost("[action]/{connectionId}/{questionId}/{answerId}")]
-    public async Task<IActionResult> SendAnswerJwt(string connectionId, string questionId, string answerId)
+    [HttpPost("[action]/{connectionId}/{questionId}/{answerId}/{isMultiAnswer}")]
+    public async Task<IActionResult> SendAnswerJwt(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
         var user = await _jwtService.ValidateToken(this);
         if (user == null) return Forbid();
         
-        await _service.SendAnswer(connectionId, questionId, answerId);
+        await _service.SendAnswer(connectionId, questionId, answerId, false);
         return Ok();
     }
 }

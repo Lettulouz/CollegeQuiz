@@ -128,7 +128,8 @@ const MainWindowGameComponent = () => {
             setIsLast(parsedAnswers.isLast);
         });
         connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => {
-            setCurrentAnswer(JSON.parse(currentAnsw));
+            const parsedAnswers = JSON.parse(currentAnsw);
+            setCurrentAnswer(parsedAnswers);
         });
         connection.on("OnDisconectedSession", data => {
             setIsJoinClicked(false);
@@ -332,12 +333,12 @@ const QuestionType3Component = () => {
                         <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
-                        <QuestionCardComponent number={0}/>
-                        <QuestionCardComponent number={1}/>
+                        <QuestionCardComponentMulti number={0}/>
+                        <QuestionCardComponentMulti number={1}/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
-                        <QuestionCardComponent number={2}/>
-                        <QuestionCardComponent number={3}/>
+                        <QuestionCardComponentMulti number={2}/>
+                        <QuestionCardComponentMulti number={3}/>
                     </div>
                 </div>
                 <div className="col-2 px-0">
@@ -449,7 +450,7 @@ const QuestionCardComponent = ({ number }) => {
         setClickedIndex(answer);
     }
     
-    const incClassAns = () => currentAnswer !== answers[number] && currentAnswer !== "" ? 'incorrectAnswer' : '';
+    const incClassAns = () => !Object.values(currentAnswer).find(x=> x.AnswerName === answers[number]) && Object.keys(currentAnswer).length !== 0 ? 'incorrectAnswer' : '';
     const isClicked = () => isAnswerSet && clickedIndex !== number && 'notClicked';
     
     return (
@@ -457,6 +458,37 @@ const QuestionCardComponent = ({ number }) => {
             <div className={`card bg-dark text-white card-img-custom ${clickedIndex === number && 'clicked'} ${isClicked()}`}
                  onClick={() => handleClick(number)}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${isAnswerSet && 'cursor-not-allowed'} `}>
+                    <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
+                    <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
+                        <h5 className="card-title text-center">Odpowiedź {ANSWER_LETTERS[number]}</h5>
+                        <p className="card-text text-center">{answers[number]}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+const QuestionCardComponentMulti = ({ number }) => {
+    const {
+        answers, connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer
+    } = useContext(SessionContext);
+    const [clickedIndex, setClickedIndex] = useState([]);
+
+    const handleClick = answer => {
+        if(clickedIndex.includes(answer)) return;
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/${true}`,
+            getCommonFetchObj("POST")).then(r => r)
+        setIsAnswerSet(true);
+        setClickedIndex([...clickedIndex, answer]);
+    }
+    const incClassAns = () => !Object.values(currentAnswer).find(x=> x.AnswerName === answers[number]) && Object.keys(currentAnswer).length !== 0 ? 'incorrectAnswer' : '';
+    
+    return (
+        <div className={`col-6 d-flex m-0 ${incClassAns()}`}>
+            <div className={`card bg-dark text-white card-img-custom ${clickedIndex.includes(number) && 'clicked'}`}
+                 onClick={() => handleClick(number)}>
+                <button className={`bg-transparent border-0 p-0 m-0 cursor-default`}>
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
                     <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
                         <h5 className="card-title text-center">Odpowiedź {ANSWER_LETTERS[number]}</h5>
@@ -572,7 +604,7 @@ const QuizSessionRootComponent = () => {
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
     const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
-    const [ currentAnswer, setCurrentAnswer ] = useState("");
+    const [ currentAnswer, setCurrentAnswer ] = useState([]);
     const [ isLast, setIsLast ] = useState(false);
     
     const [ isActive, setActiveCallback ] = useLoadableContent();
