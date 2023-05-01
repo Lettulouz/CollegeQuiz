@@ -219,56 +219,39 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             if (connetionIdInDb == null)
                 return;
 
-            var answerInDb =
-                _context.UsersQuestionsAnswers
-                    .Include(p => p.QuizSessionParticEntity)
-                    .Where(p =>
-                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
-                    .ToList();
+            if (isMultiAnswer)
+            {
+                var answerInDb =
+                    _context.UsersQuestionsAnswers
+                        .Include(p => p.QuizSessionParticEntity)
+                        .Where(p =>
+                            p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId)
+                            && p.Answer.Equals(answerId))
+                        .ToList();
+                
+                if (!answerInDb.Count.Equals(0))
+                    return;
+            }
+            else
+            {
+                var answerInDb =
+                    _context.UsersQuestionsAnswers
+                        .Include(p => p.QuizSessionParticEntity)
+                        .Where(p =>
+                            p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                        .ToList();
+                
+                if (!answerInDb.Count.Equals(0))
+                    return;
+            }
 
-            if (!answerInDb.Count.Equals(0))
-                return;
-        
             UsersQuestionsAnswersEntity usersAnswersEntity = new();
             usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
             usersAnswersEntity.Question = questionNum;
             usersAnswersEntity.Answer = answerNum;
-        if (connetionIdInDb == null)
-            return;
-        
-        if (isMultiAnswer)
-        {
-            var answerInDb =
-                _context.UsersQuestionsAnswers
-                    .Include(p => p.QuizSessionParticEntity)
-                    .Where(p =>
-                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId)
-                        && p.Answer.Equals(answerId))
-                    .ToList();
-            
-            if (!answerInDb.Count.Equals(0))
-                return;
-        }
-        else
-        {
-            var answerInDb =
-                _context.UsersQuestionsAnswers
-                    .Include(p => p.QuizSessionParticEntity)
-                    .Where(p =>
-                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
-                    .ToList();
-            
-            if (!answerInDb.Count.Equals(0))
-                return;
-        }
 
-        UsersQuestionsAnswersEntity usersAnswersEntity = new();
-        usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
-        usersAnswersEntity.Question = questionNum;
-        usersAnswersEntity.Answer = answerNum;
-
-            _context.Add(usersAnswersEntity);
-        }
+                _context.Add(usersAnswersEntity);
+            }
 
        
         await _context.SaveChangesAsync();
