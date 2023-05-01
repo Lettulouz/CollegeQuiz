@@ -84,7 +84,7 @@ const MainWindowGameComponent = () => {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer,
         setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
-        setIsLast, setAnswerSett, answerSett, questionType, setQuestionType, answRange, setAnswRange
+        setIsLast, setAnswerSett, questionType, setQuestionType, setAnswRange, setQuestionImage
     } = useContext(SessionContext);
     
     const [ counting, setCounting ] = useState(5);
@@ -114,6 +114,7 @@ const MainWindowGameComponent = () => {
             setQuestionType(parsedAnswers.questionType);
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
+            setQuestionImage(parsedAnswers.image_url);
             setIsAnswerSet(false);
             setCurrentAnswer("");
         });
@@ -247,7 +248,7 @@ const QuestionResultComponent = () => {
 
 // 4 ANSWERS, ONE CORRECT
 const QuestionType1Component = () => {
-    const { question, questionTimer } = useContext(SessionContext);
+    const { question, questionTimer, questionImage } = useContext(SessionContext);
     return (
         <div className="container d-flex">
             <div className="row d-flex justify-content-center">
@@ -262,7 +263,7 @@ const QuestionType1Component = () => {
                 <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
-                        <img src="/gfx/1.png" width="200px" height="200px" alt=""/>
+                        <img src={questionImage || "/gfx/1.png"} width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
                         <QuestionCardComponent number={0}/>
@@ -284,7 +285,7 @@ const QuestionType1Component = () => {
 
 // TRUE/FALSE
 const QuestionType2Component = () => {
-    const { question, questionTimer } = useContext(SessionContext);
+    const { question, questionTimer, questionImage } = useContext(SessionContext);
     return (
         <div className="container d-flex">
             <div className="row d-flex justify-content-center">
@@ -299,7 +300,7 @@ const QuestionType2Component = () => {
                 <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
-                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                        <img src={questionImage || "/gfx/timer.svg"} width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
                         <QuestionCardComponent number={0}/>
@@ -316,7 +317,7 @@ const QuestionType2Component = () => {
 
 // FOUR ANSWERS, MANY CORRECT
 const QuestionType3Component = () => {
-    const { question, questionTimer } = useContext(SessionContext);
+    const { question, questionTimer, questionImage } = useContext(SessionContext);
     return (
         <div className="container d-flex">
             <div className="row d-flex justify-content-center">
@@ -331,7 +332,7 @@ const QuestionType3Component = () => {
                 <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
-                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                        <img src={questionImage || "/gfx/timer.svg"} width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
                         <QuestionCardComponentMulti number={0}/>
@@ -352,7 +353,7 @@ const QuestionType3Component = () => {
 
 // SIX ANSWERS, ONE CORRECT
 const QuestionType4Component = () => {
-    const { question, questionTimer } = useContext(SessionContext);
+    const { question, questionTimer, questionImage } = useContext(SessionContext);
     return (
         <div className="container d-flex">
             <div className="row d-flex justify-content-center">
@@ -367,7 +368,7 @@ const QuestionType4Component = () => {
                 <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
-                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                        <img src={questionImage || "/gfx/timer.svg"} width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-3 px-3">
                         <QuestionCardComponent number={0}/>
@@ -394,7 +395,8 @@ const QuestionType4Component = () => {
 // RANGE
 const QuestionType5Component = () => {
     const {
-        connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer, answerSett, answRange, setAnswRange
+        connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer, answerSett, answRange, setAnswRange,
+        questionImage
     } = useContext(SessionContext);
     const { question, questionTimer } = useContext(SessionContext);
     const stepsSlider = useRef(null);
@@ -440,7 +442,7 @@ const QuestionType5Component = () => {
                 <div className="col-9">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3>{question}</h3>
-                        <img src="/gfx/timer.svg" width="200px" height="200px" alt=""/>
+                        <img src={questionImage || "/gfx/timer.svg"} width="200px" height="200px" alt=""/>
                     </div>
                     <div className="row d-flex mt-6 px-3">
                         <div ref={stepsSlider}></div>
@@ -625,6 +627,7 @@ const QuizSessionRootComponent = () => {
     const [ answers, setAnswers ] = useState([]);
     const [ answerSett, setAnswerSett ] = useState ({step: "", min: "", max: "", min_counted: "", max_counted: ""});
     const [ question, setQuestion ] = useState('');
+    const [ questionImage, setQuestionImage ] = useState('');
     const [ questionType, setQuestionType ] = useState(null);
     const [ questionTimer, setQuestionTimer ] = useState(null);
     const [ questionNumber, setQuestionNumber ] = useState(null);
@@ -645,7 +648,8 @@ const QuizSessionRootComponent = () => {
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
             afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
-            currentAnswer, setCurrentAnswer, isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange
+            currentAnswer, setCurrentAnswer, isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange,
+            questionImage, setQuestionImage
         }}>
             {isActive && <>
                 {isConnect ? <>

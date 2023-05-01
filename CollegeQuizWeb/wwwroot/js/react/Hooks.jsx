@@ -8,5 +8,10 @@ export const useLoadableContent = (spinnerId = 'react-loadable-spinner-content')
         setShowContent(true);
     };
 
-    return [ showContent, showContentCallback ];
+    const hideContentCallback = () => {
+        document.getElementById(spinnerId).style.cssText = 'display:flex !important';
+        setShowContent(false);
+    };
+
+    return [ showContent, showContentCallback, hideContentCallback ];
 };

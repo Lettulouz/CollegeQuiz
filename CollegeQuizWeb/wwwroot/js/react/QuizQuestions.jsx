@@ -1,12 +1,19 @@
 import { useLoadableContent } from "./Hooks.jsx";
-import { getCommonFetchObj, alertOff, alertInfo, alertDanger, getCommonFetchObjWithBody } from "./Utils.jsx";
-const { useEffect, useState, createContext, useContext } = React;
+import {
+    getCommonFetchObj, alertOff, alertInfo, alertDanger, getCommonFetchObjWithBody, getCommonFetchObjWithFormData,
+    getCropperConfig
+} from "./Utils.jsx";
+const { useEffect, useState, createContext, useContext, useRef } = React;
 
 const QuestionsContext = createContext(null);
 const MainContext = createContext(null);
 
 let QUIZ_NAME = document.getElementById("addQuizQuestionsRoot").dataset.quizName;
 const QUIZ_ID = document.getElementById("addQuizQuestionsRoot").dataset.quizId;
+const loadableSpinner = document.getElementById('react-loadable-spinner-content');
+
+const path = window.location.pathname.split('/');
+const id = path[path.length - 1];
 
 const QuizChangeNameComponent = () => {
     const { setAlert } = useContext(MainContext);
@@ -165,11 +172,57 @@ const QuizSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers }) => {
     );
 };
 
+const QuizImageManipulator = ({ modalRef, acceptChanges, refuseChanges, imageRef, imageSrc, cropperRef }) => {
+
+    useEffect(() => {
+        cropperRef.current = new Cropper(imageRef.current, getCropperConfig());
+        return () => { cropperRef.current.destroy() };
+    }, [ imageSrc ]);
+    
+    return (
+        <div className="modal fade" tabIndex="-1" aria-hidden="false" ref={modalRef} data-bs-backdrop="static" role="dialog">
+            <div className="modal-dialog modal-lg" role="document">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h1 className="modal-title fs-5">Kadrowanie zdjęcia</h1>
+                    </div>
+                    <div className="modal-body fw-normal d-flex justify-content-center w-100"
+                        style={{ width: 600 }}>
+                        <img ref={imageRef} src={imageSrc} alt="Original" />
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn-color-one" data-bs-dismiss="modal" onClick={acceptChanges}>
+                            Zatwierdź zmiany
+                        </button>
+                        <button type="button" className="btn-color-one bg-danger text-white" data-bs-dismiss="modal" onClick={refuseChanges}>
+                            Odrzuć i usuń zdjęcie
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const QuizQuestionComponent = () => {
+    const { setAlert } = useContext(MainContext);
     const {
-        q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds, onSetQuestionType, availableModes
+        q, onSetQuestionTitle, onRemoveQuestion, onSetMinutes, onSetSeconds, onSetQuestionType, availableModes,
+        uploadedImages, setUploadedImages, onSetQuestionImage
     } = useContext(QuestionsContext);
     
+    const modalRef = useRef(null);
+    const imageRef = useRef(null);
+    const cropperRef = useRef(null);
+    const inputImageRef = useRef(null);
+    
+    const [ mainImageVisible, setMainImageVisible ] = useState(false);
+    const [ imageSrc, setImageSrc ] = useState('');
+    const [ imagePreview, setImagePreview ] = useState('');
+
+    const showModal = () => new bootstrap.Modal(modalRef.current, {backdrop: 'static', keyboard: false}).show();
+    const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
+
     const generateOptions = availableModes.map(o => <option key={o.slug} value={o.slug}>{o.title}</option>);
     
     const answersComponents = q.answers.map((answer, idx) => (
@@ -178,6 +231,64 @@ const QuizQuestionComponent = () => {
             isMultipleAnswers={q.type === "MULTIPLE_FOUR_ANSWERS"}
         />
     ));
+    
+    const onRemoveImage = () => {
+        const images = [ ...uploadedImages ];
+        const withoutImage = images.filter(i => i.id !== q.id);
+        setUploadedImages(withoutImage);
+        setMainImageVisible(false);
+        URL.revokeObjectURL(imageSrc);
+        onSetQuestionImage('', q.id);
+        setImageSrc('');
+        inputImageRef.current.value = "";
+        cropperRef.current.destroy();
+    };
+    
+    const acceptChanges = () => {
+        const canvas = cropperRef.current.getCroppedCanvas({ width: 500, height: 500 });
+        setImagePreview(canvas.toDataURL());
+        canvas.toBlob(function (blob) {
+            const images = [ ...uploadedImages ];
+            let updatedImage = images.findIndex(i => i.id === q.id);
+            if (updatedImage !== -1) {
+                images[updatedImage] = { id: q.id, image: blob };
+                setUploadedImages(images);
+            } else {
+                setUploadedImages(prevState => [ ...prevState, { id: q.id, image: blob } ]);
+            }
+        });
+        setMainImageVisible(true);
+    };
+    
+    const refuseChanges = () => {
+        hideModal();
+        onRemoveImage();
+    };
+    
+    const onLoadImage = e => {
+        const { files } = e.target;
+        if (!files || !files[0]) return;
+        setImageSrc(URL.createObjectURL(files[0]));
+        showModal();
+    };
+
+    useEffect(() => {
+        if (!q.imageUrl) return;
+        setImageSrc(q.imageUrl);
+        setImagePreview(q.imageUrl);
+        fetch(q.imageUrl)
+            .then(r => r.blob())
+            .then(b => {
+                if (uploadedImages.length === 0) {
+                    setUploadedImages(prevState => ([ ...prevState, { id: q.id, image: b } ]));
+                }
+            })
+            .catch(e => {
+                if (e === undefined) return;
+                setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił problem z załadowaniem grafiki' });
+            })
+        setMainImageVisible(true);
+    }, [ q.imageUrl ]);
     
     useEffect(() => {
         if (q.timeMin.length > 3) onSetMinutes(q.id, q.timeMin.slice(0, 3));
@@ -189,35 +300,49 @@ const QuizQuestionComponent = () => {
     }, [ q.timeSec ]);
     
     return (
-        <div className="row g-2 mb-4">
-            <div className="col-12">
-                <div className="p-3 card">
-                    <div className="mb-2">
-                        <select className="form-select" value={q.type}
-                                onChange={e => onSetQuestionType(e.target.value, q.id)}>
-                            {generateOptions}
-                        </select>
-                    </div>
-                    <div className="hstack gap-2">
-                        <div className="me-2 fs-3">{q.id}</div>
-                        <textarea className="form-control h-100" placeholder="Treść pytania" value={q.text}
-                                  onChange={e => onSetQuestionTitle(e.target.value, q.id)}></textarea>
-                        <div>
-                            <label className="mb-1">Czas trwania pytania:</label>
-                            <div className="d-flex">
-                                <input type="number" className="form-control time-control" placeholder="min" min="0" max="999"
-                                       maxLength="3" value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
-                                <span className="mx-2 fw-bold pt-1">:</span>
-                                <input type="number" className="form-control time-control" placeholder="sek" min="0" max="59"
-                                       maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
-                            </div>
+        <>
+            <QuizImageManipulator
+                modalRef={modalRef} acceptChanges={acceptChanges} refuseChanges={refuseChanges} imageSrc={imageSrc}
+                imageRef={imageRef} cropperRef={cropperRef}
+            />
+            <div className="row g-2 mb-4">
+                <div className="col-12">
+                    <div className="p-3 card">
+                        {mainImageVisible && <div className="d-flex justify-content-center mb-3">
+                            <button onClick={showModal} className="bg-transparent border-image">
+                                <img src={imagePreview} alt="loadedImage" className="align-middle" width="100%" height="100%"/>
+                            </button>
+                        </div>}
+                        <div className="mb-2 hstack gap-3">
+                            <select className="form-select" value={q.type}
+                                    onChange={e => onSetQuestionType(e.target.value, q.id)}>
+                                {generateOptions}
+                            </select>
+                            <input ref={inputImageRef} type="file" className="form-control" onChange={onLoadImage}
+                                accept="image/png,image/jpeg,image/jpg" disabled={mainImageVisible}/>
+                            {mainImageVisible && <button className="btn btn-danger text-white" onClick={onRemoveImage}>X</button>}
                         </div>
-                        <button className="btn btn-danger text-white ms-2" onClick={() => onRemoveQuestion(q.id)}>X</button>
+                        <div className="hstack gap-2">
+                            <div className="me-2 fs-3">{q.id}</div>
+                            <textarea className="form-control h-100" placeholder="Treść pytania" value={q.text}
+                                onChange={e => onSetQuestionTitle(e.target.value, q.id)}></textarea>
+                            <div>
+                                <label className="mb-1">Czas trwania pytania:</label>
+                                <div className="d-flex">
+                                    <input type="number" className="form-control time-control" placeholder="min" min="0" max="999"
+                                        maxLength="3" value={q.timeMin} onChange={e => onSetMinutes(q.id, e.target.value)}/>
+                                    <span className="mx-2 fw-bold pt-1">:</span>
+                                    <input type="number" className="form-control time-control" placeholder="sek" min="0" max="59"
+                                        maxLength="2" value={q.timeSec} onChange={e => onSetSeconds(q.id, e.target.value)}/>
+                                </div>
+                            </div>
+                            <button className="btn btn-danger text-white ms-2" onClick={() => onRemoveQuestion(q.id)}>X</button>
+                        </div>
                     </div>
                 </div>
+                {q.type === "RANGE" ? <QuizRangeAnswerComponent id={q.id}/> : answersComponents}
             </div>
-            {q.type === "RANGE" ? <QuizRangeAnswerComponent id={q.id}/> : answersComponents}
-        </div>
+        </>
     );
 };
 
@@ -227,6 +352,7 @@ const initialQuestions = [
         text: '',
         timeMin: '0',
         timeSec: '',
+        imageUrl: '',
         type: 'SINGLE_FOUR_ANSWERS',
         answers: [
             { id: 1, text: '', isCorrect: true, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
@@ -241,11 +367,19 @@ const AddQuizQuestionsRoot = () => {
     const [ questions, setQuestions ] = useState(initialQuestions);
     const [ allGood, setAllGood ] = useState(true);
     const [ alert, setAlert ] = useState(alertOff());
-    const [ isActive, setActiveCallback ] = useLoadableContent();
+    const [ isActive, setActiveCallback, setInactiveCallback ] = useLoadableContent();
     const [ isSended, setIsSended ] = useState(false);
     const [ isNotValid, setIsNotValid ] = useState(false);
     const [ availableModes, setAvailableModes ] = useState([]);
     const [ infoModesAlert, setInfoModesAlert ] = useState('');
+    const [ uploadedImages, setUploadedImages ] = useState([]);
+
+    const onSetQuestionImage = (image, questionId) => {
+        const qst = [ ...questions ];
+        const idx = qst.findIndex(qs => qs.id === questionId);
+        qst[idx].imageUrl = image;
+        setQuestions(qst);
+    };
     
     const onSetQuestionType = (type, questionId) => {
         const qst = [ ...questions ];
@@ -301,6 +435,7 @@ const AddQuizQuestionsRoot = () => {
             text: '',
             timeMin: '0',
             timeSec: '',
+            imageUrl: '',
             type: 'SINGLE_FOUR_ANSWERS',
             answers: [
                 { id: 1, text: '', isCorrect: true, isRange: false, max: 0, maxCounted: 0, min: 0, minCounted: 0, step: 0, correctAns: 0 },
@@ -351,12 +486,13 @@ const AddQuizQuestionsRoot = () => {
         setQuestions(qst.filter(q => q.id !== id));
     };
     
-    const appendQuestionsTooQuiz = () => {
-        if (isSended) return;
-        setIsSended(true);
-        const path = window.location.pathname.split('/');
-        const id = path[path.length - 1];
-        fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
+    const appendQuizImages = () => {
+        const formData = new FormData();
+        for (const uploadedImage of uploadedImages) {
+            const type = uploadedImage.image.type.substring(uploadedImage.image.type.indexOf('/') + 1);
+            formData.append("uploads", uploadedImage.image, `question${uploadedImage.id}.${type}`);
+        }
+        fetch(`/api/v1/dotnet/QuizAPI/UpdateQuizImages/${id}`, getCommonFetchObjWithFormData('POST', formData))
             .then(r => {
                 setIsSended(false);
                 window.scrollTo(0, 0);
@@ -365,6 +501,37 @@ const AddQuizQuestionsRoot = () => {
             .then(r => {
                 if (r.isGood) {
                     setAlert(alertInfo(r.message));
+                    const qst = [ ...questions ];
+                    const updatedImages = qst.map(qst2 => {
+                        const quizImage = r.quizImages.find(i => i.id === qst2.id);
+                        qst2.imageUrl = quizImage ? quizImage.url : "";
+                        return qst2;
+                    });
+                    setQuestions(updatedImages);
+                } else {
+                    setAlert(alertDanger(r.message));
+                }
+                setActiveCallback();
+            })
+            .catch(e => {
+                if (e === undefined) return;
+                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setActiveCallback();
+            });
+    };
+    
+    const appendQuestionsTooQuiz = () => {
+        setInactiveCallback();
+        if (isSended) return;
+        setIsSended(true);
+        fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
+            .then(r => {
+                setIsSended(false);
+                return r.json()
+            })
+            .then(r => {
+                if (r.isGood) {
+                    appendQuizImages();
                 } else {
                     setAlert(alertDanger(r.message));
                 }
@@ -372,11 +539,11 @@ const AddQuizQuestionsRoot = () => {
             .catch(e => {
                 if (e === undefined) return;
                 setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setActiveCallback();
             });
     };
     
     useEffect(() => {
-        const loadableSpinner = document.getElementById('react-loadable-spinner-content');
         const path = window.location.pathname.split('/');
         const id = path[path.length - 1];
         fetch(`/api/v1/dotnet/QuizAPI/GetQuizQuestions/${id}`, getCommonFetchObj('GET')).then(r => {
@@ -406,7 +573,8 @@ const AddQuizQuestionsRoot = () => {
     const generateQuestionsComponents = questions.map((q, idx) => (
         <QuestionsContext.Provider key={idx} value={{
             q, setQuestions, onSetQuestionAnswer, onChangeCorrectAnswer, onSetQuestionTitle, onRemoveQuestion,
-            onSetMinutes, onSetSeconds, onSetQuestionType, onSetRangeProp, setIsNotValid, availableModes
+            onSetMinutes, onSetSeconds, onSetQuestionType, onSetRangeProp, setIsNotValid, availableModes,
+            uploadedImages, setUploadedImages, onSetQuestionImage
         }}>
             <QuizQuestionComponent/>
         </QuestionsContext.Provider>

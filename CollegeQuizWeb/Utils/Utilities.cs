@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using CollegeQuizWeb.Dto;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeQuizWeb.Utils;
 
@@ -38,5 +39,7 @@ public static class Utilities
         AlertDto? alertDto = JsonSerializer.Deserialize<AlertDto>(jsonStringProperty);
         return alertDto;
     }
-    
+
+    public static string GetBaseUrl(Controller controller) =>
+        $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
 }
