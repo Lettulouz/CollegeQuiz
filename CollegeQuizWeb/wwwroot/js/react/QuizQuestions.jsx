@@ -321,7 +321,6 @@ const AddQuizQuestionsRoot = () => {
         switch (type) {
             case "TRUE_FALSE":
                 qst[idx].answers = Array.from({ length: 2 }).map((_, i) => generateAnswerObject(i, i === 0));
-                console.log(qst[idx].answers);
                 break;
             case "RANGE":
                 qst[idx].answers = [

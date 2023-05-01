@@ -33,7 +33,7 @@ public class QuizManagerSessionHub : Hub
         
         var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l => l.Code.Equals(token));
         if (lobby == null) return counter;
-       
+
         if (counter == 0) lobby.InGameScreen = "IN_GAME";
         else lobby.InGameScreen = "COUNTING_SCREEN";
         
@@ -162,10 +162,7 @@ public class QuizManagerSessionHub : Hub
                     }
                 }
             }
-
-
             await _context.SaveChangesAsync();
-
 
             Console.WriteLine("punkt testowy 7");
             var topUsers =
@@ -179,13 +176,11 @@ public class QuizManagerSessionHub : Hub
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
                     }).OrderByDescending(obj => obj.Score).Take(5).ToList();
 
-
             Console.WriteLine("punkt testowy 8");
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             Thread.Sleep(2000);
-
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
@@ -213,7 +208,6 @@ public class QuizManagerSessionHub : Hub
                 .Where(t => t.Question.Equals(question.questionId) &&
                             t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
                 .OrderBy(t => t.CreatedAt).ToList();
-
             
             IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
             var actuallTime = DateTime.Now;
@@ -248,7 +242,6 @@ public class QuizManagerSessionHub : Hub
                 }
                 else
                 {
-                    
                     if (min >= currentAnswers[0].AnswerMinCounted && max <= currentAnswers[0].AnswerMaxCounted)
                     {
                         int amountOfNumbers = ((max - min) / currentAnswers[0].AnswerStep)+1;
@@ -282,10 +275,7 @@ public class QuizManagerSessionHub : Hub
                     }
                 }
             }
-
-
             await _context.SaveChangesAsync();
-
 
             Console.WriteLine("punkt testowy 7");
             var topUsers =
@@ -299,18 +289,15 @@ public class QuizManagerSessionHub : Hub
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
                     }).OrderByDescending(obj => obj.Score).Take(5).ToList();
 
-
             Console.WriteLine("punkt testowy 8");
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             Thread.Sleep(2000);
 
-
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
         }
-
         Console.WriteLine("punkt testowy 9");
         quiz.CurrentQuestion++;
         _context.QuizLobbies.Update(quiz);
@@ -318,7 +305,9 @@ public class QuizManagerSessionHub : Hub
         Console.WriteLine("punkt testowy 10");
     }
 
-    private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,  List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier, bool continueStreak, int additionalPoints)
+    private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,
+        List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier,
+        bool continueStreak, int additionalPoints)
     {
         TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
         TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
@@ -354,6 +343,5 @@ public class QuizManagerSessionHub : Hub
         
         if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
         await _context.SaveChangesAsync();
-        
     }
 }

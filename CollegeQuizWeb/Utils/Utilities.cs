@@ -26,7 +26,6 @@ public static class Utilities
                     stringBuilder.Append(CHARACTERS2[RANDOM.Next(CHARACTERS2.Length)]);
                     break;
             }
-            
         }
         return stringBuilder.ToString();
     }

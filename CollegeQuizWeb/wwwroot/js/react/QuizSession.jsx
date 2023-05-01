@@ -98,15 +98,13 @@ const MainWindowGameComponent = () => {
         connection.on("QUESTION_P2P", answ=>{
             const parsedAnswers = JSON.parse(answ);
             setQuestion(parsedAnswers.question);
-            setAnswerSett(
-                {
-                    step: parsedAnswers.step, 
-                    min: parsedAnswers.min, 
-                    max: parsedAnswers.max, 
-                    min_counted: parsedAnswers.min_counted, 
-                    max_counted: parsedAnswers.max_counted
-                }
-            );
+            setAnswerSett({
+                step: parsedAnswers.step,
+                min: parsedAnswers.min,
+                max: parsedAnswers.max,
+                min_counted: parsedAnswers.min_counted,
+                max_counted: parsedAnswers.max_counted,
+            });
             setAnswRange({
                 min: parsedAnswers.min,
                 max: parsedAnswers.max
@@ -171,7 +169,6 @@ const MainWindowGameComponent = () => {
                 <QuestionResultComponent/>
             );
             default:
-
                 switch(questionType){
                     case 1: return <QuestionType1Component/>;
                     case 2: return <QuestionType2Component/>;
@@ -225,7 +222,7 @@ const QuestionResultComponent = () => {
                 <div className="col-md-6" ref={containerUsernamesRef}>
                     {afterQuestionResults.map(m => (
                         <div className="leaderboard text-white fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
-                             key={m.Username}>
+                            key={m.Username}>
                             {m.Username}
                         </div>
                     ))}
@@ -233,15 +230,15 @@ const QuestionResultComponent = () => {
                 <div className="col-md-6" ref={containerScoresRef}>
                     {afterQuestionResults.map(m => (
                         <div className="leaderboard gold-leaderboard fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
-                             key={m.Username}>
+                            key={m.Username}>
                             {m.Score} + {m.newPoints}
                         </div>
                     ))}
                 </div>
             </div>
             <div className="leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
-                 ref={leaderRef}>
-               {currentQuestionLeader}
+                ref={leaderRef}>
+                {currentQuestionLeader}
             </div>
         </div>
     );
@@ -486,7 +483,7 @@ const QuestionCardComponent = ({ number }) => {
     return (
         <div className={`col-6 d-flex m-0 ${incClassAns()}`}>
             <div className={`card bg-dark text-white card-img-custom ${clickedIndex === number && 'clicked'} ${isClicked()}`}
-                 onClick={() => handleClick(number)}>
+                onClick={() => handleClick(number)}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${isAnswerSet && 'cursor-not-allowed'} `}>
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
                     <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
@@ -501,7 +498,7 @@ const QuestionCardComponent = ({ number }) => {
 
 const QuestionCardComponentMulti = ({ number }) => {
     const {
-        answers, connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer
+        answers, connectionId, questionNumber, setIsAnswerSet, currentAnswer
     } = useContext(SessionContext);
     const [clickedIndex, setClickedIndex] = useState([]);
 
@@ -517,7 +514,7 @@ const QuestionCardComponentMulti = ({ number }) => {
     return (
         <div className={`col-6 d-flex m-0 ${incClassAns()}`}>
             <div className={`card bg-dark text-white card-img-custom ${clickedIndex.includes(number) && 'clicked'}`}
-                 onClick={() => handleClick(number)}>
+                onClick={() => handleClick(number)}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default`}>
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
                     <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
@@ -535,7 +532,7 @@ const HeaderPanelComponent = () => {
     return (
         <>
             {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && 
-             <div className="row">
+            <div className="row">
                 <LeaveSessionButtonComponent text={"Opuść pokój"}/>
             </div>}
         </>
@@ -602,7 +599,7 @@ const JoinToSessionComponent = () => {
                             <div className="forms-inputs mb-4">
                                 <label id="username">Token</label>
                                 <input type="text" className="form-control" value={token} onChange={e => setToken(e.target.value)}
-                                       pattern="[a-zA-Z]{5}" maxLength="5" placeholder="np. RGKQE"/>
+                                    pattern="[a-zA-Z]{5}" maxLength="5" placeholder="np. RGKQE"/>
                                 <button className={`btn btn-color-one mt-4 text-white w-100 ${joinDisabled && 'disabled'}`}
                                         type="submit">Dołącz</button>
                             </div>
