@@ -473,7 +473,7 @@ const QuestionCardComponent = ({ number }) => {
     
     const handleClick = answer => {
         if(isAnswerSet || currentAnswer !== "") return;
-        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`,
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
             getCommonFetchObj("POST")).then(r => r)
         setIsAnswerSet(true);
         setClickedIndex(answer);
@@ -506,7 +506,7 @@ const QuestionCardComponentMulti = ({ number }) => {
 
     const handleClick = answer => {
         if(clickedIndex.includes(answer)) return;
-        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/${true}`,
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/true`,
             getCommonFetchObj("POST")).then(r => r)
         setIsAnswerSet(true);
         setClickedIndex([...clickedIndex, answer]);
