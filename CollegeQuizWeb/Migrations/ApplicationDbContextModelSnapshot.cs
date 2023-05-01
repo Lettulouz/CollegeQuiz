@@ -172,7 +172,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("varchar(80)")
                         .HasColumnName("customer_name");
