@@ -23,6 +23,9 @@ public class AnswerEntity : AbstractAuditableEntity
     [Column("is_range")]
     public bool IsRange { get; set; }
     
+    [Column("correct_answer")]
+    public int CorrectAnswer { get; set; }
+    
     [Column("step")]
     public int Step { get; set; }
     

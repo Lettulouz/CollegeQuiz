@@ -406,7 +406,7 @@ const QuestionType5Component = () => {
         
         const answer = "r" + parseInt(answRange.min) + "," + parseInt(answRange.max);
         console.log(answer);
-        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}`,
+        fetch(`/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
             getCommonFetchObj("POST")).then(r => r)
         console.log("test");
         setIsAnswerSet(true);

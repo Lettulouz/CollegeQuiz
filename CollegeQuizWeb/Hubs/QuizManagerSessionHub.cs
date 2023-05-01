@@ -5,8 +5,10 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Sprache;
 
 namespace CollegeQuizWeb.Hubs;
 
@@ -122,75 +124,193 @@ public class QuizManagerSessionHub : Hub
             cts.Dispose();
         }
 
-
-        var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
+        if (!question.is_range)
+        {
+            var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
                 .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
-                t.QuestionEntity.QuizId.Equals(quiz.QuizId))
-                .Select(q=>new
+                            t.QuestionEntity.QuizId.Equals(quiz.QuizId))
+                .Select(q => new
                 {
                     AnswerName = q.Name
                 }).ToList();
 
-        var getAllAnswersForUpdate = _context.UsersQuestionsAnswers
-            .Include(t => t.QuizSessionParticEntity)
-            .ThenInclude(t => t.QuizLobbyEntity)
-            .ThenInclude(t=>t.UserEntity)
-            .Where(t => t.Question.Equals(question.questionId) &&
-                          t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
-            .OrderBy(t => t.CreatedAt).ToList();
-        
-        IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
-        var actuallTime = DateTime.Now;
-        foreach (var answer in getAllAnswersForUpdate)
-        {
-            foreach (var currentAnswer in currentAnswers)
+            var getAllAnswersForUpdate = _context.UsersQuestionsAnswers
+                .Include(t => t.QuizSessionParticEntity)
+                .ThenInclude(t => t.QuizLobbyEntity)
+                .ThenInclude(t => t.UserEntity)
+                .Where(t => t.Question.Equals(question.questionId) &&
+                            t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
+                .OrderBy(t => t.CreatedAt).ToList();
+
+            IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
+            var actuallTime = DateTime.Now;
+            foreach (var answer in getAllAnswersForUpdate)
             {
-                if (question.answers[answer.Answer] == currentAnswer.AnswerName)
+                foreach (var currentAnswer in currentAnswers)
                 {
-                    TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
-                    TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
-                    var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
-                                                          restOfTime.TotalSeconds)) * 1000 *
-                                                    (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02));
-                    if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
-                        newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += wonPoints;
+                    if (question.answers[answer.Answer] == currentAnswer.AnswerName)
+                    {
+                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,1.00, true, 0);
+                    }
                     else
-                        newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
-                    //answer.QuizSessionParticEntity.Score += wonPoints;
-                    //answer.QuizSessionParticEntity.CurrentStreak += 1;
+                    {
+                        answer.QuizSessionParticEntity.CurrentStreak = 0;
+                        if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+                            newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += 0;
+                        else
+                            newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, 0);
+                    }
+                }
+            }
+
+
+            await _context.SaveChangesAsync();
+
+
+            Console.WriteLine("punkt testowy 7");
+            var topUsers =
+                _context.QuizSessionPartics
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Select(obj => new
+                    {
+                        obj.UserEntity.Username,
+                        obj.Score,
+                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
+                    }).OrderByDescending(obj => obj.Score).Take(5).ToList();
+
+
+            Console.WriteLine("punkt testowy 8");
+
+            await _hubUserContext.Clients.Group(token)
+                .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
+            Thread.Sleep(2000);
+
+
+            await _hubUserContext.Clients.Group(token)
+                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
+        }
+        else
+        {
+            var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
+                .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                            t.QuestionEntity.QuizId.Equals(quiz.QuizId))
+                .Select(q => new
+                {
+                    AnswerName = q.Name,
+                    AnswerCorrect = q.CorrectAnswer,
+                    AnswerMin = q.Min,
+                    AnswerMax = q.Max,
+                    AnswerMinCounted = q.MinCounted,
+                    AnswerMaxCounted = q.MaxCounted,
+                    AnswerStep = q.Step
+                }).ToList();
+
+            var getAllAnswersForUpdate = _context.UsersQuestionsAnswers
+                .Include(t => t.QuizSessionParticEntity)
+                .ThenInclude(t => t.QuizLobbyEntity)
+                .ThenInclude(t => t.UserEntity)
+                .Where(t => t.Question.Equals(question.questionId) &&
+                            t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
+                .OrderBy(t => t.CreatedAt).ToList();
+
+            
+            IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
+            var actuallTime = DateTime.Now;
+            foreach (var answer in getAllAnswersForUpdate)
+            {
+                string[] minMax = answer.Range.Split(',');
+                int min=currentAnswers[0].AnswerMin, max=currentAnswers[0].AnswerMax;
+                bool oneAnswer = false;
+                if (minMax.Length.Equals(2))
+                {
+                    min = Int32.Parse(minMax[0]);
+                    max = Int32.Parse(minMax[1]);
+                }
+
+                if (min.Equals(max))
+                    oneAnswer = true;
+
+                if (oneAnswer)
+                {
+                    if (min == currentAnswers[0].AnswerCorrect)
+                    {
+                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,1.00, true, 750);
+                    }
+                    else
+                    {
+                        answer.QuizSessionParticEntity.CurrentStreak = 0;
+                        if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+                            newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += 0;
+                        else
+                            newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, 0);
+                    }
                 }
                 else
                 {
-                    answer.QuizSessionParticEntity.CurrentStreak = 0;
-                    if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
-                        newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += 0;
+                    
+                    if (min >= currentAnswers[0].AnswerMinCounted && max <= currentAnswers[0].AnswerMaxCounted)
+                    {
+                        int amountOfNumbers = ((max - min) / currentAnswers[0].AnswerStep)+1;
+                        double multiplier = (1.00 / amountOfNumbers*2) * 0.4;
+                        multiplier = multiplier + 0.6;
+                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 400);
+                    }
                     else
-                        newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, 0);
+                    {
+                        int amountOfNumbers = ((max - min) / currentAnswers[0].AnswerStep)+1;
+                        int amountOfCorrectNumbers = ((currentAnswers[0].AnswerMax - currentAnswers[0].AnswerMin) 
+                                               / currentAnswers[0].AnswerStep)+1;
+                        int outsideLeft = currentAnswers[0].AnswerMinCounted - min;
+                        int outsideRight = max - currentAnswers[0].AnswerMax;
+                        int insideLeft = 0;
+                        int insideRight = 0;
+                        if (outsideLeft < 0) { insideLeft = -outsideLeft; outsideLeft = 0;}
+                        if (outsideRight < 0){ insideRight = -outsideRight; outsideRight = 0;}
+                        int totalCorrectInside = amountOfCorrectNumbers - insideLeft - insideRight;
+                        if (totalCorrectInside < 0)
+                            totalCorrectInside = 0;
+                        double basicMultiplier = 0.2;
+                        double rangeMultiplier = 1.00 / (amountOfNumbers*amountOfNumbers);
+                        double correctMultiplier;
+                        if (totalCorrectInside == 0)
+                            correctMultiplier = 0.00;
+                        else
+                            correctMultiplier = totalCorrectInside / (double)amountOfCorrectNumbers;
+                        double multiplier = (basicMultiplier + (basicMultiplier * rangeMultiplier)) * correctMultiplier;
+                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 0);
+                    }
                 }
             }
+
+
+            await _context.SaveChangesAsync();
+
+
+            Console.WriteLine("punkt testowy 7");
+            var topUsers =
+                _context.QuizSessionPartics
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Select(obj => new
+                    {
+                        obj.UserEntity.Username,
+                        obj.Score,
+                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
+                    }).OrderByDescending(obj => obj.Score).Take(5).ToList();
+
+
+            Console.WriteLine("punkt testowy 8");
+
+            await _hubUserContext.Clients.Group(token)
+                .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
+            Thread.Sleep(2000);
+
+
+            await _hubUserContext.Clients.Group(token)
+                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
         }
-        await _context.SaveChangesAsync();
-        
-        
-        Console.WriteLine("punkt testowy 7");
-        var topUsers =
-           _context.QuizSessionPartics
-               .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
-               .Select(obj=> new
-               {
-                   obj.UserEntity.Username,
-                   obj.Score,
-                   isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
-                   newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
-               }).OrderByDescending(obj=>obj.Score).Take(5).ToList();
-       
 
-        Console.WriteLine("punkt testowy 8");
-
-        await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
-        Thread.Sleep(2000);
-        
-        await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
         Console.WriteLine("punkt testowy 9");
         quiz.CurrentQuestion++;
         _context.QuizLobbies.Update(quiz);
@@ -198,6 +318,23 @@ public class QuizManagerSessionHub : Hub
         Console.WriteLine("punkt testowy 10");
     }
 
+    private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,  List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier, bool continueStreak, int additionalPoints)
+    {
+        TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+        TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+        var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
+                                              restOfTime.TotalSeconds)) * 1000 *
+                                        (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02)*multiplier+additionalPoints);
+        if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+            newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += wonPoints;
+        else
+            newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
+        answer.QuizSessionParticEntity.Score += wonPoints;
+        if(continueStreak)
+            answer.QuizSessionParticEntity.CurrentStreak += 1;
+        else
+            answer.QuizSessionParticEntity.CurrentStreak = 0;
+    }
     public async override Task OnDisconnectedAsync(Exception? exception)
     {
         var hostUser = await _context.QuizLobbies

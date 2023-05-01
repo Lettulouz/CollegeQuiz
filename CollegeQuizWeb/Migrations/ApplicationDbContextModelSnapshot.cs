@@ -26,6 +26,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
+                    b.Property<int>("CorrectAnswer")
+                        .HasColumnType("int")
+                        .HasColumnName("correct_answer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
