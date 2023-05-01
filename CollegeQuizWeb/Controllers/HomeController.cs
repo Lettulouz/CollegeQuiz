@@ -50,7 +50,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Subscription(int? id=null)
     {
         if(id==null)
-            Response.Redirect("/Home");
+            Response.Redirect("/Auth/Login");
         
         ViewBag.TypeOfSubscription = id;
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
