@@ -361,4 +361,40 @@ public class AdminController : Controller
 
         return View(payloadDto.Dto);
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> Subscriptions()
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        
+        var subscriptionTypes = await _adminService.GetSubscriptions();
+        
+        return View(subscriptionTypes);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task Subscriptions(SubscriptionTypeDto sub)
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            Redirect("/Home");
+            return; 
+        }
+
+        var payloadDto = new SubscriptionTypeDtoPayload(this) {Dto = sub};
+        
+        if (ModelState.IsValid)
+        {
+            await _adminService.UpdateSub(payloadDto);
+        }
+
+        
+    }
+    
+    
 }
+
+    

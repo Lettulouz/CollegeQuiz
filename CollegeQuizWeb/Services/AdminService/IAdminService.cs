@@ -34,4 +34,8 @@ public interface IAdminService
     Task CreateCategory(CategoryListDtoPayload obj);
     Task<List<CouponDto>> GetCoupons();
     Task DeleteCoupon(string couponToDelete, AdminController controller);
+
+    Task<List<SubscriptionTypeDto>> GetSubscriptions();
+
+    Task UpdateSub(SubscriptionTypeDtoPayload obj);
 }

@@ -196,3 +196,10 @@
 .button-link{
     max-height: 38px !important;
 }
+
+.border-image {
+    border: 2px solid #3a8a7f;
+    width: 200px;
+    padding: 5px !important;
+    transition: .2s;
+}
