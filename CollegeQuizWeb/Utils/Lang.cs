@@ -171,4 +171,8 @@ public static class Lang
     public const string PAYU_WAITING = "Oczekuje";
     public const string PAYU_COMPLETED = "Zakończona";
     public const string PAYU_CANCELED = "Anulowana";
+    
+    public const string SUB_UPDATED = "Pakiet {0} został zaktualizowamy";
+    public const string SUB_ERROR = "Pola nazwa i cena nie mogą być puste";
+    
 }

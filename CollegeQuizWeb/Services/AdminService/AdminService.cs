@@ -138,6 +138,19 @@ public class AdminService : IAdminService
             }).FirstOrDefaultAsync();
        
        controller.ViewBag.couponStats = couponStats ?? new { Total = 0, Archive = 0, Active = 0};
+       
+       var subStats = await (from q in _context.Coupons
+           group q by 1
+           into g
+           select new
+           {
+               Total = _context.SubsciptionTypes.Count(),
+           }).FirstOrDefaultAsync();
+       
+       controller.ViewBag.subStats = subStats ?? new { Total = 0};
+
+       var subInfo = await _context.SubsciptionTypes.ToListAsync();
+       controller.ViewBag.subInfo = subInfo;
     }
     
     
@@ -859,7 +872,55 @@ public class AdminService : IAdminService
         await _context.SaveChangesAsync();
         controller.Response.Redirect("/Admin/CouponList");
     }
+    
+    public async Task<List<SubscriptionTypeDto>> GetSubscriptions()
+    {
+        var subsEntity = await _context.SubsciptionTypes.ToListAsync();
+        List<SubscriptionTypeDto> subTypes = new();
+        foreach (var type in subsEntity)
+        {
+            SubscriptionTypeDto dto = new();
 
+            dto.Id = type.Id;
+            dto.Name = type.Name;
+            dto.Price = type.Price.ToString("N", CultureInfo.InvariantCulture);
+            string? Discount = type.CurrentDiscount.ToString().Replace(',', '.');
+            dto.CurrentDiscount = Discount;
+            dto.BeforeDiscountPrice = type.BeforeDiscountPrice.ToString().Replace(',', '.');
+            
+            subTypes.Add(dto);
+        }
+
+        return subTypes;
+    }
+
+    public async Task UpdateSub(SubscriptionTypeDtoPayload obj)
+    {
+        AdminController controller = obj.ControllerReference;
+
+        var paymentEntity = await _context.SubsciptionTypes.FirstOrDefaultAsync(s=>s.Id.Equals(obj.Dto.Id));
+
+        if (paymentEntity != null)
+        {
+            paymentEntity.Name = obj.Dto.Name;
+            var Price = obj.Dto.Price.Replace('.', ',');
+            paymentEntity.Price = Convert.ToDecimal(Price);
+            string? Discount = obj.Dto.CurrentDiscount.ToString().Replace('.', ',');
+            paymentEntity.CurrentDiscount = Convert.ToDouble(Discount); 
+            string? BefDiscount = obj.Dto.BeforeDiscountPrice.ToString().Replace('.', ',');
+            paymentEntity.BeforeDiscountPrice = Convert.ToDecimal(BefDiscount);
+                
+            _context.Update(paymentEntity);
+            await _context.SaveChangesAsync();
+
+            String message = String.Format(Lang.SUB_UPDATED, obj.Dto.Name);
+            controller.HttpContext.Session.SetString(SessionKey.SUB_UPDATED,message);
+            
+            controller.Response.Redirect("/Admin/Subscriptions");
+        }
+        
+    }
+    
     public bool EmailExistsInDb(string email)
     {
         if (_context.Users.FirstOrDefault(o => o.Email.Equals(email)) == null)

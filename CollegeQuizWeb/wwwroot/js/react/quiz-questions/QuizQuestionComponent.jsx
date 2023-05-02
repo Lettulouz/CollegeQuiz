@@ -9,7 +9,7 @@ import QuizQuestionTextContentComponent from "./QuizQuestionTextContentComponent
 
 const QuizQuestionComponent = () => {
     const {
-        setAlert, setQuestions, uploadedImages, setUploadedImages, onSetQuestionProperty
+        setAlert, setQuestions, uploadedImages, setUploadedImages, onSetQuestionProperty, questions
     } = React.useContext(MainContext);
     
     const { q, availableModes } = React.useContext(QuestionsContext);

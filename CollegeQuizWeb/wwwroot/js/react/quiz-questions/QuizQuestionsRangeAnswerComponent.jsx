@@ -1,7 +1,7 @@
 import { QuestionsContext, MainContext } from "./QuizQuestionsRenderer.jsx";
 
 const QuizQuestionsRangeAnswerComponent = () => {
-    const { setQuestions, setIsNotValid } = React.useContext(MainContext);
+    const { questions, setQuestions, setIsNotValid } = React.useContext(MainContext);
     const { q } = React.useContext(QuestionsContext);
     
     const answerR = q.answers[0];
@@ -28,8 +28,7 @@ const QuizQuestionsRangeAnswerComponent = () => {
             ((answerR.min - answerR.correctAns) % answerR.step !== 0 ||
                 (answerR.max - answerR.correctAns) % answerR.step !== 0 ||
                 (answerR.minCounted - answerR.correctAns) % answerR.step !== 0 ||
-                (answerR.maxCounted - answerR.correctAns) % answerR.step !== 0 ||
-                answerR.step > answerR.max || answerR.step < answerR.min) && answerR.step !== 1;
+                (answerR.maxCounted - answerR.correctAns) % answerR.step !== 0) && answerR.step !== 1;
         const correctAnsIsInvalid = answerR.correctAns > answerR.max || answerR.correctAns < answerR.min;
 
         setMinInvalid(minMax ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
@@ -49,38 +48,38 @@ const QuizQuestionsRangeAnswerComponent = () => {
                         <div className="col-md-4 mb-2">
                             <label htmlFor="minId" className="form-label">Min</label>
                             <input value={answerR.min} type="number" className={`form-control ${minInvalid && 'is-invalid'}`}
-                                id="minId" onChange={e => onSetRangeProp(e, "min")} min={0}/>
+                                id="minId" onChange={e => onSetRangeProp(e, "min")}/>
                             <div className="invalid-feedback">{minInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="stepId" className="form-label">Step(sister)</label>
                             <input value={answerR.step} type="number" className={`form-control ${stepIsInvalid && 'is-invalid'}`}
-                                id="stepId" onChange={e => onSetRangeProp(e, "step")} min={0}/>
+                                id="stepId" onChange={e => onSetRangeProp(e, "step")}/>
                             <div className="invalid-feedback">{stepIsInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="maxId" className="form-label">Maks</label>
                             <input value={answerR.max} type="number" className="form-control" id="maxId"
-                                onChange={e => onSetRangeProp(e, "max")} min={0}/>
+                                onChange={e => onSetRangeProp(e, "max")}/>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="minCountedId" className="form-label">Min punktowane</label>
                             <input value={answerR.minCounted} type="number"
                                 className={`form-control ${(countedOutOfRange || minCountedInvalid) && 'is-invalid'}`}
-                                id="minCountedId" onChange={e => onSetRangeProp(e, "minCounted")} min={0}/>
+                                id="minCountedId" onChange={e => onSetRangeProp(e, "minCounted")}/>
                             <div className="invalid-feedback">{minCountedInvalid}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="correctAnsId" className="form-label">Prawidłowa odpowiedź</label>
                             <input value={answerR.correctAns} type="number"
                                 className={`form-control ${(isInvalidCorrectAns) && 'is-invalid'}`}
-                                id="correctAnsId" onChange={e => onSetRangeProp(e, "correctAns")} min={0}/>
+                                id="correctAnsId" onChange={e => onSetRangeProp(e, "correctAns")}/>
                             <div className="invalid-feedback">{isInvalidCorrectAns}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="maxCounterId" className="form-label">Maks punktowane</label>
                             <input value={answerR.maxCounted} type="number" className={`form-control ${countedOutOfRange && 'is-invalid'}`}
-                                id="maxCounterId" onChange={e => onSetRangeProp(e, "maxCounted")} min={0}/>
+                                id="maxCounterId" onChange={e => onSetRangeProp(e, "maxCounted")}/>
                             <div className="invalid-feedback">{countedOutOfRange}</div>
                         </div>
                     </div>

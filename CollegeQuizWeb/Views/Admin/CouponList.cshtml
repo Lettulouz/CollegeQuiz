@@ -110,6 +110,12 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
+
+        document.getElementById('coupon_collapse').classList.add('show');
+        document.getElementById('coupon_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+        document.getElementById('coupon_collapse_btn').setAttribute( 'style', 'color:white !important' );
+        document.getElementById('cplist').setAttribute( 'style', 'color:white !important' );
+
     @{
         var couponList = Html.Raw(JsonConvert.SerializeObject(Model.Item2));
     }
@@ -519,5 +525,6 @@
               hideButtons();
           })
     
+
 </script>
 <noscript>Sorry, your browser does not support JavaScript!</noscript>

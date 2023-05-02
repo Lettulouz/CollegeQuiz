@@ -7,7 +7,7 @@ const QuizManagerQuestionTickComponent = () => {
     
     React.useEffect(() => {
         // uruchamiane przy odliczaniu do następnego pytania
-        connection.on("LOBBY_QUESTION_TICK_P2P", tickObject => {
+        connection.on("QUESTION_TIMER_P2P", tickObject => {
             const parsedTickObject = JSON.parse(tickObject);
             
             setTick(parsedTickObject.Elapsed);

@@ -6,7 +6,7 @@
 .sidebar{
     width: var( --offcanvas-width);
     top: var( --topNavbarHeight);
-    height: calc(100%-var( --topNavbarHeight));
+    height: calc(100% - var( --topNavbarHeight));
 }
 
 .sidecustomcolor{
@@ -152,6 +152,11 @@
     background: linear-gradient(180deg, rgba(226,0,0,1) 0%, rgba(255,0,0,1) 85%) !important;
 }
 
+.custom-card-5{
+    background: rgb(139,0,224) !important;
+    background: linear-gradient(180deg, rgba(139,0,224,1) 0%, rgba(158,0,255,1) 100%) !important;
+}
+
 .user-card{
     border-radius: 7px;
     border-width: 1px;
@@ -195,4 +200,11 @@
 
 .button-link{
     max-height: 38px !important;
+}
+
+.border-image {
+    border: 2px solid #3a8a7f;
+    width: 200px;
+    padding: 5px !important;
+    transition: .2s;
 }
