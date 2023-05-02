@@ -186,7 +186,6 @@ public class QuizManagerSessionHub : Hub
                     else
                         corectAnswersNumber.Add(answer.QuizSessionParticEntity.ConnectionId, currentAnswers.Count()+1);
                 }
-                
             }
 
             var getAllAnswersForUpdate = _context.UsersQuestionsAnswers

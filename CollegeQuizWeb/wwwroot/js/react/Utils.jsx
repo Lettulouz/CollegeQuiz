@@ -1,5 +1,5 @@
-export const alertInfo = (message) => ({ active: true, style: 'alert-success', message });
-export const alertDanger = (message) => ({ active: true, style: 'alert-danger', message });
+export const alertInfo = message => ({ active: true, style: 'alert-success', message });
+export const alertDanger = message => ({ active: true, style: 'alert-danger', message });
 export const alertOff = () => ({ active: false, style: 'alert-success', message: '' });
 
 export const WAITING_SCREEN = "WAITING_SCREEN";

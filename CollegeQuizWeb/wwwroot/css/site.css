@@ -132,14 +132,20 @@ a.navbar-brand {
     color: #3a8a7f;
 }
 
-.border-image {
+.border-image,
+.border-image.nohov {
     border: 2px solid #3a8a7f;
-    width: 200px;
+    width: 300px;
     padding: 5px !important;
+}
+.border-image {
     transition: .2s;
 }
 .border-image:hover {
     transform: translateY(-5px);
+}
+.border-image.nohov:hover {
+    transform: none;
 }
 
 /*

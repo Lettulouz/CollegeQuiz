@@ -154,9 +154,13 @@ public class QuizService : IQuizService
     {
         long userId = _context.Users.FirstOrDefault(u => u.Username.Equals(loggedUsername))!.Id;
         var test = await _context.QuizLobbies
+            .Include(q => q.QuizEntity)
             .FirstOrDefaultAsync(q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId));
 
-        int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
+        var quiz = await _context.Quizes.FirstOrDefaultAsync(q => q.Id.Equals(quizId));
+        if (quiz == null) return false;
+        
+            int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
         if (countOfQuestions == 0) return true;
         
         string generatedCode;
@@ -177,6 +181,7 @@ public class QuizService : IQuizService
             _context.QuizLobbies.Update(test);
             await _context.SaveChangesAsync();
             controller.ViewBag.Code = generatedCode;
+            controller.ViewBag.QuizName = quiz.Name;
             return false;
         }
         QuizLobbyEntity codeQuiz = new QuizLobbyEntity()
@@ -191,6 +196,7 @@ public class QuizService : IQuizService
         await _context.QuizLobbies.AddAsync(codeQuiz);
         await _context.SaveChangesAsync();
         controller.ViewBag.Code = generatedCode;
+        controller.ViewBag.QuizName = quiz.Name;
         return false;
     }
 
