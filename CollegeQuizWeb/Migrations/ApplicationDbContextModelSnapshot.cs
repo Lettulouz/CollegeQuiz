@@ -612,6 +612,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
+                    b.Property<decimal?>("BeforeDiscountPrice")
+                        .HasColumnType("decimal(5,2)")
+                        .HasColumnName("before_discount_price");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");

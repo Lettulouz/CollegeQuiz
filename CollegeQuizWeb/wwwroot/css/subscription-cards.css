@@ -89,3 +89,19 @@
         transform: none;
     }
 }
+
+
+
+
+.discount{
+    content: attr(data-label);
+    padding: 0.5rem;
+    width: 10rem;
+    background: #8b6cff;
+    color: white;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bolder;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 4px 4px 15px rgba(26, 35, 126, 0.2);
+}

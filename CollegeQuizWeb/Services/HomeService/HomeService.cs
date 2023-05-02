@@ -205,7 +205,6 @@ public class HomeService : IHomeService
         var remoteIpAddress = GetIpAddress(controller);
         Decimal tempDec = subscriptionTypesEntity.Price * 100;
         int price = (int)tempDec;
-        price = (int)(price * (1.00 - subscriptionTypesEntity.CurrentDiscount))!;
 
         Buyer buyer = new Buyer(userEntity.Email);
         buyer.FirstName = userEntity.FirstName;
@@ -287,7 +286,8 @@ public class HomeService : IHomeService
             SubscriptionTypesDto subscriptionTypesDto = new();
             subscriptionTypesDto.Name = subsciptionType.Name;
             subscriptionTypesDto.Price = subsciptionType.Price;
-            subscriptionTypesDto.CurrentDiscount = subsciptionType.CurrentDiscount;
+            subscriptionTypesDto.PreviousPrice = subsciptionType.BeforeDiscountPrice;
+            subscriptionTypesDto.CurrentDiscount = subsciptionType.CurrentDiscount*100;
             subscriptionTypesDtos.Add(subscriptionTypesDto);
         }
             
