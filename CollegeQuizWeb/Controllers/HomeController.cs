@@ -29,8 +29,8 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         await HttpContext.Session.CommitAsync();
-        string? logouUser = HttpContext.Session.GetString(SessionKey.USER_LOGOUT);
-        ViewBag.Logout = logouUser!;
+        string? logoutUser = HttpContext.Session.GetString(SessionKey.USER_LOGOUT);
+        ViewBag.Logout = logoutUser!;
         HttpContext.Session.Remove(SessionKey.USER_LOGOUT);
         
         return View();
@@ -50,6 +50,8 @@ public class HomeController : Controller
     
     public async Task<IActionResult> Subscription(int? id=null)
     {
+        string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if(isUserLogged == null) return Redirect("/Auth/Login");
         await HttpContext.Session.CommitAsync();
         if(id==null)
             Response.Redirect("/Auth/Login");
@@ -68,6 +70,8 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Subscription(SubscriptionPaymentDto subscriptionPaymentDto)
     {
+        string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if(isUserLogged == null) return Redirect("/Auth/Login");
         await HttpContext.Session.CommitAsync();
         var payloadDto = new SubscriptionPaymentDtoPayload(this) { Dto = subscriptionPaymentDto };
         await _homeService.MakePaymentForSubscription(payloadDto);
@@ -88,15 +92,17 @@ public class HomeController : Controller
            var orderId = order["order"]["orderId"].ToString();
            var orderStatus = order["order"]["status"].ToString();
            var subscriptionName = order["order"]["products"][0]["name"].ToString();
-           if(await _homeService.ChangePaymentStatus(orderStatus, orderId, subscriptionName))
+           if (await _homeService.ChangePaymentStatus(orderStatus, orderId, subscriptionName))
                return Ok();
+           else
+               return StatusCode(499);
        }
-
-        return new EmptyResult();
     }
 
     public async Task<IActionResult> ChooseSubscription()
     {
+        string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if(isUserLogged == null) return Redirect("/Auth/Login");
         await HttpContext.Session.CommitAsync();
         var subscriptions = await _homeService.GetSubscriptionTypes();
         return View(subscriptions);

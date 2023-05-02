@@ -19,6 +19,7 @@ public class SharedQuizesController : Controller
     public IActionResult Share()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (isLogged == null) return Redirect("/Auth/Login");
         ViewBag.TokenMessage = HttpContext.Session.GetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM);
         ViewBag.Type = HttpContext.Session.GetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM_TYPE);
         HttpContext.Session.Remove(SessionKey.QUIZ_CODE_MESSAGE_REDEEM);
@@ -32,6 +33,8 @@ public class SharedQuizesController : Controller
     public async Task<IActionResult> Share(ShareTokenDto shareTokenDto)
     {
         await HttpContext.Session.CommitAsync();
+        string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (isLogged == null) return Redirect("/Auth/Login");
         var payloadDto = new ShareTokenPayloadDto(this) { Dto = shareTokenDto };
         await _service.ShareQuizToken(payloadDto);
         return View(payloadDto.Dto);

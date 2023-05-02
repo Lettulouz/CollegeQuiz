@@ -227,6 +227,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task UnbanUser(List<UserListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         var id = list[0].Id;
         await _adminService.UnbanUser(id, this);
@@ -236,6 +242,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task UnbanUserProf(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         await _adminService.UnbanUser(id, this);
     }
@@ -244,6 +256,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task ResendEmail(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         await _adminService.ResendEmail(id, this);
     }
@@ -252,6 +270,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelUser(List<UserListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         var id = list[0].Id;
         await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
@@ -261,6 +285,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelUserProf(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
     }
@@ -329,6 +359,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelQuiz(List<QuizListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         var id = list[0].Id;
         await _adminService.DelQuiz(id, this);
@@ -338,6 +374,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelCategory(List<CategoryListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         var id = list[0].CategoryId;
         await _adminService.DelCategory(id, this);
@@ -347,6 +389,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelQuizView(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
         await HttpContext.Session.CommitAsync();
         await _adminService.DelQuiz(id, this);
     }
@@ -355,6 +403,8 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddCoupon(CouponDto couponDto)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
         await HttpContext.Session.CommitAsync();
         var payloadDto = new CouponDtoPayload(this) {Dto = couponDto};
         await _adminService.CreateCoupons(payloadDto);
@@ -374,6 +424,8 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddCategory(CategoryListDto categoryListDto)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
         await HttpContext.Session.CommitAsync();
         var payloadDto = new CategoryListDtoPayload(this) {Dto = categoryListDto};
 
