@@ -1,3 +1,4 @@
+@using Newtonsoft.Json
 @model List<CollegeQuizWeb.Dto.Admin.UserListDto>
 
 @{
@@ -18,7 +19,7 @@
 </form>
 
 
-<h1 class="text-muted px-2">Lista Użytkowników</h1> 
+<h1 class="text-muted px-2">Lista użytkowników</h1>
 <hr class="divider mt-0">
 
 <div class="container-fluid">
@@ -38,7 +39,7 @@
                     <li class="page-item me-2 flex-item">
                         <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="unActiveButton" onclick="filterButtonClick(5)" type="submit">Nieaktywni</button>
                     </li>
-                    
+
                 </ul>
             </nav>
         </div>
@@ -46,11 +47,13 @@
         <div class="row mt-3 mx-0 px-0">
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="searchBox" value onkeyup="filterButtonClick(4)" placeholder="Wyszukaj Użytkownika">
+                    <input type="text" class="form-control" id="searchBox" value onkeyup="filterButtonClick(4)" placeholder="Wyszukaj użytkownika">
                     <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
                         <i class="bi bi-x"></i>
                     </button>
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
                 </div>
             </div>
             <div class="col">
@@ -95,23 +98,23 @@
             </div>
         </div>
     </div>
-    @if (ViewBag.userRemoved!=null)
+    @if (ViewBag.userRemoved != null)
     {
         <div class="alert alert-primary alert-dismissible fade show" role="alert">
             @ViewBag.userRemoved
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-    
-    @if (ViewBag.userSuspended!=null)
+
+    @if (ViewBag.userSuspended != null)
     {
         <div class="alert alert-primary alert-dismissible fade show" role="alert">
             @ViewBag.userSuspended
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
-    
-    @if (ViewBag.mailError!=null)
+
+    @if (ViewBag.mailError != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @ViewBag.mailError
@@ -132,7 +135,7 @@
 
 <script>
     @{
-        var userList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        var userList = Html.Raw(JsonConvert.SerializeObject(Model));
     }
  
  $(document).ready(function (){

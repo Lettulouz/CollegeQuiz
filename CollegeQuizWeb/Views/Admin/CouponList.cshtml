@@ -1,5 +1,6 @@
+@using Newtonsoft.Json
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model Tuple<CollegeQuizWeb.Dto.Admin.CouponListDto,IEnumerable<CollegeQuizWeb.Dto.User.CouponDto>>
+@model Tuple<CollegeQuizWeb.Dto.Admin.CouponListDto, IEnumerable<CollegeQuizWeb.Dto.User.CouponDto>>
 
 @{
     Layout = "_AdminLayout";
@@ -17,84 +18,84 @@
 <h1 class="text-muted px-3">Lista kuponów</h1>
 <div class="container-fluid">
     <div class="col">
-                <nav aria-label="Buttons">
-                    <ul class="pagination justify-content-start flex-container">
-                        <li class="page-item me-2 flex-item">
-                            <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
-                        </li>
-                        <li class="page-item me-2 flex-item">
-                            <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
-                        </li>
-                        <li class="page-item me-2 flex-item">
-                            <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
-                        </li>
-                        <li class="page-item me-2 flex-item2">
-                            <a class="btn btn-lg btn-warning justify-content-center mx-0 " style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
-                                data-bs-placement="top" data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
-                                <i class="bi bi-printer-fill"></i>
-                            </a>
-                        </li>
-                        <li class="page-item me-2 flex-item2">
-                            <a class="btn btn-lg btn-danger justify-content-center mx-0" style="font-size: 17px" type="button" data-bs-toggle="tooltip" 
-                            data-bs-placement="top" data-bs-title="Usuń zaznaczone" onclick="deleteButtonClicked()">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+        <nav aria-label="Buttons">
+            <ul class="pagination justify-content-start flex-container">
+                <li class="page-item me-2 flex-item">
+                    <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
+                </li>
+                <li class="page-item me-2 flex-item">
+                    <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Aktywne</button>
+                </li>
+                <li class="page-item me-2 flex-item">
+                    <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Archiwalne</button>
+                </li>
+                <li class="page-item me-2 flex-item2">
+                    <a class="btn btn-lg btn-warning justify-content-center mx-0 " style="font-size: 17px" type="button" data-bs-toggle="tooltip"
+                       data-bs-placement="top" data-bs-title="Pobierz plik .txt" onclick="getAllSelectedCoupons()">
+                        <i class="bi bi-printer-fill"></i>
+                    </a>
+                </li>
+                <li class="page-item me-2 flex-item2">
+                    <a class="btn btn-lg btn-danger justify-content-center mx-0" style="font-size: 17px" type="button" data-bs-toggle="tooltip"
+                       data-bs-placement="top" data-bs-title="Usuń zaznaczone" onclick="deleteButtonClicked()">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <hr class="dropdown-divider m-0"></hr>
+    <div class="row mt-3">
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchBox" onkeyup="filterButtonClick(4)" placeholder="Wyszukaj odbiorcę">
+                <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
+                    <i class="bi bi-x"></i>
+                </button>
             </div>
-        <hr class="dropdown-divider m-0"></hr>
-        <div class="row mt-3">
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                               <div class="input-group">
-                                   <input type="text" class="form-control" id="searchBox" onkeyup="filterButtonClick(4)" placeholder="Wyszukaj odbiorcę">
-                                   <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
-                                       <i class="bi bi-x"></i>
-                                   </button>
-                               </div>
-                           </div>
-                       <div class="col">
-                           <nav aria-label="Site Pagination">
-                               <ul class="pagination justify-content-end">
-                                   <li class="page-item me-2">
-                                       <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
-                                           <option value="10">10</option>
-                                           <option value="25" selected="selected">25</option>
-                                           <option value="100">100</option>
-                                           <option value="500">500</option>
-                                       </select>
-                                   </li>
-                                   <li class="page-item">
-                                       <button class="page-link" onclick="goToFirstPage()">
-                                           <i class="bi bi-caret-left-fill"></i>
-                                       </button>
-                                   </li>
-                                   <li class="page-item">
-                                       <button class="page-link" onclick="prevPage()">
-                                           <i class="bi bi-arrow-left"></i>
-                                       </button>
-                                   </li>
-                                   <li class="page-item page-num1" style="width: 75px">
-                                       <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
-                                   </li>
-                                   <li class="page-item page-num2" style="width: 75px">
-                                       <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
-                                   </li>
-                                   <li class="page-item">
-                                       <button class="page-link" onclick="nextPage()">
-                                           <i class="bi bi-arrow-right"></i>
-                                       </button>
-                                   </li>
-                                   <li class="page-item">
-                                       <button class="page-link" onclick="goToLastPage()">
-                                           <i class="bi bi-caret-right-fill"></i>
-                                       </button>
-                                   </li>
-                               </ul>
-                           </nav>
-                       </div>
-                   </div>
-               
+        </div>
+        <div class="col">
+            <nav aria-label="Site Pagination">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item me-2">
+                        <select class="form-select justify-content-end" id="couponsPerPagePag" onchange="couponsPerPageChange()">
+                            <option value="10">10</option>
+                            <option value="25" selected="selected">25</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="goToFirstPage()">
+                            <i class="bi bi-caret-left-fill"></i>
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="prevPage()">
+                            <i class="bi bi-arrow-left"></i>
+                        </button>
+                    </li>
+                    <li class="page-item page-num1" style="width: 75px">
+                        <input type="text" class="page-link" name="pagination123" id="pagination123" onchange="changePageInput(this)" style="width: 75px" value="1">
+                    </li>
+                    <li class="page-item page-num2" style="width: 75px">
+                        <label class="page-link" id="pagination321" style="width: 75px">z 1</label>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="nextPage()">
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" onclick="goToLastPage()">
+                            <i class="bi bi-caret-right-fill"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
 
     @if (Model.Item2.FirstOrDefault() != null)
     {
@@ -110,7 +111,7 @@
 
 <script>
     @{
-        var couponList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Item2));
+        var couponList = Html.Raw(JsonConvert.SerializeObject(Model.Item2));
     }
     
     $(document).ready(function (){

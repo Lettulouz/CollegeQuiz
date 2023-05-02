@@ -1,70 +1,78 @@
 @model dynamic
 
 @{
-    ViewBag.Title = "Podgląd Quizu";
+    ViewBag.Title = "Podgląd quizu";
     Layout = "_AdminLayout";
 }
 
-@if (@ViewBag.quizInfo != null)
+@if (ViewBag.quizInfo != null)
 {
     <div class="d-flex">
-        <h1 class="text-muted px-2">@ViewBag.quizInfo.Name</h1> 
+        <h1 class="text-muted px-2">@ViewBag.quizInfo.Name</h1>
         <div class="ms-auto text-right pe-1">
-            @using (Html.BeginForm("DelQuizView", "Admin", new { id = @ViewBag.quizInfo.Id }, FormMethod.Post))
+            @using (Html.BeginForm("DelQuizView", "Admin", new {id = ViewBag.quizInfo.Id}, FormMethod.Post))
             {
-                <button type="submit" class="btn btn-danger" data-bs-toggle="tooltip" 
-                        data-bs-placement="top" data-bs-title="Usuń quiz" ><i class="bi bi-trash"></i></button>
+                <button type="submit" class="btn btn-danger" data-bs-toggle="tooltip"
+                        data-bs-placement="top" data-bs-title="Usuń quiz">
+                    <i class="bi bi-trash"></i>
+                </button>
             }
         </div>
     </div>
     <hr class="divider mt-0">
-     <div class="container-fluid viewBorder p-2" style="max-width: 720px">                       
-     <div class="row ">
-         <div class="col-auto py-0 my-0">
-             <i class="bi bi-puzzle-fill p-0" style=" font-size: 100px;"></i>
-         </div>
-        
-         <div class="col-auto">
-             <div class="row">
-                 <h3>Dane Quizu</h3>
-             </div>
-             <div class="row">
-                 <div class="col-auto">
-                     <p>Nazwa: @ViewBag.quizInfo.Name</p>
-                     <p>Właściciel: <a asp-action="UserProfile" asp-controller="Admin" asp-route-id=" @ViewBag.quizInfo.UserEntity.Id">
-                         @ViewBag.quizInfo.UserEntity.Username
-                     </a></p>
-                     <p>Utworzono: @ViewBag.quizInfo.CreatedAt</p>
-                     <p>Publiczny: @(@ViewBag.quizInfo.IsPublic ? "Tak" : "Nie")</p>
-                 </div>
-             </div>
-         </div>
-         <div class="row p-0 m-0">
-             <h3 class="ps-3"><a class="dash-list text-decoration-none text-black"
-                    data-bs-toggle="collapse" href="#dashcollapse1" role="button" aria-expanded="true" aria-controls="dashcollapse1">
-                 Pytania <span class="bi bi-chevron-down right-icon ms-auto"></span></a></h3>
-             <div class="collapse collapse show " id="dashcollapse1">
+    <div class="container-fluid viewBorder p-2" style="max-width: 720px">
+        <div class="row ">
+            <div class="col-auto py-0 my-0">
+                <i class="bi bi-puzzle-fill p-0" style=" font-size: 100px;"></i>
+            </div>
 
-                         @if (@ViewBag.questions != null)
-                         {
-                             @foreach (var question in ViewBag.questions)
-                             {
-                                 <div class="row text-center m-1">
-                                     <h5>@question.question |<a>@question.time_sec</a>s</h5>
+            <div class="col-auto">
+                <div class="row">
+                    <h3>Dane quizu</h3>
+                </div>
+                <div class="row">
+                    <div class="col-auto">
+                        <p>Nazwa: @ViewBag.quizInfo.Name</p>
+                        <p>
+                            Właściciel:
+                            <a asp-action="UserProfile" asp-controller="Admin" asp-route-id=" @ViewBag.quizInfo.UserEntity.Id">
+                                @ViewBag.quizInfo.UserEntity.Username
+                            </a>
+                        </p>
+                        <p>Utworzono: @ViewBag.quizInfo.CreatedAt</p>
+                        <p>Publiczny: @(ViewBag.quizInfo.IsPublic ? "Tak" : "Nie")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-0 m-0">
+                <h3 class="ps-3">
+                    <a class="dash-list text-decoration-none text-black"
+                       data-bs-toggle="collapse" href="#dashcollapse1" role="button" aria-expanded="true" aria-controls="dashcollapse1">
+                        Pytania <span class="bi bi-chevron-down right-icon ms-auto"></span>
+                    </a>
+                </h3>
+                <div class="collapse collapse show " id="dashcollapse1">
 
-                                     @foreach (var answer in @question.answers)
-                                     {
-                                         <div class="col-12 col-sm-6 p-2">
-                                             @answer
-                                         </div>
-                                     }
-                                     <hr/>
-                                 </div>
-                             }
-                         }
+                    @if (ViewBag.questions != null)
+                    {
+                        @foreach (var question in ViewBag.questions)
+                        {
+                            <div class="row text-center m-1">
+                                <h5>@question.question |<a>@question.time_sec</a>s</h5>
 
-                 </div>
-                      </div>
-             </div>
-          </div>
-     }
+                                @foreach (var answer in question.answers)
+                                {
+                                    <div class="col-12 col-sm-6 p-2">
+                                        @answer
+                                    </div>
+                                }
+                                <hr/>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
