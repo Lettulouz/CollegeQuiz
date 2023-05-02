@@ -1,11 +1,12 @@
 import { SessionContext } from "./QuizSessionRenderer.jsx";
 
 const QuizSessionQuestionResultComponent = () => {
-    const { afterQuestionResults} = React.useContext(SessionContext);
+    const { afterQuestionResults } = React.useContext(SessionContext);
 
     const containerUsernamesRef = React.useRef(null);
     const containerScoresRef = React.useRef(null);
     const leaderRef = React.useRef(null);
+    
     const timeline = anime.timeline({ easing: 'easeOutExpo' });
     const lastItem = afterQuestionResults.length - 1;
 
@@ -52,8 +53,7 @@ const QuizSessionQuestionResultComponent = () => {
             {afterQuestionResults[lastItem].CurrentStreak > 0 &&
             <div className="leaderboard streak fw-bold fs-1 mx-2 px-5 col-sm" ref={leaderRef}>
                 {afterQuestionResults[lastItem].Username}: {afterQuestionResults[lastItem].CurrentStreak}⚡
-            </div>
-            }
+            </div>}
         </div>
     );
 };
