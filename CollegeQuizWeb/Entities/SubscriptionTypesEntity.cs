@@ -17,8 +17,11 @@ public class SubscriptionTypesEntity : AbstractAuditableEntity
     public string Name { get; set; }
 
     [Required]
-    [Column("price",TypeName = "decimal(5,2)")]
+    [Column("price", TypeName = "decimal(5,2)")]
     public Decimal Price { get; set; }
+
+    [Column("before_discount_price",TypeName = "decimal(5,2)")]
+    public Decimal? BeforeDiscountPrice { get; set; }
 
     [Column("current_discount")]
     public double? CurrentDiscount { get; set; }

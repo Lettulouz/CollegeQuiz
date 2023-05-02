@@ -859,7 +859,48 @@ public class AdminService : IAdminService
         await _context.SaveChangesAsync();
         controller.Response.Redirect("/Admin/CouponList");
     }
+    
+    public async Task<List<SubscriptionTypeDto>> GetSubscriptions()
+    {
+        var subsEntity = await _context.SubsciptionTypes.ToListAsync();
+        List<SubscriptionTypeDto> subTypes = new();
+        foreach (var type in subsEntity)
+        {
+            SubscriptionTypeDto dto = new();
 
+            dto.Id = type.Id;
+            dto.Name = type.Name;
+            dto.Price = type.Price.ToString("N", CultureInfo.InvariantCulture);
+            string? Discount = type.CurrentDiscount.ToString().Replace(',', '.');
+            dto.CurrentDiscount = Discount;
+            
+            subTypes.Add(dto);
+        }
+
+        return subTypes;
+    }
+
+    public async Task UpdateSub(SubscriptionTypeDtoPayload obj)
+    {
+        AdminController controller = obj.ControllerReference;
+
+        var paymentEntity = await _context.SubsciptionTypes.FirstOrDefaultAsync(s=>s.Id.Equals(obj.Dto.Id));
+
+        if (paymentEntity != null)
+        {
+            paymentEntity.Name = obj.Dto.Name;
+            var Price = obj.Dto.Price.Replace('.', ',');
+            paymentEntity.Price = Convert.ToDecimal(Price);
+            string? Discount = obj.Dto.CurrentDiscount.ToString().Replace('.', ',');
+            paymentEntity.CurrentDiscount = Convert.ToDouble(Discount);
+
+            _context.Update(paymentEntity);
+            await _context.SaveChangesAsync();
+            controller.Response.Redirect("/Admin/Subscriptions");
+        }
+        
+    }
+    
     public bool EmailExistsInDb(string email)
     {
         if (_context.Users.FirstOrDefault(o => o.Email.Equals(email)) == null)
