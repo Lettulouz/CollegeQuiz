@@ -294,6 +294,10 @@ public class QuizAPIService : IQuizAPIService
             string url = $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{index}";
             quizImages.Add(new QuizImage(){ Id = int.Parse(index), Url = url });
         }
+        if (uploads.Count == 0 && Directory.Exists(dir))
+        {
+            Directory.Delete(dir, true);
+        }
         return new QuizImagesResDto()
         {
             IsGood = true,

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CollegeQuizWeb.API.Services.Quiz;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
@@ -239,6 +241,11 @@ public class QuizService : IQuizService
                 _context.Quizes.Remove(deletedQuiz);
                 await _context.SaveChangesAsync();
             }   
+        }
+        string dirName = $"{QuizAPIService.FOLDER_PATH}/{quizId}";
+        if (Directory.Exists(dirName))
+        {
+            Directory.Delete(dirName, true);
         }
         AlertDto alertDto2 = new AlertDto()
         {
