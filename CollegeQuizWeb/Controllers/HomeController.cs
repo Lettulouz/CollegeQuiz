@@ -26,8 +26,9 @@ public class HomeController : Controller
         _homeService = homeService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        await HttpContext.Session.CommitAsync();
         string? logouUser = HttpContext.Session.GetString(SessionKey.USER_LOGOUT);
         ViewBag.Logout = logouUser!;
         HttpContext.Session.Remove(SessionKey.USER_LOGOUT);
@@ -49,6 +50,7 @@ public class HomeController : Controller
     
     public async Task<IActionResult> Subscription(int? id=null)
     {
+        await HttpContext.Session.CommitAsync();
         if(id==null)
             Response.Redirect("/Auth/Login");
         
@@ -66,6 +68,7 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Subscription(SubscriptionPaymentDto subscriptionPaymentDto)
     {
+        await HttpContext.Session.CommitAsync();
         var payloadDto = new SubscriptionPaymentDtoPayload(this) { Dto = subscriptionPaymentDto };
         await _homeService.MakePaymentForSubscription(payloadDto);
         return View(subscriptionPaymentDto);
@@ -75,6 +78,7 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> ChangePaymentStatus()
     {
+        await HttpContext.Session.CommitAsync();
         HttpContext.Request.EnableBuffering();
 
         using (var reader = new StreamReader(Request.Body))
@@ -93,6 +97,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> ChooseSubscription()
     {
+        await HttpContext.Session.CommitAsync();
         var subscriptions = await _homeService.GetSubscriptionTypes();
         return View(subscriptions);
     }

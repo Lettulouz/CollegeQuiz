@@ -31,6 +31,7 @@ public class SharedQuizesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Share(ShareTokenDto shareTokenDto)
     {
+        await HttpContext.Session.CommitAsync();
         var payloadDto = new ShareTokenPayloadDto(this) { Dto = shareTokenDto };
         await _service.ShareQuizToken(payloadDto);
         return View(payloadDto.Dto);
@@ -39,6 +40,7 @@ public class SharedQuizesController : Controller
     [HttpGet]
     public async Task<IActionResult> SharePage([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         
