@@ -4,7 +4,7 @@ import { SessionContext } from "./QuizSessionRenderer.jsx";
 const LeaveQuizSessionButtonComponent = ({ text }) => {
     const {
         token, connectionId, setIsConnect, setAlert, setScreenAction, isLeaveClicked, setIsLeaveClicked, setIsJoinClicked,
-        connection
+        connection, setToken
     } = React.useContext(SessionContext);
     
     const modalRef = React.useRef();
@@ -32,7 +32,10 @@ const LeaveQuizSessionButtonComponent = ({ text }) => {
     };
 
     const showModal = () => new bootstrap.Modal(modalRef.current, { backdrop: 'static', keyboard: false }).show();
-    const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
+    const hideModal = () => {
+        setToken("");
+        bootstrap.Modal.getInstance(modalRef.current).hide();
+    };
 
     React.useEffect(() => {
         connection.on("OnDisconnectedSession", _ => hideModal());
