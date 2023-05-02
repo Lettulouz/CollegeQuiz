@@ -19,7 +19,6 @@ const JoinToQuizSessionComponent = () => {
                 if (r.isGood) {
                     setQuizName(r.quizName);
                     setScreenAction(question !== "" ? r.screenType : WAITING_SCREEN);
-                    setToken("");
                     setIsConnect(true);
                 } else {
                     setIsJoinClicked(false);
