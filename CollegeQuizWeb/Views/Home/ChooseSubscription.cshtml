@@ -1,6 +1,10 @@
 @using Microsoft.IdentityModel.Tokens
 @model List<CollegeQuizWeb.Dto.Home.SubscriptionTypesDto>
 
+@{
+    ViewData["Title"] = "Wybierz subskrypcję";
+}
+
 @if (!Model[0].Name.IsNullOrEmpty())
 {
     <div class="container mt-2 mb-1">
