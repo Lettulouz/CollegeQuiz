@@ -83,7 +83,7 @@ const MainWindowGameComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked, 
         setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
+        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentAnswer,
         setIsLast, setAnswerSett, questionType, setQuestionType, setAnswRange, setQuestionImage
     } = useContext(SessionContext);
     
@@ -124,10 +124,8 @@ const MainWindowGameComponent = () => {
         connection.on("QUESTION_RESULT_P2P", questionAnsw => {
             setScreenAction(QUESTION_RESULT_SCREEN);
             const parsedAnswers = JSON.parse(questionAnsw);
+            console.log(questionAnsw)
             setAfterQuestionResults(parsedAnswers);
-            console.log(parsedAnswers);
-            console.log(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
-            setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
             setIsLast(parsedAnswers.isLast);
         });
         connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => {
@@ -188,12 +186,13 @@ const MainWindowGameComponent = () => {
 };
 
 const QuestionResultComponent = () => {
-    const { afterQuestionResults, currentQuestionLeader } = useContext(SessionContext);
+    const { afterQuestionResults } = useContext(SessionContext);
     
     const containerUsernamesRef = useRef(null);
     const containerScoresRef = useRef(null);
     const leaderRef = useRef(null);
     const timeline = anime.timeline({ easing: 'easeOutExpo' });
+    const lastItem = afterQuestionResults.length - 1;
     
     useEffect(() => {
         if (!afterQuestionResults[0].isLast) return;
@@ -221,25 +220,25 @@ const QuestionResultComponent = () => {
         <div className="container">
             <div className="row mb-2">
                 <div className="col-md-6" ref={containerUsernamesRef}>
-                    {afterQuestionResults.map(m => (
-                        <div className="leaderboard text-white fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                    {afterQuestionResults.slice(0, -1).map(m => (
+                        <div className="leaderboard colors-leaderboard fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
                             key={m.Username}>
                             {m.Username}
                         </div>
                     ))}
                 </div>
                 <div className="col-md-6" ref={containerScoresRef}>
-                    {afterQuestionResults.map(m => (
-                        <div className="leaderboard gold-leaderboard fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+                    {afterQuestionResults.slice(0, -1).map(m => (
+                        <div className="leaderboard fw-bold mb-2 fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
                             key={m.Username}>
-                            {m.Score} + {m.newPoints}
+                            {m.Score} (+ {m.newPoints})
                         </div>
                     ))}
                 </div>
             </div>
-            <div className="leaderboard text-white fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
+            <div className="leaderboard streak fw-bold fs-1 mx-2 px-5 col-sm d-flex align-items-center justify-content-center"
                 ref={leaderRef}>
-                {currentQuestionLeader}
+                {afterQuestionResults[lastItem].Username}: {afterQuestionResults[lastItem].CurrentStreak}⚡
             </div>
         </div>
     );
@@ -638,7 +637,6 @@ const QuizSessionRootComponent = () => {
     const [ questionNumber, setQuestionNumber ] = useState(null);
     const [ isAnswerSet, setIsAnswerSet ] = useState(false);
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
-    const [ currentQuestionLeader, setCurrentQuestionLeader ] = useState("");
     const [ currentAnswer, setCurrentAnswer ] = useState([]);
     const [ isLast, setIsLast ] = useState(false);
     const [ answRange, setAnswRange ] = useState({min: "", max: ""});
@@ -652,9 +650,9 @@ const QuizSessionRootComponent = () => {
             screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, question, 
             setQuestion, questionTimer, setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet,
-            afterQuestionResults, setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader,
-            currentAnswer, setCurrentAnswer, isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange,
-            questionImage, setQuestionImage
+            afterQuestionResults, setAfterQuestionResults, currentAnswer, setCurrentAnswer, isLast, setIsLast, 
+            answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange, questionImage, 
+            setQuestionImage
         }}>
             {isActive && <>
                 {isConnect ? <>
