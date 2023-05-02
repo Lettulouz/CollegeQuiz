@@ -315,6 +315,15 @@ select{
     background-color: #3a8a7f;
 }
 
+.btn-std:disabled {
+    opacity: .5;
+}
+
+.btn-color-second-short {
+    color: #f9fef8 !important;
+    background-color: #3a8a7f;
+}
+
 .btn-color-hover {
     border: 1px solid #19452e;
     width: 250px;
@@ -408,6 +417,23 @@ select{
     color: #19452e;
 }
 
+.question-progress-bar {
+    position: relative;
+    border-radius: 5px;
+    height: 10px;
+    background-color: #aee5d4;
+}
+
+.question-progress-bar-inner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transition: .3s;
+    border-radius: 5px;
+    background-color: #63c4ab;
+}
+
 #mainName {
     position: absolute;
     top: -23px;
@@ -490,6 +516,9 @@ select{
     -webkit-mask: var(--mask);
     mask: var(--mask);
     height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .leaderboard.gold-leaderboard{
