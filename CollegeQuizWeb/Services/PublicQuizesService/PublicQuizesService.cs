@@ -27,7 +27,7 @@ public class PublicQuizesService : IPublicQuizesService
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
             .Where(q => q.QuizEntity.IsPublic.Equals(true))
             .Select(q => new MyQuizDto()
-                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
+                { Name = q.QuizEntity.Name, Author = q.QuizEntity.UserEntity.Username , Id = q.QuizEntity.Id, Token = q.Token})
             .ToListAsync();
     }
 

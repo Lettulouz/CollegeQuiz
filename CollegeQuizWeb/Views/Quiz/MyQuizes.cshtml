@@ -5,7 +5,7 @@
 
 @if (ViewBag.Alert != null)
 {
-    <div class="alert @ViewBag.Alert.Type alert-dismissible fade show" role="alert">
+    <div class="alert @ViewBag.Alert.Type alert-dismissible fade show mb-5" role="alert">
         @Html.Raw(ViewBag.Alert.Content)
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -139,6 +139,9 @@
                                     <h5 class="card-title">@quizes.Name</h5>
                                 </div>
                             </a>
+                            <p class="card-text text-end mt-auto mx-3 mb-3">
+                                Autor: @quizes.Author
+                            </p>
                         </div>
                     </div>
                 }

@@ -112,6 +112,7 @@ public class QuizService : IQuizService
             .Where(x => x.UserId.Equals(userEntity.Id))
             .Select(q => new MyQuizSharedDto()
             {
+                Author = q.QuizEntity.UserEntity.Username,
                 Name = q.QuizEntity.Name,
                 Id = q.QuizEntity.Id,
                 CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
