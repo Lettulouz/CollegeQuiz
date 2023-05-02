@@ -735,7 +735,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("question");
 
                     b.Property<string>("Range")
-                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("range_answer");
 

@@ -19,8 +19,7 @@ public class UsersQuestionsAnswersEntity : AbstractAuditableEntity
     [Column("answer")]
     public int Answer { get; set; }
     
-    [Required]
     [Column("range_answer")]
-    public string Range { get; set; }
+    public string? Range { get; set; }
     public virtual QuizSessionParticEntity QuizSessionParticEntity { get; set; }
 }
