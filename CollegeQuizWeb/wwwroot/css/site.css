@@ -734,3 +734,22 @@ select{
 .mt-6{
     margin-top: 60px;
 }
+
+/*
+.icon-animation{
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(0.8);
+    }
+}
+*/
+ 
