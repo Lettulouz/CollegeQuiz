@@ -4,7 +4,7 @@
 
 <div class="position-relative">
     <div id="react-loadable-spinner-content"
-         class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner">
+        class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner">
         <div class="spinner-border load-spinner-circle mt-4" role="status"></div>
     </div>
     <div id="quizManagerRoot"></div>
@@ -12,8 +12,9 @@
 
 <div id="inject-qr-code-blob" style="display: none; !important;">@ViewBag.ImageBtm</div>
 <div id="inject-sess-code" style="display: none; !important;">@ViewBag.Code</div>
+<div id="inject-quiz-name" style="display: none; !important;">@ViewBag.QuizName</div>
 
-<script type="module" src="@Url.Content("~/js/react/QuizManager.jsx")"></script>
+<script type="module" src="@Url.Content("~/js/react/quiz-manager/QuizManagerRenderer.jsx")"></script>
 
 <script lang="js">
     window.onbeforeunload = function() {
