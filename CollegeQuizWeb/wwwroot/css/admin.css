@@ -152,6 +152,11 @@
     background: linear-gradient(180deg, rgba(226,0,0,1) 0%, rgba(255,0,0,1) 85%) !important;
 }
 
+.custom-card-5{
+    background: rgb(139,0,224) !important;
+    background: linear-gradient(180deg, rgba(139,0,224,1) 0%, rgba(158,0,255,1) 100%) !important;
+}
+
 .user-card{
     border-radius: 7px;
     border-width: 1px;

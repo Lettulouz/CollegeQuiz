@@ -11,46 +11,77 @@
     <hr class="divider mt-0">
 
 <div class="container" style="max-width:960px;">
-@foreach (var sub in Model)
-    {   
-        @using (Html.BeginForm("Subscriptions", "Admin",  FormMethod.Post)
+    @if (ViewBag.subUpdated != null)
+        {
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                @ViewBag.subUpdated
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    
+    @if (ViewBag.subError != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewBag.subError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+    
+    @foreach (var sub in Model)
+    {
+        @using (Html.BeginForm("Subscriptions", "Admin", FormMethod.Post)
             )
         {
             @Html.HiddenFor(x => sub.Id)
             <div class="row mb-1">
                 <div class="col-12 col-md-4 mb-3">
                     <div class="form-floating">
-                        @Html.TextBoxFor(x => sub.Name, new{ @class="form-control", @type="text"})
+                        @Html.TextBoxFor(x => sub.Name, new { @class = "form-control", @type = "text" })
                         <label>Nazwa</label>
                     </div>
                 </div>
-                
-                <div class="col-5 col-md-3 mb-3">
+
+                <div class="col-6 col-md-2 mb-3">
                     <div class="form-floating">
                         @Html.TextBoxFor(x => sub.Price,
-                            new{ @class="form-control",@id="Price", @type="number", @min="0", @step=".01"})
+                            new { @class = "form-control", @id = "Price", @type = "number", @min = "0", @step = ".01" })
                         <label>Cena</label>
                     </div>
                 </div>
-                
-                <div class="col-4 col-md-3 mb-3">
+
+                <div class="col-6 col-md-2 mb-3">
                     <div class="form-floating">
                         @Html.TextBoxFor(x => sub.CurrentDiscount,
-                            new{ @class="form-control", @type="number", @min="0", @max="1", @step=".01"})
+                            new { @class = "form-control", @type = "number", @min = "0", @max = "1", @step = ".01" })
                         <label>Rabat</label>
                     </div>
                 </div>
-                
-                <div class="col-2 mb-3">
+
+                <div class="col-6 col-md-2 mb-3">
+                    <div class="form-floating">
+                        @Html.TextBoxFor(x => sub.BeforeDiscountPrice,
+                            new { @class = "form-control", @type = "number", @min = "0", @step = ".01" })
+                        <label>Stara cena</label>
+                    </div>
+                </div>
+
+                <div class="col-5 col-md-2 mb-3">
                     <div class="form-floating">
                         <button class="btn btn-primary btn-lg h-100" type="submit" style="height: 58px  !important; width: 58px !important;">
                             <i class="bi bi-check-lg"></i>
                         </button>
                     </div>
                 </div>
-            </div> 
-             
+            </div>
+
         }
-         
+
     }
 </div>
+
+<script>
+    document.getElementById('coupon_collapse').classList.add('show');
+    document.getElementById('coupon_collapse_btn').setAttribute( 'aria-expanded', 'true' );
+    document.getElementById('coupon_collapse_btn').setAttribute( 'style', 'color:white !important' );
+    document.getElementById('sb').setAttribute( 'style', 'color:white !important' );
+</script>

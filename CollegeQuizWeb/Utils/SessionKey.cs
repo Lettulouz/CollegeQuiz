@@ -23,4 +23,7 @@ public class SessionKey
     public const string QUIZ_CODE_MESSAGE_REDEEM_TYPE = "QUIZ_CODE_MESSAGE_REDEEM_TYPE+SESS";
     public const string EMAIL_SENT = "EMAIL_SENT+SESS";
     public const string ACCOUNT_UPDATED = "ACCOUNT_UPDATED+SESS";
+    
+    public const string SUB_UPDATED = "SUB_UPDATED+SESS";
+    public const string SUB_ERROR = "SUB_ERROR+SESS";
 }

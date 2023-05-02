@@ -443,6 +443,14 @@ public class AdminController : Controller
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
+        string? subUpdated = HttpContext.Session.GetString(SessionKey.SUB_UPDATED);
+        HttpContext.Session.Remove(SessionKey.SUB_UPDATED);
+        ViewBag.subUpdated = subUpdated!;
+        
+        string? subError = HttpContext.Session.GetString(SessionKey.SUB_ERROR);
+        HttpContext.Session.Remove(SessionKey.SUB_ERROR);
+        ViewBag.subError = subError!;
+        
         var subscriptionTypes = await _adminService.GetSubscriptions();
         
         return View(subscriptionTypes);
@@ -464,6 +472,12 @@ public class AdminController : Controller
         if (ModelState.IsValid)
         {
             await _adminService.UpdateSub(payloadDto);
+        }
+        else
+        {
+            HttpContext.Session.SetString(SessionKey.SUB_ERROR, Lang.SUB_ERROR);
+            Response.Redirect("/Admin/Subscriptions");
+            
         }
 
         
