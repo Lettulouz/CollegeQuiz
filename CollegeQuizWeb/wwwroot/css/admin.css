@@ -6,7 +6,7 @@
 .sidebar{
     width: var( --offcanvas-width);
     top: var( --topNavbarHeight);
-    height: calc(100%-var( --topNavbarHeight));
+    height: calc(100% - var( --topNavbarHeight));
 }
 
 .sidecustomcolor{

@@ -29,7 +29,7 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
         .find(x=> x.AnswerName === answers[number]) && Object.keys(currentAnswer).length !== 0 ? 'incorrectAnswer' : '';
     
     const isClicked = () => isAnswerSet && clickedIndex !== number && 'notClicked';
-    const cssDisabledClickEvent = (isMultiSelect && isAnswerSet) && 'cursor-not-allowed';
+    const cssDisabledClickEvent = (!isMultiSelect && isAnswerSet) && 'cursor-not-allowed';
     
     const cssClickedClass = isMultiSelect
         ? clickedIndex.includes(number) && 'clicked'

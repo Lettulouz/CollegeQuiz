@@ -9,9 +9,9 @@ import QuizQuestionUniversalTypeComponent from "./QuizQuestionUniversalTypeCompo
 const QuizSessionMainGameWindowComponent = () => {
     const {
         connection, setScreenAction, screenAction, setIsConnect, setAlert, quizName, setIsJoinClicked,
-        setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer,
-        setQuestionNumber, setIsAnswerSet, setAfterQuestionResults, setCurrentQuestionLeader, setCurrentAnswer,
-        setIsLast, setAnswerSett, questionType, setQuestionType, setAnswRange, setQuestionImage
+        setIsLeaveClicked, setAnswers, setQuestion, setQuestionTimer, setQuestionNumber, setIsAnswerSet,
+        setAfterQuestionResults, setCurrentAnswer, setIsLast, setAnswerSett, questionType, setQuestionType,
+        setAnswRange, setQuestionImage, setProgressWidth
     } = React.useContext(SessionContext);
 
     const [ counting, setCounting ] = React.useState(5);
@@ -47,7 +47,11 @@ const QuizSessionMainGameWindowComponent = () => {
         });
 
         // timer odliczający czas pytania
-        connection.on("QUESTION_TIMER_P2P", counter => setQuestionTimer(counter));
+        connection.on("QUESTION_TIMER_P2P", counter => {
+            const parsedCounter = JSON.parse(counter);
+            setProgressWidth((parsedCounter.Elapsed / parsedCounter.Total) * 100);
+            setQuestionTimer(parsedCounter.Elapsed);
+        });
 
         // ustawienie prawidłowego pytania
         connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => setCurrentAnswer(JSON.parse(currentAnsw)));

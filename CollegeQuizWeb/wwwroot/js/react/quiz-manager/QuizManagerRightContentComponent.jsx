@@ -39,7 +39,7 @@ const QuizManagerRightContentComponent = () => {
             <div className="card px-3 py-3 h-100 d-flex flex-column justify-content-between">
                 <div className="w-100">
                     <button className="btn btn-color-second-short mt-2 w-100 btn-std" onClick={startQuiz}
-                            disabled={allParticipants.Connected.length === 0 || counting === 0 || isEnded}>
+                        disabled={allParticipants.Connected.length === 0 || counting === 0 || isEnded}>
                         {startBtnText}
                     </button>
                     <button className="btn btn-color-one-short text-white mt-2 w-100 btn-std" onClick={() => sendSignal()}
@@ -48,7 +48,7 @@ const QuizManagerRightContentComponent = () => {
                     </button>
                 </div>
                 <div className="w-100">
-                    <button className="btn btn-danger text-white w-100" onClick={() => window.location.reload()}>
+                    <button className="btn btn-danger mt-2 text-white w-100" onClick={() => window.location.reload()}>
                         Zakończ quiz
                     </button>
                 </div>
