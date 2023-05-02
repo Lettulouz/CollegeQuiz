@@ -243,4 +243,29 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         }
         await _context.SaveChangesAsync();
     }
+
+    public async Task RemoveFromSession(string loggedUsername, string token, string username)
+    {
+        var particToDelete = _context.QuizSessionPartics
+            .Include(x=>x.QuizLobbyEntity)
+            .Where(x => x.QuizLobbyEntity.Code.Equals(token))
+            .FirstOrDefault(x=> x.UserEntity.Username.Equals(username));
+        if (particToDelete != null)
+        {
+            _context.QuizSessionPartics.Remove(particToDelete);
+            await _context.SaveChangesAsync();
+            var restOfPartic = _context.QuizSessionPartics
+                .Include(p => p.QuizLobbyEntity)
+                .Include(p => p.UserEntity)
+                .Where(p => p.QuizLobbyEntity.Code.Equals(token));
+        
+            await _hubManagerContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
+            {
+                Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
+                Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
+            }));
+            
+            await _hubUserContext.Clients.Client(particToDelete.ConnectionId).SendAsync("OnDisconnectedSession", "Zostałeś rozłączony przez hosta.");
+        }
+    }
 }

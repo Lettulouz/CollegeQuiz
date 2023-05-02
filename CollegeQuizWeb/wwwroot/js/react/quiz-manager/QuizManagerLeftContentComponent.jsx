@@ -18,8 +18,23 @@ const QuizManagerLeftContentComponent = () => {
             });
     }, []);
 
-    const allConnected = allParticipants.Connected.map(name => <li key={name}>{name}</li>);
-    const allDisconnected = allParticipants.Disconnected.map(name => <li key={name}>{name}</li>);
+    const handleClick = username => {
+        fetch(
+            `/api/v1/dotnet/QuizSessionAPI/RemoveFromSession/${SESS_TOKEN}/${username}`,
+            getCommonFetchObj("POST")
+        ).then(r => r);
+    };
+
+    const allConnected = allParticipants.Connected.map(name => <li className="h5 list-group-item bg-transparent border-0 mb-0" key={name}>
+        <div className="container p-0">
+            <div className="row d-inline">
+                <div className="d-inline">{name}</div>
+                <i onClick={() => handleClick(name)} className="bi bi-x-circle-fill text-danger d-inline"></i>
+            </div>
+        </div>
+        
+    </li>);
+    const allDisconnected = allParticipants.Disconnected.map(name => <li className="h5 list-group-item bg-transparent border-0 mb-0" key={name}>{name}</li>);
 
     return (
         <div className="col-lg-3 px-0 mb-2 mb-lg-0 order-lg-0 order-1">
@@ -30,9 +45,11 @@ const QuizManagerLeftContentComponent = () => {
                 <h6 className="text-black-50 mb-0">Host</h6>
                 <h5 className="mb-4 lh-sm">{lobbyData.host}</h5>
                 <h6 className="text-black-50 mb-1">Połączeni: ({allParticipants.Connected.length})</h6>
-                {allParticipants.Connected.length > 0 && <ul className="fw-bold">{allConnected}</ul>}
-                <h6 className="text-black-50 mb-1">Rozłączeni: ({allParticipants.Disconnected.length})</h6>
-                {allParticipants.Disconnected.length  > 0 && <ul className="fw-bold">{allDisconnected}</ul>}
+                {allParticipants.Connected.length > 0 && 
+                    <ul className="fw-bold list-group">{allConnected}</ul>}
+                <h6 className="text-black-50 mt-3 mb-1">Rozłączeni: ({allParticipants.Disconnected.length})</h6>
+                {allParticipants.Disconnected.length  > 0 && <ul className="fw-bold list-group">{allDisconnected}</ul>}
+                <h6></h6>
             </div>
         </div>
     );

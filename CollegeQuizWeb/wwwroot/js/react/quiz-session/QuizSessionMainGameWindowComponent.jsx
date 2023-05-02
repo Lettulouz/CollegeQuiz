@@ -62,7 +62,7 @@ const QuizSessionMainGameWindowComponent = () => {
         connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => setCurrentAnswer(JSON.parse(currentAnsw)));
         
         // rozłączenie hosta
-        connection.on("OnDisconectedSession", data => {
+        connection.on("OnDisconnectedSession", data => {
             setIsJoinClicked(false);
             setIsLeaveClicked(false);
             connection.stop().then(_ => {

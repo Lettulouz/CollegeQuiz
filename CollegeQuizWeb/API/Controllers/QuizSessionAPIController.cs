@@ -49,6 +49,18 @@ public class QuizSessionAPIController : AbstractAPIController
         }
         return Json(await _service.LeaveRoom(loggedUsername, connectionId, token));
     }
+    
+    [HttpPost("[action]/{token}/{username}")]
+    public async Task<IActionResult> RemoveFromSession(string token, string username)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null)
+        {
+            return StatusCode(401);
+        }
+        await _service.RemoveFromSession(loggedUsername, token, username);
+        return StatusCode(200);
+    }
 
     [HttpPost("[action]/{connectionId}/{token}")]
     public async Task<JsonResult> LeaveRoomJwt(string connectionId, string token)

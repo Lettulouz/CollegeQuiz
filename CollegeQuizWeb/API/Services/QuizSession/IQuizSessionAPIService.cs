@@ -10,4 +10,5 @@ public interface IQuizSessionAPIService
     Task<JoinToSessionDto> EstabilishedHostRoom(string loggedUsername, string connectionId, string token);
     Task<QuizLobbyInfoDto> GetLobbyData(string loggedUsername, string token);
     Task SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer);
+    Task RemoveFromSession(string loggedUsername, string token, string username);
 }

@@ -35,7 +35,7 @@ const LeaveQuizSessionButtonComponent = ({ text }) => {
     const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
 
     React.useEffect(() => {
-        connection.on("OnDisconectedSession", _ => hideModal());
+        connection.on("OnDisconnectedSession", _ => hideModal());
     }, []);
 
     return (

@@ -439,8 +439,8 @@ public class QuizManagerSessionHub : Hub
             .FirstOrDefaultAsync(q => q.HostConnId.Equals(Context.ConnectionId));
         if (hostUser == null) return;
         
-        await _hubUserContext.Clients.Group(hostUser.Code).SendAsync("OnDisconectedSession", "Host zakończył sesję.");
-        
+        await _hubUserContext.Clients.Group(hostUser.Code).SendAsync("OnDisconnectedSession", "Host zakończył sesję.");
+
         var entities = _context.QuizSessionPartics
             .Include(q => q.QuizLobbyEntity)
             .Where(q => q.QuizLobbyEntity.Code.Equals(hostUser.Code));
