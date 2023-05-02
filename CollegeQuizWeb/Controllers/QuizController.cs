@@ -114,6 +114,4 @@ public class QuizController : Controller
         await _service.DeleteSharedQuiz(quizId, loggedUsername, this);
         return Redirect("/Quiz/MyQuizes");
     }
-    
-    [HttpGet] public IActionResult InGameQuestion() => View();
 }
