@@ -191,6 +191,7 @@ public class HomeService : IHomeService
         var remoteIpAddress = GetIpAddress(controller);
         Decimal tempDec = subscriptionTypesEntity.Price * 100;
         int price = (int)tempDec;
+        price = (int)(price * (1.00 - subscriptionTypesEntity.CurrentDiscount))!;
 
         Buyer buyer = new Buyer(userEntity.Email);
         buyer.FirstName = userEntity.FirstName;
@@ -261,6 +262,22 @@ public class HomeService : IHomeService
         await _context.SaveChangesAsync();
 
         controller.Response.Redirect(orderResponse.RedirectUri);
+    }
+
+    public async Task<List<SubscriptionTypesDto>> GetSubscriptionTypes()
+    {
+        var subsciptionTypes = _context.SubsciptionTypes.ToList();
+        List<SubscriptionTypesDto> subscriptionTypesDtos = new();
+        foreach (var subsciptionType in subsciptionTypes)
+        {
+            SubscriptionTypesDto subscriptionTypesDto = new();
+            subscriptionTypesDto.Name = subsciptionType.Name;
+            subscriptionTypesDto.Price = subsciptionType.Price;
+            subscriptionTypesDto.CurrentDiscount = subsciptionType.CurrentDiscount;
+            subscriptionTypesDtos.Add(subscriptionTypesDto);
+        }
+            
+        return subscriptionTypesDtos;
     }
     
     private string GetIpAddress(HomeController controller)

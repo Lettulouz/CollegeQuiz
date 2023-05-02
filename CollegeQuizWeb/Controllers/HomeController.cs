@@ -91,9 +91,10 @@ public class HomeController : Controller
         return new EmptyResult();
     }
 
-    public  IActionResult Sandbox()
+    public async Task<IActionResult> ChooseSubscription()
     {
-        return View();
+        var subscriptions = await _homeService.GetSubscriptionTypes();
+        return View(subscriptions);
     }
     
 
