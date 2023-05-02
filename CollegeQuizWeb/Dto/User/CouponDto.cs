@@ -8,8 +8,7 @@ namespace CollegeQuizWeb.Dto.User;
 
 public class CouponDto
 {
-    [Required(ErrorMessage = Lang.INVALID_COUPON_CODE_ERROR)]
-    public string Coupon { get; set; }
+    public string? Coupon { get; set; }
     
     public bool IsUsed { get; set; }
     
@@ -28,7 +27,7 @@ public class CouponDto
     public int TypeOfSubscription { get; set; }
     
     [StringLength(80)]
-    public string CustomerName { get; set; }
+    public string? CustomerName { get; set; }
 }
 
 public class CouponDtoPayload : AbstractControllerPayloader<AdminController>
