@@ -19,6 +19,7 @@ public class SharedQuizesController : Controller
     public IActionResult Share()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (isLogged == null) return Redirect("/Auth/Login");
         ViewBag.TokenMessage = HttpContext.Session.GetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM);
         ViewBag.Type = HttpContext.Session.GetString(SessionKey.QUIZ_CODE_MESSAGE_REDEEM_TYPE);
         HttpContext.Session.Remove(SessionKey.QUIZ_CODE_MESSAGE_REDEEM);
@@ -31,6 +32,9 @@ public class SharedQuizesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Share(ShareTokenDto shareTokenDto)
     {
+        await HttpContext.Session.CommitAsync();
+        string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (isLogged == null) return Redirect("/Auth/Login");
         var payloadDto = new ShareTokenPayloadDto(this) { Dto = shareTokenDto };
         await _service.ShareQuizToken(payloadDto);
         return View(payloadDto.Dto);
@@ -39,6 +43,7 @@ public class SharedQuizesController : Controller
     [HttpGet]
     public async Task<IActionResult> SharePage([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         

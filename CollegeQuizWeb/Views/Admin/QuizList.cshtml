@@ -1,3 +1,4 @@
+@using Newtonsoft.Json
 @model List<CollegeQuizWeb.Dto.Admin.QuizListDto>
 
 @{
@@ -12,7 +13,7 @@
 </form>
 
 
-<h1 class="text-muted px-2">Lista quizów</h1> 
+<h1 class="text-muted px-2">Lista quizów</h1>
 <hr class="divider mt-0">
 
 <div class="container-fluid">
@@ -29,7 +30,7 @@
                     <li class="page-item me-2">
                         <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Prywatne</button>
                     </li>
-                    
+
                 </ul>
             </nav>
         </div>
@@ -41,7 +42,9 @@
                     <button type="button" class="btn bg-transparent clrBtn" onclick="delSearch()" style="margin-left: -40px; z-index: 100;">
                         <i class="bi bi-x"></i>
                     </button>
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
                 </div>
             </div>
             <div class="col">
@@ -107,7 +110,7 @@
 
 <script>
     @{
-        var quizList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        var quizList = Html.Raw(JsonConvert.SerializeObject(Model));
     }
  
  $(document).ready(function (){

@@ -26,7 +26,6 @@ const QuizSessionRootComponent = () => {
     const [ questionNumber, setQuestionNumber ] = React.useState(null);
     const [ isAnswerSet, setIsAnswerSet ] = React.useState(false);
     const [ afterQuestionResults, setAfterQuestionResults ] = React.useState([]);
-    const [ currentQuestionLeader, setCurrentQuestionLeader ] = React.useState("");
     const [ currentAnswer, setCurrentAnswer ] = React.useState([]);
     const [ isLast, setIsLast ] = React.useState(false);
     const [ answRange, setAnswRange ] = React.useState({ min: "", max: "" });
@@ -40,7 +39,7 @@ const QuizSessionRootComponent = () => {
             setAlert, screenAction, setScreenAction, quizName, setQuizName, isJoinClicked, setIsJoinClicked, isLeaveClicked,
             setIsLeaveClicked, quizStarted, setQuizStarted, answers, setAnswers, question, setQuestion, questionTimer,
             setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet, afterQuestionResults,
-            setAfterQuestionResults, currentQuestionLeader, setCurrentQuestionLeader, currentAnswer, setCurrentAnswer,
+            setAfterQuestionResults, currentAnswer, setCurrentAnswer,
             isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange,
             questionImage, setQuestionImage
         }}>

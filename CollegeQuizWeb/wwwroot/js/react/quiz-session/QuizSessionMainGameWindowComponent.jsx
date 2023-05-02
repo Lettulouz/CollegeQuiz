@@ -48,18 +48,17 @@ const QuizSessionMainGameWindowComponent = () => {
 
         // timer odliczający czas pytania
         connection.on("QUESTION_TIMER_P2P", counter => setQuestionTimer(counter));
+
+        // ustawienie prawidłowego pytania
+        connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => setCurrentAnswer(JSON.parse(currentAnsw)));
         
         // plansza po zakończeniu tury
         connection.on("QUESTION_RESULT_P2P", questionAnsw => {
             setScreenAction(QUESTION_RESULT_SCREEN);
             const parsedAnswers = JSON.parse(questionAnsw);
             setAfterQuestionResults(parsedAnswers);
-            setCurrentQuestionLeader(parsedAnswers.reduce((max, dict) => max.newPoints > dict.newPoints ? max : dict).Username);
             setIsLast(parsedAnswers.isLast);
         });
-        
-        // ustawienie prawidłowego pytania
-        connection.on("CORRECT_ANSWERS_SCREEN", currentAnsw => setCurrentAnswer(JSON.parse(currentAnsw)));
         
         // rozłączenie hosta
         connection.on("OnDisconectedSession", data => {

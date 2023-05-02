@@ -30,7 +30,7 @@ using React.AspNet;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(25));
+builder.Services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(120));
 
 // react
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -84,6 +84,8 @@ builder.Services.AddCors(options =>
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var app = builder.Build();
+
+
 
 if (!app.Environment.IsDevelopment())
 {

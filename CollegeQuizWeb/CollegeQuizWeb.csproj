@@ -60,4 +60,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Quiz\QuestionTypes\_QuestionType1.cshtml" />
+  </ItemGroup>
 </Project>

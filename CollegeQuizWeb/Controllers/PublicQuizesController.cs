@@ -20,6 +20,7 @@ public class PublicQuizesController : Controller
     [HttpGet]
     public async Task<IActionResult> Quizes()
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         
@@ -39,6 +40,9 @@ public class PublicQuizesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Quizes(PublicQuizesDto obj)
     {
+        await HttpContext.Session.CommitAsync();
+        string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if(isUserLogged == null) return Redirect("/Auth/Login");
         var payloadDto = new PublicDtoPayLoad(this) { Dto = obj };
         if (payloadDto.Dto.Name == null)
         {
@@ -54,12 +58,22 @@ public class PublicQuizesController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizPage([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
+        string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if(isUserLogged == null) return Redirect("/Auth/Login");
         await _service.PublicQuizInfo(id, this);
         return View();
     }
 
     public async Task Share([FromRoute(Name = "id")] string token)
     {
+        await HttpContext.Session.CommitAsync();
+        string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if(isUserLogged == null)
+        {
+            HttpContext.Response.Redirect("/Auth/Login");
+            return;
+        }
         await _service.Share(token, this);
     }
 }

@@ -230,7 +230,7 @@ public class QuizManagerSessionHub : Hub
                             answer.QuizSessionParticEntity.Score += wonPoints;
                         }
 
-                        if(corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]==corectAnswersNumber.Count())
+                        if(corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]==currentAnswers.Count())
                             answer.QuizSessionParticEntity.CurrentStreak += 1;
                     }
                 }
@@ -246,8 +246,22 @@ public class QuizManagerSessionHub : Hub
                         obj.UserEntity.Username,
                         obj.Score,
                         isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
-                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
+                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
+                        obj.CurrentStreak
                     }).OrderByDescending(obj => obj.Score).Take(5).ToList();
+            
+            var streakLeader =
+                _context.QuizSessionPartics
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Select(obj => new
+                    {
+                        obj.UserEntity.Username,
+                        obj.Score,
+                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
+                        obj.CurrentStreak
+                    }).OrderByDescending(obj => obj.CurrentStreak).Take(1).ToList();
+            var leaderboard = topUsers.Concat(streakLeader).ToList();
 
             Console.WriteLine("punkt testowy 8");
 
@@ -256,7 +270,7 @@ public class QuizManagerSessionHub : Hub
             Thread.Sleep(2000);
 
             await _hubUserContext.Clients.Group(token)
-                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
+                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
         }
         else
         {
@@ -359,9 +373,23 @@ public class QuizManagerSessionHub : Hub
                         obj.UserEntity.Username,
                         obj.Score,
                         isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
-                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0
+                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
+                        obj.CurrentStreak
                     }).OrderByDescending(obj => obj.Score).Take(5).ToList();
 
+            var streakLeader =
+                _context.QuizSessionPartics
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Select(obj => new
+                    {
+                        obj.UserEntity.Username,
+                        obj.Score,
+                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
+                        obj.CurrentStreak
+                    }).OrderByDescending(obj => obj.CurrentStreak).Take(1).ToList();
+            var leaderboard = topUsers.Concat(streakLeader).ToList();
+            
             Console.WriteLine("punkt testowy 8");
 
             await _hubUserContext.Clients.Group(token)
@@ -369,7 +397,7 @@ public class QuizManagerSessionHub : Hub
             Thread.Sleep(2000);
 
             await _hubUserContext.Clients.Group(token)
-                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
+                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
         }
         await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", true);
         

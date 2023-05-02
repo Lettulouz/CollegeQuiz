@@ -1,17 +1,16 @@
-@model CollegeQuizWeb.Dto.Admin.AddUserDto
+@using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using CollegeQuizWeb.Utils
-@using Microsoft.AspNetCore.Http
-@using CollegeQuizWeb.Dto.Admin
+@model CollegeQuizWeb.Dto.Admin.AddUserDto
 @{
     ViewBag.Title = "Edytuj użytkownika";
     Layout = "_AdminLayout";
 }
-<h1 class="text-muted px-2">Edytuj użytkownika</h1> 
+<h1 class="text-muted px-2">Edytuj użytkownika</h1>
 <hr class="divider mt-0">
 
 <div class="container" style="max-width:960px;">
-    
+
     <form method="post" autocomplete="off" asp-controller="Admin" asp-action="EditUser">
         <input type="hidden" class="form-control" id="Id" asp-for="Id" placeholder="a">
         <div class="row m-2">
@@ -71,14 +70,16 @@
                     </div>
                     <label style="color:darkgray; margin-top:3px">*W przypadku pozostawienia pola hasła hasło zostanie niezmienione</label>
                 </div>
-                @if (Context.Session.GetString(SessionKey.IS_USER_LOGGED) != @Model.Username)
+                @if (Context.Session.GetString(SessionKey.IS_USER_LOGGED) != Model.Username)
                 {
                     <div class="row m-2">
                         <div class="col-12">
                             <div class="form-check form-switch">
                                 <label class="form-check-label"
                                        style="margin-top: 5px; margin-left: 10px; font-weight: bold; font-size:18px"
-                                       for="IsAdmin">Administrator</label>
+                                       for="IsAdmin">
+                                    Administrator
+                                </label>
                                 <input class="form-check-input" style="height:30px; width:60px;" type="checkbox"
                                        id="IsAdmin" asp-for="IsAdmin">
                             </div>
