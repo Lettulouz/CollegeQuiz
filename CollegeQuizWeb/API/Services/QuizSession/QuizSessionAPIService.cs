@@ -181,66 +181,66 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         int questionNum, answerNum;
         if (answerId.Length.Equals(0)) return;
         
-        // if (answerId[0].Equals('r'))
-        // {
-        //     if (!Int32.TryParse(questionId, out questionNum)) return;
-        //     string answerRange = answerId.TrimStart('r');
-        //     var connetionIdInDb = await _context.QuizSessionPartics
-        //         .FirstOrDefaultAsync(obj => obj.ConnectionId.Equals(connectionId));
-        //
-        //     if (connetionIdInDb == null) return;
-        //
-        //     var answerInDb = await _context.UsersQuestionsAnswers
-        //             .Include(p => p.QuizSessionParticEntity)
-        //             .Where(p =>
-        //                 p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
-        //             .ToListAsync();
-        //
-        //     if (!answerInDb.Count.Equals(0)) return;
-        //
-        //     UsersQuestionsAnswersEntity usersAnswersEntity = new();
-        //     usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
-        //     usersAnswersEntity.Question = questionNum;
-        //     usersAnswersEntity.Range = answerRange;
-        //
-        //     await _context.UsersQuestionsAnswers.AddAsync(usersAnswersEntity);
-        // }
-        // else
-        // {
-        //     if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
-        //         return;
-        //     var connetionIdInDb = await _context.QuizSessionPartics
-        //         .FirstOrDefaultAsync(obj => obj.ConnectionId.Equals(connectionId));
-        //
-        //     if (connetionIdInDb == null) return;
-        //
-        //     if (isMultiAnswer)
-        //     {
-        //         var answerInDb = await _context.UsersQuestionsAnswers
-        //             .Include(p => p.QuizSessionParticEntity)
-        //             .Where(p => p.Question.Equals(questionNum)
-        //                         && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId)
-        //                         && p.Answer.Equals(answerId))
-        //             .ToListAsync();
-        //         
-        //         if (!answerInDb.Count.Equals(0)) return;
-        //     }
-        //     else
-        //     {
-        //         var answerInDb = await _context.UsersQuestionsAnswers
-        //             .Include(p => p.QuizSessionParticEntity)
-        //             .Where(p => p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
-        //             .ToListAsync();
-        //         
-        //         if (!answerInDb.Count.Equals(0)) return;
-        //     }
-        //     UsersQuestionsAnswersEntity usersAnswersEntity = new();
-        //     usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
-        //     usersAnswersEntity.Question = questionNum;
-        //     usersAnswersEntity.Answer = answerNum;
-        //
-        //     await _context.UsersQuestionsAnswers.AddAsync(usersAnswersEntity);
-        // }
-        // await _context.SaveChangesAsync();
+        if (answerId[0].Equals('r'))
+        {
+            if (!Int32.TryParse(questionId, out questionNum)) return;
+            string answerRange = answerId.TrimStart('r');
+            var connetionIdInDb = await _context.QuizSessionPartics
+                .FirstOrDefaultAsync(obj => obj.ConnectionId.Equals(connectionId));
+        
+            if (connetionIdInDb == null) return;
+        
+            var answerInDb = await _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p =>
+                        p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                    .ToListAsync();
+        
+            if (!answerInDb.Count.Equals(0)) return;
+        
+            UsersQuestionsAnswersEntity usersAnswersEntity = new();
+            usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
+            usersAnswersEntity.Question = questionNum;
+            usersAnswersEntity.Range = answerRange;
+        
+            await _context.UsersQuestionsAnswers.AddAsync(usersAnswersEntity);
+        }
+        else
+        {
+            if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
+                return;
+            var connetionIdInDb = await _context.QuizSessionPartics
+                .FirstOrDefaultAsync(obj => obj.ConnectionId.Equals(connectionId));
+        
+            if (connetionIdInDb == null) return;
+        
+            if (isMultiAnswer)
+            {
+                var answerInDb = await _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p => p.Question.Equals(questionNum)
+                                && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId)
+                                && p.Answer.Equals(answerId))
+                    .ToListAsync();
+                
+                if (!answerInDb.Count.Equals(0)) return;
+            }
+            else
+            {
+                var answerInDb = await _context.UsersQuestionsAnswers
+                    .Include(p => p.QuizSessionParticEntity)
+                    .Where(p => p.Question.Equals(questionNum) && p.QuizSessionParticEntity.ConnectionId.Equals(connectionId))
+                    .ToListAsync();
+                
+                if (!answerInDb.Count.Equals(0)) return;
+            }
+            UsersQuestionsAnswersEntity usersAnswersEntity = new();
+            usersAnswersEntity.ConnectionId = connetionIdInDb.Id;
+            usersAnswersEntity.Question = questionNum;
+            usersAnswersEntity.Answer = answerNum;
+        
+            await _context.UsersQuestionsAnswers.AddAsync(usersAnswersEntity);
+        }
+        await _context.SaveChangesAsync();
     }
 }
