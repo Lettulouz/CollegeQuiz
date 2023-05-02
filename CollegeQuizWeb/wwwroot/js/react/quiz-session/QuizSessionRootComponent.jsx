@@ -29,6 +29,7 @@ const QuizSessionRootComponent = () => {
     const [ currentAnswer, setCurrentAnswer ] = React.useState([]);
     const [ isLast, setIsLast ] = React.useState(false);
     const [ answRange, setAnswRange ] = React.useState({ min: "", max: "" });
+    const [ progressWidth, setProgressWidth ] = React.useState(100);
 
     const [ isActive, setActiveCallback ] = useLoadableContent();
     React.useEffect(() => setActiveCallback(), []);
@@ -41,7 +42,7 @@ const QuizSessionRootComponent = () => {
             setQuestionTimer, questionNumber, setQuestionNumber, isAnswerSet, setIsAnswerSet, afterQuestionResults,
             setAfterQuestionResults, currentAnswer, setCurrentAnswer,
             isLast, setIsLast, answerSett, setAnswerSett, questionType, setQuestionType, answRange, setAnswRange,
-            questionImage, setQuestionImage
+            questionImage, setQuestionImage, progressWidth, setProgressWidth
         }}>
             {isActive && <>
                 {isConnect ? <>

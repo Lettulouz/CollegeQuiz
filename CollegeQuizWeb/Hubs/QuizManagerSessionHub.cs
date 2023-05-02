@@ -123,8 +123,8 @@ public class QuizManagerSessionHub : Hub
                 {
                     timer--;
                     questionTick.Elapsed = timer;
-                    await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", timer);
-                    await Clients.Group(token).SendAsync("LOBBY_QUESTION_TICK_P2P", JsonSerializer.Serialize(questionTick));
+                    await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
+                    await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                 }
                 Console.WriteLine(timer);
                 if (question.questionType != 3)
