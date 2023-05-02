@@ -128,7 +128,7 @@ public class QuizManagerSessionHub : Hub
                         .Count();
                     var amountOfUniqueAnswers = _context.UsersQuestionsAnswers
                         .Where(x => x.QuizSessionParticEntity.QuizLobbyEntity.QuizId.Equals(quiz.QuizId) &&
-                                    x.QuizSessionParticEntity.IsActive == true)
+                                    x.QuizSessionParticEntity.IsActive == true && x.Question.Equals(question.questionId))
                         .GroupBy(t => t.QuizSessionParticEntity.ParticipantId).Count();
                     if (amountOfUniqueAnswers >= amountOfParticipants)
                         timer = 0;
