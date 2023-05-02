@@ -166,7 +166,7 @@ public class AuthService : IAuthService
         if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
 
         await _context.AddAsync(userEntity);
-        await _context.SaveChangesAsync();
+
         ConfirmAccountSmtpViewModel emailViewModel = new()
         {
             FullName = $"{userEntity.FirstName} {userEntity.LastName}",
@@ -185,8 +185,13 @@ public class AuthService : IAuthService
             controller.ViewBag.Type = "alert-danger";
             controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENDING_ERROR, userEntity.Email);
         }
-
-        controller.Response.Redirect("/Home");
+        else
+        {
+            controller.ViewBag.Type = "alert-success";
+            controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENT, userEntity.Email);
+            await _context.SaveChangesAsync();
+        }
+        
     }
 
     public async Task<bool> EmailExistsInDb(string email) =>
