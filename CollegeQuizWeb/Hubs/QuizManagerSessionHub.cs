@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
@@ -45,6 +46,7 @@ public class QuizManagerSessionHub : Hub
     
     public async Task START_GAME_P2P(string token)
     {
+        await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", false);
         token = token.ToUpper();
         Console.WriteLine("punkt testowy 1");
         var quiz = await _context.QuizLobbies
@@ -111,6 +113,8 @@ public class QuizManagerSessionHub : Hub
         var periodicTimer= new PeriodicTimer(TimeSpan.FromSeconds(1));
         cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
         Console.WriteLine("punkt testowy 6");
+
+        LobbyQuestionTick questionTick = new LobbyQuestionTick() { Total = question.time_sec };
         try
         {
             while (!cts.IsCancellationRequested)
@@ -118,7 +122,9 @@ public class QuizManagerSessionHub : Hub
                 if (await periodicTimer.WaitForNextTickAsync(token2))
                 {
                     timer--;
+                    questionTick.Elapsed = timer;
                     await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", timer);
+                    await Clients.Group(token).SendAsync("LOBBY_QUESTION_TICK_P2P", JsonSerializer.Serialize(questionTick));
                 }
                 Console.WriteLine(timer);
                 if (question.questionType != 3)
@@ -131,9 +137,12 @@ public class QuizManagerSessionHub : Hub
                                     x.QuizSessionParticEntity.IsActive == true && x.Question.Equals(question.questionId))
                         .GroupBy(t => t.QuizSessionParticEntity.ParticipantId).Count();
                     if (amountOfUniqueAnswers >= amountOfParticipants)
+                    {
                         timer = 0;
+                        questionTick.Elapsed = 0;
+                        await Clients.Group(token).SendAsync("LOBBY_QUESTION_TICK_P2P", JsonSerializer.Serialize(questionTick));
+                    }
                 }
-
                 if (timer == 0)
                 {
                     cts.Cancel();
@@ -362,11 +371,18 @@ public class QuizManagerSessionHub : Hub
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(topUsers));
         }
+        await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", true);
+        
         Console.WriteLine("punkt testowy 9");
         quiz.CurrentQuestion++;
         _context.QuizLobbies.Update(quiz);
         await _context.SaveChangesAsync();
         Console.WriteLine("punkt testowy 10");
+
+        if (quiz.CurrentQuestion == questions.Count)
+        {
+            await Clients.Group(token).SendAsync("ON_END_QUESTIONS_P2P", true);
+        }
     }
 
     private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,

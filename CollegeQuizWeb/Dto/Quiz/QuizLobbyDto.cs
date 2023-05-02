@@ -1,6 +1,7 @@
 namespace CollegeQuizWeb.Dto.Quiz;
 
-public class QuizLobby
+public class LobbyQuestionTick
 {
-    
+    public long Elapsed { get; set; }
+    public long Total { get; set; }
 }
