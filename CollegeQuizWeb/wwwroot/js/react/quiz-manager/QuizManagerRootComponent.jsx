@@ -89,7 +89,7 @@ const QuizManagerRootComponent = () => {
                         <QuizManagerCenterContentComponent/>
                         <QuizManagerRightContentComponent/>
                     </div>
-                </div> : <div className="text-center" style={{ marginTop: 300 }}>
+                </div> : <div className="text-center" style={{ marginTop: '25vh' }}>
                     <p>Quiz: <strong>{QUIZ_NAME}</strong></p>
                     <button className="btn click-me mx-auto mt-5" onClick={estabilishedRoomConnection}>Stwórz nowy pokój</button>
                     <div className="hstack gap-3 align-items-center w-100 mx-auto my-5" style={{ maxWidth: 800 }}>

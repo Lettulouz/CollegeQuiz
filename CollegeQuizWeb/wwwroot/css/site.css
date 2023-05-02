@@ -507,26 +507,36 @@ select{
 }
 
 .leaderboard{
-    background: linear-gradient(90deg, rgba(99,196,171,1) 0%, rgba(54,194,159,1) 50%, rgba(99,196,171,1) 100%) fixed;
-    --mask:
-            conic-gradient(from -75deg at top    20px left  20px,#000, #0000 1deg 59deg,#000 60deg) 0    0   /51% 51%  no-repeat,
-            conic-gradient(from 15deg at top    20px right 20px,#000, #0000 1deg 59deg,#000 60deg) 100% 0   /51% 51%  no-repeat,
-            conic-gradient(from 105deg at bottom 20px right 20px,#000, #0000 1deg 59deg,#000 60deg) 100% 100%/51% 51%  no-repeat,
-            conic-gradient(from -165deg at bottom 20px left  20px,#000, #0000 1deg 59deg,#000 60deg) 0    100%/51% 51%  no-repeat;
-    -webkit-mask: var(--mask);
-    mask: var(--mask);
+    background: #aee5d4;
+    border-radius: 25px;
     height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.leaderboard.gold-leaderboard{
-    background: linear-gradient(90deg, rgba(232,188,90,1) 0%, rgba(255,242,122,1) 50%, rgba(232,188,90,1) 100%);
+.leaderboard.colors-leaderboard:nth-child(1){
+    background: #1fd2e6;
 }
 
-.leaderboard:before{
+.leaderboard.colors-leaderboard:nth-child(2){
+    background: #29e4c5;
+}
 
+.leaderboard.colors-leaderboard:nth-child(3){
+    background: #55e5a0;
+}
+
+.leaderboard.colors-leaderboard:nth-child(4){
+    background: #bbf5cd;
+}
+
+.leaderboard.colors-leaderboard:nth-child(5){
+    background: #bbf5cd;
+}
+
+.leaderboard.streak{
+    background: #e4ec95;
 }
 
 @keyframes slideInLeft {
@@ -724,3 +734,22 @@ select{
 .mt-6{
     margin-top: 60px;
 }
+
+/*
+.icon-animation{
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(0.8);
+    }
+}
+*/
+ 

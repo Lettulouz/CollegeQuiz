@@ -1,11 +1,11 @@
 @model CollegeQuizWeb.Dto.Admin.SuspendUserDto
 
 @{
-    Layout= "_AdminLayout";
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Zawieś użytkownika";
 }
-<h1 class="text-muted px-2">Zawieś użytkownika</h1> 
-    <hr class="divider mt-0">
+<h1 class="text-muted px-2">Zawieś użytkownika</h1>
+<hr class="divider mt-0">
 
 <div class="container" style="max-width:960px;">
 
@@ -18,15 +18,15 @@
                     <label>Ważne do</label>
                 </div>
             </div>
-            
-             <div class="forms-check mb-4 custom-control custom-checkbox">
+
+            <div class="forms-check mb-4 custom-control custom-checkbox">
                 <input class="form-check-input" type="checkbox" value="true" asp-for="Perm">
                 <label class="form-check-label d-inline" asp-for="Perm">
                     Zawieś permamentnie
                 </label>
                 <span class="mx-2 mt-1 d-flex errorTextColor" asp-validation-for="Perm"></span>
             </div>
-            
+
         </div>
         <div class="row p-2">
             <button class="btn btn-lg btn-primary w-100" name="suspendSubmit" type="submit">Zawieś</button>
@@ -34,7 +34,6 @@
 
     </form>
 </div>
-
 
 
 <script>

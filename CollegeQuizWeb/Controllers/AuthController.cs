@@ -41,6 +41,7 @@ public class AuthController : Controller
     [HttpGet]
     public async Task ConfirmAccount([FromQuery(Name = "token")] string token)
     {
+        await HttpContext.Session.CommitAsync();
         await _authService.Activate(token, this);
     }
 
@@ -48,7 +49,7 @@ public class AuthController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginDto obj)
     {
-
+        await HttpContext.Session.CommitAsync();
         var payloadDto = new LoginDtoPayload(this) { Dto = obj };
         
         if (ModelState.IsValid)

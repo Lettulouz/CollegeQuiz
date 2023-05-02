@@ -26,6 +26,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -42,6 +43,7 @@ public class AdminController : Controller
     
     public async Task<IActionResult> UsersList()
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -63,6 +65,7 @@ public class AdminController : Controller
     
     public async Task<IActionResult> AdminList()
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -85,6 +88,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> EditUser([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -97,6 +101,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditUser(AddUserDto obj)
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -114,6 +119,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddUser(AddUserDto obj)
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -131,6 +137,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAdmin(AddUserDto obj)
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -144,27 +151,31 @@ public class AdminController : Controller
         return View(obj);
     }
 
-    [HttpGet] public IActionResult AddUser()
-    { 
+    [HttpGet] 
+    public IActionResult AddUser()
+    {
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
         return View();
     } 
     
-    [HttpGet] public IActionResult AddAdmin(){ 
+    [HttpGet] 
+    public IActionResult AddAdmin(){ 
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
         return View();
     } 
-    [HttpGet] public IActionResult AddCoupon(){ 
+    [HttpGet] 
+    public IActionResult AddCoupon(){ 
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
         return View();
     } 
-    [HttpGet] public IActionResult SuspendUser([FromRoute(Name = "id")] long id){ 
+    [HttpGet] 
+    public IActionResult SuspendUser([FromRoute(Name = "id")] long id){ 
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -175,7 +186,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task CouponList([Bind(Prefix = "Item1")] CouponListDto couponListDto)
     {
-        
+        await HttpContext.Session.CommitAsync();
         if (!couponListDto.OneElement.IsNullOrEmpty() && couponListDto.ManyElements.IsNullOrEmpty())
         {
            await _adminService.DeleteCoupon(couponListDto.OneElement, this);
@@ -189,6 +200,7 @@ public class AdminController : Controller
     
     public async Task<IActionResult> CouponList()
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -201,7 +213,7 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SuspendUser(SuspendUserDto suspendUserDto)
     {
-
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -215,6 +227,13 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task UnbanUser(List<UserListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         var id = list[0].Id;
         await _adminService.UnbanUser(id, this);
     }
@@ -223,6 +242,13 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task UnbanUserProf(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         await _adminService.UnbanUser(id, this);
     }
     
@@ -230,6 +256,13 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task ResendEmail(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         await _adminService.ResendEmail(id, this);
     }
     
@@ -237,6 +270,13 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelUser(List<UserListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         var id = list[0].Id;
         await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
     }
@@ -245,12 +285,20 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelUserProf(long id)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         await _adminService.DelUser(id, this, HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED));
     }
     
     [HttpGet]
     public async Task<IActionResult> UserProfile([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -269,6 +317,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizView([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -279,6 +328,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizList()
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -293,6 +343,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> CategoryList()
     {
+        await HttpContext.Session.CommitAsync();
         string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
         if (isUserAdmin != "True") return Redirect("/Home");
         
@@ -308,8 +359,14 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelQuiz(List<QuizListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         var id = list[0].Id;
-
         await _adminService.DelQuiz(id, this);
     }
     
@@ -317,8 +374,14 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelCategory(List<CategoryListDto> list)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         var id = list[0].CategoryId;
-
         await _adminService.DelCategory(id, this);
     }
     
@@ -326,7 +389,13 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task DelQuizView(long id)
     {
-
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
         await _adminService.DelQuiz(id, this);
     }
 
@@ -334,6 +403,9 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddCoupon(CouponDto couponDto)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        await HttpContext.Session.CommitAsync();
         var payloadDto = new CouponDtoPayload(this) {Dto = couponDto};
         await _adminService.CreateCoupons(payloadDto);
         return View(payloadDto.Dto);
@@ -352,6 +424,9 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddCategory(CategoryListDto categoryListDto)
     {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True") return Redirect("/Home");
+        await HttpContext.Session.CommitAsync();
         var payloadDto = new CategoryListDtoPayload(this) {Dto = categoryListDto};
 
         if (ModelState.IsValid)

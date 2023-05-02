@@ -20,6 +20,7 @@ public class UserController : Controller
     
     public async Task<IActionResult> Profile()
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         
@@ -38,6 +39,7 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> EditProfile()
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
 
@@ -49,6 +51,7 @@ public class UserController : Controller
     [HttpPost]
     public async Task<IActionResult> EditProfile(EditProfileDto obj)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         
@@ -64,7 +67,9 @@ public class UserController : Controller
     
     public async Task<IActionResult> YourCoupons()
     {
+        await HttpContext.Session.CommitAsync();
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (username == null) return Redirect("/Auth/Login");
         var dtoList = _userService.GetYourCouponsList(this, username);
         ViewBag.CouponList = dtoList.Result;
 
@@ -73,7 +78,9 @@ public class UserController : Controller
     
     public async Task<IActionResult> PaymentHistory()
     {
+        await HttpContext.Session.CommitAsync();
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (username == null) return Redirect("/Auth/Login");
         var dtoList = _userService.GetPaymentHistoryList(this, username);
         ViewBag.PaymentHistoryList = dtoList.Result;
 
@@ -83,6 +90,7 @@ public class UserController : Controller
     public IActionResult AttemptCouponRedeem()
     {
         string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (isLogged == null) return Redirect("/Auth/Login");
         ViewBag.CouponMessage = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM)!;
         ViewBag.Type = HttpContext.Session.GetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM_TYPE)!;
         HttpContext.Session.Remove(SessionKey.COUPON_CODE_MESSAGE_REDEEM);
@@ -91,13 +99,15 @@ public class UserController : Controller
         return View();
     }
 
-    public IActionResult SubscriptionAfterPaymentSelf()
+    public async Task<IActionResult> SubscriptionAfterPaymentSelf()
     {
+        await HttpContext.Session.CommitAsync();
         return View("SubscriptionPages/SubscriptionAfterPaymentSelf");
     }
     
-    public IActionResult SubscriptionAfterPaymentGift()
+    public async Task<IActionResult> SubscriptionAfterPaymentGift()
     {
+        await HttpContext.Session.CommitAsync();
         return View("SubscriptionPages/SubscriptionAfterPaymentGift");
     }
     
@@ -106,6 +116,9 @@ public class UserController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AttemptCouponRedeem(AttemptCouponRedeemDto attemptCouponRedeemDto)
     {
+        await HttpContext.Session.CommitAsync();
+        string? isLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (isLogged == null) return Redirect("/Auth/Login");
         var payloadDto = new AttemptCouponRedeemPayloadDto(this) { Dto = attemptCouponRedeemDto };
         await _userService.AttemptCouponRedeem(payloadDto);
         return View(payloadDto.Dto);

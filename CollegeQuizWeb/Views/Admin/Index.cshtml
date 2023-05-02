@@ -1,13 +1,11 @@
-
-
 @{
-    Layout= "_AdminLayout";
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Panel administratora";
 }
 
 
 <div class="container-fluid">
-    @if (ViewBag.userNotExist!=null)
+    @if (ViewBag.userNotExist != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @ViewBag.userNotExist
@@ -17,27 +15,30 @@
     <div class="row">
         <div class="col-12 col-sm-6 col-xl-4 mb-3">
             <div class="card main-card custom-card-1 text-white mb-0 h-100">
-                            <div class="card-header">Administratorzy
-                                <a style='float:right;' class="text-white"  asp-area="" asp-controller="Admin" asp-action="AddAdmin">
-                                    <i class="bi bi-plus-lg"></i>
-                                </a>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">Łączna liczba administratorów: @ViewBag.adminStats.Total</h5>
-                                <p class="card-text mb-1">Gold: @ViewBag.adminStats.Gold</p>
-                                <p class="card-text mb-1">Platinum: @ViewBag.adminStats.Platinum</p>
-                                <p class="card-text">Zawieszeni: @ViewBag.adminStats.Suspended</p>
-                                <p class="card-text mt-auto">
-                                    <a class="text-white" asp-area="" asp-controller="Admin" asp-action="AdminList">
-                                        Przeglądaj Administratorów</a>
-                                </p>
-                            </div>
-                        </div>
+                <div class="card-header">
+                    Administratorzy
+                    <a style="float:right;" class="text-white" asp-area="" asp-controller="Admin" asp-action="AddAdmin">
+                        <i class="bi bi-plus-lg"></i>
+                    </a>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Łączna liczba administratorów: @ViewBag.adminStats.Total</h5>
+                    <p class="card-text mb-1">Gold: @ViewBag.adminStats.Gold</p>
+                    <p class="card-text mb-1">Platinum: @ViewBag.adminStats.Platinum</p>
+                    <p class="card-text">Zawieszeni: @ViewBag.adminStats.Suspended</p>
+                    <p class="card-text mt-auto">
+                        <a class="text-white" asp-area="" asp-controller="Admin" asp-action="AdminList">
+                            Przeglądaj administratorów
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
         <div class="col-12 col-sm-6 col-xl-4 mb-3">
             <div class="card main-card custom-card-2 text-white mb-0 h-100 ">
-                <div class="card-header">Użytkownicy
-                    <a style='float:right;' class="text-white"  asp-area="" asp-controller="Admin" asp-action="AddUser">
+                <div class="card-header">
+                    Użytkownicy
+                    <a style="float:right;" class="text-white" asp-area="" asp-controller="Admin" asp-action="AddUser">
                         <i class="bi bi-plus-lg"></i>
                     </a>
                 </div>
@@ -48,15 +49,17 @@
                     <p class="card-text">Zawieszeni: @ViewBag.userStats.Suspended</p>
                     <p class="card-text mt-auto">
                         <a class="text-white" asp-area="" asp-controller="Admin" asp-action="UsersList">
-                            Przeglądaj użytkowników</a>
+                            Przeglądaj użytkowników
+                        </a>
                     </p>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-12 col-sm-6 col-xl-4 mb-3">
             <div class="card main-card custom-card-3 text-white mb-0 h-100 ">
-                <div class="card-header">Quizy
+                <div class="card-header">
+                    Quizy
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Łączna liczba Quizów: @ViewBag.quizStats.Total</h5>
@@ -64,16 +67,18 @@
                     <p class="card-text mb-1">Prywatne: @ViewBag.quizStats.Private</p>
                     <p class="card-text mt-auto">
                         <a class="text-white" asp-area="" asp-controller="Admin" asp-action="QuizList">
-                            Przeglądaj quizy</a>
+                            Przeglądaj quizy
+                        </a>
                     </p>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-12 col-sm-6 col-xl-4 mb-3">
             <div class="card main-card custom-card-4 text-white mb-0 h-100 ">
-                <div class="card-header">Kupony
-                    <a style='float:right;' class="text-white"  asp-area="" asp-controller="Admin" asp-action="AddCoupon">
+                <div class="card-header">
+                    Kupony
+                    <a style="float:right;" class="text-white" asp-area="" asp-controller="Admin" asp-action="AddCoupon">
                         <i class="bi bi-plus-lg"></i>
                     </a>
                 </div>
@@ -83,12 +88,13 @@
                     <p class="card-text mb-1">Archiwalne: @ViewBag.couponStats.Archive</p>
                     <p class="card-text mt-auto">
                         <a class="text-white" asp-area="" asp-controller="Admin" asp-action="CouponList">
-                            Przeglądaj kupony</a>
+                            Przeglądaj kupony
+                        </a>
                     </p>
                 </div>
             </div>
         </div>
-        
+
 
     </div>
 

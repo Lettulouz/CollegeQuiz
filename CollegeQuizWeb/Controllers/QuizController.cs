@@ -23,6 +23,7 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> MyQuizes()
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         
@@ -36,6 +37,7 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizPage([FromRoute(Name = "id")] long id)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
 
@@ -57,6 +59,7 @@ public class QuizController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddQuiz(AddQuizDto dto)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
         
@@ -68,6 +71,7 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> QuizLobby([FromRoute(Name = "id")] long quizId)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
 
@@ -92,6 +96,7 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> DeleteQuiz([FromRoute(Name = "id")] long quizId)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
 
@@ -102,12 +107,11 @@ public class QuizController : Controller
     [HttpGet]
     public async Task<IActionResult> DeleteSharedQuiz([FromRoute(Name = "id")] long quizId)
     {
+        await HttpContext.Session.CommitAsync();
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return Redirect("/Auth/Login");
 
         await _service.DeleteSharedQuiz(quizId, loggedUsername, this);
         return Redirect("/Quiz/MyQuizes");
     }
-    
-    [HttpGet] public IActionResult InGameQuestion() => View();
 }

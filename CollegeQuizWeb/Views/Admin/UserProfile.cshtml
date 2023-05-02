@@ -1,6 +1,5 @@
-@using Microsoft.AspNetCore.Identity
-@using CollegeQuizWeb.Utils
 @using Microsoft.AspNetCore.Http
+@using CollegeQuizWeb.Utils
 @model dynamic
 
 @{
@@ -8,54 +7,61 @@
     Layout = "_AdminLayout";
 }
 
-@if (@ViewBag.userInfo!=null)
+@if (ViewBag.userInfo != null)
 {
     <div class="d-flex">
-    <h1 class="text-muted px-2">Profil użytkownika @ViewBag.UserInfo.Username</h1> 
-    <div class="ms-auto btn-group text-right pe-1">
+        <h1 class="text-muted px-2">Profil użytkownika @ViewBag.UserInfo.Username</h1>
+        <div class="ms-auto btn-group text-right pe-1">
 
-        <a class="btn btn-dark button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
-           data-bs-title="Edycja użytkownika"  asp-action="EditUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id"><i class="bi bi-pencil-square"></i></a>
-        @if (@Context.Session.GetString(SessionKey.IS_USER_LOGGED) != @ViewBag.UserInfo.Username)
-        {
-            @if (@ViewBag.UserInfo.AccountStatus == -1)
+            <a class="btn btn-dark button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+               data-bs-title="Edycja użytkownika" asp-action="EditUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            @if (Context.Session.GetString(SessionKey.IS_USER_LOGGED) != ViewBag.UserInfo.Username)
             {
-                @using (Html.BeginForm("UnbanUserProf", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+                @if (ViewBag.UserInfo.AccountStatus == -1)
                 {
-                    <button type="submit" class="btn btn-dark mid-button" data-bs-toggle="tooltip"
-                            data-bs-placement="top" data-bs-title="Odblokuj użytkownika"><i class="bi bi-unlock"></i></button>
+                    @using (Html.BeginForm("UnbanUserProf", "Admin", new {id = ViewBag.UserInfo.Id}, FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-dark mid-button" data-bs-toggle="tooltip"
+                                data-bs-placement="top" data-bs-title="Odblokuj użytkownika">
+                            <i class="bi bi-unlock"></i>
+                        </button>
+                    }
                 }
-
+                else
+                {
+                    <a class="btn btn-danger button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                       data-bs-title="Zawieś użytkownika" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id">
+                        <i class="bi bi-person-fill-lock"></i>
+                    </a>
+                }
+                @using (Html.BeginForm("DelUserProf", "Admin", new {id = ViewBag.UserInfo.Id}, FormMethod.Post))
+                {
+                    <button type="submit" class="btn btn-danger right-button" data-bs-toggle="tooltip"
+                            data-bs-placement="top" data-bs-title="Usuń użytkownika">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                }
             }
-            else
-            {
-                <a class="btn btn-danger button-link" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                   data-bs-title="Zawieś użytkownika" asp-action="SuspendUser" asp-controller="Admin" asp-route-id="@ViewBag.UserInfo.Id"><i class="bi bi-person-fill-lock"></i></a>
-            }
-            @using (Html.BeginForm("DelUserProf", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
-            {
-                <button type="submit" class="btn btn-danger right-button" data-bs-toggle="tooltip"
-                        data-bs-placement="top" data-bs-title="Usuń użytkownika"><i class="bi bi-trash"></i></button>
-            }
-        }
-    </div>
+        </div>
     </div>
     <hr class="divider mt-0">
     <div class="container-fluid viewBorder p-2" style="max-width: 720px">
-        @if (ViewBag.mailError!=null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @ViewBag.mailError
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-        @if (ViewBag.emailSent!=null)
-            {
-                <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                    @ViewBag.emailSent
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
+        @if (ViewBag.mailError != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @ViewBag.mailError
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (ViewBag.emailSent != null)
+        {
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                @ViewBag.emailSent
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
         <div class="row ">
             <div class="col-auto py-0 my-0">
                 <i class="bi bi-file-person p-0" style=" font-size: 100px;"></i>
@@ -73,13 +79,14 @@
                     </div>
                     <div class="col-auto">
                         <p>Status: @ViewBag.UserInfo.AccountStatus
-                        @if (@ViewBag.UserInfo.CurrentStatusExpirationDate != DateTime.MinValue)
+                        @if (ViewBag.UserInfo.CurrentStatusExpirationDate != DateTime.MinValue)
                         {
                             <a> do @ViewBag.UserInfo.CurrentStatusExpirationDate</a>
                         }
 
-                        <p>Konto aktywowane:
-                            @if (@ViewBag.UserInfo.IsAccountActivated == true)
+                        <p>
+                            Konto aktywowane:
+                            @if (ViewBag.UserInfo.IsAccountActivated == true)
                             {
                                 <a>Tak</a>
                             }
@@ -87,7 +94,7 @@
                             {
                                 <a>Nie</a>
                                 <a href="#" onclick="subForm()"> Wyślij link aktywacyjny ponownie</a>
-                                @using (Html.BeginForm("ResendEmail", "Admin", new { id = @ViewBag.UserInfo.Id }, FormMethod.Post))
+                                @using (Html.BeginForm("ResendEmail", "Admin", new {id = ViewBag.UserInfo.Id}, FormMethod.Post))
                                 {
                                     <button type="submit" id="resendButton" hidden="hidden"></button>
                                 }
@@ -96,54 +103,59 @@
                         <p>Data dołączenia: @ViewBag.UserInfo.CreatedAt</p>
                     </div>
                 </div>
-               
-            </div>
-             <div class="row mb-1">
-                 <h3><a class="dash-list text-decoration-none text-black"
-                        data-bs-toggle="collapse" href="#dashcollapse1" role="button" aria-expanded="true" aria-controls="dashcollapse1">
-                     Quizy użytkownika <span class="bi bi-chevron-down right-icon ms-auto"></span>
-                 </a> </h3>
-                 <div class="collapse collapse show " id="dashcollapse1">
-                     @if (@ViewBag.UserQuizes != null)
-                     {
-                         @foreach (var quiz in ViewBag.UserQuizes)
-                         {
-                             <p class="mb-1 ps-3"><a asp-action="QuizView" asp-controller="Admin" asp-route-id="@quiz.Id">@quiz.Name</a></p>
-                         }
-                     }
-                 </div>
-                            </div>
-                            <div class="row d-flex ">
-                                <h3><a class="dash-list text-decoration-none text-black"
-                                       data-bs-toggle="collapse" href="#dashcollapse2" role="button" aria-expanded="true" aria-controls="dashcollapse2">
-                                    Płatności użytkownika <span class="bi bi-chevron-down right-icon ms-auto"></span>
-                                </a> </h3>
-                                <div class="collapse collapse show" id="dashcollapse2">
-                                    @if (@ViewBag.payments != null)
-                                    {
-                                        <div class=" d-flex justify-content-center flex-column">
-                                            <table class="text-center ">
-                                                <thead>
-                                                <th class="px-2">Rodzaj</th>
-                                                <th class="px-2">Data</th>
-                                                <th class="px-2">Status</th>
-                                                </thead>
-                                                <tbody>
-                                                @foreach (var payment in ViewBag.payments)
-                                                {
-                                                    <tr>
-                                                        <td class="px-2">@payment.Subscription</td>
-                                                        <td class="px-2">@payment.CreatedAt</td>
-                                                        <td class="px-2"> @payment.OrderStatus</td>
-                                                    </tr>
 
-                                                }
-                                                </tbody>
-                                            </table>
-                                            </div>
-                                    }
-                                </div>
-                                </div>
+            </div>
+            <div class="row mb-1">
+                <h3>
+                    <a class="dash-list text-decoration-none text-black"
+                       data-bs-toggle="collapse" href="#dashcollapse1" role="button" aria-expanded="true" aria-controls="dashcollapse1">
+                        Quizy użytkownika <span class="bi bi-chevron-down right-icon ms-auto"></span>
+                    </a>
+                </h3>
+                <div class="collapse collapse show " id="dashcollapse1">
+                    @if (ViewBag.UserQuizes != null)
+                    {
+                        @foreach (var quiz in ViewBag.UserQuizes)
+                        {
+                            <p class="mb-1 ps-3">
+                                <a asp-action="QuizView" asp-controller="Admin" asp-route-id="@quiz.Id">@quiz.Name</a>
+                            </p>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="row d-flex ">
+                <h3>
+                    <a class="dash-list text-decoration-none text-black"
+                       data-bs-toggle="collapse" href="#dashcollapse2" role="button" aria-expanded="true" aria-controls="dashcollapse2">
+                        Płatności użytkownika <span class="bi bi-chevron-down right-icon ms-auto"></span>
+                    </a>
+                </h3>
+                <div class="collapse collapse show" id="dashcollapse2">
+                    @if (ViewBag.payments != null)
+                    {
+                        <div class=" d-flex justify-content-center flex-column">
+                            <table class="text-center ">
+                                <thead>
+                                <th class="px-2">Rodzaj</th>
+                                <th class="px-2">Data</th>
+                                <th class="px-2">Status</th>
+                                </thead>
+                                <tbody>
+                                @foreach (var payment in ViewBag.payments)
+                                {
+                                    <tr>
+                                        <td class="px-2">@payment.Subscription</td>
+                                        <td class="px-2">@payment.CreatedAt</td>
+                                        <td class="px-2"> @payment.OrderStatus</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
 
     </div>

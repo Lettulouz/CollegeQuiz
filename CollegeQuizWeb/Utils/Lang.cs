@@ -30,8 +30,8 @@ public static class Lang
     public const string EMAIL_TOO_LONG_ERROR = "*Podana treść nie spełnia założeń emaila.";
     
     public const string PASSWORD_IS_REQUIRED_ERROR = "*Pole Hasło jest wymagane.";
-    public const string PASSWORD_TO_SHORT_ERROR = "*Podano za krótkie hasło.";
-    public const string PASSWORD_TO_LONG_ERROR = "*Podano za długie hasło.";
+    public const string PASSWORD_TO_SHORT_ERROR = "*Podano za krótkie hasło (minimum 8).";
+    public const string PASSWORD_TO_LONG_ERROR = "*Podano za długie hasło (maksimum 25).";
     public const string PASSWORD_REGEX_ERROR =
         "*Hasło powinno zawierać co najmniej jedną dużą literę, jedną małą literę, " +
         "jedną cyfrę oraz jeden znak specjalny.";
@@ -166,4 +166,9 @@ public static class Lang
     public const string SUCCESSFULL_DELETED_SHARED_QUIZ = "Udostępniony quiz <strong>{0}</strong> został pomyślnie usunięty.";
     public const string DISABLE_DELETE_SHARED_QUIZ =
         "Usunięcie udostępnionego quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwe.";
+
+    public const string PAYU_PENDING = "W toku";
+    public const string PAYU_WAITING = "Oczekuje";
+    public const string PAYU_COMPLETED = "Zakończona";
+    public const string PAYU_CANCELED = "Anulowana";
 }

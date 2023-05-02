@@ -1,13 +1,17 @@
 @using Microsoft.IdentityModel.Tokens
 @model List<CollegeQuizWeb.Dto.Home.SubscriptionTypesDto>
 
+@{
+    ViewData["Title"] = "Wybierz subskrypcję";
+}
+
 @if (!Model[0].Name.IsNullOrEmpty())
 {
     <div class="container mt-2 mb-1">
         <div class="row mt-2 d-flex subscription-cards">
             <div class="col-md-4 my-2 payments-card-standard p-3 pt-4 d-flex flex-column justify-content-between">
                 <div class="flex-fill">
-                    <h2 class="text-center mb-5">STANDARD</h2>
+                    <h2 class="text-center mb-4">STANDARD</h2>
                     <h1 class="text-center mb-5 card-price">0,00 zł</h1>
                     <p class="card-description">
                         Ten pakiet umożliwi Ci dostęp do tworzenia quizów z następującymi typami pytań:
@@ -23,11 +27,19 @@
                     </button>
                 </div>
             </div>
-            <div class="col-md-4 my-2 payments-card-middle p-3 pt-4 d-flex flex-column justify-content-between">
-                <div class="flex-fill">
-                    <h2 class="text-center mb-5">@Model[0].Name</h2>
-                    <h1 class="text-center mb-5 card-price">@Model[0].Price zł</h1>
-                    <p class="card-description">
+            <div class="col-md-4 my-2 payments-card-middle p-3 pt-4 d-flex flex-column justify-content-between" data-label="In Progress">
+                <div class="flex-fill d-flex flex-column">
+                    <h2 class="text-center mb-4">@Model[0].Name</h2>
+                    @if (Model[0].PreviousPrice != null && !Model[0].PreviousPrice.Equals(Model[0].Price))
+                    {
+                        <h4 class="text-center mb-2 text-decoration-line-through text-muted">@Model[0].PreviousPrice zł</h4>
+                    }
+                    <h1 class="text-center mb-3 card-price">@Model[0].Price zł</h1>
+                    @if (Model[0].CurrentDiscount > 0)
+                    {
+                        <div class="discount align-self-center justify-content-center">- @Model[0].CurrentDiscount%</div>
+                    }
+                    <p class="card-descriptio mt-4">
                         Ten pakiet umożliwi Ci dostęp do tworzenia quizów z następującymi typami pytań:
                     </p>
                     <ul class="card-list">
@@ -43,11 +55,19 @@
                     </a>
                 </div>
             </div>
-            <div class="col-md-4 my-2 payments-card-premium p-3 pt-4 d-flex flex-column justify-content-between">
-                <div class="flex-fill">
-                    <h2 class="text-center mb-5">@Model[1].Name</h2>
-                    <h1 class="text-center mb-5 card-price">@Model[1].Price zł</h1>
-                    <p class="card-description">
+            <div class="col-md-4 my-2 payments-card-premium p-3 pt-4 d-flex flex-column justify-content-between" data-label="In Progress">
+                <div class="flex-fill d-flex flex-column">
+                    <h2 class="text-center mb-4">@Model[1].Name</h2>
+                    @if (Model[1].PreviousPrice != null && !Model[1].PreviousPrice.Equals(Model[1].Price))
+                    {
+                        <h4 class="text-center mb-2 text-decoration-line-through text-muted">@Model[1].PreviousPrice zł</h4>
+                    }
+                    <h1 class="text-center mb-3 card-price">@Model[1].Price zł</h1>
+                    @if (Model[1].CurrentDiscount > 0)
+                    {
+                        <div class="discount align-self-center justify-content-center">- @Model[1].CurrentDiscount%</div>
+                    }
+                    <p class="card-description mt-4">
                         Ten pakiet umożliwi Ci dostęp do tworzenia quizów z następującymi typami pytań:
                     </p>
                     <ul class="card-list">
@@ -55,7 +75,7 @@
                         <li class="my-2">odpowiedzi zakresowe</li>
                     </ul>
                     <hr class="my-4"/>
-                    <p class="card-description text-center">oraz wszystkie pozostałe w pakiecie<br/> <strong>GOLD</strong></p>
+                    <p class="card-description text-center">oraz wszystkie pozostałe w pakiecie<br/> <strong>@Model[0].Name</strong></p>
                 </div>
                 <div>
                     <a class="btn payments-card-button premium w-100" asp-route-id="2" asp-action="Subscription" asp-controller="Home">
