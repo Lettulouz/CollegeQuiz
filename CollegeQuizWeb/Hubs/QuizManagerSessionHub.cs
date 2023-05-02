@@ -155,6 +155,39 @@ public class QuizManagerSessionHub : Hub
                 {
                     AnswerName = q.Name
                 }).ToList();
+            
+            var getAllAnswersForUpdate2 = _context.UsersQuestionsAnswers
+                .Include(t => t.QuizSessionParticEntity)
+                .ThenInclude(t => t.QuizLobbyEntity)
+                .ThenInclude(t => t.UserEntity)
+                .Where(t => t.Question.Equals(question.questionId) &&
+                            t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
+                .OrderBy(t => t.CreatedAt).ToList();
+            
+            IDictionary<string, long> corectAnswersNumber = new Dictionary<string, long>();
+            foreach (var answer in getAllAnswersForUpdate2)
+            {
+                var currentAnswer = _context.Answers.Include(t => t.QuestionEntity)
+                    .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                                t.QuestionEntity.QuizId.Equals(quiz.QuizId) && t.Name.Equals(question.answers[answer.Answer])
+                    ).Count();
+                
+                if (currentAnswer > 0)
+                {
+                    if (corectAnswersNumber.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+                        corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] += 1;
+                    else
+                        corectAnswersNumber.Add(answer.QuizSessionParticEntity.ConnectionId, 1);
+                }
+                else
+                {
+                    if (corectAnswersNumber.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
+                        corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] += currentAnswers.Count()+1;
+                    else
+                        corectAnswersNumber.Add(answer.QuizSessionParticEntity.ConnectionId, currentAnswers.Count()+1);
+                }
+                
+            }
 
             var getAllAnswersForUpdate = _context.UsersQuestionsAnswers
                 .Include(t => t.QuizSessionParticEntity)
@@ -162,7 +195,9 @@ public class QuizManagerSessionHub : Hub
                 .ThenInclude(t => t.UserEntity)
                 .Where(t => t.Question.Equals(question.questionId) &&
                             t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
-                .OrderBy(t => t.CreatedAt).ToList();
+                .GroupBy(t => t.ConnectionId)
+                .Select(t => t.OrderByDescending(x=>x.CreatedAt).First())
+                .ToList();
 
             IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
             var actuallTime = DateTime.Now;
@@ -172,15 +207,23 @@ public class QuizManagerSessionHub : Hub
                 {
                     if (question.answers[answer.Answer] == currentAnswer.AnswerName)
                     {
-                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,1.00, true, 0);
-                    }
-                    else
-                    {
-                        answer.QuizSessionParticEntity.CurrentStreak = 0;
-                        if (newUserPoinst.ContainsKey(answer.QuizSessionParticEntity.ConnectionId))
-                            newUserPoinst[answer.QuizSessionParticEntity.ConnectionId] += 0;
-                        else
-                            newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, 0);
+                        if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] <=
+                            currentAnswers.Count())
+                        {
+                            TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                            TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                            var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
+                                                                  restOfTime.TotalSeconds)) * 1000 *
+                                                            (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02)*
+                                                            (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]/Convert.ToDouble(currentAnswers.Count())));
+
+                            newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
+
+                            answer.QuizSessionParticEntity.Score += wonPoints;
+                        }
+
+                        if(corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]==corectAnswersNumber.Count())
+                            answer.QuizSessionParticEntity.CurrentStreak += 1;
                     }
                 }
             }
