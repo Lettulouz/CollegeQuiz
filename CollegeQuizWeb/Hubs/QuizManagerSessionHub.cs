@@ -401,6 +401,8 @@ public class QuizManagerSessionHub : Hub
             else
                 Thread.Sleep(2500);
             await _hubUserContext.Clients.Group(token)
+                .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
+            await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
         }
         await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", true);
