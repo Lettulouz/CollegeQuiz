@@ -773,6 +773,11 @@ select{
 }
 */
 
+.kick-user:hover {
+    color: #941103!important;
+}
+
+
 #slider-slow.noUi-state-tap .noUi-connect,
 #slider-slow.noUi-state-tap .noUi-origin {
     -webkit-transition: transform 1600ms;
