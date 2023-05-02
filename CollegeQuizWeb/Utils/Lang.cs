@@ -88,8 +88,12 @@ public static class Lang
     public const string COUPON_CODE_LOWER_LEVEL_ERROR =
         "Nie można aktywować kuponu z subskrypcją niższą niż obecnie posiadana!";
 
-    
-    
+    public const string COUPON_CODE_FILL_CREATE_ERROR =
+        "Należy wypełnić wszystkie wymagane pola";
+
+    public const string COUPON_CODE_CREATE_AMOUNT_ERROR = "*Niepoprawnie wypełniono pole Ilość kuponów.";
+    public const string COUPON_CODE_CREATE_TILL_ERROR = "*Niepoprawnie wypełniono pole Ważne do.";
+    public const string COUPON_CODE_CREATE_FOR_ERROR = "*Niepoprawnie wypełniono pole Przedłuża subskrypcję o.";
     
    public const string CATEGORIES_GENERATED_INFO_STRING =
         "Stworzono kategorię <strong>{0}</strong.";

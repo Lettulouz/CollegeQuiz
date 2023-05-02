@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CollegeQuizWeb.Services.AdminService;
 
@@ -53,7 +54,7 @@ public class AdminService : IAdminService
            userModel.CreatedAt = userData.CreatedAt;
            userModel.Email = userData.Email;
            userModel.UserName = userData.Username;
-           userModel.AccountStatus =userData.AccountStatus;
+           userModel.AccountStatus = userData.AccountStatus;
            userModel.IsAccountActivated = userData.IsAccountActivated; 
            DtoList.Add(userModel);
        }
@@ -736,9 +737,17 @@ public class AdminService : IAdminService
     public async Task CreateCoupons(CouponDtoPayload obj)
     {
         var controller = obj.ControllerReference;
-        int amount = obj.Dto.Amount;
-        DateTime expiringAt = obj.Dto.ExpiringAt;
-        int extensionTime = obj.Dto.ExtensionTime;
+
+        if (!controller.ModelState.IsValid)
+        {
+            controller.ViewBag.GeneratedCouponsMessage = Lang.COUPON_CODE_FILL_CREATE_ERROR;
+            controller.ViewBag.MessageColor = "alert-danger";
+            return;
+        }
+        
+        int amount = (int)obj.Dto.Amount!;
+        DateTime expiringAt = (DateTime)obj.Dto.ExpiringAt!;
+        int extensionTime = (int)obj.Dto.ExtensionTime!;
         int typeOfSubscription = obj.Dto.TypeOfSubscription;
         string customerName = obj.Dto.CustomerName;
         
@@ -768,6 +777,7 @@ public class AdminService : IAdminService
             message += "</br>";
             listOfGeneretedCoupons.Add(couponEntity);
         }
+        controller.ViewBag.MessageColor = "alert-success";
         controller.ViewBag.GeneratedCouponsMessage = message;
         await _context.AddRangeAsync(listOfGeneretedCoupons);
         await _context.SaveChangesAsync();
@@ -802,19 +812,23 @@ public class AdminService : IAdminService
     public async Task<List<CouponDto>> GetCoupons()
     {
         var test = await _context.Coupons.ToListAsync();
-        List<CouponDto> test2 = new();
+        List<CouponDto> couponsDtosList = new();
         foreach (var VARIABLE in test)
         {
-            CouponDto test3 = new();
-            test3.Coupon = VARIABLE.Token;
-            test3.ExpiringAt = VARIABLE.ExpiringAt;
-            test3.TypeOfSubscription = VARIABLE.TypeOfSubscription;
-            test3.ExtensionTime = VARIABLE.ExtensionTime;
-            test3.IsUsed = VARIABLE.IsUsed;
-            test3.CustomerName = VARIABLE.CustomerName;
-            test2.Add(test3);
+            CouponDto couponDto = new();
+            couponDto.Coupon = VARIABLE.Token;
+            couponDto.ExpiringAt = VARIABLE.ExpiringAt;
+            couponDto.TypeOfSubscription = VARIABLE.TypeOfSubscription;
+            couponDto.ExtensionTime = VARIABLE.ExtensionTime;
+            couponDto.IsUsed = VARIABLE.IsUsed;
+            if (VARIABLE.CustomerName == null)
+                couponDto.CustomerName = "";
+            else
+                couponDto.CustomerName = VARIABLE.CustomerName;
+            
+            couponsDtosList.Add(couponDto);
         }
-        return test2;
+        return couponsDtosList;
     }
 
     public async Task DeleteCoupon(string couponsToDelete, AdminController controller)

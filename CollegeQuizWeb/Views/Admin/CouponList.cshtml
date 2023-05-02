@@ -387,7 +387,7 @@
 
     function copyToClipBoardButtonClick(obj)
     {
-        let row = $(obj).parent().parent();
+        let row = $(obj).parent().parent().parent().parent();
         let valueToCopy = row.find('.couponVal').text();
         navigator.clipboard.writeText(valueToCopy);
         let message = `Skopiowano kod ${valueToCopy} do schowka.`;
