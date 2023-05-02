@@ -73,7 +73,21 @@ public class HomeService : IHomeService
         SubscriptionPaymentHistoryEntity subscriptionPaymentHistoryEntity =
             _context.SubscriptionsPaymentsHistory
                 .FirstOrDefault(obj => obj.PayuId.Equals(orderId))!;
-        subscriptionPaymentHistoryEntity.OrderStatus = paymentStatus;
+        switch (paymentStatus)
+        {
+            case "PENDING":
+                subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_PENDING;
+                break;
+            case "WAITING_FOR_CONFIRMATION":
+                subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_WAITING;
+                break;
+            case "COMPLETEDN":
+                subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_COMPLETED;
+                break;
+            case "CANCELED":
+                subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_CANCELED;
+                break;
+        }
         _context.Update(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
 
@@ -257,7 +271,7 @@ public class HomeService : IHomeService
         subscriptionPaymentHistoryEntity.PayuId = orderResponse.OrderId;
         subscriptionPaymentHistoryEntity.Price = price;
         subscriptionPaymentHistoryEntity.Subscription = subscriptionTypesEntity.Name;
-        subscriptionPaymentHistoryEntity.OrderStatus = "PENDING";
+        subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_PENDING;
         _context.SubscriptionsPaymentsHistory.Add(subscriptionPaymentHistoryEntity);
         await _context.SaveChangesAsync();
 

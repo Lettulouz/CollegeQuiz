@@ -166,4 +166,9 @@ public static class Lang
     public const string SUCCESSFULL_DELETED_SHARED_QUIZ = "Udostępniony quiz <strong>{0}</strong> został pomyślnie usunięty.";
     public const string DISABLE_DELETE_SHARED_QUIZ =
         "Usunięcie udostępnionego quizu, który jest aktualnie używany w aktywnej sesji nie jest możliwe.";
+
+    public const string PAYU_PENDING = "W toku";
+    public const string PAYU_WAITING = "Oczekuje";
+    public const string PAYU_COMPLETED = "Zakończona";
+    public const string PAYU_CANCELED = "Anulowana";
 }
