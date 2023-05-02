@@ -48,7 +48,7 @@ const QuizManagerRightContentComponent = () => {
                     </button>
                 </div>
                 <div className="w-100">
-                    <button className="btn btn-danger text-white w-100" onClick={() => window.location.reload()}>
+                    <button className="btn btn-danger mt-2 text-white w-100" onClick={() => window.location.reload()}>
                         Zakończ quiz
                     </button>
                 </div>

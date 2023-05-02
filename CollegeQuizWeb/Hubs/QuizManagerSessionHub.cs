@@ -140,7 +140,7 @@ public class QuizManagerSessionHub : Hub
                     {
                         timer = 0;
                         questionTick.Elapsed = 0;
-                        await Clients.Group(token).SendAsync("LOBBY_QUESTION_TICK_P2P", JsonSerializer.Serialize(questionTick));
+                        await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     }
                 }
                 if (timer == 0)

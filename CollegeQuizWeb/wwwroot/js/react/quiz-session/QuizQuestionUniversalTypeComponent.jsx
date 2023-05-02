@@ -27,7 +27,7 @@ const QuizQuestionUniversalTypeComponent = ({ children }) => {
                         {children}
                     </div>
                 </div>
-                <div className="col-2 px-0">
+                <div className="col-lg px-0 order-0 order-lg-2 mb-3">
                     <LeaveQuizSessionButtonComponent text="Wyjdź"/>
                 </div>
             </div>

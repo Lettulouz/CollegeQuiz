@@ -1,5 +1,7 @@
 import { SessionContext } from "./QuizSessionRenderer.jsx";
 
+import LeaveSessionButtonComponent from "./LeaveQuizSessionButtonComponent.jsx";
+
 const QuizSessionQuestionResultComponent = () => {
     const { afterQuestionResults } = React.useContext(SessionContext);
 
@@ -34,6 +36,9 @@ const QuizSessionQuestionResultComponent = () => {
 
     return (
         <div className="container">
+            <div className="row mb-4">
+                <LeaveSessionButtonComponent text="Opuść quiz" customClass="danger-button-fixed"/>
+            </div>
             <div className="row mb-2">
                 <div className="col-md-6" ref={containerUsernamesRef}>
                     {afterQuestionResults.slice(0, -1).map(m => (
