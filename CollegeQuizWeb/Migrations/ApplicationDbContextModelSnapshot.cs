@@ -626,7 +626,7 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(5,2)")
                         .HasColumnName("price");
 
                     b.Property<int>("SiteId")
