@@ -35,6 +35,8 @@ Website that is being created for college project. It will let players to play t
 
 **Image resizer js library**: CropperJS
 
+**Range sliders**: noUiSlider
+
 **Server and SignalR broker provider**: MS Azure
 
 ## License
