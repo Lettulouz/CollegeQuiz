@@ -9,7 +9,10 @@ const QuizQuestionTextContentComponent = () => {
     
     const onRemoveQuestion = () => {
         const qst = [ ...questions ];
-        setQuestions(qst.filter(qstData => qstData.id !== q.id));
+        const withoutRemoved = qst
+            .filter(qstData => qstData.id !== q.id)
+            .map((qstData, i) => ({ ...qstData, id: i + 1 }));
+        setQuestions(withoutRemoved);
     };
     
     React.useEffect(() => {
