@@ -18,7 +18,7 @@ const QuizQuestionRangeTypeComponent = () => {
 
     const handleClick = () => {
         if (isAnswerSet || currentAnswer !== "") return;
-        
+
         const answer = "r" + parseInt(answRange.min) + "," + parseInt(answRange.max);
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
@@ -33,15 +33,6 @@ const QuizQuestionRangeTypeComponent = () => {
     };
 
     React.useEffect(() => {
-        console.log(stepsSliderResult.current);
-        if (stepsSliderResult.current.outerHTML !== '<div></div>') {
-            console.log("test");
-            stepsSliderResult.current.outerHTML = '<div></div>'
-            stepsSliderResult.current.noUiSlider.destroy();
-        }
-        if (stepsSlider.current.outerHTML !== '<div></div>') {
-            stepsSlider.current.noUiSlider.destroy();
-        }
         noUiSlider.create(stepsSlider.current, {
             start: [ answerSett.min, answerSett.max ],
             behaviour: 'drag',
@@ -81,9 +72,7 @@ const QuizQuestionRangeTypeComponent = () => {
             ];
         }
 
-        if (stepsSliderResult.current.outerHTML !== '<div></div>') {
-            stepsSliderResult.current.noUiSlider.destroy();
-        }
+        if (!stepsSliderResult.current) return;
         noUiSlider.create(stepsSliderResult.current, {
             start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
             connect: true,
@@ -120,7 +109,9 @@ const QuizQuestionRangeTypeComponent = () => {
                         <div ref={stepsSlider}></div>
                     </div>
                     <div className="row d-flex mt-6 px-3">
+                        {isAnswerSet &&
                         <div ref={stepsSliderResult}></div>
+                        }
                     </div>
                     {!isAnswerSet &&
                     <div className="row d-flex mt-3 px-3">
