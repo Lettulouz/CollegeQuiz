@@ -55,16 +55,14 @@ const QuizSessionQuestionResultComponent = () => {
                     ))}
                 </div>
             </div>
-            {afterQuestionResults[lastItem].CurrentStreak > 0 &&
-            <div className="leaderboard streak fw-bold fs-1 mx-2 px-5 col-sm" ref={leaderRef}>
-                <div className="icon-animation"><i className="bi bi-lightning-charge-fill text-warning fs-1 icon-animation"></i></div>
-                <div className="flex-fill text-center">
-                    {afterQuestionResults[lastItem].Username}: {afterQuestionResults[lastItem].CurrentStreak}
-                </div>
-                <div className="icon-animation"><i className="bi bi-lightning-charge-fill text-warning fs-1"></i></div>
-            </div>
-                
-            }
+            {afterQuestionResults[lastItem].CurrentStreak > 0 && 
+                <div className="leaderboard streak fw-bold fs-1 mx-2 px-5 col-sm" ref={leaderRef}>
+                    <div className="icon-animation"><i className="bi bi-lightning-charge-fill text-warning fs-1 icon-animation"></i></div>
+                    <div className="flex-fill text-center">
+                        {afterQuestionResults[lastItem].Username}: {afterQuestionResults[lastItem].CurrentStreak}
+                    </div>
+                    <div className="icon-animation"><i className="bi bi-lightning-charge-fill text-warning fs-1"></i></div>
+                </div>}
         </div>
     );
 };

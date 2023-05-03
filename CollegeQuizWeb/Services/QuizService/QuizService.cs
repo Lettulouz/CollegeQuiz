@@ -209,7 +209,7 @@ public class QuizService : IQuizService
         QRCode qrCode = new QRCode(qrCodeData);
         var svgDocument = SvgDocument.Open(@"wwwroot/logo.svg");
         var bitmap = svgDocument.Draw();
-        return qrCode.GetGraphic(50,Color.Black, Color.White,
+        return qrCode.GetGraphic(50,Color.Black, ColorTranslator.FromHtml("#f7fef5"),
             bitmap, 20, 1);
     }
 

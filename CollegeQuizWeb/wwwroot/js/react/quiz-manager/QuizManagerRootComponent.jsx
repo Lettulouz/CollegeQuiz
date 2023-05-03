@@ -79,7 +79,6 @@ const QuizManagerRootComponent = () => {
         }}>
             {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-4`} role="alert">
                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
-                <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>
             </div>}
             {isActive && <div className="container px-0 mx-0">
                 {isJoinable ? <div>

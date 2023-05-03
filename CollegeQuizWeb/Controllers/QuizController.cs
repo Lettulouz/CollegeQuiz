@@ -82,6 +82,7 @@ public class QuizController : Controller
         test.Save(ms, ImageFormat.Jpeg);
         byte[] byteImage = ms.ToArray();
         ViewBag.ImageBtm = Convert.ToBase64String(byteImage);
+        ms.Close();
         return View();
     }
 

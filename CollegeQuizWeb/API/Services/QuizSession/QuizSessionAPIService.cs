@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
-using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -265,7 +264,8 @@ public class QuizSessionAPIService : IQuizSessionAPIService
                 Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
             }));
             
-            await _hubUserContext.Clients.Client(particToDelete.ConnectionId).SendAsync("OnDisconnectedSession", "Zostałeś rozłączony przez hosta.");
+            await _hubUserContext.Clients.Client(particToDelete.ConnectionId)
+                .SendAsync("OnDisconnectedSession", "Zostałeś rozłączony przez hosta.");
         }
     }
 }

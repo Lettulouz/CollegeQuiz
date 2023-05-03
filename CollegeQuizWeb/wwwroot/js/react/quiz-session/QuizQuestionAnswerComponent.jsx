@@ -1,5 +1,5 @@
-import { ANSWER_LETTERS, ANSWER_SVGS, SessionContext } from "./QuizSessionRenderer.jsx";
-import { getCommonFetchObj } from "../Utils.jsx";
+import { SessionContext } from "./QuizSessionRenderer.jsx";
+import { alertDanger, ANSWER_LETTERS, ANSWER_SVGS, getCommonFetchObj } from "../Utils.jsx";
 
 const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     const {
@@ -16,7 +16,11 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/${multi}`,
             getCommonFetchObj("POST")
-        ).then(r => r);
+        ).then(r => r)
+            .catch(e => {
+                if (e === undefined) return;
+                setAlert(alertDanger('Wystąpił błąd podczas wysyłania odpowiedzi przez użytkownika.'));
+            });
         setIsAnswerSet(true);
         if (isMultiSelect) {
             setClickedIndex([...clickedIndex, answer]);

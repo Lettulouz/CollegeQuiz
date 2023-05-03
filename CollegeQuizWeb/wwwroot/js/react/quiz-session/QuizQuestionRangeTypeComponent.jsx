@@ -1,5 +1,5 @@
 import { SessionContext } from "./QuizSessionRenderer.jsx";
-import { getCommonFetchObj } from "../Utils.jsx";
+import { alertDanger, getCommonFetchObj } from "../Utils.jsx";
 
 import LeaveQuizSessionButtonComponent from "./LeaveQuizSessionButtonComponent.jsx";
 import QuizQuestionProgressBarComponent from "./QuizQuestionProgressBarComponent.jsx";
@@ -13,13 +13,17 @@ const QuizQuestionRangeTypeComponent = () => {
     const stepsSlider = React.useRef(null);
 
     const handleClick = () => {
-        if(isAnswerSet || currentAnswer !== "") return;
+        if (isAnswerSet || currentAnswer !== "") return;
 
         const answer = "r" + parseInt(answRange.min) + "," + parseInt(answRange.max);
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
             getCommonFetchObj("POST")
-        ).then(r => r);
+        ).then(r => r)
+            .catch(e => {
+                if (e === undefined) return;
+                setAlert(alertDanger('Wystąpił błąd podczas wysyłania odpowiedzi przez użytkownika.'));
+            });
         setIsAnswerSet(true);
     };
 

@@ -300,7 +300,7 @@ public class QuizManagerSessionHub : Hub
             var actuallTime = DateTime.Now;
             foreach (var answer in getAllAnswersForUpdate)
             {
-                string[] minMax = answer.Range.Split(',');
+                string[] minMax = answer.Range!.Split(',');
                 int min=currentAnswers[0].AnswerMin, max=currentAnswers[0].AnswerMax;
                 bool oneAnswer = false;
                 if (minMax.Length.Equals(2))
@@ -316,7 +316,7 @@ public class QuizManagerSessionHub : Hub
                 {
                     if (min == currentAnswers[0].AnswerCorrect)
                     {
-                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,1.00, true, 750);
+                        AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,1.00, true, 750);
                     }
                     else
                     {
@@ -334,7 +334,7 @@ public class QuizManagerSessionHub : Hub
                         int amountOfNumbers = ((max - min) / currentAnswers[0].AnswerStep)+1;
                         double multiplier = (1.00 / amountOfNumbers*2) * 0.4;
                         multiplier = multiplier + 0.6;
-                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 400);
+                        AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 400);
                     }
                     else
                     {
@@ -358,7 +358,7 @@ public class QuizManagerSessionHub : Hub
                         else
                             correctMultiplier = totalCorrectInside / (double)amountOfCorrectNumbers;
                         double multiplier = (basicMultiplier + (basicMultiplier * rangeMultiplier)) * correctMultiplier;
-                        await AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 0);
+                        AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 0);
                     }
                 }
             }
@@ -413,7 +413,7 @@ public class QuizManagerSessionHub : Hub
         }
     }
 
-    private async Task AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,
+    private void AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,
         List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier,
         bool continueStreak, int additionalPoints)
     {

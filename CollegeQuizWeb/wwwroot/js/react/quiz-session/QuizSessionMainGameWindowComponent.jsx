@@ -1,4 +1,4 @@
-import { alertDanger, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN, WAITING_SCREEN } from "../Utils.jsx";
+import { alertWarning, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN, WAITING_SCREEN } from "../Utils.jsx";
 import { SessionContext } from "./QuizSessionRenderer.jsx";
 
 import QuizQuestionAnswerComponent from "./QuizQuestionAnswerComponent.jsx";
@@ -70,7 +70,7 @@ const QuizSessionMainGameWindowComponent = () => {
             setIsLeaveClicked(false);
             connection.stop().then(_ => {
                 setIsConnect(false);
-                setAlert(alertDanger(data));
+                setAlert(alertWarning(data));
             });
         });
     }, []);
