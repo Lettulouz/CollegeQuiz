@@ -8,13 +8,13 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     
     const [ clickedIndex, setClickedIndex ] = React.useState([]);
 
-    const handleClick = answer => {
-        if (isMultiSelect && clickedIndex.includes(answer)) return;
+    const handleClick = () => {
+        if (isMultiSelect && clickedIndex.includes(number)) return;
         if (!isMultiSelect && (isAnswerSet || currentAnswer !== "")) return;
         
         const multi = isMultiSelect ? "true" : "false";
         fetch(
-            `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/${multi}`,
+            `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${number}/${multi}`,
             getCommonFetchObj("POST")
         ).then(r => r)
             .catch(e => {
@@ -23,10 +23,10 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
             });
         setIsAnswerSet(true);
         if (isMultiSelect) {
-            setClickedIndex([...clickedIndex, answer]);
+            setClickedIndex([ ...clickedIndex, number ]);
             return;
         }
-        setClickedIndex(answer);
+        setClickedIndex(number);
     };
 
     const incClassAns = () => !Object.values(currentAnswer)
@@ -42,7 +42,7 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     return (
         <div className={`col-6 d-flex m-0 mt-3 ${incClassAns()}`}>
             <div className={`card bg-dark text-white card-img-custom ${cssClickedClass} ${isMultiSelect && isClicked()}`}
-                onClick={() => handleClick(number)}>
+                onClick={handleClick}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${cssDisabledClickEvent}`}>
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
                     <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
