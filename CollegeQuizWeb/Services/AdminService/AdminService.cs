@@ -333,6 +333,14 @@ public class AdminService : IAdminService
             {
                 isAdmin = true;
             }
+
+            var quizesIds = await _context.Quizes.Where(q => q.UserId.Equals(id)).ToListAsync();
+
+            foreach (var quiz in quizesIds)
+            {
+                await DelQuizImages(quiz.Id);
+            }
+            
             String message = string.Format(Lang.USER_DELETED, user.Username);
             _context.Remove(user);
             await _context.SaveChangesAsync();
@@ -703,8 +711,23 @@ public class AdminService : IAdminService
             _context.Remove(quiz);
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+           await DelQuizImages(id);
         }
         controller.Response.Redirect("/Admin/QuizList");
+    }
+
+    async Task DelQuizImages(long quizId)
+    {
+        string dir = $"{FOLDER_PATH}/{quizId}";
+        DirectoryInfo directoryInfo = new DirectoryInfo(dir);
+        if (Directory.Exists(dir))
+        {
+            foreach (var file in directoryInfo.GetFiles())
+            {
+                file.Delete();
+            }
+            Directory.Delete(dir);
+        }
     }
 
     public async Task DelCategory(long id, AdminController controller)
