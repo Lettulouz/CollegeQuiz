@@ -260,7 +260,7 @@ public class QuizManagerSessionHub : Hub
                             var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
                                                                   restOfTime.TotalSeconds)) * 1000 *
                                                             (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02)*
-                                                            (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]/Convert.ToDouble(currentAnswers.Count())));
+                                                            (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]*2/Convert.ToDouble(currentAnswers.Count())));
 
                             newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
 
