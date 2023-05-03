@@ -4,7 +4,7 @@ import { SessionContext } from "./QuizSessionRenderer.jsx";
 const JoinToQuizSessionComponent = () => {
     const {
         setIsConnect, setConnection, connectionId, setConnectionId, token, setToken, alert, setAlert, setQuizName,
-        setScreenAction, isJoinClicked, setIsJoinClicked, question
+        setScreenAction, isJoinClicked, setIsJoinClicked, currentAnswer
     } = React.useContext(SessionContext);
 
     const [ joinDisabled, setJoinDisabled ] = React.useState(true);
@@ -18,7 +18,7 @@ const JoinToQuizSessionComponent = () => {
             .then(r => {
                 if (r.isGood) {
                     setQuizName(r.quizName);
-                    setScreenAction(question !== "" ? r.screenType : WAITING_SCREEN);
+                    setScreenAction(currentAnswer === [] ? r.screenType : WAITING_SCREEN);
                     setIsConnect(true);
                 } else {
                     setIsJoinClicked(false);

@@ -47,6 +47,7 @@ public class QuizManagerSessionHub : Hub
     public async Task START_GAME_P2P(string token)
     {
         await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", false);
+        await _hubUserContext.Clients.Group(token).SendAsync("MOBILE_CHECKPOINT");
         token = token.ToUpper();
         Console.WriteLine("punkt testowy 1");
         var quiz = await _context.QuizLobbies
@@ -394,8 +395,11 @@ public class QuizManagerSessionHub : Hub
 
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
-            Thread.Sleep(2000);
-
+            
+            if(question.questionType == 5)
+                Thread.Sleep(4000);
+            else
+                Thread.Sleep(2500);
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
         }

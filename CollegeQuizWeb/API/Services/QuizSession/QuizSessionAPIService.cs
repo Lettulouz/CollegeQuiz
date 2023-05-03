@@ -7,6 +7,7 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
+using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,7 +40,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         if (quizLobby == null) return new JoinToSessionDto()
         {
             IsGood = false,
-            Message = $"Podany kod <strong>{token}</strong> nie istnieje lub uległ przedawnieniu."
+            Message = String.Format(Lang.ERROR_TOKEN, token)
         };
         var alreadyJoinedInactive = await _context.QuizSessionPartics
             .Include(p => p.UserEntity)
@@ -52,7 +53,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         if (isHost != null) return new JoinToSessionDto()
         {
             IsGood = false,
-            Message = $"Host gry nie może jednocześnie być hostem i brać w niej udziału."
+            Message = Lang.HOST_ERROR
         };
 
         var alreadyExist = await _context.QuizSessionPartics
@@ -63,7 +64,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         if (alreadyExist != null) return new JoinToSessionDto()
         {
             IsGood = false,
-            Message = $"Na tym koncie obecnie prowadzona jest rozgrywka w sesji. Użyj innego konta."
+            Message = Lang.CURRNETLY_IN_GAME
         };
         if (alreadyJoinedInactive == null)
         {
@@ -113,7 +114,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         if (quizSessionPart == null) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = "Obecnie nie jesteś w wybranej grze."
+            Message = Lang.CURRNETLY_NOT_IN_GAME
         };
         quizSessionPart.IsActive = false;
         await _context.SaveChangesAsync();
@@ -132,7 +133,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         return new SimpleResponseDto()
         {
             IsGood = true,
-            Message = "Wyszedłeś z sesji, aby wejść ponownie wprowadź kod quizu"
+            Message = Lang.SESSION_LEFT_ENTER_TOKEN
         };
     }
 
@@ -145,7 +146,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         if (isHost == null) return new JoinToSessionDto()
         {
             IsGood = false,
-            Message = "Nie znaleziono aktywnego hosta sesji gry."
+            Message = Lang.HOST_NOT_FOUND
         };
         isHost.IsEstabilished = true;
         isHost.InGameScreen = "WAITING_SCREEN";
@@ -265,7 +266,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
                 Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
             }));
             
-            await _hubUserContext.Clients.Client(particToDelete.ConnectionId).SendAsync("OnDisconnectedSession", "Zostałeś rozłączony przez hosta.");
+            await _hubUserContext.Clients.Client(particToDelete.ConnectionId).SendAsync("OnDisconnectedSession", Lang.HOST_DISCONECT_USER);
         }
     }
 }

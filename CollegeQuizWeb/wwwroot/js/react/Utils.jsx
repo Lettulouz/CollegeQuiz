@@ -7,6 +7,7 @@ export const COUNTING_SCREEN = "COUNTING_SCREEN";
 export const IN_GAME = "IN_GAME";
 export const QUESTION_RESULT_SCREEN = "QUESTION_RESULT_SCREEN";
 export const CORRECT_ANSWERS_SCREEN = "CORRECT_ANSWERS_SCREEN";
+export const MOBILE_CHECKPOINT = "MOBILE_CHECKPOINT";
 
 export const getCommonFetchObj = method => ({
     method,

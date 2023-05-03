@@ -29,7 +29,7 @@ const QuizManagerLeftContentComponent = () => {
         <div className="container p-0">
             <div className="row d-inline">
                 <div className="d-inline">{name}</div>
-                <i onClick={() => handleClick(name)} className="bi bi-x-circle-fill text-danger d-inline"></i>
+                <i onClick={() => handleClick(name)} className="bi bi-x-circle-fill text-danger d-inline kick-user"></i>
             </div>
         </div>
         

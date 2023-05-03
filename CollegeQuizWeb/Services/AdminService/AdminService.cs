@@ -292,7 +292,7 @@ public class AdminService : IAdminService
         {
             TemplateName = TemplateName.EDIT_USER,
             ToEmails = new List<string>() { userEntity.Email },
-            Subject = $"Aktualizacja konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            Subject = string.Format(Lang.ACCOUNT_UPDATE_FOR, userEntity.FirstName, userEntity.LastName, userEntity.Username),
             DataModel = emailViewModel
         };
         if (!await _smtpService.SendEmailMessage(options))
