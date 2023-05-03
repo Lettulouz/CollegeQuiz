@@ -7,7 +7,7 @@ import QuizQuestionProgressBarComponent from "./QuizQuestionProgressBarComponent
 const QuizQuestionRangeTypeComponent = () => {
     const {
         connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer, answerSett, answRange, setAnswRange,
-        questionImage, question, questionTimer, answers
+        questionImage, question, questionTimer
     } = React.useContext(SessionContext);
 
     
@@ -33,8 +33,6 @@ const QuizQuestionRangeTypeComponent = () => {
     };
 
     React.useEffect(() => {
-        console.log(answerSett)
-        console.log(answers)
         noUiSlider.create(stepsSlider.current, {
             start: [ answerSett.min, answerSett.max ],
             behaviour: 'drag',
