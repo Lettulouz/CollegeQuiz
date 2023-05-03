@@ -12,7 +12,7 @@ public class ProfileDto
     
     public string? Email { get; set; }
     
-    public int AccountStatus { get; set; }
+    public string AccountStatus { get; set; }
     
     public string? Password { get; set; }
     

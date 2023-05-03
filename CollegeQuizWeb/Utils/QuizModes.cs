@@ -19,10 +19,10 @@ public static class QuizModes
     
     private static List<QuizMode> AllQuizModes { get; set; } = new List<QuizMode>()
     {
-        new QuizMode() { Title = "4 odpowiedzi, jedna prawidłowa", Slug = "SINGLE_FOUR_ANSWERS" },
-        new QuizMode() { Title = "Prawda fałsz", Slug = "TRUE_FALSE" },
-        new QuizMode() { Title = "4 odpowiedzi, wiele prawidłowych", Slug = "MULTIPLE_FOUR_ANSWERS" },
-        new QuizMode() { Title = "6 odpowiedzi, jedna prawidłowa", Slug = "SINGLE_SIX_ANSWERS" },
+        new QuizMode() { Title = "4 odpowiedzi (jedna prawidłowa)", Slug = "SINGLE_FOUR_ANSWERS" },
+        new QuizMode() { Title = "prawda/fałsz", Slug = "TRUE_FALSE" },
+        new QuizMode() { Title = "4 odpowiedzi (wiele prawidłowych)", Slug = "MULTIPLE_FOUR_ANSWERS" },
+        new QuizMode() { Title = "6 odpowiedzi (jedna prawidłowa)", Slug = "SINGLE_SIX_ANSWERS" },
         new QuizMode() { Title = "Zakres", Slug = "RANGE" },
     };
 

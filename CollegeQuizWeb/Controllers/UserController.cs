@@ -35,7 +35,7 @@ public class UserController : Controller
         string? UpdateAlert = HttpContext.Session.GetString(SessionKey.ACCOUNT_UPDATED);
         HttpContext.Session.Remove(SessionKey.ACCOUNT_UPDATED);
         ViewBag.UpdateAlert = UpdateAlert!;
-        ViewBag.UpdateAlert ??= "";
+        
         
         var val = await _userService.UserInfo(loggedUsername);
 

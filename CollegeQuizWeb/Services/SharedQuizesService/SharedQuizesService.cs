@@ -112,6 +112,10 @@ public class SharedQuizesService : ISharedQuizesService
                     time_min = q.QuestionEntity.TimeMin,
                     time_sec = q.QuestionEntity.TimeSec,
                     type = q.QuestionEntity.QuestionType,
+                    max = q.Max, max_counted = q.MaxCounted,
+                    min = q.Min, min_counted = q.MinCounted,
+                    is_range = q.IsRange, step = q.Step,
+                    correct_answer = q.CorrectAnswer
                 })
                 .GroupBy(q=>q.question)
                 .Select(q=>new
@@ -123,6 +127,13 @@ public class SharedQuizesService : ISharedQuizesService
                     time_min= q.Select(a=>a.time_min).FirstOrDefault(),
                     time_sec = q.Select(a=>a.time_sec).FirstOrDefault(),
                     type = q.Select(a=>a.type).FirstOrDefault(),
+                    max = q.Select(a=>a.max).ToList(),
+                    max_counted = q.Select(a=>a.max_counted).ToList(),
+                    min = q.Select(a=>a.min).ToList(),
+                    min_counted = q.Select(a=>a.min_counted).ToList(),
+                    is_range = q.Select(a=>a.is_range).ToList(),
+                    step = q.Select(a=>a.step).ToList(),
+                    correct_answer = q.Select(a=>a.correct_answer).ToList()
                 })
                 .OrderBy(q=>q.qid)
                 .ToListAsync();
@@ -139,6 +150,12 @@ public class SharedQuizesService : ISharedQuizesService
         }
     }
     
+    /// <summary>
+    /// Method that is being used to get image for question in quiz
+    /// </summary>
+    /// <param name="quizId">Quiz id</param>
+    /// <param name="gId">Question id</param>
+    /// <returns>Image</returns>
     async Task<string> GetQuestionImage(long quizId, int qId)
     {
         string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
