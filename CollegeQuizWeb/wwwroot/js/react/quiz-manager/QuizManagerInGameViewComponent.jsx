@@ -4,6 +4,7 @@ import StartQuizButtonComponent from "./StartQuizButtonComponent.jsx";
 import NextQuestionButtonComponent from "./NextQuestionButtonComponent.jsx";
 import QuizManagerInGameTableComponent from "./QuizManagerInGameTableComponent.jsx";
 import QuizManagerQrCodeModalComponent from "./QuizManagerQrCodeModalComponent.jsx";
+import QuizManagerQuestionTickComponent from "./QuizManagerQuestionTickComponent.jsx";
 
 export const InGameViewContext = React.createContext(null);
 
@@ -78,6 +79,7 @@ const QuizManagerInGameViewComponent = () => {
     
     return (
         <>
+            <QuizManagerQuestionTickComponent/>
             <div className="row mb-2">
                 <div className="col-lg-3 px-1">
                     <div className="mb-2">

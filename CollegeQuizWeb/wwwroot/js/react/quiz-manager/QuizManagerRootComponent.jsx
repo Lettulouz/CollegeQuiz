@@ -4,7 +4,6 @@ import { SessionContext, SESS_TOKEN, QUIZ_NAME } from "./QuizManagerRenderer.jsx
 
 import QuizManagerInGameViewComponent from "./QuizManagerInGameViewComponent.jsx";
 import QuizManagerLeftContentComponent from "./QuizManagerLeftContentComponent.jsx";
-import QuizManagerQuestionTickComponent from "./QuizManagerQuestionTickComponent.jsx";
 import QuizManagerRightContentComponent from "./QuizManagerRightContentComponent.jsx";
 import QuizManagerCenterContentComponent from "./QuizManagerCenterContentComponent.jsx";
 
@@ -103,7 +102,6 @@ const QuizManagerRootComponent = () => {
             </div>}
             {isActive && <div className="container px-0 mx-0">
                 {isJoinable ? <div>
-                    <QuizManagerQuestionTickComponent/>
                     {inGameViewActive ? <QuizManagerInGameViewComponent/> :
                         <div className="row">
                             <QuizManagerLeftContentComponent/>
