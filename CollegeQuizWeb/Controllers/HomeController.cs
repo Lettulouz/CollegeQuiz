@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using CollegeQuizWeb.Dto;
 using CollegeQuizWeb.Dto.Home;
 using Microsoft.AspNetCore.Mvc;
 using CollegeQuizWeb.Models;
 using CollegeQuizWeb.Services.HomeService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using Test = System.Web;
 
@@ -82,9 +78,11 @@ public class HomeController : Controller
         if(id==null)
             Response.Redirect("/Auth/Login");
         
-        ViewBag.TypeOfSubscription = id;
+        ViewBag.TypeOfSubscription = id!;
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        var subscriptionPaymentDto = await _homeService.GetUserData(username, this);
+        if (username.IsNullOrEmpty())
+            return Redirect("/Auth/Login");
+        var subscriptionPaymentDto = await _homeService.GetUserData(username!, this);
         ViewBag.SubscriptionMessage = HttpContext.Session.GetString(SessionKey.SUBSCRIPTION_MESSAGE)!;
         ViewBag.Type = HttpContext.Session.GetString(SessionKey.SUBSCRIPTION_MESSAGE_TYPE)!;
         HttpContext.Session.Remove(SessionKey.SUBSCRIPTION_MESSAGE);
@@ -124,9 +122,16 @@ public class HomeController : Controller
        {
            var body = await reader.ReadToEndAsync();
            var order = JObject.Parse(body);
-           var orderId = order["order"]["orderId"].ToString();
-           var orderStatus = order["order"]["status"].ToString();
-           var subscriptionName = order["order"]["products"][0]["name"].ToString();
+           if (order["order"] == null) return StatusCode(499);
+           if (order["order"]!["orderId"] == null) return StatusCode(499);
+           if (order["order"]!["status"] == null) return StatusCode(499);
+           if (order["order"]!["products"] == null) return StatusCode(499);
+           if (order["order"]!["products"]![0] == null) return StatusCode(499);
+           if (order["order"]!["products"]![0]!["name"] == null) return StatusCode(499);
+               
+           var orderId = order["order"]!["orderId"]!.ToString();
+           var orderStatus = order["order"]!["status"]!.ToString();
+           var subscriptionName = order["order"]!["products"]![0]!["name"]!.ToString();
            if (await _homeService.ChangePaymentStatus(orderStatus, orderId, subscriptionName))
                return Ok();
            else
