@@ -192,13 +192,26 @@ public class UserService : IUserService
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(isLogged));
 
+        var subStatus = await _context.SubsciptionTypes.FirstOrDefaultAsync(s => s.SiteId.Equals(userInfo.AccountStatus));
+
+        string userStatus;
+        
+        if (subStatus == null)
+        {
+            userStatus = "STANDARD";
+        }
+        else
+        {
+            userStatus = subStatus.Name;
+        }
+        
         ProfileDto UserDto = new ProfileDto()
         {
             FirstName = userInfo.FirstName,
             LastName = userInfo.LastName,
             CreatedAt = userInfo.CreatedAt,
             Email = userInfo.Email,
-            AccountStatus = userInfo.AccountStatus,
+            AccountStatus = userStatus,
             Username = userInfo.Username,
             Password = userInfo.Password
         };
