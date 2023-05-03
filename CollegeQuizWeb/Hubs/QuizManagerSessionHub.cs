@@ -74,7 +74,7 @@ public class QuizManagerSessionHub : Hub
                 question = q.First().QuestionEntity.Name,
                 questionType = q.First().QuestionEntity.QuestionTypeEntity.TypeId,
                 answers = q.Select(a => a.Name).ToList(),
-                time_sec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).Sum(),
+                time_sec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).FirstOrDefault(),
                 is_range = q.First().IsRange,
                 step = q.First().Step,
                 min = q.First().Min,
@@ -246,15 +246,17 @@ public class QuizManagerSessionHub : Hub
                             var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
                                                                   restOfTime.TotalSeconds)) * 1000 *
                                                             (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02)*
-                                                            (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]*2/Convert.ToDouble(currentAnswers.Count())));
+                                                            (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]/Convert.ToDouble(currentAnswers.Count())));
 
                             newUserPoinst.Add(answer.QuizSessionParticEntity.ConnectionId, wonPoints);
 
                             answer.QuizSessionParticEntity.Score += wonPoints;
                         }
 
-                        if(corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]==currentAnswers.Count())
+                        if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] == currentAnswers.Count())
                             answer.QuizSessionParticEntity.CurrentStreak += 1;
+                        else
+                            answer.QuizSessionParticEntity.CurrentStreak = 0;
                     }
                 }
             }
