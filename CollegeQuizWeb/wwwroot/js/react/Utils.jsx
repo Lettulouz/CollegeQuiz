@@ -1,5 +1,6 @@
 export const alertInfo = message => ({ active: true, style: 'alert-success', message });
 export const alertDanger = message => ({ active: true, style: 'alert-danger', message });
+export const alertWarning = message => ({ active: true, style: 'alert-warning', message });
 export const alertOff = () => ({ active: false, style: 'alert-success', message: '' });
 
 export const WAITING_SCREEN = "WAITING_SCREEN";
@@ -47,3 +48,9 @@ export const getCropperConfig = () => ({
     minCanvasWidth: 700,
     minCanvasHeight: 500,
 });
+
+export const ANSWER_LETTERS = [ "A", "B", "C", "D", "E", "F" ];
+export const ANSWER_SVGS = [
+    "/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg",
+    "/gfx/tealCard.svg", "/gfx/oliveCard.svg", "/gfx/darkgreenCard.svg"
+];
