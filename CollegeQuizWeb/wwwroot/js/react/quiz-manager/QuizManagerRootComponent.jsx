@@ -1,11 +1,12 @@
 import { useLoadableContent } from "../Hooks.jsx";
-import { alertDanger, alertInfo, alertOff, getCommonFetchObj } from "../Utils.jsx";
+import { alertDanger, alertInfo, alertOff, alertWarning, getCommonFetchObj } from "../Utils.jsx";
 import { SessionContext, SESS_TOKEN, QUIZ_NAME } from "./QuizManagerRenderer.jsx";
 
+import QuizManagerInGameViewComponent from "./QuizManagerInGameViewComponent.jsx";
 import QuizManagerLeftContentComponent from "./QuizManagerLeftContentComponent.jsx";
-import QuizManagerCenterContentComponent from "./QuizManagerCenterContentComponent.jsx";
-import QuizManagerRightContentComponent from "./QuizManagerRightContentComponent.jsx";
 import QuizManagerQuestionTickComponent from "./QuizManagerQuestionTickComponent.jsx";
+import QuizManagerRightContentComponent from "./QuizManagerRightContentComponent.jsx";
+import QuizManagerCenterContentComponent from "./QuizManagerCenterContentComponent.jsx";
 
 const QuizManagerRootComponent = () => {
     const [ isActive, setActiveCallback ] = useLoadableContent();
@@ -21,7 +22,13 @@ const QuizManagerRootComponent = () => {
     const [ startBtnText, setStartBtnText ] = React.useState("Rozpocznij");
     const [ isEnded, setIsEnded ] = React.useState(false);
     const [ progressWidth, setProgressWidth ] = React.useState(100);
-
+    const [ lobbyData, setLobbyData ] = React.useState({ name: '', host: '', questionsCount: 0 });
+    const [ inGameViewActive, setInGameViewActive ] = React.useState(false);
+    const [ counting, setCounting ] = React.useState(5);
+    const [ countingActive, setCountingActive ] = React.useState(false);
+    const [ afterQuestionResults, setAfterQuestionResults ] = React.useState([]);
+    const [ resultTable, setResultTable ] = React.useState([]);
+    
     const estabilishedRoomConnection = () => {
         if (isEstabiblishedClicked) return;
         setIsEstabilishedClicked(true);
@@ -52,16 +59,20 @@ const QuizManagerRootComponent = () => {
                 setActiveCallback();
             }))
             .catch(() => setAlert(alertDanger('Nieudane dołączenie do sesji.')));
-
-        // chowanie i pokazywanie przycisku następnego pytania
-        connectionObj.on("ON_NEXT_QUESTION_P2P", isActive => {
-            setNextQuestionBtnText("Następne pytanie");
-            setTimeout(() => setProgressWidth(100), 2000);
-            setNextQuestionIsActive(isActive);
-        });
         
-        // przy ostatnim pytaniu, chowanie przycisków
-        connectionObj.on("ON_END_QUESTIONS_P2P", _ => {
+        // plansza po zakończeniu tury/rozgrywki
+        connectionObj.on("QUESTION_RESULT_P2P", questionAnsw => {
+            const parsedAnswers = JSON.parse(questionAnsw);
+            
+            setAfterQuestionResults(parsedAnswers);
+            setNextQuestionBtnText("Następne pytanie");
+            setNextQuestionIsActive(true);
+            
+            setTimeout(() => setProgressWidth(100), 2000);
+            
+            // jeśli to jest ostatnia odpowiedź
+            if (!parsedAnswers[0].isLast) return;
+            
             setNextQuestionBtnText("Koniec pytań");
             setStartBtnText("Zakończony");
             setIsEnded(true);
@@ -71,11 +82,21 @@ const QuizManagerRootComponent = () => {
         });
     }, []);
 
+    React.useEffect(() => {
+        if (isJoinable) {
+            setAlert(alertWarning("Rozgrywka jest możliwa tylko wtedy, gdy uczestniczy w niej przynajmniej jeden gracz."));
+        } else {
+            setAlert(alertOff());
+        }
+    }, [ isJoinable ]);
+    
     return (
         <SessionContext.Provider value={{
             connection, setAlert, allParticipants, setAllParticipants, nextQuestionIsActive, tick, setTick,
             nextQuestionBtnText, setNextQuestionBtnText, startBtnText, isEnded, setStartBtnText,
-            progressWidth, setProgressWidth,
+            progressWidth, setProgressWidth, lobbyData, setLobbyData, setInGameViewActive, inGameViewActive,
+            counting, setCounting, countingActive, setCountingActive, afterQuestionResults, setNextQuestionIsActive,
+            resultTable, setResultTable
         }}>
             {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-4`} role="alert">
                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
@@ -83,13 +104,14 @@ const QuizManagerRootComponent = () => {
             {isActive && <div className="container px-0 mx-0">
                 {isJoinable ? <div>
                     <QuizManagerQuestionTickComponent/>
-                    <div className="row w-100 position-relative mx-0">
-                        <QuizManagerLeftContentComponent/>
-                        <QuizManagerCenterContentComponent/>
-                        <QuizManagerRightContentComponent/>
-                    </div>
+                    {inGameViewActive ? <QuizManagerInGameViewComponent/> :
+                        <div className="row">
+                            <QuizManagerLeftContentComponent/>
+                            <QuizManagerCenterContentComponent/>
+                            <QuizManagerRightContentComponent/>
+                        </div>}
                 </div> : <div className="text-center" style={{ marginTop: '25vh' }}>
-                    <p>Quiz: <strong>{QUIZ_NAME}</strong></p>
+                    <p>Quiz:<br/><strong>{QUIZ_NAME}</strong></p>
                     <button className="btn click-me mx-auto mt-5" onClick={estabilishedRoomConnection}>Stwórz nowy pokój</button>
                     <div className="hstack gap-3 align-items-center w-100 mx-auto my-5" style={{ maxWidth: 800 }}>
                         <hr className="flex-fill"/>

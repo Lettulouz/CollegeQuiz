@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,7 +65,7 @@ public class QuizManagerSessionHub : Hub
         }
         var questions = await _context.Answers
             .Include(q => q.QuestionEntity)
-            .Where(q => q.QuestionEntity.QuizId.Equals(quiz.QuizId))
+            .Where(q => q.QuestionEntity.QuizId.Equals(quiz!.QuizId))
             .Select(q => new
             {
                 questionId = q.QuestionEntity.Index,
@@ -82,6 +84,7 @@ public class QuizManagerSessionHub : Hub
             .GroupBy(q=>q.questionId)
             .Select(q=>new
             {
+                
                 questionId = q.Select(a => a.questionId).Distinct().FirstOrDefault(),
                 question = q.Select(a => a.question).Distinct().FirstOrDefault(),
                 questionType = q.Select(a => a.question_type).Distinct().FirstOrDefault(),
@@ -93,19 +96,53 @@ public class QuizManagerSessionHub : Hub
                 max = q.Select(a => a.max).Distinct().FirstOrDefault(),
                 min_counted = q.Select(a => a.min_counted).Distinct().FirstOrDefault(),
                 max_counted = q.Select(a => a.max_counted).Distinct().FirstOrDefault(),
-                image_url = GetImageUrl(q.Select(a => a.questionId).Distinct().FirstOrDefault(), basePatch, quiz.QuizId),
+                image_url = GetImageUrl(q.Select(a => a.questionId).Distinct().FirstOrDefault(), basePatch, quiz!.QuizId),
             }).ToListAsync();
         
         Console.WriteLine("punkt testowy 3");
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
 
         Console.WriteLine("punkt testowy 4");
-        if(quiz.CurrentQuestion>=questions.Count) return;
+        if(quiz!.CurrentQuestion>=questions.Count) return;
         var question = questions[quiz.CurrentQuestion];
         
         int timer;
-        
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
+        
+        var allAnswersWithGood = await _context.Answers.Include(t => t.QuestionEntity)
+            .Where(t => t.QuestionEntity.Index.Equals(question.questionId) && t.QuestionEntity.QuizId.Equals(quiz.QuizId))
+            .Select(q => new QuizLobbyAnswerData()
+            {
+                Text = q.Name,
+                IsCorrect = q.IsGood
+                
+            }).ToListAsync();
+        int correctRangeAnswer = 0;
+        if (question.questionType == 5)
+        {
+            var rangeAnswer = await _context.Answers.Include(t => t.QuestionEntity)
+                .FirstOrDefaultAsync(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                                          t.QuestionEntity.QuizId.Equals(quiz.QuizId));
+            correctRangeAnswer = rangeAnswer!.CorrectAnswer;
+        }
+        QuizLobbyQuestionData quizLobbyQuestionData = new()
+        {
+            QuestionName = question.question!,
+            IsRange = question.is_range,
+            Max = question.max,
+            Min = question.min,
+            MaxCounted = question.max_counted,
+            MinCounted = question.min_counted,
+            QuestionType = question.questionType,
+            ImageUrl = question.image_url,
+            TimeSec = question.time_sec,
+            Step = question.step,
+            QuestionId = quiz.CurrentQuestion + 1,
+            Answers = allAnswersWithGood,
+            CorrectAnswerRange = correctRangeAnswer
+        };
+        await Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(quizLobbyQuestionData));
+        
         Console.WriteLine("punkt testowy 5");
         CancellationTokenSource cts = new CancellationTokenSource();
         CancellationToken token2 = cts.Token;
@@ -238,7 +275,7 @@ public class QuizManagerSessionHub : Hub
             await _context.SaveChangesAsync();
 
             Console.WriteLine("punkt testowy 7");
-            var topUsers =
+            var allUsersPoints =
                 _context.QuizSessionPartics
                     .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
                     .Select(obj => new
@@ -248,7 +285,9 @@ public class QuizManagerSessionHub : Hub
                         isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
                         obj.CurrentStreak
-                    }).OrderByDescending(obj => obj.Score).Take(5).ToList();
+                    }).OrderByDescending(obj => obj.Score);
+            
+            var topUsers = allUsersPoints.Take(5).ToList();
             
             var streakLeader =
                 _context.QuizSessionPartics
@@ -265,12 +304,24 @@ public class QuizManagerSessionHub : Hub
 
             Console.WriteLine("punkt testowy 8");
 
+            List<ComputePoints> computePointsList = new List<ComputePoints>();
+            foreach (var userPoints in allUsersPoints)
+            {
+                computePointsList.Add(new ComputePoints()
+                {
+                    Username = userPoints.Username,
+                    Points = $"{userPoints.Score} (+ {userPoints.newPoints})",
+                    IsGood = userPoints.newPoints != 0 ? "true" : "false"
+                });
+            }
+            await Clients.Group(token).SendAsync("COMPUTE_ALL_POINTS_P2P", JsonSerializer.Serialize(computePointsList));
+            
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             Thread.Sleep(2000);
 
-            await _hubUserContext.Clients.Group(token)
-                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
+            await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
+            await Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
         }
         else
         {
@@ -365,7 +416,7 @@ public class QuizManagerSessionHub : Hub
             await _context.SaveChangesAsync();
 
             Console.WriteLine("punkt testowy 7");
-            var topUsers =
+            var allUsersPoints =
                 _context.QuizSessionPartics
                     .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
                     .Select(obj => new
@@ -375,8 +426,10 @@ public class QuizManagerSessionHub : Hub
                         isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
                         obj.CurrentStreak
-                    }).OrderByDescending(obj => obj.Score).Take(5).ToList();
+                    }).OrderByDescending(obj => obj.Score);
 
+            var topUsers = allUsersPoints.Take(5).ToList();
+            
             var streakLeader =
                 _context.QuizSessionPartics
                     .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
@@ -392,14 +445,25 @@ public class QuizManagerSessionHub : Hub
             
             Console.WriteLine("punkt testowy 8");
 
+            List<ComputePoints> computePointsList = new List<ComputePoints>();
+            foreach (var userPoints in allUsersPoints)
+            {
+                computePointsList.Add(new ComputePoints()
+                {
+                    Username = userPoints.Username,
+                    Points = $"{userPoints.Score} (+ {userPoints.newPoints})",
+                    IsGood = userPoints.newPoints != 0 ? "true" : "false"
+                });
+            }
+            await Clients.Group(token).SendAsync("COMPUTE_ALL_POINTS_P2P", JsonSerializer.Serialize(computePointsList));
+            
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             Thread.Sleep(2000);
 
-            await _hubUserContext.Clients.Group(token)
-                .SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
+            await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
+            await Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
         }
-        await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", true);
         
         Console.WriteLine("punkt testowy 9");
         quiz.CurrentQuestion++;

@@ -131,6 +131,13 @@ a.navbar-brand {
 .text-prim-color {
     color: #3a8a7f;
 }
+.background-primary-logo {
+    background-color: #3a8a7f;
+    border: 3px solid #19452e;
+    border-radius: 5px;
+    width: 60px;
+    height: 60px;
+}
 
 .border-image,
 .border-image.nohov {
@@ -218,6 +225,9 @@ input:-webkit-autofill {
     background-color: #f7fef5;
     border: 2px solid #63c4ab;
 }
+.card.trsp {
+    background-color: rgba(247, 254, 245, .8);
+}
 
 .card-add {
     background-color: rgba(174, 229, 212, .2);
@@ -255,7 +265,8 @@ input:-webkit-autofill {
     color: #3a8a7f;
 }
 
-.card-img-custom {
+.card-img-custom,
+.card-img-custom-noanim {
     border: none;
     border-radius: 50px;
     transition: transform 0.2s;
@@ -274,7 +285,7 @@ input:-webkit-autofill {
     filter: grayscale(100%);
 }
 
-.cursor-not-allowed{
+.cursor-not-allowed {
     cursor: not-allowed !important;
 }
 
@@ -342,6 +353,10 @@ select{
 .btn-color-second-short {
     color: #f9fef8 !important;
     background-color: #3a8a7f;
+}
+
+.btn-nobtn {
+    cursor: default;
 }
 
 .btn-color-hover {
@@ -526,69 +541,42 @@ select{
     background-color: #63C4AB
 }
 
-.leaderboard{
-    background: #aee5d4;
+.leaderboard,
+.leaderboard.small {
+    background: rgba(174, 229, 212, 0.8);
     border-radius: 25px;
     height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+.leaderboard.small {
+    height: 50px;
+    border-radius: 13px;
+}
 
 .leaderboard.colors-leaderboard:nth-child(1){
-    background: #1fd2e6;
+    background: rgba(31, 210, 230, 0.8);
 }
 
 .leaderboard.colors-leaderboard:nth-child(2){
-    background: #29e4c5;
+    background: rgba(41, 228, 197, 0.8);
 }
 
 .leaderboard.colors-leaderboard:nth-child(3){
-    background: #55e5a0;
+    background: rgba(85, 229, 160, 0.8);
 }
 
 .leaderboard.colors-leaderboard:nth-child(4){
-    background: #bbf5cd;
+    background: rgba(187, 245, 205, 0.8);
 }
 
 .leaderboard.colors-leaderboard:nth-child(5){
-    background: #bbf5cd;
+    background: rgba(187, 245, 205, 0.8);
 }
 
 .leaderboard.streak{
-    background: #e4ec95;
-}
-
-@keyframes slideInLeft {
-    from {
-        transform: translateX(-200%);
-    }
-
-    to {
-        transform: translateX(0%);
-    }
-}
-
-@keyframes slideInDown {
-    from {
-        transform: translateY(calc(100vh - 100px));
-    }
-
-    to {
-        transform: translateY(0%);
-    }
-}
-
-.animate-left {
-    animation-name: slideInLeft;
-    animation-duration: 3s;
-    animation-fill-mode: forwards;
-}
-
-.animate-down {
-    animation-name: slideInDown;
-    animation-duration: 3s;
-    animation-fill-mode: forwards;
+    background: rgba(228, 236, 149, 0.8);
 }
 
 .custom-card-1{

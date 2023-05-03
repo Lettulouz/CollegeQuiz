@@ -54,6 +54,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             Message = $"Host gry nie może jednocześnie być hostem i brać w niej udziału."
         };
 
+        ComputePoints computePoints = new ComputePoints() { IsGood = "none" };
         var alreadyExist = await _context.QuizSessionPartics
             .Include(u => u.UserEntity)
             .Include(u => u.QuizLobbyEntity)
@@ -73,11 +74,15 @@ public class QuizSessionAPIService : IQuizSessionAPIService
                 QuizLobbyEntity = quizLobby,
                 UserEntity = user!
             });
+            computePoints.Username = user!.Username;
+            computePoints.Points = "0 (+ 0)";
         }
         else
         {
             alreadyJoinedInactive.ConnectionId = connectionId;
             alreadyJoinedInactive.IsActive = true;
+            computePoints.Username = alreadyJoinedInactive.UserEntity.Username;
+            computePoints.Points = $"{alreadyJoinedInactive.Score} (+ 0)";
         }
         await _hubUserContext.Groups.AddToGroupAsync(connectionId, token);
         await _context.SaveChangesAsync();
@@ -92,6 +97,9 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
             Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
         }));
+
+        await _hubManagerContext.Clients.Group(token)
+            .SendAsync("USER_JOINABLE_POINTS_P2P", JsonSerializer.Serialize(computePoints));
         
         return new JoinToSessionDto()
         {
@@ -128,6 +136,8 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
             Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
         }));
+        
+        await _hubManagerContext.Clients.Group(token).SendAsync("USER_ON_LEAVE_ROOM_P2P", loggedUsername);
         return new SimpleResponseDto()
         {
             IsGood = true,
@@ -168,10 +178,13 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             .FirstOrDefaultAsync(l => l.Code.Equals(token));
         
         if (lobbyData == null) return new QuizLobbyInfoDto();
+
+        int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(lobbyData.QuizId)).Count();
         return new QuizLobbyInfoDto()
         {
             Name = lobbyData.QuizEntity.Name,
-            Host = lobbyData.UserEntity.Username
+            Host = lobbyData.UserEntity.Username,
+            QuestionsCount = countOfQuestions
         };
     }
 
@@ -180,11 +193,17 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         int questionNum, answerNum;
         if (answerId.Length.Equals(0)) return;
         
+        var token = await _context.QuizSessionPartics
+            .Include(q => q.QuizLobbyEntity)
+            .FirstOrDefaultAsync(q => q.ConnectionId.Equals(connectionId));
+        if (token == null) return;
+        
         if (answerId[0].Equals('r'))
         {
             if (!Int32.TryParse(questionId, out questionNum)) return;
             string answerRange = answerId.TrimStart('r');
             var connetionIdInDb = await _context.QuizSessionPartics
+                .Include(q => q.UserEntity)
                 .FirstOrDefaultAsync(obj => obj.ConnectionId.Equals(connectionId));
         
             if (connetionIdInDb == null) return;
@@ -203,12 +222,21 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             usersAnswersEntity.Range = answerRange;
         
             await _context.UsersQuestionsAnswers.AddAsync(usersAnswersEntity);
+            
+            CurrentGameStatusQuestions currentGameStatusQuestions = new()
+            {
+                Username = connetionIdInDb.UserEntity.Username,
+                SelectedAnswer = answerRange,
+            };
+            await _hubManagerContext.Clients.Group(token.QuizLobbyEntity.Code)
+                .SendAsync("USER_SELECT_ANSWER_P2P", JsonSerializer.Serialize(currentGameStatusQuestions));
         }
         else
         {
             if (!Int32.TryParse(questionId, out questionNum) || !Int32.TryParse(answerId, out answerNum))
                 return;
             var connetionIdInDb = await _context.QuizSessionPartics
+                .Include(q => q.UserEntity)
                 .FirstOrDefaultAsync(obj => obj.ConnectionId.Equals(connectionId));
         
             if (connetionIdInDb == null) return;
@@ -239,6 +267,14 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             usersAnswersEntity.Answer = answerNum;
         
             await _context.UsersQuestionsAnswers.AddAsync(usersAnswersEntity);
+            
+            CurrentGameStatusQuestions currentGameStatusQuestions = new()
+            {
+                Username = connetionIdInDb.UserEntity.Username,
+                SelectedAnswer = $"{answerNum}",
+            };
+            await _hubManagerContext.Clients.Group(token.QuizLobbyEntity.Code)
+                .SendAsync("USER_SELECT_ANSWER_P2P", JsonSerializer.Serialize(currentGameStatusQuestions));
         }
         await _context.SaveChangesAsync();
     }
