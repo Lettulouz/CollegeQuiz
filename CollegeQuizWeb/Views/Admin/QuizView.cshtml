@@ -68,14 +68,60 @@
                                     </div>    
                                 }
                                     
-                                <div class="row p-0 m-0">
-                                    @foreach (var answer in @ViewBag.questions[j].answers)
-                                    {
-                                        <div class="col-12 col-sm-6 p-2">
-                                            @answer
+                                    <div class="row p-0 m-0">
+
+                                        @for(int i = 0; i < ((IEnumerable<dynamic>)ViewBag.questions[j].answers).Count(); i++)
+                                        {
+                                            @if (@ViewBag.questions[j].type == 5)
+                                            {
+                                              
+                                                <div class="col-6 col-sm-4 mb-2">
+                                                    <label className="form-label">Min</label>
+                                                    <div >@ViewBag.questions[j].min[i]</div>
+                                                </div>
+                                                    
+                                                <div class="col-6 col-sm-4 mb-2">
+                                                    <label  className="form-label">Step</label>
+                                                    <div >@ViewBag.questions[j].step[i]</div>
+                                                </div>
+                                                
+                                                <div class="col-6 col-sm-4 mb-2">
+                                                    <label  className="form-label">Maks</label>
+                                                    <div >@ViewBag.questions[j].max[i]</div>
+                                                </div>
+                                                
+                                                <div class="col-6 col-sm-4 mb-2">
+                                                    <label  className="form-label">Min punkty</label>
+                                                    <div >@ViewBag.questions[j].min_counted[i]</div>
+                                                </div>
+                                                
+                                                <div class="col-6 col-sm-4 mb-2">
+                                                    <label  className="form-label">Odpowiedź</label>
+                                                    <div >@ViewBag.questions[j].correct_answer[i]</div>
+                                                </div>
+                                                
+                                                <div class="col-6 col-sm-4 mb-2">
+                                                    <label  className="form-label">Maks punkty</label>
+                                                    <div >@ViewBag.questions[j].max_counted[i]</div>
+                                                </div>
+                                                    
+
+
+                                            }
+                                            else if (@ViewBag.questions[j].type == 2)
+                                            {
+                                            <div class="col-6 p-2">@(i == 0 ? "Prawda" : "Fałsz")</div>
+
+                                            }
+                                            else
+                                            {
+                                            <div class="col-12 col-sm-6 p-2">
+                                                @ViewBag.questions[j].answers[i]
+                                            </div>
+                                            }
+                                            }
+
                                         </div>
-                                    }
-                                </div>
                                 <hr/>
                             </div>
                         }
