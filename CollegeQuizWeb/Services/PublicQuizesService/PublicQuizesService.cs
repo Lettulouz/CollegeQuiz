@@ -48,6 +48,33 @@ public class PublicQuizesService : IPublicQuizesService
             .ToListAsync();
         
     }
+
+    public async Task Categories(PublicQuizesController controller)
+    {
+        var categories = await _context.Categories
+            .ToListAsync();
+
+        controller.ViewBag.Categories = categories;
+        
+    }
+
+    public async Task<List<SharedQuizesEntity>> Filter(PublicQuizesController controller, string[] categories)
+    {
+        controller.HttpContext.Session.SetString(SessionKey.CATEGORY_FILTER, "true");
+        
+        List<long> allCat = await _context.Categories
+            .Select(c => c.Id)
+            .ToListAsync();
+        
+        return await _context.SharedQuizes
+            .Include(q => q.QuizEntity)
+            .Include(q => q.UserEntity)
+            .Include(q => q.QuizEntity.QuizCategoryEntities)
+            .Where(q=>q.QuizEntity.QuizCategoryEntities
+                .Any(qk=>allCat.Contains(qk.CategoryId)))
+                
+            .ToListAsync();
+    }
     
     public async Task PublicQuizInfo(long id, PublicQuizesController controller)
     {
