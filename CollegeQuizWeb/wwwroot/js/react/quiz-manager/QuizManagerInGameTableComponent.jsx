@@ -6,6 +6,7 @@ import QuizPlayerViewResultComponent from "./QuizPlayerViewResultComponent.jsx";
 import RemoveUserFromSessionButtonComponent from "./RemoveUserFromSessionButtonComponent.jsx";
 import QuizPlayerViewRangeAnswerTypeComponent from "./QuizPlayerViewRangeAnswerTypeComponent.jsx";
 import QuizPlayerViewUniversalAnswerTypeComponent from "./QuizPlayerViewUniversalAnswerTypeComponent.jsx";
+import QuizPlayerViewTrueFalseAnswerTypeComponent from "./QuizPlayerViewTrueFalseAnswerTypeComponent.jsx";
 import QuizPlayerViewUniversalQuestionTypeComponent from "./QuizPlayerViewUniversalQuestionTypeComponent.jsx";
 
 const QuizManagerInGameTableComponent = () => {
@@ -15,16 +16,23 @@ const QuizManagerInGameTableComponent = () => {
     const answerColor = r => r.IsGood !== "none" ? r.IsGood === "true" ? 'text-success' : 'text-danger' : '';
     
     const renderQuestionTypeSection = () => {
-        if (questionType === 5) {
-            return <QuizPlayerViewRangeAnswerTypeComponent/>;
+        switch (questionType) {
+            case 5: return <QuizPlayerViewRangeAnswerTypeComponent/>;
+            case 2: return (
+                <QuizPlayerViewUniversalQuestionTypeComponent>
+                    {answers.map((answer, idx) => (
+                        <QuizPlayerViewTrueFalseAnswerTypeComponent key={idx} number={idx} answer={answer}/>
+                    ))}
+                </QuizPlayerViewUniversalQuestionTypeComponent>
+            );
+            default: return  (
+                <QuizPlayerViewUniversalQuestionTypeComponent>
+                    {answers.map((answer, idx) => (
+                        <QuizPlayerViewUniversalAnswerTypeComponent key={answer.Text} number={idx} answer={answer}/>
+                    ))}
+                </QuizPlayerViewUniversalQuestionTypeComponent>
+            );
         }
-        return (
-            <QuizPlayerViewUniversalQuestionTypeComponent>
-                {answers.map((answer, idx) => (
-                    <QuizPlayerViewUniversalAnswerTypeComponent key={answer.Text} number={idx} answer={answer}/>
-                ))}
-            </QuizPlayerViewUniversalQuestionTypeComponent>
-        );
     };
     
     const generateAnswer = r => {

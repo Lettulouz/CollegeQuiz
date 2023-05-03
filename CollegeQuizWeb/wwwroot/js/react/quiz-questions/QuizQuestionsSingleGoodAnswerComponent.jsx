@@ -46,7 +46,7 @@ const QuizQuestionsSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers 
                             checked={answer.isCorrect} onChange={onCorrentSingleAnswer}/>
                     </>}
                     <label htmlFor={questionId} className="form-check-label">
-                        {q.type === "TRUE_FALSE" ? id === 1 ? "Prawda" : "Fałsz" : "To jest poprawna odpowiedź"}
+                        To jest poprawna odpowiedź
                     </label>
                 </div>
             </div>

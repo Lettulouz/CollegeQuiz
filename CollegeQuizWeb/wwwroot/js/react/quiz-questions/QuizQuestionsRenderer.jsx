@@ -10,6 +10,7 @@ const path = window.location.pathname.split('/');
 export const id = path[path.length - 1];
 
 export const generateAnswers = length => Array.from({ length }).map((_, i) => generateDiffAnswer(i, i === 0, false, ""));
+export const generateTrueFalse = () => Array.from({ length: 2 }).map((_, i) => generateDiffAnswer(i, i === 0, false, "BOOLEAN"));
 export const generateMultAnswers = length => Array.from({ length }).map((_, i) => generateDiffAnswer(i, false, false, ""));
 export const generateRangeAnswer = () => [ generateDiffAnswer(1, true, true, "RANGE") ];
 

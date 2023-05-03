@@ -90,12 +90,15 @@ public class QuizAPIService : IQuizAPIService
                 QuestionTypeEntity = questionType
             };
             // sprawdzenie, czy odpowiedzi nie są takie same
-            var flattedAnswers = question.Answers.Select(a => a.Text).ToList();
-            if (flattedAnswers.Count != flattedAnswers.Distinct().Count()) return new SimpleResponseDto()
+            if (question.Type != "TRUE_FALSE" && question.Type != "RANGE")
             {
-                IsGood = false,
-                Message = String.Format(Lang.QUESTION_REPEATED, question.Text)
-            };
+                var flattedAnswers = question.Answers.Select(a => a.Text).ToList();
+                if (flattedAnswers.Count != flattedAnswers.Distinct().Count()) return new SimpleResponseDto()
+                {
+                    IsGood = false,
+                    Message = String.Format(Lang.QUESTION_REPEATED, question.Text)
+                };
+            }
             foreach (var answer in question.Answers)
             {
                 AnswerEntity answerEntity;

@@ -1,11 +1,12 @@
 import {
-    generateAnswers, generateMultAnswers, generateRangeAnswer, MainContext, QuestionsContext
+    generateAnswers, generateMultAnswers, generateRangeAnswer, generateTrueFalse, MainContext, QuestionsContext
 } from "./QuizQuestionsRenderer.jsx";
 
+import QuizQuestionTextContentComponent from "./QuizQuestionTextContentComponent.jsx";
 import QuizQuestionsRangeAnswerComponent from "./QuizQuestionsRangeAnswerComponent.jsx";
+import QuizQuestionsTrueFalseAnswerComponent from "./QuizQuestionsTrueFalseAnswerComponent.jsx";
 import QuizQuestionsImageManipulatorComponent from "./QuizQuestionsImageManipulatorComponent.jsx";
 import QuizQuestionsSingleGoodAnswerComponent from "./QuizQuestionsSingleGoodAnswerComponent.jsx";
-import QuizQuestionTextContentComponent from "./QuizQuestionTextContentComponent.jsx";
 
 const QuizQuestionComponent = () => {
     const {
@@ -68,7 +69,7 @@ const QuizQuestionComponent = () => {
         const idx = qst.findIndex(qstData => qstData.id === q.id);
         qst[idx].type = e.target.value;
         switch (e.target.value) {
-            case "TRUE_FALSE":              qst[idx].answers = generateAnswers(2);      break;
+            case "TRUE_FALSE":              qst[idx].answers = generateTrueFalse();      break;
             case "RANGE":                   qst[idx].answers = generateRangeAnswer();   break;
             case "SINGLE_SIX_ANSWERS":      qst[idx].answers = generateAnswers(6);      break;
             case "MULTIPLE_FOUR_ANSWERS":   qst[idx].answers = generateMultAnswers(4);  break;
@@ -89,6 +90,16 @@ const QuizQuestionComponent = () => {
         showModal();
     };
 
+    const generateAnswersComponent = () => {
+        switch (q.type) {
+            case "RANGE": return <QuizQuestionsRangeAnswerComponent/>;
+            case "TRUE_FALSE": return q.answers.map((answer, idx) => (
+                <QuizQuestionsTrueFalseAnswerComponent key={idx} id={idx + 1} answer={answer}/>
+            ));
+            default: return answersComponents;
+        }
+    };
+    
     React.useEffect(() => {
         if (!q.imageUrl) return;
         setImageSrc(q.imageUrl);
@@ -133,7 +144,7 @@ const QuizQuestionComponent = () => {
                         <QuizQuestionTextContentComponent/>
                     </div>
                 </div>
-                {q.type === "RANGE" ? <QuizQuestionsRangeAnswerComponent/> : answersComponents}
+                {generateAnswersComponent()}
             </div>
         </>
     );

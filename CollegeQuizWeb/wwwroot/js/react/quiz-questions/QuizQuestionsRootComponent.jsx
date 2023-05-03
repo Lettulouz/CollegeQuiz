@@ -40,7 +40,8 @@ const QuizQuestionsRootComponent = () => {
     React.useEffect(() => {
         const anyBad = questions.filter(q => {
             return q.text.length <= 2 || (q.answers
-                    .filter(a => a.text.length >= 1).length !== q.answers.length && q.type !== "RANGE") ||
+                    .filter(a => a.text.length >= 1).length !== q.answers.length && q.type !== "RANGE"
+                        && q.type !== "TRUE_FALSE") ||
                 q.timeMin.length === 0 || q.timeSec.length === 0 ||
                 q.answers.filter(q => q.isCorrect).length === 0;
         });

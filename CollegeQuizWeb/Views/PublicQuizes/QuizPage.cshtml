@@ -35,10 +35,17 @@
                         <div class="p-3 card">
                             <div class="p-3 card hstack">
                                 <div class="me-2 fs-4">@(i + 1)</div>
-                                <label type="text" class="form-control" placeholder="Treść odpowiedzi">@ViewBag.questions[j].answers[i]</label>
+                                @if (@ViewBag.questions[j].type == 2)
+                                {
+                                    <label type="text" class="form-control">@(i == 0 ? "Prawda" : "Fałsz")</label>
+                                }
+                                else
+                                {
+                                    <label type="text" class="form-control">@ViewBag.questions[j].answers[i]</label>
+                                }
                             </div>
                             <div class="form-check mt-2">
-                                @if (@ViewBag.questions[j].goodAnswers[i] == true)
+                                @if (@ViewBag.questions[j].goodAnswers[i])
                                 {
                                     <label class="form-check-label">To jest poprawna odpowiedź</label>
                                 }

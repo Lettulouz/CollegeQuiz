@@ -5,6 +5,7 @@ import QuizQuestionAnswerComponent from "./QuizQuestionAnswerComponent.jsx";
 import QuizQuestionRangeTypeComponent from "./QuizQuestionRangeTypeComponent.jsx";
 import QuizSessionQuestionResultComponent from "./QuizSessionQuestionResultComponent.jsx";
 import QuizQuestionUniversalTypeComponent from "./QuizQuestionUniversalTypeComponent.jsx";
+import QuizQuestionTrueFalseAnswerTypeComponent from "./QuizQuestionTrueFalseAnswerTypeComponent.jsx";
 
 const QuizSessionMainGameWindowComponent = () => {
     const {
@@ -86,10 +87,18 @@ const QuizSessionMainGameWindowComponent = () => {
         </QuizQuestionUniversalTypeComponent>
     );
 
+    const generateTrueFalseAnswers = () => (
+        <QuizQuestionUniversalTypeComponent>
+            {Array.from({ length: 2 }).map((_, i) => (
+                <QuizQuestionTrueFalseAnswerTypeComponent key={i} number={i}/>
+            ))}
+        </QuizQuestionUniversalTypeComponent>
+    );
+    
     const renderQuestionTypeSection = () => {
         switch (questionType) {
             case 1: return generateUniversalAnswers(4, false);  // 4 odpowiedzi, jedna poprawna
-            case 2: return generateUniversalAnswers(2, false);  // true/false
+            case 2: return generateTrueFalseAnswers();          // true/false
             case 3: return generateUniversalAnswers(4, true);   // 4 odpowiedzi, wiele poprawnych
             case 4: return generateUniversalAnswers(6, false);  // 6 odpowiedzi, jedna poprawna
             case 5: return <QuizQuestionRangeTypeComponent/>;
