@@ -761,39 +761,22 @@ public class AdminService : IAdminService
             var questions = await _context.Answers
                 .Include(q => q.QuestionEntity)
                 .Where(q => q.QuestionEntity.QuizId.Equals(quizInfo.Id))
+                .GroupBy(q=>q.QuestionEntity.Id)
                 .Select(q => new
-                {
-                    qid=q.Id,
-                    question = q.QuestionEntity.Name,
-                    answer = q.Name,
-                    time_min = q.QuestionEntity.TimeMin,
-                    time_sec = q.QuestionEntity.TimeSec,
-                    type = q.QuestionEntity.QuestionType,
-                    max = q.Max, max_counted = q.MaxCounted,
-                    min = q.Min, min_counted = q.MinCounted,
-                    is_range = q.IsRange, step = q.Step,
-                    correct_answer = q.CorrectAnswer
-                    
-                    
-                })
-                .OrderBy(q=>q.qid)
-                .GroupBy(q=>q.question)
-                .Select(q=>new
-                {   
-                    qid=q.Select(a=>a.qid).FirstOrDefault(),
-                    question = q.Key,
-                    answers = q.Select(a => a.answer).ToList(),
-                    time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault(),
-                    type = q.Select(a=>a.type).FirstOrDefault(),
-                    max = q.Select(a=>a.max).ToList(),
-                    max_counted = q.Select(a=>a.max_counted).ToList(),
-                    min = q.Select(a=>a.min).ToList(),
-                    min_counted = q.Select(a=>a.min_counted).ToList(),
-                    is_range = q.Select(a=>a.is_range).ToList(),
-                    step = q.Select(a=>a.step).ToList(),
-                    correct_answer = q.Select(a=>a.correct_answer).ToList()
-
-                }).OrderBy(q=>q.qid).ToListAsync();
+                    {
+                        qid = q.Key,
+                        question = q.First().QuestionEntity.Name,
+                        type = q.First().QuestionEntity.QuestionType,
+                        answers = q.Select(a => a.Name).ToList(),
+                        time_sec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).First(),
+                        step = q.First().Step,
+                        min = q.First().Min,
+                        max = q.First().Max,
+                        min_counted = q.First().MinCounted,
+                        max_counted = q.First().MaxCounted,
+                        correct_answer = q.First().CorrectAnswer
+                    })
+                .ToListAsync();
 
             controller.ViewBag.questions = questions;
             List<string> images = new();
