@@ -693,8 +693,8 @@ public class AdminService : IAdminService
         {
             CategoryListDto categoryModel = new();
 
-            categoryModel.CategoryId = categoryData.CategoryId;
-            categoryModel.CategoryName = categoryData.Category;
+            categoryModel.CategoryId = categoryData.Id;
+            categoryModel.CategoryName = categoryData.Name;
             
             DtoList2.Add(categoryModel);
         }
@@ -735,7 +735,7 @@ public class AdminService : IAdminService
         var category = _context.Categories.Find(id);
         if (category != null)
         {
-            String message = string.Format(Lang.CATEGORY_REMOVED, category.Category);
+            String message = string.Format(Lang.CATEGORY_REMOVED, category.Name);
             _context.Remove(category);
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.CATEGORY_REMOVED, message);
@@ -864,12 +864,12 @@ public class AdminService : IAdminService
         string message;
         message = string.Format(Lang.CATEGORIES_GENERATED_INFO_STRING, name);
         
-        if ( _context.Categories.FirstOrDefault(o => o.Category.Equals(obj.Dto.CategoryName)) != null)
+        if ( _context.Categories.FirstOrDefault(o => o.Name.Equals(obj.Dto.CategoryName)) != null)
             controller.ModelState.AddModelError("CategoryName", Lang.CATEGORYNAME_MUST_BE_UNIQUE);
 
         if (!controller.ModelState.IsValid) return;
         CategoryEntity categoryEntity = new();
-        categoryEntity.Category = name;
+        categoryEntity.Name = name;
         
         message += name;
         message += "</br>";

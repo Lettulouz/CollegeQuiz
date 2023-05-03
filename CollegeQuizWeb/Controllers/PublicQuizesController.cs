@@ -39,8 +39,14 @@ public class PublicQuizesController : Controller
 
 
         ViewBag.Alert = Utilities.getSessionPropertyAndRemove(HttpContext, SessionKey.MY_QUIZES_ALERT)!;
-        ViewBag.Quizes = await _service.GetPublicQuizes();
+
+        if (HttpContext.Session.GetString(SessionKey.CATEGORY_FILTER) != "true")
+        {
+            ViewBag.Quizes = await _service.GetPublicQuizes();
+        }
         
+        await _service.Categories(this);
+
         return View();
     }
 
@@ -97,5 +103,12 @@ public class PublicQuizesController : Controller
             return;
         }
         await _service.Share(token, this);
+    }
+    
+    public async Task Filter(string[] tags)
+    {
+        string[] board = tags;
+        Response.Redirect("/PublicQuizes/Quizes");
+        ViewBag.Quizes = await _service.Filter(this, board);
     }
 }

@@ -8,13 +8,10 @@ namespace CollegeQuizWeb.Entities;
 [Table("category")]
 public class CategoryEntity : AbstractAuditableEntity
 {
-    [Required]
-    [Column("id")]
-    public long CategoryId { get; set; }
     
     [Required]
     [Column("name")]
-    public string Category { get; set; }
+    public string Name { get; set; }
 
     public virtual ICollection<QuizCategoryEntity> QuizCategoryEntities { get; set; }
 }
