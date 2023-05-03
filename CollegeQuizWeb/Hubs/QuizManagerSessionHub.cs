@@ -159,7 +159,7 @@ public class QuizManagerSessionHub : Hub
                 if (await periodicTimer.WaitForNextTickAsync(token2))
                 {
                     timer--;
-                    questionTick.Elapsed = timer;
+                    questionTick.Remaining = timer;
                     await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                 }
@@ -176,7 +176,7 @@ public class QuizManagerSessionHub : Hub
                     if (amountOfUniqueAnswers >= amountOfParticipants)
                     {
                         timer = 0;
-                        questionTick.Elapsed = 0;
+                        questionTick.Remaining = 0;
                         await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     }
                 }

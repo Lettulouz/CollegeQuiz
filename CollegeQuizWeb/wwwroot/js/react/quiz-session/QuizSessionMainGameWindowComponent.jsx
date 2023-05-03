@@ -23,6 +23,7 @@ const QuizSessionMainGameWindowComponent = () => {
         connection.on("INIT_GAME_SEQUENCER_P2P", counter => {
             setScreenAction(COUNTING_SCREEN);
             setCounting(counter);
+            playSound(counter);
         });
         
         // rozpoczęcie gry
@@ -53,8 +54,9 @@ const QuizSessionMainGameWindowComponent = () => {
         // timer odliczający czas pytania
         connection.on("QUESTION_TIMER_P2P", counter => {
             const parsedCounter = JSON.parse(counter);
-            setProgressWidth((parsedCounter.Elapsed / parsedCounter.Total) * 100);
-            setQuestionTimer(parsedCounter.Elapsed);
+            setProgressWidth((parsedCounter.Remaining / parsedCounter.Total) * 100);
+            setQuestionTimer(parsedCounter.Remaining);
+            playSound(parsedCounter.Remaining);
         });
 
         // ustawienie prawidłowego pytania
@@ -78,6 +80,14 @@ const QuizSessionMainGameWindowComponent = () => {
             });
         });
     }, []);
+    
+    const playSound = counter => {
+        if(counter <= 5 && counter>0){
+            var audio = new Audio("/sounds/counter/" + counter + ".mp4");
+            audio.volume = 0.8
+            audio.play();
+        }
+    }
     
     const generateUniversalAnswers = (count, multiSelect) => (
         <QuizQuestionUniversalTypeComponent>

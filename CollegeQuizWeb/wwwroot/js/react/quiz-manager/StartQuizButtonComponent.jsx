@@ -18,6 +18,7 @@ const StartQuizButtonComponent = () => {
         const interval = setInterval(() => {
             connection.invoke('INIT_GAME_SEQUENCER_P2P', i, SESS_TOKEN).then(r => setCounting(r));
             setStartBtnText(`Zaczyna się za ${i}...`);
+            playSound(i);
             setCountingActive(true);
             if (i === 0) {
                 setStartBtnText('Aktywny');
@@ -31,6 +32,14 @@ const StartQuizButtonComponent = () => {
             --i;
         }, 1000);
     };
+
+    const playSound = counter => {
+        if(counter <= 5 && counter>0){
+            var audio = new Audio("/sounds/counter/" + counter + ".mp4");
+            audio.volume = 0.8
+            audio.play();
+        }
+    }
     
     return (
         <button className="btn btn-color-second-short w-100 btn-std" onClick={startQuiz}

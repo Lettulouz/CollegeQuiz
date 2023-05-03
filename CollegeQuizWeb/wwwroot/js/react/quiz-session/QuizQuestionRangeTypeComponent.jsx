@@ -14,6 +14,7 @@ const QuizQuestionRangeTypeComponent = () => {
     const stepsSlider = React.useRef(null);
     const stepsSliderResult = React.useRef(null);
     const componentReady = React.useRef(false);
+    const component2Ready = React.useRef(false);
 
     const handleClick = () => {
         if (isAnswerSet || currentAnswer !== "") return;
@@ -32,6 +33,9 @@ const QuizQuestionRangeTypeComponent = () => {
     };
 
     React.useEffect(() => {
+        if (stepsSlider.current.outerHTML !== '<div></div>') {
+            stepsSlider.current.noUiSlider.destroy();
+        }
         noUiSlider.create(stepsSlider.current, {
             start: [ answerSett.min, answerSett.max ],
             behaviour: 'drag',
@@ -71,6 +75,9 @@ const QuizQuestionRangeTypeComponent = () => {
             ];
         }
 
+        if (stepsSliderResult.current.outerHTML !== '<div></div>') {
+            stepsSliderResult.current.noUiSlider.destroy();
+        }
         noUiSlider.create(stepsSliderResult.current, {
             start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
             connect: true,
