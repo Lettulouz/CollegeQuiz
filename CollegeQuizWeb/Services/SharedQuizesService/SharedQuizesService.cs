@@ -139,6 +139,12 @@ public class SharedQuizesService : ISharedQuizesService
         }
     }
     
+    /// <summary>
+    /// Method that is being used to get image for question in quiz
+    /// </summary>
+    /// <param name="quizId">Quiz id</param>
+    /// <param name="gId">Question id</param>
+    /// <returns>Image</returns>
     async Task<string> GetQuestionImage(long quizId, int qId)
     {
         string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
