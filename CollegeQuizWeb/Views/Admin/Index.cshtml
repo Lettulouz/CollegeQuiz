@@ -94,6 +94,30 @@
                 </div>
             </div>
         </div>
+        
+        <div class="col-12 col-sm-6 col-xl-4 mb-3">
+                    <div class="card main-card custom-card-5 text-white mb-0 h-100 ">
+                        <div class="card-header">
+                            Subskrypcje
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Łączna liczba Pakietów: @ViewBag.subStats.Total</h5>
+                            @if (ViewBag.subInfo != null)
+                            {
+                                @foreach (var type in @ViewBag.subInfo)
+                                {
+                                    <p class="card-text mb-1">@type.Name: @type.Price zł</p>
+                                }
+                            }
+                            
+                            <p class="card-text mt-auto">
+                                <a class="text-white" asp-area="" asp-controller="Admin" asp-action="Subscriptions">
+                                    Przeglądaj subskrypcje
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
 
     </div>

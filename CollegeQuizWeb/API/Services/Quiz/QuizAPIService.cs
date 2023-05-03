@@ -36,7 +36,7 @@ public class QuizAPIService : IQuizAPIService
         if (quizEntity == null) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
+            Message = Lang.QUIZ_NOT_FOUND
         };
         // usunięcie poprzednich pytań
         var prevQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizEntity.Id));
@@ -47,7 +47,7 @@ public class QuizAPIService : IQuizAPIService
         if (flattedQuestions.Count != flattedQuestions.Distinct().Count()) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = "Pytania w edytowanym quizie nie mogą się powtarzać."
+            Message = Lang.QUESTIONS_REPEATED
         };
         foreach (var question in dto.Aggregate)
         {
@@ -56,8 +56,7 @@ public class QuizAPIService : IQuizAPIService
                 return new SimpleResponseDto()
                 {
                     IsGood = false,
-                    Message = $"Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór " +
-                              $"trybu <strong>{QuizModes.GetValueFromSlug(question.Type)}</strong> rozgrywki."
+                    Message = String.Format(Lang.PACKAGE_DOES_NOT_ALLOW, QuizModes.GetValueFromSlug(question.Type))
                 };
             }
             int min, sec;
@@ -66,20 +65,20 @@ public class QuizAPIService : IQuizAPIService
                 return new SimpleResponseDto()
                 {
                     IsGood = false,
-                    Message = "Podane wartości czasu nie są liczbami."
+                    Message = Lang.GIVEN_VALUES_NOT_NUMBERS
                 };
             }
             if (sec < 5 || sec > 59) return new SimpleResponseDto()
             {
                 IsGood = false,
-                Message = "Wartość sekund nie może być mniejsza od 10 i większa od 59."
+                Message = Lang.WRONG_TIME_INTERVALS
             };
             if (min < 0) min = 0;
             var questionType = await _context.QuestionTypeEntities.FirstOrDefaultAsync(t => t.Name.Equals(question.Type));
             if (questionType == null) return new SimpleResponseDto()
             {
                 IsGood = false,
-                Message = "Nie znaleziono typu pytania."
+                Message = Lang.WRONG_QUESTION_TYPE
             };
             QuestionEntity questionEntity = new QuestionEntity()
             {
@@ -95,7 +94,7 @@ public class QuizAPIService : IQuizAPIService
             if (flattedAnswers.Count != flattedAnswers.Distinct().Count()) return new SimpleResponseDto()
             {
                 IsGood = false,
-                Message = $"Odpowiedzi w pytaniu <strong>{question.Text}</strong> nie mogą być takie same."
+                Message = String.Format(Lang.QUESTION_REPEATED, question.Text)
             };
             foreach (var answer in question.Answers)
             {
@@ -134,7 +133,7 @@ public class QuizAPIService : IQuizAPIService
         return new SimpleResponseDto()
         {
             IsGood = true,
-            Message = $"Quiz o nazwie <strong>{quizEntity.Name}</strong> został pomyślnie zaktualizowany."
+            Message = String.Format(Lang.QUIZ_NAME_UPDATED, quizEntity.Name)
         };
     }
 
@@ -223,7 +222,7 @@ public class QuizAPIService : IQuizAPIService
         if (quizEntity == null) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
+            Message = Lang.QUIZ_NOT_FOUND
         };
         int countOfSameName = _context.Quizes.Include(q => q.UserEntity)
             .Where(q => q.Name.Equals(newQuizName, StringComparison.OrdinalIgnoreCase)
@@ -232,7 +231,7 @@ public class QuizAPIService : IQuizAPIService
         if (countOfSameName != 0) return new SimpleResponseDto()
         {
             IsGood = false,
-            Message = $"Quiz o nazwie <strong>{newQuizName}</strong> istnieje już na Twoim koncie. Podaj inną nazwę."
+            Message = String.Format(Lang.QUIZ_NAME_REPEATED, newQuizName)
         };
         string prevName = quizEntity.Name;
         quizEntity.Name = newQuizName;
@@ -242,8 +241,7 @@ public class QuizAPIService : IQuizAPIService
         return new SimpleResponseDto()
         {
             IsGood = true,
-            Message = $"Nazwa quizu o nazwie <strong>{prevName}</strong> została pomyślnie " +
-                      $"zmieniona na <strong>{newQuizName}</strong>",
+            Message = String.Format(Lang.QUIZ_NAME_UPDATED2, prevName, newQuizName),
         };
     }
 
@@ -255,7 +253,7 @@ public class QuizAPIService : IQuizAPIService
         if (quizEntity == null) return new QuizImagesResDto()
         {
             IsGood = false,
-            Message = "Nie znaleziono quizu przypisanego do Twojego konta."
+            Message = Lang.QUIZ_NOT_FOUND
         };
         string dir = $"{FOLDER_PATH}/{quizId}";
         DirectoryInfo directoryInfo = new DirectoryInfo(dir);
@@ -273,12 +271,12 @@ public class QuizAPIService : IQuizAPIService
             if (upload == null || upload.Length == 0) return new QuizImagesResDto()
             {
                 IsGood = true,
-                Message = $"Wystąpił problem z załadowaniem grafiki."
+                Message = Lang.IMAGE_ERROR
             };
             if (Array.IndexOf(ACCEPTABLE_IMAGE_TYPES, upload.ContentType) == -1) return new QuizImagesResDto()
             {
                 IsGood = true,
-                Message = $"Akceptowane rozszerzenia pliku to <strong>{string.Join(", ", ACCEPTABLE_IMAGE_TYPES)}</strong."
+                Message = String.Format(Lang.IMAGE_ACCEPTED_EXTENSIONS, string.Join(", ", ACCEPTABLE_IMAGE_TYPES))
             };
             string index = Regex.Match(upload.FileName, @"\d+").Value;
             string fullPath = $"{FOLDER_PATH}/{quizId}/question{index}.jpg";
@@ -302,7 +300,7 @@ public class QuizAPIService : IQuizAPIService
         {
             IsGood = true,
             QuizImages = quizImages,
-            Message = $"Quiz o nazwie <strong>{quizEntity.Name}</strong> został pomyślnie zaktualizowany."
+            Message = String.Format(Lang.QUIZ_NAME_UPDATED, quizEntity.Name)
         };
     }
 }

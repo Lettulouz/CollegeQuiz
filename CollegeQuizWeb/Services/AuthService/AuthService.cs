@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CollegeQuizWeb.Services.AuthService;
 
@@ -38,6 +39,11 @@ public class AuthService : IAuthService
         var userEntity = await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(obj.Dto.LoginOrEmail)
                                                                  || o.Email.Equals(obj.Dto.LoginOrEmail));
 
+        if (obj.Dto.Password.IsNullOrEmpty())
+        {
+            controller.ModelState.AddModelError("Password", Lang.PASSWORD_TO_SHORT_ERROR);
+            return;
+        }
         if (userEntity != null)
         {
             if (!userEntity.IsAccountActivated)
@@ -117,6 +123,11 @@ public class AuthService : IAuthService
 
         AuthController controller = obj.ControllerReference;
 
+        if (obj.Dto.Password.IsNullOrEmpty())
+        {
+            controller.ModelState.AddModelError("Password", Lang.PASSWORD_TO_SHORT_ERROR);
+            return;
+        }
         UserEntity userEntity = new();
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;

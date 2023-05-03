@@ -55,17 +55,27 @@
 
                     @if (ViewBag.questions != null)
                     {
-                        @foreach (var question in ViewBag.questions)
+                        @for (int j = 0; j < ((IEnumerable<dynamic>)ViewBag.questions).Count(); j++)
                         {
                             <div class="row text-center m-1">
-                                <h5>@question.question |<a>@question.time_sec</a>s</h5>
-
-                                @foreach (var answer in question.answers)
-                                {
-                                    <div class="col-12 col-sm-6 p-2">
-                                        @answer
-                                    </div>
+                                
+                                <h5>@ViewBag.questions[j].question |<a>@ViewBag.questions[j].time_sec</a>s</h5>
+                                    @if (ViewBag.images[j]!="")
+                                {   <div class="d-flex justify-content-center">
+                                        <div class="bg-transparent border-image">
+                                            <img src="data:image/jpeg;base64,@ViewBag.images[j]" class="align-middle" style="width: 100%; height: 100%" alt=""/>
+                                        </div>
+                                    </div>    
                                 }
+                                    
+                                <div class="row p-0 m-0">
+                                    @foreach (var answer in @ViewBag.questions[j].answers)
+                                    {
+                                        <div class="col-12 col-sm-6 p-2">
+                                            @answer
+                                        </div>
+                                    }
+                                </div>
                                 <hr/>
                             </div>
                         }
@@ -76,3 +86,4 @@
         </div>
     </div>
 }
+

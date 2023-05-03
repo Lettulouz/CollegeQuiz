@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -14,6 +18,7 @@ using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +31,8 @@ public class AdminService : IAdminService
     private readonly ApplicationDbContext _context;
     private readonly IPasswordHasher<UserEntity> _passwordHasher;
     private readonly ISmtpService _smtpService;
+    public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
+    public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
 
     public AdminService(ILogger<AdminService> logger, ApplicationDbContext context, ISmtpService smtpService,
         IPasswordHasher<UserEntity> passwordHasher)
@@ -138,6 +145,19 @@ public class AdminService : IAdminService
             }).FirstOrDefaultAsync();
        
        controller.ViewBag.couponStats = couponStats ?? new { Total = 0, Archive = 0, Active = 0};
+       
+       var subStats = await (from q in _context.Coupons
+           group q by 1
+           into g
+           select new
+           {
+               Total = _context.SubsciptionTypes.Count(),
+           }).FirstOrDefaultAsync();
+       
+       controller.ViewBag.subStats = subStats ?? new { Total = 0};
+
+       var subInfo = await _context.SubsciptionTypes.ToListAsync();
+       controller.ViewBag.subInfo = subInfo;
     }
     
     
@@ -272,7 +292,7 @@ public class AdminService : IAdminService
         {
             TemplateName = TemplateName.EDIT_USER,
             ToEmails = new List<string>() { userEntity.Email },
-            Subject = $"Aktualizacja konta dla {userEntity.FirstName} {userEntity.LastName} ({userEntity.Username})",
+            Subject = string.Format(Lang.ACCOUNT_UPDATE_FOR, userEntity.FirstName, userEntity.LastName, userEntity.Username),
             DataModel = emailViewModel
         };
         if (!await _smtpService.SendEmailMessage(options))
@@ -652,6 +672,8 @@ public class AdminService : IAdminService
 
         return DtoList;
     }
+
+    
     
     public async Task<List<CategoryListDto>> GetCategoryList()
     {
@@ -712,28 +734,53 @@ public class AdminService : IAdminService
         {
             controller.ViewBag.quizInfo = quizInfo;
 
-            controller.ViewBag.questions = await _context.Answers
+            var questions = await _context.Answers
                 .Include(q => q.QuestionEntity)
                 .Where(q => q.QuestionEntity.QuizId.Equals(quizInfo.Id))
                 .Select(q => new
                 {
+                    qid=q.Id,
                     question = q.QuestionEntity.Name,
                     answer = q.Name,
                     time_min = q.QuestionEntity.TimeMin,
                     time_sec = q.QuestionEntity.TimeSec
                 })
+                .OrderBy(q=>q.qid)
                 .GroupBy(q=>q.question)
                 .Select(q=>new
-                {
+                {   
+                    qid=q.Select(a=>a.qid).FirstOrDefault(),
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
                     time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault()
-                }).ToListAsync();
-            //controller.ViewBag.UserQuizes = await _context.Quizes
-            //    .Where(q => q.UserId.Equals(id)).ToListAsync();
+                }).OrderBy(q=>q.qid).ToListAsync();
+
+            controller.ViewBag.questions = questions;
+            List<string> images = new();
+            for (int i = 1; i <= questions.Count; i++)
+            {
+                images.Add(await GetQuestionImage(id,i));
+            }
+
+           controller.ViewBag.images = images;
         }
     }
     
+    async Task<string> GetQuestionImage(long quizId, int qId)
+    {
+        string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
+        if (!File.Exists(dir)) return "";
+            Image image = Image.FromFile(dir);
+            image = new Bitmap(image, new Size(500, 500));
+            MemoryStream ms = new MemoryStream();
+            image.Save(ms, ImageFormat.Jpeg);
+            byte[] byteImg = ms.ToArray();
+            string b64Img = Convert.ToBase64String(byteImg);
+            ms.Close();
+
+            return b64Img;
+    }
+
     public async Task CreateCoupons(CouponDtoPayload obj)
     {
         var controller = obj.ControllerReference;
@@ -873,6 +920,7 @@ public class AdminService : IAdminService
             dto.Price = type.Price.ToString("N", CultureInfo.InvariantCulture);
             string? Discount = type.CurrentDiscount.ToString().Replace(',', '.');
             dto.CurrentDiscount = Discount;
+            dto.BeforeDiscountPrice = type.BeforeDiscountPrice.ToString().Replace(',', '.');
             
             subTypes.Add(dto);
         }
@@ -892,10 +940,16 @@ public class AdminService : IAdminService
             var Price = obj.Dto.Price.Replace('.', ',');
             paymentEntity.Price = Convert.ToDecimal(Price);
             string? Discount = obj.Dto.CurrentDiscount.ToString().Replace('.', ',');
-            paymentEntity.CurrentDiscount = Convert.ToDouble(Discount);
-
+            paymentEntity.CurrentDiscount = Convert.ToDouble(Discount); 
+            string? BefDiscount = obj.Dto.BeforeDiscountPrice.ToString().Replace('.', ',');
+            paymentEntity.BeforeDiscountPrice = Convert.ToDecimal(BefDiscount);
+                
             _context.Update(paymentEntity);
             await _context.SaveChangesAsync();
+
+            String message = String.Format(Lang.SUB_UPDATED, obj.Dto.Name);
+            controller.HttpContext.Session.SetString(SessionKey.SUB_UPDATED,message);
+            
             controller.Response.Redirect("/Admin/Subscriptions");
         }
         

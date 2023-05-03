@@ -49,6 +49,7 @@ public class QuizManagerSessionHub : Hub
     public async Task START_GAME_P2P(string token)
     {
         await Clients.Group(token).SendAsync("ON_NEXT_QUESTION_P2P", false);
+        await _hubUserContext.Clients.Group(token).SendAsync("MOBILE_CHECKPOINT");
         token = token.ToUpper();
         Console.WriteLine("punkt testowy 1");
         var quiz = await _context.QuizLobbies
@@ -84,7 +85,6 @@ public class QuizManagerSessionHub : Hub
             .GroupBy(q=>q.questionId)
             .Select(q=>new
             {
-                
                 questionId = q.Select(a => a.questionId).Distinct().FirstOrDefault(),
                 question = q.Select(a => a.question).Distinct().FirstOrDefault(),
                 questionType = q.Select(a => a.question_type).Distinct().FirstOrDefault(),
@@ -459,10 +459,15 @@ public class QuizManagerSessionHub : Hub
             
             await _hubUserContext.Clients.Group(token)
                 .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
-            Thread.Sleep(2000);
-
+            
+            if(question.questionType == 5)
+                Thread.Sleep(4000);
+            else
+                Thread.Sleep(2500);
+            
             await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
             await Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
+
         }
         
         Console.WriteLine("punkt testowy 9");
@@ -470,11 +475,6 @@ public class QuizManagerSessionHub : Hub
         _context.QuizLobbies.Update(quiz);
         await _context.SaveChangesAsync();
         Console.WriteLine("punkt testowy 10");
-
-        if (quiz.CurrentQuestion == questions.Count)
-        {
-            await Clients.Group(token).SendAsync("ON_END_QUESTIONS_P2P", true);
-        }
     }
 
     private void AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,

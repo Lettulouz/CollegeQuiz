@@ -128,6 +128,7 @@ public static class Lang
     public const string PASSWORD_CHANGED = "Hasło do Twojego konta zostało pomyślnie zmienione.";
     public const string QUIZ_ALREADY_EXISTS = "Quiz o wybranej nazwie istnieje już na Twoim koncie. Wprowadź inną nazwę.";
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
+    public const string ACCOUNT_UPDATE_FOR = "Aktualizacja konta dla {0} {1} ({2})";
 
     public const string CATEGORY_REMOVED = "Kategoria {0} została usunięta";
     
@@ -171,4 +172,31 @@ public static class Lang
     public const string PAYU_WAITING = "Oczekuje";
     public const string PAYU_COMPLETED = "Zakończona";
     public const string PAYU_CANCELED = "Anulowana";
+    
+    public const string SUB_UPDATED = "Pakiet {0} został zaktualizowamy";
+    public const string SUB_ERROR = "Pola nazwa i cena nie mogą być puste";
+    
+    public const string HOST_DISCONECTED = "Host zakończył sesję";
+    public const string HOST_ERROR = "Host gry nie może jednocześnie być hostem i brać w niej udziału";
+    public const string QUIZ_NOT_FOUND = "Nie znaleziono quizu przypisanego do Twojego konta";
+    public const string QUESTIONS_REPEATED = "Pytania w edytowanym quizie nie mogą się powtarzać";
+    public const string PACKAGE_DOES_NOT_ALLOW = "Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór" +
+                                                 "trybu <strong>{0}</strong> rozgrywki.";
+    public const string GIVEN_VALUES_NOT_NUMBERS = "Podane wartości czasu nie są liczbami";
+    public const string WRONG_TIME_INTERVALS = "Wartość sekund nie może być mniejsza od 10 i większa od 59.";
+    public const string WRONG_QUESTION_TYPE = "Nie znaleziono typu pytania";
+    public const string QUESTION_REPEATED = "Odpowiedzi w pytaniu <strong>{0}</strong> nie mogą być takie same.";
+    public const string QUIZ_NAME_UPDATED = "Quiz o nazwie <strong>{0}</strong> został pomyślnie zaktualizowany";
+    public const string QUIZ_NAME_REPEATED = "Quiz o nazwie <strong>{0}</strong> istnieje już na Twoim koncie. Podaj inną nazwę.";
+    public const string QUIZ_NAME_UPDATED2 = "Nazwa quizu o nazwie <strong>{0}</strong> została pomyślnie zmieniona na <strong>{1}</strong>";
+    public const string IMAGE_ERROR = "Wystąpił problem z załadowaniem grafiki";
+    public const string IMAGE_ACCEPTED_EXTENSIONS = "Akceptowane rozszerzenia pliku to <strong>{0}</strong>.";
+    public const string CURRNETLY_IN_GAME = "Na tym koncie obecnie prowadzona jest rozgrywka w sesji. Użyj innego konta.";
+    public const string CURRNETLY_NOT_IN_GAME = "Obecnie nie jesteś w wybranej grze.";
+    public const string SESSION_LEFT_ENTER_TOKEN = "Wyszedłeś z sesji, aby wejść ponownie wprowadź kod quizu.";
+    public const string HOST_NOT_FOUND = "Nie znaleziono aktywnego hosta sesji gry.";
+    public const string HOST_DISCONECT_USER = "Zostałeś rozłączony przez hosta.";
+
+    
+
 }
