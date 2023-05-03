@@ -27,7 +27,7 @@ const QuizSessionMainGameWindowComponent = () => {
         });
         
         // rozpoczęcie gry
-        connection.on("START_GAME_P2P", () => setScreenAction(IN_GAME));
+        connection.on("START_GAME_P2P", () => {});
 
         // przeładowanie mobilnej aplikacji
         connection.on("MOBILE_CHECKPOINT", () => {});
@@ -36,9 +36,9 @@ const QuizSessionMainGameWindowComponent = () => {
         connection.on("QUESTION_P2P", answ => {
             const parsedAnswers = JSON.parse(answ);
             const { step, min, max, min_counted, max_counted } = parsedAnswers;
-            
-            setQuestion(parsedAnswers.question);
             setAnswerSett({ step, min, max, min_counted, max_counted });
+            setScreenAction(IN_GAME)
+            setQuestion(parsedAnswers.question);
             setAnswRange({ min, max });
             setAnswers(parsedAnswers.answers);
             
@@ -46,7 +46,6 @@ const QuizSessionMainGameWindowComponent = () => {
             setQuestionTimer(parsedAnswers.time_sec);
             setQuestionNumber(parsedAnswers.questionId);
             setQuestionImage(parsedAnswers.image_url);
-            
             setIsAnswerSet(false);
             setCurrentAnswer("");
         });

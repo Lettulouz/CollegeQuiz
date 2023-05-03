@@ -7,7 +7,7 @@ import QuizQuestionProgressBarComponent from "./QuizQuestionProgressBarComponent
 const QuizQuestionRangeTypeComponent = () => {
     const {
         connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer, answerSett, answRange, setAnswRange,
-        questionImage, question, questionTimer
+        questionImage, question, questionTimer, answers
     } = React.useContext(SessionContext);
 
     
@@ -33,9 +33,8 @@ const QuizQuestionRangeTypeComponent = () => {
     };
 
     React.useEffect(() => {
-        if (stepsSlider.current.outerHTML !== '<div></div>') {
-            stepsSlider.current.noUiSlider.destroy();
-        }
+        console.log(answerSett)
+        console.log(answers)
         noUiSlider.create(stepsSlider.current, {
             start: [ answerSett.min, answerSett.max ],
             behaviour: 'drag',
@@ -75,9 +74,7 @@ const QuizQuestionRangeTypeComponent = () => {
             ];
         }
 
-        if (stepsSliderResult.current.outerHTML !== '<div></div>') {
-            stepsSliderResult.current.noUiSlider.destroy();
-        }
+        if (!stepsSliderResult.current) return;
         noUiSlider.create(stepsSliderResult.current, {
             start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
             connect: true,
@@ -114,7 +111,9 @@ const QuizQuestionRangeTypeComponent = () => {
                         <div ref={stepsSlider}></div>
                     </div>
                     <div className="row d-flex mt-6 px-3">
+                        {isAnswerSet &&
                         <div ref={stepsSliderResult}></div>
+                        }
                     </div>
                     {!isAnswerSet &&
                     <div className="row d-flex mt-3 px-3">
