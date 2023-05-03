@@ -743,7 +743,6 @@ select{
     margin-top: 60px;
 }
 
-/*
 .icon-animation{
     animation: pulse 2s infinite;
 }
@@ -759,7 +758,6 @@ select{
         transform: scale(0.8);
     }
 }
-*/
 
 .kick-user:hover {
     color: #941103!important;
