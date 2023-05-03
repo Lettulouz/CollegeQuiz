@@ -48,58 +48,40 @@ const QuizQuestionRangeTypeComponent = () => {
     }, []);
 
     React.useEffect(() => {
-        if (currentAnswer !== "") {
-            if(currentAnswer[0].AnswerMinCounted === currentAnswer[0].AnswerCorrect){
-                noUiSlider.create(stepsSliderResult.current, {
-                    start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
-                    connect: true,
-                    tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
-                    handleAttributes: [
-                        { 'style': 'background:#DC3545' },
-                        { 'style': 'background:#DC3545' },
-                        { 'aria-label': 'upper' },
-                    ],
-                    range: {
-                        'min': [ answerSett.min, answerSett.step ],
-                        'max' :answerSett.max
-                    },
-                });
-            }else if(currentAnswer[0].AnswerMaxCounted === currentAnswer[0].AnswerCorrect){
-                noUiSlider.create(stepsSliderResult.current, {
-                    start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
-                    connect: true,
-                    tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
-                    handleAttributes: [
-                        { 'aria-label': 'upper' },
-                        { 'style': 'background:#DC3545' },
-                        { 'style': 'background:#DC3545' },
-                    ],
-                    range: {
-                        'min': [ answerSett.min, answerSett.step ],
-                        'max' :answerSett.max
-                    },
-                });
-            }else{
-                noUiSlider.create(stepsSliderResult.current, {
-                    start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
-                    connect: true,
-                    tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
-                    handleAttributes: [
-                        { 'aria-label': 'upper' },
-                        { 'style': 'background:#DC3545' },
-                        { 'aria-label': 'upper' },
-                    ],
-                    range: {
-                        'min': [ answerSett.min, answerSett.step ],
-                        'max' :answerSett.max
-                    },
-                });
-            }
-            stepsSliderResult.current.noUiSlider.disable(0);
-            stepsSliderResult.current.noUiSlider.disable(1);
-            stepsSliderResult.current.noUiSlider.disable(2);
+        if (!currentAnswer) return;
+
+        let attributes;
+        if(currentAnswer[0].AnswerMinCounted === currentAnswer[0].AnswerCorrect) {
+            attributes =  [
+                { 'style': 'background:#DC3545' },
+                { 'style': 'background:#DC3545' },
+                { 'aria-label': 'upper' },
+            ];
+        } else if (currentAnswer[0].AnswerMaxCounted === currentAnswer[0].AnswerCorrect) {
+            attributes = [
+                { 'aria-label': 'upper' },
+                { 'style': 'background:#DC3545' },
+                { 'style': 'background:#DC3545' },
+            ];
+        } else {
+            attributes = [
+                { 'aria-label': 'upper' },
+                { 'style': 'background:#DC3545' },
+                { 'aria-label': 'upper' },
+            ];
         }
-           
+
+        noUiSlider.create(stepsSliderResult.current, {
+            start: [ currentAnswer[0].AnswerMinCounted, currentAnswer[0].AnswerCorrect, currentAnswer[0].AnswerMaxCounted ],
+            connect: true,
+            tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
+            handleAttributes: attributes,
+            range: {
+                'min': [ answerSett.min, answerSett.step ],
+                'max': answerSett.max
+            },
+        });
+        Array.from({ length: 3 }).forEach((_, i) => stepsSliderResult.current.noUiSlider.disable(i))
     }, [currentAnswer]);
 
 
