@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -766,7 +767,14 @@ public class AdminService : IAdminService
                     question = q.QuestionEntity.Name,
                     answer = q.Name,
                     time_min = q.QuestionEntity.TimeMin,
-                    time_sec = q.QuestionEntity.TimeSec
+                    time_sec = q.QuestionEntity.TimeSec,
+                    type = q.QuestionEntity.QuestionType,
+                    max = q.Max, max_counted = q.MaxCounted,
+                    min = q.Min, min_counted = q.MinCounted,
+                    is_range = q.IsRange, step = q.Step,
+                    correct_answer = q.CorrectAnswer
+                    
+                    
                 })
                 .OrderBy(q=>q.qid)
                 .GroupBy(q=>q.question)
@@ -775,7 +783,16 @@ public class AdminService : IAdminService
                     qid=q.Select(a=>a.qid).FirstOrDefault(),
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
-                    time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault()
+                    time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault(),
+                    type = q.Select(a=>a.type).FirstOrDefault(),
+                    max = q.Select(a=>a.max).ToList(),
+                    max_counted = q.Select(a=>a.max_counted).ToList(),
+                    min = q.Select(a=>a.min).ToList(),
+                    min_counted = q.Select(a=>a.min_counted).ToList(),
+                    is_range = q.Select(a=>a.is_range).ToList(),
+                    step = q.Select(a=>a.step).ToList(),
+                    correct_answer = q.Select(a=>a.correct_answer).ToList()
+
                 }).OrderBy(q=>q.qid).ToListAsync();
 
             controller.ViewBag.questions = questions;
