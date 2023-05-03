@@ -308,6 +308,12 @@ public class UserService : IUserService
         return paymentHistoryListDtos;
     }
     
+    /// <summary>
+    /// Method that is being used to check if username belong to logged user
+    /// </summary>
+    /// <param name="id">Logged user's id</param>
+    /// /// <param name="username">Logged user's username</param>
+    /// <returns>True or false</returns>
     bool UsernameBelongsToUser(long? id, string username)
     {
         var user = _context.Users.FirstOrDefault(o => o.Username.Equals(username));

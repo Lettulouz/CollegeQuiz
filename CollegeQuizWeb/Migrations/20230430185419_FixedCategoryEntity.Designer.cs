@@ -3,6 +3,7 @@ using System;
 using CollegeQuizWeb.DbConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeQuizWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230430185419_FixedCategoryEntity")]
+    partial class FixedCategoryEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,10 +27,6 @@ namespace CollegeQuizWeb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    b.Property<int>("CorrectAnswer")
-                        .HasColumnType("int")
-                        .HasColumnName("correct_answer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -168,6 +166,7 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("varchar(80)")
                         .HasColumnName("customer_name");
@@ -608,10 +607,6 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<decimal?>("BeforeDiscountPrice")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("before_discount_price");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
@@ -626,7 +621,7 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnName("name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(5,2)")
+                        .HasColumnType("decimal(65,30)")
                         .HasColumnName("price");
 
                     b.Property<int>("SiteId")
@@ -733,10 +728,6 @@ namespace CollegeQuizWeb.Migrations
                     b.Property<int>("Question")
                         .HasColumnType("int")
                         .HasColumnName("question");
-
-                    b.Property<string>("Range")
-                        .HasColumnType("longtext")
-                        .HasColumnName("range_answer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")

@@ -15,11 +15,19 @@ public class QuizController : Controller
 {
     private readonly IQuizService _service;
 
+    /// <summary>
+    /// Quiz, contains methods for hosting, creating, checking already created quizes
+    /// </summary>
+    /// <param name="service">Quiz service interface</param>
     public QuizController(IQuizService service)
     {
         _service = service;
     }
 
+    /// <summary>
+    /// Method that is being used to render quizes (both created by user that invokes and shared)
+    /// </summary>
+    /// <returns>Quizes list View</returns>
     [HttpGet]
     public async Task<IActionResult> MyQuizes()
     {
@@ -34,6 +42,11 @@ public class QuizController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Method that is being used to render quiz preview 
+    /// </summary>
+    /// <param name="id">Id of quiz that is going to be previewed</param>
+    /// <returns>Quiz preview View</returns>
     [HttpGet]
     public async Task<IActionResult> QuizPage([FromRoute(Name = "id")] long id)
     {
@@ -46,6 +59,10 @@ public class QuizController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Method that is being used to render add new quiz view
+    /// </summary>
+    /// <returns>Add new quiz View</returns>
     [HttpGet]
     public IActionResult AddQuiz()
     {
@@ -55,6 +72,11 @@ public class QuizController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Method that is being used to add new quiz
+    /// </summary>
+    /// <param name="dto">Dto with new quiz data</param>
+    /// <returns>Add new quiz View</returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddQuiz(AddQuizDto dto)
@@ -68,6 +90,11 @@ public class QuizController : Controller
         return View(dto);
     }
     
+    /// <summary>
+    /// Method that is being used to prepare space for quiz lobby, that will be created in React
+    /// </summary>
+    /// <param name="quizId">Id of quiz that is going to be hosted</param>
+    /// <returns>Quiz lobby View</returns>
     [HttpGet]
     public async Task<IActionResult> QuizLobby([FromRoute(Name = "id")] long quizId)
     {
@@ -86,6 +113,10 @@ public class QuizController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Method that is being used to prepare quiz session view for React
+    /// </summary>
+    /// <returns>Quiz session View</returns>
     [HttpGet]
     public IActionResult QuizSession()
     {
@@ -94,6 +125,11 @@ public class QuizController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Method that is being used to delete quiz
+    /// </summary>
+    /// <param name="quizId">Id of quiz that is going to be deleted</param>
+    /// <returns>Redirect to MyQuizes</returns>
     [HttpGet]
     public async Task<IActionResult> DeleteQuiz([FromRoute(Name = "id")] long quizId)
     {
@@ -105,6 +141,11 @@ public class QuizController : Controller
         return Redirect("/Quiz/MyQuizes");
     }
 
+    /// <summary>
+    /// Method that is being used to delete connection with shared quiz
+    /// </summary>
+    /// <param name="quizId">Id of quiz that is going to be deleted</param>
+    /// <returns>Redirect to MyQuizes</returns>
     [HttpGet]
     public async Task<IActionResult> DeleteSharedQuiz([FromRoute(Name = "id")] long quizId)
     {

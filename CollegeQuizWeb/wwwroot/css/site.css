@@ -743,6 +743,11 @@ select{
     margin-top: 60px;
 }
 
+hr.hr-mid-green{
+    border-top: 2px solid #63c4ab; 
+    width:70%;
+}
+
 /*
 .icon-animation{
     animation: pulse 2s infinite;
