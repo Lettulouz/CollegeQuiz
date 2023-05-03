@@ -748,7 +748,7 @@ hr.hr-mid-green{
     width:70%;
 }
 
-/*
+
 .icon-animation{
     animation: pulse 2s infinite;
 }
@@ -764,7 +764,6 @@ hr.hr-mid-green{
         transform: scale(0.8);
     }
 }
-*/
 
 .kick-user:hover {
     color: #941103!important;
