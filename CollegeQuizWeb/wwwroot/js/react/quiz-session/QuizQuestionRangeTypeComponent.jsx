@@ -18,7 +18,7 @@ const QuizQuestionRangeTypeComponent = () => {
 
     const handleClick = () => {
         if (isAnswerSet || currentAnswer !== "") return;
-
+        
         const answer = "r" + parseInt(answRange.min) + "," + parseInt(answRange.max);
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
@@ -33,6 +33,12 @@ const QuizQuestionRangeTypeComponent = () => {
     };
 
     React.useEffect(() => {
+        console.log(stepsSliderResult.current);
+        if (stepsSliderResult.current.outerHTML !== '<div></div>') {
+            console.log("test");
+            stepsSliderResult.current.outerHTML = '<div></div>'
+            stepsSliderResult.current.noUiSlider.destroy();
+        }
         if (stepsSlider.current.outerHTML !== '<div></div>') {
             stepsSlider.current.noUiSlider.destroy();
         }
