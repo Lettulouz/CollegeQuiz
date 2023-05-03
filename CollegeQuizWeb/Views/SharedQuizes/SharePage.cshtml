@@ -16,9 +16,11 @@
             @for (int j = 0; j < ((IEnumerable<dynamic>)ViewBag.questions).Count(); j++)
             {
                 <div class="col-12">
-                    <div class="p-3 card hstack gap-2 mt-3">
-                        <div class="me-2 fs-3">@(j + 1)</div>
-                        <label class="form-control h-100" placeholder="Treść pytania">@ViewBag.questions[j].question</label>
+                <div class="p-3 card mt-3">
+                    <div class="hstack gap-2">
+                    <div class="me-2 fs-3">@(j + 1)</div>
+                    <label class="form-control h-100" placeholder="Treść pytania">@ViewBag.questions[j].question</label>
+
                         <div>
                             <label class="mb-1">Czas trwania pytania:</label>
                             <div class="d-flex mb-5">
@@ -27,8 +29,19 @@
                                 <label type="number" class="form-control time-control" placeholder="sek">@ViewBag.questions[j].time_sec</label>
                             </div>
                         </div>
-                    </div>
+                      </div>
+                        @if (ViewBag.images[j] != "")
+                    {
+                        <div class="row">
+                            <div class="d-flex justify-content-center">
+                                <div class="bg-transparent border-image">
+                                    <img src="data:image/jpeg;base64,@ViewBag.images[j]" class="align-middle" style="width: 100%; height: 100%" alt=""/>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
+            </div>
                 @for (int i = 0; i < ((IEnumerable<dynamic>)ViewBag.questions[j].answers).Count(); i++)
                 {
                     <div class="col-6">

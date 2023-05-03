@@ -1,4 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -16,6 +20,8 @@ namespace CollegeQuizWeb.Services.PublicQuizesService;
 public class PublicQuizesService : IPublicQuizesService
 {
     private readonly ApplicationDbContext _context;
+    public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
+    public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
     
     public PublicQuizesService(ApplicationDbContext context)
     {
@@ -57,11 +63,12 @@ public class PublicQuizesService : IPublicQuizesService
         {
             controller.ViewBag.shareQuizInfo = quizShareInfo;
             
-            controller.ViewBag.questions = await _context.Answers
+                var questions = await _context.Answers
                 .Include(q => q.QuestionEntity)
                 .Where(q => q.QuestionEntity.QuizId.Equals(quizShareInfo.Id))
                 .Select(q => new
                 {
+                    qid=q.Id,
                     question = q.QuestionEntity.Name,
                     answer = q.Name,
                     goodAnswer = q.IsGood,
@@ -72,6 +79,7 @@ public class PublicQuizesService : IPublicQuizesService
                 .GroupBy(q=>q.question)
                 .Select(q=>new
                 {
+                    qid=q.Select(a=>a.qid).FirstOrDefault(),
                     question = q.Key,
                     answers = q.Select(a => a.answer).ToList(),
                     goodAnswers = q.Select(a => a.goodAnswer).ToList(),
@@ -79,10 +87,36 @@ public class PublicQuizesService : IPublicQuizesService
                     time_sec = q.Select(a=>a.time_sec).FirstOrDefault(),
                     type = q.Select(a=>a.type).FirstOrDefault(),
                 })
+                .OrderBy(q=>q.qid)
                 .ToListAsync();
+
+                controller.ViewBag.questions = questions;
+                
+                List<string> images = new();
+                for (int i = 1; i <= questions.Count; i++)
+                {
+                    images.Add(await GetQuestionImage(id,i));
+                }
+                
+                controller.ViewBag.images = images;
         }
     }
 
+    async Task<string> GetQuestionImage(long quizId, int qId)
+    {
+        string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
+        if (!File.Exists(dir)) return "";
+        Image image = Image.FromFile(dir);
+        image = new Bitmap(image, new Size(500, 500));
+        MemoryStream ms = new MemoryStream();
+        image.Save(ms, ImageFormat.Jpeg);
+        byte[] byteImg = ms.ToArray();
+        string b64Img = Convert.ToBase64String(byteImg);
+        ms.Close();
+
+        return b64Img;
+    }
+    
     public async Task Share(string token, PublicQuizesController controller)
     {
         string? loggedUsername = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
