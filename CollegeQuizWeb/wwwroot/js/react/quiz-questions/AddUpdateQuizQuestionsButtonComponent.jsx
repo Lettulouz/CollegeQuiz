@@ -1,24 +1,12 @@
-import { generateAnswers, id, MainContext } from "./QuizQuestionsRenderer.jsx";
+import { id, MainContext } from "./QuizQuestionsRenderer.jsx";
 import { alertDanger, alertInfo, getCommonFetchObjWithBody, getCommonFetchObjWithFormData } from "../Utils.jsx";
 
-const AddUpdateQuizQuestionComponent = () => {
+const AddUpdateQuizQuestionsButtonComponent = () => {
     const {
         questions, setQuestions, setInactiveCallback, setActiveCallback, setAlert, allGood, uploadedImages
     } = React.useContext(MainContext);
 
     const [ isSended, setIsSended ] = React.useState(false);
-    
-    const onAddNewQuestion = () => {
-        setQuestions([ ...questions, {
-            id: questions.length + 1,
-            text: '',
-            timeMin: '0',
-            timeSec: '',
-            imageUrl: '',
-            type: 'SINGLE_FOUR_ANSWERS',
-            answers: generateAnswers(4)
-        }]);
-    };
 
     const appendQuizImages = () => {
         const formData = new FormData();
@@ -68,6 +56,7 @@ const AddUpdateQuizQuestionComponent = () => {
                     appendQuizImages();
                 } else {
                     setAlert(alertDanger(r.message));
+                    setActiveCallback();
                 }
             })
             .catch(e => {
@@ -79,9 +68,6 @@ const AddUpdateQuizQuestionComponent = () => {
     
     return (
         <>
-            <button onClick={onAddNewQuestion} className="btn btn-color-one w-100 mt-2">
-                Dodaj nowe pytanie
-            </button>
             {allGood && <button className="btn btn-color-one mt-2 btn-light w-100" onClick={appendQuestionsTooQuiz}>
                 Zaktualizuj pytania quizu
             </button>}
@@ -89,4 +75,4 @@ const AddUpdateQuizQuestionComponent = () => {
     );
 };
 
-export default AddUpdateQuizQuestionComponent;
+export default AddUpdateQuizQuestionsButtonComponent;

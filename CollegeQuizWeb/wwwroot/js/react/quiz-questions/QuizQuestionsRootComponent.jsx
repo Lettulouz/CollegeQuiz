@@ -3,8 +3,9 @@ import { alertOff, getCommonFetchObj } from "../Utils.jsx";
 import { id, initialQuestions, QuestionsContext, MainContext } from "./QuizQuestionsRenderer.jsx";
 
 import QuizQuestionComponent from "./QuizQuestionComponent.jsx";
+import AddNewMemoryQuestionComponent from "./AddNewMemoryQuestionComponent.jsx";
 import QuizQuestionsChangeNameComponent from "./QuizQuestionsChangeNameComponent.jsx";
-import AddUpdateQuizQuestionComponent from "./AddUpdateQuizQuestionComponent.jsx";
+import AddUpdateQuizQuestionsButtonComponent from "./AddUpdateQuizQuestionsButtonComponent.jsx";
 
 const QuizQuestionsRootComponent = () => {
     const [ questions, setQuestions ] = React.useState(initialQuestions);
@@ -73,8 +74,12 @@ const QuizQuestionsRootComponent = () => {
                     <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>
                 </div>}
                 <QuizQuestionsChangeNameComponent/>
+                <div className="mb-2">
+                    <AddUpdateQuizQuestionsButtonComponent/>
+                </div>
                 {generateQuestionsComponents}
-                <AddUpdateQuizQuestionComponent/>
+                <AddNewMemoryQuestionComponent/>
+                <AddUpdateQuizQuestionsButtonComponent/>
             </>}
         </MainContext.Provider>
     );
