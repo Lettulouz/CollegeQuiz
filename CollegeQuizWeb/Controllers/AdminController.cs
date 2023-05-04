@@ -398,6 +398,10 @@ public class AdminController : Controller
         HttpContext.Session.Remove(SessionKey.QUIZ_REMOVED);
         ViewBag.quizRemoved = quizRemoved!;
         
+        string? error = HttpContext.Session.GetString(SessionKey.ADMIN_ERROR);
+        HttpContext.Session.Remove(SessionKey.ADMIN_ERROR);
+        ViewBag.error = error!;
+        
         var quizList = await _adminService.GetQuizList();
         return View(quizList);
     }

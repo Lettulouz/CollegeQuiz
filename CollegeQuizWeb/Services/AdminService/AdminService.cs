@@ -320,32 +320,50 @@ public class AdminService : IAdminService
     {
         var user = _context.Users.Find(id);
         bool isAdmin = false;
+        
+        var host = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.UserHostId.Equals(id));
+        
+        var participant = await _context.QuizSessionPartics
+            .FirstOrDefaultAsync(q => q.ParticipantId.Equals(id));
+        
+      
+            
         if (user != null)
         {
-            if (loggedUser == user.Username)
-            {
-                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_YOURSELF);
-                controller.Response.Redirect("/Admin/AdminList");
-                return;
-            }
-
-            
             if (user.IsAdmin)
             {
                 isAdmin = true;
             }
-
-            var quizesIds = await _context.Quizes.Where(q => q.UserId.Equals(id)).ToListAsync();
-
-            foreach (var quiz in quizesIds)
-            {
-                await DelQuizImages(quiz.Id);
-            }
             
-            String message = string.Format(Lang.USER_DELETED, user.Username);
-            _context.Remove(user);
-            await _context.SaveChangesAsync();
-            controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
+            if (host != null || participant != null)
+            {
+                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_USER_IN_GAME);
+            }
+            else
+            {
+                if (loggedUser == user.Username)
+                {
+                    controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_YOURSELF);
+                    controller.Response.Redirect("/Admin/AdminList");
+                    return;
+                }
+
+
+                
+
+                var quizesIds = await _context.Quizes.Where(q => q.UserId.Equals(id)).ToListAsync();
+
+                foreach (var quiz in quizesIds)
+                {
+                    await DelQuizImages(quiz.Id);
+                }
+
+                String message = string.Format(Lang.USER_DELETED, user.Username);
+                _context.Remove(user);
+                await _context.SaveChangesAsync();
+                controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
+            }
         }
         else
         {
@@ -705,15 +723,27 @@ public class AdminService : IAdminService
     
     public async Task DelQuiz(long id, AdminController controller)
     {
+        string responseMessage;
+        
         var quiz = _context.Quizes.Find(id);
-        if (quiz != null)
+        var quizLobby = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.QuizId.Equals(id));
+        if (quizLobby != null && quizLobby.IsEstabilished)
         {
-            String message = string.Format(Lang.QUIZ_REMOVED, quiz.Name);
-            _context.Remove(quiz);
-            await _context.SaveChangesAsync();
-            controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
-           await DelQuizImages(id);
+            controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.DISABLE_REMOVABLE_QUIZ);
         }
+        else
+        {
+            if (quiz != null)
+            {
+                String message = string.Format(Lang.QUIZ_REMOVED, quiz.Name);
+                _context.Remove(quiz);
+                await _context.SaveChangesAsync();
+                controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+                await DelQuizImages(id);
+            }
+        }
+
         controller.Response.Redirect("/Admin/QuizList");
     }
 

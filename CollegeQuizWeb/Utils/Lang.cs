@@ -196,6 +196,8 @@ public static class Lang
     public const string SESSION_LEFT_ENTER_TOKEN = "Wyszedłeś z sesji, aby wejść ponownie wprowadź kod quizu.";
     public const string HOST_NOT_FOUND = "Nie znaleziono aktywnego hosta sesji gry.";
     public const string HOST_DISCONECT_USER = "Zostałeś rozłączony przez hosta.";
+    
+    public const string CANNOT_DELETE_USER_IN_GAME = "Nie można usunąć użytkownika znajdującego się w rozgrywce";
 
     
 
