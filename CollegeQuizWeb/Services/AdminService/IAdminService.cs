@@ -19,6 +19,8 @@ public interface IAdminService
     Task<List<CategoryListDto>> GetCategoryList();
     Task QuizInfo(long id, AdminController controller);
     Task DelQuiz(long id, AdminController controller);
+    Task LockQuiz(long id, AdminController controller);
+    Task UnlockQuiz(long id, AdminController controller);
     Task DelCategory(long id, AdminController controller);
     Task<AddUserDto> GetUserData(long id, AdminController controller);
     Task UserInfo(long id, AdminController controller);

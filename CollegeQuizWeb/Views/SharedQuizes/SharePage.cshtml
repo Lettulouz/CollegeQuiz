@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = $"Quiz {ViewBag.shareQuizInfo.Name}";
+    ViewData["Title"] =(ViewBag.shareQuizInfo!=null) ? $"Quiz {ViewBag.shareQuizInfo.Name}" : "";
 }
 
 <div class="mt-3 mb-3">

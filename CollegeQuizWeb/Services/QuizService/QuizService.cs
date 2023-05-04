@@ -95,7 +95,7 @@ public class QuizService : IQuizService
     {
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
             .ThenInclude(q =>q.UserEntity)
-            .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin))
+            .Where(x => x.QuizEntity.UserEntity.Username.Equals(userLogin) && !x.QuizEntity.IsHidden)
             .Select(q => new MyQuizDto()
             {
                 Name = q.QuizEntity.Name,
@@ -111,7 +111,7 @@ public class QuizService : IQuizService
         var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(userLogin));
         
         return await _context.SharedQuizes
-            .Where(x => x.UserId.Equals(userEntity.Id))
+            .Where(x => x.UserId.Equals(userEntity.Id) && !x.QuizEntity.IsHidden)
             .Select(q => new MyQuizSharedDto()
             {
                 Author = q.QuizEntity.UserEntity.Username,
@@ -126,7 +126,7 @@ public class QuizService : IQuizService
     {
         var quizEntity = await _context.Quizes
             .Include(q => q.UserEntity)
-            .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(userLogin));
+            .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(userLogin) && !q.IsHidden);
         if (quizEntity == null)
         {
             controller.Response.Redirect("/Quiz/MyQuizes");
@@ -159,8 +159,8 @@ public class QuizService : IQuizService
             .Include(q => q.QuizEntity)
             .FirstOrDefaultAsync(q => q.UserHostId.Equals(userId) && q.QuizId.Equals(quizId));
 
-        var quiz = await _context.Quizes.FirstOrDefaultAsync(q => q.Id.Equals(quizId));
-        if (quiz == null) return false;
+        var quiz = await _context.Quizes.FirstOrDefaultAsync(q => q.Id.Equals(quizId) && !q.IsHidden);
+        if (quiz == null) return true;
         
             int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
         if (countOfQuestions == 0) return true;

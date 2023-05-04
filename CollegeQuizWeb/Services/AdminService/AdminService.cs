@@ -693,6 +693,7 @@ public class AdminService : IAdminService
             quizModel.CreatedAt = quizData.CreatedAt;
             quizModel.UserId = quizData.UserId;
             quizModel.UserName = quizData.UserEntity.Username;
+            quizModel.IsHidden = quizData.IsHidden;
             
             DtoList.Add(quizModel);
         }
@@ -761,6 +762,40 @@ public class AdminService : IAdminService
         }
     }
 
+    public async Task LockQuiz(long id, AdminController controller)
+    {
+
+        var quiz = _context.Quizes.Find(id);
+
+            if (quiz != null)
+            {
+                String message = string.Format(Lang.QUIZ_LOCKED, quiz.Name);
+                quiz.IsHidden = true;
+                _context.Update(quiz);
+                await _context.SaveChangesAsync();
+                controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+            }
+            
+            controller.Response.Redirect("/Admin/QuizList");
+    }
+    
+    public async Task UnlockQuiz(long id, AdminController controller)
+    {
+
+        var quiz = _context.Quizes.Find(id);
+
+        if (quiz != null)
+        {
+            String message = string.Format(Lang.QUIZ_UNLOCKED, quiz.Name);
+            quiz.IsHidden = false;
+            _context.Update(quiz);
+            await _context.SaveChangesAsync();
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+        }
+            
+        controller.Response.Redirect("/Admin/QuizList");
+    }
+    
     public async Task DelCategory(long id, AdminController controller)
     {
         var category = _context.Categories.Find(id);

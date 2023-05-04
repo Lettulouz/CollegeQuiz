@@ -425,6 +425,8 @@ public class AdminController : Controller
         await _adminService.DelQuiz(id, this);
     }
     
+
+    
     /// <summary>
     ///  Method that is being used to delete quiz by admin from quiz view
     /// </summary>
@@ -441,6 +443,77 @@ public class AdminController : Controller
         }
         await HttpContext.Session.CommitAsync();
         await _adminService.DelQuiz(id, this);
+    }
+    
+    
+    /// <summary>
+    /// Method that is being used to lock quiz by admin from quizes list view
+    /// </summary>
+    /// <param name="list">List of quizes, always first id is going to be locked</param>
+    public async Task LockQuiz(List<QuizListDto> list)
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
+        var id = list[0].Id;
+        await _adminService.LockQuiz(id, this);
+    }
+    
+    /// <summary>
+    ///  Method that is being used to lock quiz by admin from quiz view
+    /// </summary>
+    /// <param name="id">Id of quiz that is going to be locked</param>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task LockQuizView(long id)
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
+        await _adminService.LockQuiz(id, this);
+    }
+    
+    /// <summary>
+    /// Method that is being used to unlock quiz by admin from quizes list view
+    /// </summary>
+    /// <param name="list">List of quizes, always first id is going to be unlocked</param>
+    public async Task UnlockQuiz(List<QuizListDto> list)
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
+        var id = list[0].Id;
+        await _adminService.UnlockQuiz(id, this);
+    }
+    
+    /// <summary>
+    ///  Method that is being used to unlock quiz by admin from quiz view
+    /// </summary>
+    /// <param name="id">Id of quiz that is going to be unlocked</param>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task UnlockQuizView(long id)
+    {
+        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+        if (isUserAdmin != "True")
+        {
+            HttpContext.Response.Redirect("/Home");
+            return;
+        }
+        await HttpContext.Session.CommitAsync();
+        await _adminService.UnlockQuiz(id, this);
     }
     
     //=======================
