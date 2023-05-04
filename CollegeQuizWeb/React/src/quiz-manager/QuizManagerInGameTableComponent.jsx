@@ -15,7 +15,12 @@ const QuizManagerInGameTableComponent = () => {
         nextQuestionIsActive, allParticipants, resultTable, isAnswersVisible, respondedUsers
     } = useContext(SessionContext);
     
-    const answerColor = r => r.IsGood !== "none" ? r.IsGood === "true" ? 'text-success' : 'text-danger' : '';
+    const answerColor = r => {
+        if (isAnswersVisible) {
+            return r.IsGood !== "none" ? r.IsGood === "true" ? 'text-success' : 'text-danger' : '';
+        }
+        return '';
+    };
     
     const renderQuestionTypeSection = () => {
         switch (questionType) {
@@ -40,7 +45,7 @@ const QuizManagerInGameTableComponent = () => {
     const generateAnswer = r => {
         if (r.Answer === "-") return r.Answer;
         switch (questionType) {
-            case 1: case 3: case 4: return ANSWER_LETTERS[Number(r.Answer)];        // 4 odpowiedzi, 6 odpowidzi
+            case 1: case 4:         return ANSWER_LETTERS[Number(r.Answer)];        // 4 odpowiedzi, 6 odpowidzi
             case 2:                 return r.Answer === "0" ? "P" : "F";            // prawda/fałsz
             default:                return r.Answer;                                // zakresowe
         }

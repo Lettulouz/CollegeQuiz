@@ -1,5 +1,6 @@
-import StartQuizButtonComponent from "./StartQuizButtonComponent.jsx";
-import NextQuestionButtonComponent from "./NextQuestionButtonComponent.jsx";
+import StartQuizButtonComponent from "./StartQuizButtonComponent";
+import NextQuestionButtonComponent from "./NextQuestionButtonComponent";
+import AnswersVisibilityButtonComponent from "./AnswersVisibilityButtonComponent";
 
 const QuizManagerRightContentComponent = () => {
     return (
@@ -10,6 +11,7 @@ const QuizManagerRightContentComponent = () => {
                         <StartQuizButtonComponent/>
                     </div>
                     <NextQuestionButtonComponent/>
+                    <AnswersVisibilityButtonComponent/>
                 </div>
                 <div className="w-100">
                     <button className="btn btn-danger mt-2 text-white w-100" onClick={() => window.location.reload()}>
