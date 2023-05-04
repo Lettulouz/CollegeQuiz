@@ -1,2 +1,4 @@
 .env
 _Uploads/QuizImages/*
+node_modules/
+**/jsLibraryMappings.xml

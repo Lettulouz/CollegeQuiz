@@ -14,13 +14,13 @@
         <div class="spinner-border load-spinner-circle mt-4" role="status">
         </div>
     </div>
-    <div class="mt-3" id="addQuizQuestionsRoot" data-quiz-name="@ViewBag.QuizData.Name"
+    <div class="mt-3" id="quiz-questions-embed-content" data-quiz-name="@ViewBag.QuizData.Name"
         data-quiz-id="@ViewBag.QuizData.Id"></div>
 </div>
 
-<script type="module" src="@Url.Content("~/js/react/quiz-questions/QuizQuestionsRenderer.jsx")"></script>
+<script src="/js/bundles/quizQuestionsRenderer.js"></script>
 
-<script lang="js">
+<script>
     window.onbeforeunload = function() {
         return "Czy na pewno chcesz przeładować stronę? Niezapisane dane zostaną bezpowrotnie utracone!";
     };

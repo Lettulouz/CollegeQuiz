@@ -7,14 +7,13 @@
         class="position-absolute d-flex justify-content-center align-content-center w-100 load-spinner">
         <div class="spinner-border load-spinner-circle mt-4" role="status"></div>
     </div>
-    <div id="quizSessionRoot"></div>
+    <div id="quiz-session-embed-content"></div>
 </div>
-<script type="module" src="@Url.Content("~/js/react/quiz-session/QuizSessionRenderer.jsx")"></script>
 
-<script lang="js">
+<script src="/js/bundles/quizSessionRenderer.js"></script>
+
+<script>
     window.onbeforeunload = function() {
         return "Czy na pewno chcesz przeładować stronę? Zapisane dane zostaną bezpowrotnie utracone!";
     };
 </script>
-
-
