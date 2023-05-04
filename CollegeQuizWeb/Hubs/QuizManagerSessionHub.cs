@@ -242,7 +242,9 @@ public class QuizManagerSessionHub : Hub
                         if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] <=
                             currentAnswers.Count())
                         {
-                            TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                            TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate
+                                .Where(t => question.answers[t.Answer] == currentAnswer.AnswerName)
+                                .Min(t => t.CreatedAt);;
                             TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
                             var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
                                                                   restOfTime.TotalSeconds)) * 1000 *
