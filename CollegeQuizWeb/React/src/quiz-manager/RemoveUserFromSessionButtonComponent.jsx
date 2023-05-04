@@ -3,9 +3,10 @@ import { SESS_TOKEN, SessionContext } from "../quiz-manager-renderer";
 import { alertDanger, getCommonFetchObj } from "../utils/common";
 
 const RemoveUserFromSessionButtonComponent = ({ name }) => {
-    const { setAlert } = React.useContext(SessionContext);
+    const { setAlert, countingActive } = useContext(SessionContext);
     
     const onRemoveUser = () => {
+        if (countingActive) return;
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/RemoveFromSession/${SESS_TOKEN}/${name}`,
             getCommonFetchObj("POST")
@@ -17,9 +18,10 @@ const RemoveUserFromSessionButtonComponent = ({ name }) => {
     };
     
     return (
-        <button className="border-0 bg-transparent" onClick={onRemoveUser}
-                title="Usuwanie użytkownika z sesji wraz z usunięciem wszystkich zdobytych przez niego punktów">
-            <i className="bi bi-x-circle-fill text-danger"></i>
+        <button className="border-0 bg-transparent on-hover-darker" onClick={onRemoveUser}
+            title="Usuwanie użytkownika z sesji wraz z usunięciem wszystkich zdobytych przez niego punktów"
+            disabled={countingActive}>
+            <i className="bi bi-x-circle-fill text-danger fs-5"></i>
         </button>
     );
 };
