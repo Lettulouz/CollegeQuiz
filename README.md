@@ -40,7 +40,7 @@ Website that is being created for college project. It will let players to play t
 
 **Range sliders**: noUiSlider
 
-**Javascript bundler technology**: Webpack + Babel
+**Javascript bundling technology**: Webpack + Babel
 
 **Server and SignalR broker provider**: MS Azure
 
