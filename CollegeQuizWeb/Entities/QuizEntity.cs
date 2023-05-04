@@ -16,6 +16,9 @@ public class QuizEntity : AbstractAuditableEntity
     [Column("is_public")]
     public bool IsPublic { get; set; }
     
+    [Column("is_hidden")]
+    public bool IsHidden { get; set; }
+    
     [ForeignKey(nameof(UserEntity))]
     [Column("user_id")]
     public long UserId { get; set; }
