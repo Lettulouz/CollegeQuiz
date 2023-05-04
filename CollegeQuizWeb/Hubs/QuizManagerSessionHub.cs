@@ -217,6 +217,7 @@ public class QuizManagerSessionHub : Hub
                         corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] += currentAnswers.Count()+1;
                     else
                         corectAnswersNumber.Add(answer.QuizSessionParticEntity.ConnectionId, currentAnswers.Count()+1);
+                    answer.QuizSessionParticEntity.CurrentStreak = 0;
                 }
             }
 
@@ -255,11 +256,19 @@ public class QuizManagerSessionHub : Hub
 
                         if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] == currentAnswers.Count())
                             answer.QuizSessionParticEntity.CurrentStreak += 1;
-                        else
-                            answer.QuizSessionParticEntity.CurrentStreak = 0;
                     }
                 }
             }
+            
+            var notAnswered = _context.QuizSessionPartics
+                .Where(qsp => !_context.UsersQuestionsAnswers
+                    .Any(uqa => uqa.ConnectionId == qsp.Id && uqa.Question.Equals(question.questionId) && uqa.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token)))
+                .ToList();
+            
+            foreach (var user in notAnswered)
+                user.CurrentStreak = 0;
+
+            
             await _context.SaveChangesAsync();
 
             Console.WriteLine("punkt testowy 7");
