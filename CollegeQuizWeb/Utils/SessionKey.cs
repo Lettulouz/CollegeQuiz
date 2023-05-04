@@ -26,4 +26,5 @@ public class SessionKey
     
     public const string SUB_UPDATED = "SUB_UPDATED+SESS";
     public const string SUB_ERROR = "SUB_ERROR+SESS";
+    public const string CATEGORY_FILTER = "CATEGORY_FILTER+SESS";
 }

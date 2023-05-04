@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -319,24 +320,50 @@ public class AdminService : IAdminService
     {
         var user = _context.Users.Find(id);
         bool isAdmin = false;
+        
+        var host = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.UserHostId.Equals(id));
+        
+        var participant = await _context.QuizSessionPartics
+            .FirstOrDefaultAsync(q => q.ParticipantId.Equals(id));
+        
+      
+            
         if (user != null)
         {
-            if (loggedUser == user.Username)
-            {
-                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_YOURSELF);
-                controller.Response.Redirect("/Admin/AdminList");
-                return;
-            }
-
-            
             if (user.IsAdmin)
             {
                 isAdmin = true;
             }
-            String message = string.Format(Lang.USER_DELETED, user.Username);
-            _context.Remove(user);
-            await _context.SaveChangesAsync();
-            controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
+            
+            if (host != null || participant != null)
+            {
+                controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_USER_IN_GAME);
+            }
+            else
+            {
+                if (loggedUser == user.Username)
+                {
+                    controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_DELETE_YOURSELF);
+                    controller.Response.Redirect("/Admin/AdminList");
+                    return;
+                }
+
+
+                
+
+                var quizesIds = await _context.Quizes.Where(q => q.UserId.Equals(id)).ToListAsync();
+
+                foreach (var quiz in quizesIds)
+                {
+                    await DelQuizImages(quiz.Id);
+                }
+
+                String message = string.Format(Lang.USER_DELETED, user.Username);
+                _context.Remove(user);
+                await _context.SaveChangesAsync();
+                controller.HttpContext.Session.SetString(SessionKey.USER_REMOVED, message);
+            }
         }
         else
         {
@@ -685,8 +712,8 @@ public class AdminService : IAdminService
         {
             CategoryListDto categoryModel = new();
 
-            categoryModel.CategoryId = categoryData.CategoryId;
-            categoryModel.CategoryName = categoryData.Category;
+            categoryModel.CategoryId = categoryData.Id;
+            categoryModel.CategoryName = categoryData.Name;
             
             DtoList2.Add(categoryModel);
         }
@@ -696,15 +723,42 @@ public class AdminService : IAdminService
     
     public async Task DelQuiz(long id, AdminController controller)
     {
+        string responseMessage;
+        
         var quiz = _context.Quizes.Find(id);
-        if (quiz != null)
+        var quizLobby = await _context.QuizLobbies
+            .FirstOrDefaultAsync(q => q.QuizId.Equals(id));
+        if (quizLobby != null && quizLobby.IsEstabilished)
         {
-            String message = string.Format(Lang.QUIZ_REMOVED, quiz.Name);
-            _context.Remove(quiz);
-            await _context.SaveChangesAsync();
-            controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+            controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.DISABLE_REMOVABLE_QUIZ);
         }
+        else
+        {
+            if (quiz != null)
+            {
+                String message = string.Format(Lang.QUIZ_REMOVED, quiz.Name);
+                _context.Remove(quiz);
+                await _context.SaveChangesAsync();
+                controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+                await DelQuizImages(id);
+            }
+        }
+
         controller.Response.Redirect("/Admin/QuizList");
+    }
+
+    async Task DelQuizImages(long quizId)
+    {
+        string dir = $"{FOLDER_PATH}/{quizId}";
+        DirectoryInfo directoryInfo = new DirectoryInfo(dir);
+        if (Directory.Exists(dir))
+        {
+            foreach (var file in directoryInfo.GetFiles())
+            {
+                file.Delete();
+            }
+            Directory.Delete(dir);
+        }
     }
 
     public async Task DelCategory(long id, AdminController controller)
@@ -712,7 +766,7 @@ public class AdminService : IAdminService
         var category = _context.Categories.Find(id);
         if (category != null)
         {
-            String message = string.Format(Lang.CATEGORY_REMOVED, category.Category);
+            String message = string.Format(Lang.CATEGORY_REMOVED, category.Name);
             _context.Remove(category);
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.CATEGORY_REMOVED, message);
@@ -737,23 +791,22 @@ public class AdminService : IAdminService
             var questions = await _context.Answers
                 .Include(q => q.QuestionEntity)
                 .Where(q => q.QuestionEntity.QuizId.Equals(quizInfo.Id))
+                .GroupBy(q=>q.QuestionEntity.Id)
                 .Select(q => new
-                {
-                    qid=q.Id,
-                    question = q.QuestionEntity.Name,
-                    answer = q.Name,
-                    time_min = q.QuestionEntity.TimeMin,
-                    time_sec = q.QuestionEntity.TimeSec
-                })
-                .OrderBy(q=>q.qid)
-                .GroupBy(q=>q.question)
-                .Select(q=>new
-                {   
-                    qid=q.Select(a=>a.qid).FirstOrDefault(),
-                    question = q.Key,
-                    answers = q.Select(a => a.answer).ToList(),
-                    time_sec = q.Select(a=>a.time_min*60+a.time_sec).FirstOrDefault()
-                }).OrderBy(q=>q.qid).ToListAsync();
+                    {
+                        qid = q.Key,
+                        question = q.First().QuestionEntity.Name,
+                        type = q.First().QuestionEntity.QuestionType,
+                        answers = q.Select(a => a.Name).ToList(),
+                        time_sec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).First(),
+                        step = q.First().Step,
+                        min = q.First().Min,
+                        max = q.First().Max,
+                        min_counted = q.First().MinCounted,
+                        max_counted = q.First().MaxCounted,
+                        correct_answer = q.First().CorrectAnswer
+                    })
+                .ToListAsync();
 
             controller.ViewBag.questions = questions;
             List<string> images = new();
@@ -841,12 +894,12 @@ public class AdminService : IAdminService
         string message;
         message = string.Format(Lang.CATEGORIES_GENERATED_INFO_STRING, name);
         
-        if ( _context.Categories.FirstOrDefault(o => o.Category.Equals(obj.Dto.CategoryName)) != null)
+        if ( _context.Categories.FirstOrDefault(o => o.Name.Equals(obj.Dto.CategoryName)) != null)
             controller.ModelState.AddModelError("CategoryName", Lang.CATEGORYNAME_MUST_BE_UNIQUE);
 
         if (!controller.ModelState.IsValid) return;
         CategoryEntity categoryEntity = new();
-        categoryEntity.Category = name;
+        categoryEntity.Name = name;
         
         message += name;
         message += "</br>";

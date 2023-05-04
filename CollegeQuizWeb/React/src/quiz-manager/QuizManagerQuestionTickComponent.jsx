@@ -11,12 +11,21 @@ const QuizManagerQuestionTickComponent = () => {
         connection.on("QUESTION_TIMER_P2P", tickObject => {
             const parsedTickObject = JSON.parse(tickObject);
             
-            setTick(parsedTickObject.Elapsed);
-            setNextQuestionBtnText(`Do następnego pytania: ${parsedTickObject.Elapsed}...`);
+            setTick(parsedTickObject.Remaining);
+            setNextQuestionBtnText(`Do następnego pytania: ${parsedTickObject.Remaining}...`);
             
-            setProgressWidth((parsedTickObject.Elapsed / parsedTickObject.Total) * 100);
+            setProgressWidth((parsedTickObject.Remaining / parsedTickObject.Total) * 100);
+            playSound(parsedTickObject.Remaining);
         });
     }, []);
+
+    const playSound = counter => {
+        if(counter <= 5 && counter>0){
+            var audio = new Audio("/sounds/counter/" + counter + ".mp4");
+            audio.volume = 0.8
+            audio.play();
+        }
+    }
     
     return (
         <div className="row px-1 mb-3">

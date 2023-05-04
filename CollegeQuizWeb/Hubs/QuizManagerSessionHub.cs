@@ -67,37 +67,23 @@ public class QuizManagerSessionHub : Hub
         var questions = await _context.Answers
             .Include(q => q.QuestionEntity)
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz!.QuizId))
+            .GroupBy(q => q.QuestionEntity.Index)
             .Select(q => new
             {
-                questionId = q.QuestionEntity.Index,
-                question = q.QuestionEntity.Name,
-                question_type = q.QuestionEntity.QuestionTypeEntity.TypeId,
-                answers = q.Name,
-                is_range = q.IsRange,
-                step = q.Step,
-                min = q.Min,
-                max = q.Max,
-                min_counted = q.MinCounted,
-                max_counted = q.MaxCounted,
-                time_min = q.QuestionEntity.TimeMin,
-                time_sec = q.QuestionEntity.TimeSec
+                questionId = q.Key,
+                question = q.First().QuestionEntity.Name,
+                questionType = q.First().QuestionEntity.QuestionTypeEntity.TypeId,
+                answers = q.Select(a => a.Name).ToList(),
+                time_sec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).FirstOrDefault(),
+                is_range = q.First().IsRange,
+                step = q.First().Step,
+                min = q.First().Min,
+                max = q.First().Max,
+                min_counted = q.First().MinCounted,
+                max_counted = q.First().MaxCounted,
+                image_url = GetImageUrl(q.Key, basePatch, quiz!.QuizId),
             })
-            .GroupBy(q=>q.questionId)
-            .Select(q=>new
-            {
-                questionId = q.Select(a => a.questionId).Distinct().FirstOrDefault(),
-                question = q.Select(a => a.question).Distinct().FirstOrDefault(),
-                questionType = q.Select(a => a.question_type).Distinct().FirstOrDefault(),
-                answers = q.Select(a => a.answers).ToList(),
-                time_sec = q.Select(a => a.time_min * 60 + a.time_sec).Distinct().Sum(),
-                is_range = q.Select(a => a.is_range).Distinct().FirstOrDefault(),
-                step = q.Select(a => a.step).Distinct().FirstOrDefault(),
-                min = q.Select(a => a.min).Distinct().FirstOrDefault(),
-                max = q.Select(a => a.max).Distinct().FirstOrDefault(),
-                min_counted = q.Select(a => a.min_counted).Distinct().FirstOrDefault(),
-                max_counted = q.Select(a => a.max_counted).Distinct().FirstOrDefault(),
-                image_url = GetImageUrl(q.Select(a => a.questionId).Distinct().FirstOrDefault(), basePatch, quiz!.QuizId),
-            }).ToListAsync();
+            .ToListAsync();
         
         Console.WriteLine("punkt testowy 3");
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
@@ -159,7 +145,7 @@ public class QuizManagerSessionHub : Hub
                 if (await periodicTimer.WaitForNextTickAsync(token2))
                 {
                     timer--;
-                    questionTick.Elapsed = timer;
+                    questionTick.Remaining = timer;
                     await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                 }
@@ -176,7 +162,7 @@ public class QuizManagerSessionHub : Hub
                     if (amountOfUniqueAnswers >= amountOfParticipants)
                     {
                         timer = 0;
-                        questionTick.Elapsed = 0;
+                        questionTick.Remaining = 0;
                         await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     }
                 }
@@ -231,6 +217,7 @@ public class QuizManagerSessionHub : Hub
                         corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] += currentAnswers.Count()+1;
                     else
                         corectAnswersNumber.Add(answer.QuizSessionParticEntity.ConnectionId, currentAnswers.Count()+1);
+                    answer.QuizSessionParticEntity.CurrentStreak = 0;
                 }
             }
 
@@ -255,7 +242,9 @@ public class QuizManagerSessionHub : Hub
                         if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] <=
                             currentAnswers.Count())
                         {
-                            TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate.Min(t => t.CreatedAt);
+                            TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate
+                                .Where(t => question.answers[t.Answer] == currentAnswer.AnswerName)
+                                .Min(t => t.CreatedAt);;
                             TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
                             var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
                                                                   restOfTime.TotalSeconds)) * 1000 *
@@ -267,11 +256,21 @@ public class QuizManagerSessionHub : Hub
                             answer.QuizSessionParticEntity.Score += wonPoints;
                         }
 
-                        if(corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]==currentAnswers.Count())
+                        if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] == currentAnswers.Count())
                             answer.QuizSessionParticEntity.CurrentStreak += 1;
                     }
                 }
             }
+            
+            var notAnswered = _context.QuizSessionPartics
+                .Where(qsp => !_context.UsersQuestionsAnswers
+                    .Any(uqa => uqa.ConnectionId == qsp.Id && uqa.Question.Equals(question.questionId) && uqa.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token)))
+                .ToList();
+            
+            foreach (var user in notAnswered)
+                user.CurrentStreak = 0;
+
+            
             await _context.SaveChangesAsync();
 
             Console.WriteLine("punkt testowy 7");

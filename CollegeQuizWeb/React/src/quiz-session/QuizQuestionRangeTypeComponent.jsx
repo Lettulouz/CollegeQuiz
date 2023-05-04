@@ -91,6 +91,7 @@ const QuizQuestionRangeTypeComponent = () => {
                 'max': answerSett.max
             },
         });
+        Array.from({ length: 3 }).forEach((_, i) => resultSlider.current.noUiSlider.disable(i))
     }, [ resultSliderContainer, currentAnswer, resultSlider ]);
     
     return (

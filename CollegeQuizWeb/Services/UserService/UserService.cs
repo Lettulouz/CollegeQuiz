@@ -192,13 +192,26 @@ public class UserService : IUserService
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(isLogged));
 
+        var subStatus = await _context.SubsciptionTypes.FirstOrDefaultAsync(s => s.SiteId.Equals(userInfo.AccountStatus));
+
+        string userStatus;
+        
+        if (subStatus == null)
+        {
+            userStatus = "STANDARD";
+        }
+        else
+        {
+            userStatus = subStatus.Name;
+        }
+        
         ProfileDto UserDto = new ProfileDto()
         {
             FirstName = userInfo.FirstName,
             LastName = userInfo.LastName,
             CreatedAt = userInfo.CreatedAt,
             Email = userInfo.Email,
-            AccountStatus = userInfo.AccountStatus,
+            AccountStatus = userStatus,
             Username = userInfo.Username,
             Password = userInfo.Password
         };
@@ -308,6 +321,12 @@ public class UserService : IUserService
         return paymentHistoryListDtos;
     }
     
+    /// <summary>
+    /// Method that is being used to check if username belong to logged user
+    /// </summary>
+    /// <param name="id">Logged user's id</param>
+    /// /// <param name="username">Logged user's username</param>
+    /// <returns>True or false</returns>
     bool UsernameBelongsToUser(long? id, string username)
     {
         var user = _context.Users.FirstOrDefault(o => o.Username.Equals(username));

@@ -1,4 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -16,6 +20,8 @@ namespace CollegeQuizWeb.Services.PublicQuizesService;
 public class PublicQuizesService : IPublicQuizesService
 {
     private readonly ApplicationDbContext _context;
+    public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
+    public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
     
     public PublicQuizesService(ApplicationDbContext context)
     {
@@ -42,6 +48,33 @@ public class PublicQuizesService : IPublicQuizesService
             .ToListAsync();
         
     }
+
+    public async Task Categories(PublicQuizesController controller)
+    {
+        var categories = await _context.Categories
+            .ToListAsync();
+
+        controller.ViewBag.Categories = categories;
+        
+    }
+
+    public async Task<List<SharedQuizesEntity>> Filter(PublicQuizesController controller, string[] categories)
+    {
+        controller.HttpContext.Session.SetString(SessionKey.CATEGORY_FILTER, "true");
+        
+        List<long> allCat = await _context.Categories
+            .Select(c => c.Id)
+            .ToListAsync();
+        
+        return await _context.SharedQuizes
+            .Include(q => q.QuizEntity)
+            .Include(q => q.UserEntity)
+            .Include(q => q.QuizEntity.QuizCategoryEntities)
+            .Where(q=>q.QuizEntity.QuizCategoryEntities
+                .Any(qk=>allCat.Contains(qk.CategoryId)))
+                
+            .ToListAsync();
+    }
     
     public async Task PublicQuizInfo(long id, PublicQuizesController controller)
     {
@@ -57,32 +90,55 @@ public class PublicQuizesService : IPublicQuizesService
         {
             controller.ViewBag.shareQuizInfo = quizShareInfo;
             
-            controller.ViewBag.questions = await _context.Answers
+                var questions = await _context.Answers
                 .Include(q => q.QuestionEntity)
                 .Where(q => q.QuestionEntity.QuizId.Equals(quizShareInfo.Id))
+                .GroupBy(q=>q.QuestionEntity.Id)
                 .Select(q => new
-                {
-                    question = q.QuestionEntity.Name,
-                    answer = q.Name,
-                    goodAnswer = q.IsGood,
-                    time_min = q.QuestionEntity.TimeMin,
-                    time_sec = q.QuestionEntity.TimeSec,
-                    type = q.QuestionEntity.QuestionType,
-                })
-                .GroupBy(q=>q.question)
-                .Select(q=>new
-                {
-                    question = q.Key,
-                    answers = q.Select(a => a.answer).ToList(),
-                    goodAnswers = q.Select(a => a.goodAnswer).ToList(),
-                    time_min= q.Select(a=>a.time_min).FirstOrDefault(),
-                    time_sec = q.Select(a=>a.time_sec).FirstOrDefault(),
-                    type = q.Select(a=>a.type).FirstOrDefault(),
-                })
+                    {
+                        qid = q.Key,
+                        question = q.First().QuestionEntity.Name,
+                        type = q.First().QuestionEntity.QuestionType,
+                        answers = q.Select(a => a.Name).ToList(),
+                        goodAnswers = q.Select(a=>a.IsGood).ToList(),
+                        time_sec = q.First().QuestionEntity.TimeSec,
+                        time_min = q.First().QuestionEntity.TimeMin,
+                        step = q.First().Step,
+                        min = q.First().Min,
+                        max = q.First().Max,
+                        min_counted = q.First().MinCounted,
+                        max_counted = q.First().MaxCounted,
+                        correct_answer = q.First().CorrectAnswer
+                    })
                 .ToListAsync();
+
+                controller.ViewBag.questions = questions;
+                
+                List<string> images = new();
+                for (int i = 1; i <= questions.Count; i++)
+                {
+                    images.Add(await GetQuestionImage(id,i));
+                }
+                
+                controller.ViewBag.images = images;
         }
     }
 
+    async Task<string> GetQuestionImage(long quizId, int qId)
+    {
+        string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
+        if (!File.Exists(dir)) return "";
+        Image image = Image.FromFile(dir);
+        image = new Bitmap(image, new Size(500, 500));
+        MemoryStream ms = new MemoryStream();
+        image.Save(ms, ImageFormat.Jpeg);
+        byte[] byteImg = ms.ToArray();
+        string b64Img = Convert.ToBase64String(byteImg);
+        ms.Close();
+
+        return b64Img;
+    }
+    
     public async Task Share(string token, PublicQuizesController controller)
     {
         string? loggedUsername = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
