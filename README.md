@@ -14,6 +14,9 @@ Website that is being created for college project. It will let players to play t
 - [@kBaginskik](https://www.github.com/kBaginskik)
 - [@crucialis](https://www.github.com/crucialis)
 
+## App testers
+
+- [@Arek2017](https://github.com/Arek2017)
 
 ## Tech Stack
 
