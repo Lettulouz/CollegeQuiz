@@ -20,7 +20,9 @@ const QuizManagerInGameViewComponent = () => {
     const [ answers, setAnswers ] = useState([]);
     const [ currentQuestion, setCurrentQuestion ] = useState(1);
     
-    const [ rangeData, setRangeData ] = React.useState({
+    const questionTypeRef = useRef(0);
+    
+    const [ rangeData, setRangeData ] = useState({
         Step: 0, Min: 0, Max: 0, MinCounted: 0, MaxCounted: 0, CorrectAnswerRange: 0
     });
     
@@ -38,6 +40,7 @@ const QuizManagerInGameViewComponent = () => {
             });
             setResultTable(newState);
             setRespondedUsers(0);
+            questionTypeRef.current = parsedAnswers.QuestionType;
             
             setNextQuestionIsActive(false);
             setRangeData({ Step, Min, Max, MinCounted, MaxCounted, CorrectAnswerRange });
@@ -50,22 +53,40 @@ const QuizManagerInGameViewComponent = () => {
         
         // użytkownik wysyłający odpowiedź (uruchamia się w momencie zaznaczenia przez niego odpowiedzi)
         connection.on("USER_SELECT_ANSWER_P2P", answer => {
+            if (questionTypeRef.current === 0) return;
             const parsedAnswer = JSON.parse(answer);
 
             const stateCopy = [ ...resultTable ];
             const parcitipantIndex = stateCopy.findIndex(e => e.Username === parsedAnswer.Username);
             if (!parcitipantIndex === -1) return;
             
-            stateCopy[parcitipantIndex].Answer = parsedAnswer.SelectedAnswer;
+            let updatedAnswer = stateCopy[parcitipantIndex].Answer;
+            switch (questionTypeRef.current) {
+                case 3: // wiele możliwych odpowiedzi
+                    let selectedAns = parsedAnswer.SelectedAnswer;
+                    if (updatedAnswer === "-") {
+                        updatedAnswer = ANSWER_LETTERS[Number(selectedAns)];
+                        setRespondedUsers(prevState => prevState + 1);
+                    } else {
+                        updatedAnswer += `,${ANSWER_LETTERS[Number(selectedAns)]}`;
+                    }
+                    break;
+                default: // pozostałe
+                    updatedAnswer = parsedAnswer.SelectedAnswer;
+                    setRespondedUsers(prevState => prevState + 1);
+            }
+            stateCopy[parcitipantIndex].Answer = updatedAnswer;
             setResultTable(stateCopy);
-            setRespondedUsers(prevState => prevState + 1);
         });
-        
+    }, []);
+    
+    useEffect(() => {
         // wykona się gdy serwer obliczy punkty po każdej turze
         connection.on("COMPUTE_ALL_POINTS_P2P", usersPoints => {
             const parsedUserPoints = JSON.parse(usersPoints);
-            
+
             const stateCopy = [ ...resultTable ];
+            console.log(stateCopy, parsedUserPoints);
             const newState = stateCopy.map(u => {
                 const user = parsedUserPoints.find(usr => usr.Username === u.Username);
                 if (!user) return u;
@@ -75,7 +96,7 @@ const QuizManagerInGameViewComponent = () => {
             });
             setResultTable(newState);
         });
-    }, []);
+    }, [ allParticipants.Connected ]);
     
     return (
         <>
@@ -86,6 +107,7 @@ const QuizManagerInGameViewComponent = () => {
                         <StartQuizButtonComponent/>
                     </div>
                     <NextQuestionButtonComponent/>
+                    <AnswersVisibilityButtonComponent/>
                 </div>
                 <div className="col-lg-6 px-1 px-lg-2 py-2 py-lg-0">
                     <div className="card h-100 trsp px-3 py-3">
