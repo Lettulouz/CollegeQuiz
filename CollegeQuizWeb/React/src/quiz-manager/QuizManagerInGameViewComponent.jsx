@@ -80,7 +80,7 @@ const QuizManagerInGameViewComponent = () => {
     return (
         <>
             <QuizManagerQuestionTickComponent/>
-            <div className="row mb-2">
+            <div className="row h-100 mb-2">
                 <div className="col-lg-3 px-1">
                     <div className="mb-2">
                         <StartQuizButtonComponent/>
@@ -88,8 +88,8 @@ const QuizManagerInGameViewComponent = () => {
                     <NextQuestionButtonComponent/>
                 </div>
                 <div className="col-lg-6 px-1 px-lg-2 py-2 py-lg-0">
-                    <div className="card trsp px-3 py-3">
-                        <div className="row">
+                    <div className="card h-100 trsp px-3 py-3">
+                        <div className="row h-100 d-flex align-items-center">
                             <div className="col-md-5 mb-1 d-flex flex-column justify-content-center">
                                 <h6 className="text-black-50 mb-0 text-center text-lg-start">
                                     Nazwa quizu:
@@ -118,7 +118,7 @@ const QuizManagerInGameViewComponent = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-3 px-1">
+                <div className="col-lg-3 px-1 d-flex flex-column">
                     <div className="hstack gap-2 mb-2">
                         <span className="form-control text-center" style={{ fontWeight: 'bolder' }}>
                             {SESS_TOKEN}
@@ -128,13 +128,13 @@ const QuizManagerInGameViewComponent = () => {
                             <i className="bi bi-clipboard"></i>
                         </a>
                     </div>
-                    <button className="btn btn-danger text-white mb-2 w-100 btn-std" onClick={() => window.location.reload()}>
+                    <button className="btn btn-danger text-white w-100 btn-std flex-fill" onClick={() => window.location.reload()}>
                         Zakończ quiz
                     </button>
                 </div>
             </div>
             <InGameViewContext.Provider value={{
-                imageUrl, questionName, rangeData, questionType, answers, respondedUsers
+                imageUrl, questionName, rangeData, questionType, answers
             }}>
                 <QuizManagerInGameTableComponent/>
             </InGameViewContext.Provider>

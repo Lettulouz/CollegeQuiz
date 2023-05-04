@@ -35,7 +35,7 @@ const QuizQuestionsRangeAnswerComponent = () => {
         setMinInvalid(minMax ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setMinCountedInvalid(minMaxCounted ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setCountedOutOfRange(countedOutOfRange ? "Wartość punktowana wykracza poza zakres" : "");
-        setStepIsInvalid(stepIsInvalid ? "Wartość step musi być dzielnikiem pozostałych wartości" : "");
+        setStepIsInvalid(stepIsInvalid ? "Wartość przejścia musi być dzielnikiem pozostałych wartości" : "");
         setIsCorrectInvalid(correctAnsIsInvalid ? "Nieprawidłowa wartość prawidłowej odpowiedzi" : "");
 
         setIsNotValid(minMax || minMaxCounted || countedOutOfRange || stepIsInvalid || correctAnsIsInvalid);
@@ -53,7 +53,7 @@ const QuizQuestionsRangeAnswerComponent = () => {
                             <div className="invalid-feedback">{minInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
-                            <label htmlFor="stepId" className="form-label">Step(sister)</label>
+                            <label htmlFor="stepId" className="form-label">Wartość przejścia</label>
                             <input value={answerR.step} type="number" className={`form-control ${stepIsInvalid && 'is-invalid'}`}
                                 id="stepId" onChange={e => onSetRangeProp(e, "step")}/>
                             <div className="invalid-feedback">{stepIsInvalid}</div>

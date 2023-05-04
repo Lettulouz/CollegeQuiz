@@ -10,11 +10,11 @@ const QuizManagerQrCodeModalComponent = () => {
     
     return (
         <>
-            <div className="modal fade" id="confirm-leave-session-modal" tabIndex="-1" aria-hidden="false" ref={modalRef}>
+            <div className="modal fade" tabIndex="-1" aria-hidden="false" ref={modalRef}>
                 <div className="modal-dialog modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5">OR kod ({SESS_TOKEN})</h1>
+                            <h1 className="modal-title fs-5">Kod QR ({SESS_TOKEN})</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={hideModal}></button>
                         </div>
                         <div className="modal-body fw-normal">

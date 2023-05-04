@@ -33,10 +33,7 @@ const LeaveQuizSessionButtonComponent = ({ text }) => {
     };
 
     const showModal = () => new bootstrap.Modal(modalRef.current, { backdrop: 'static', keyboard: false }).show();
-    const hideModal = () => {
-        setToken("");
-        bootstrap.Modal.getInstance(modalRef.current).hide();
-    };
+    const hideModal = () => bootstrap.Modal.getInstance(modalRef.current).hide();
 
     useEffect(() => {
         connection.on("OnDisconnectedSession", _ => hideModal());

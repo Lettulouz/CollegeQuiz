@@ -99,10 +99,10 @@ const QuizManagerRootComponent = () => {
             counting, setCounting, countingActive, setCountingActive, afterQuestionResults, setNextQuestionIsActive,
             resultTable, setResultTable
         }}>
-            {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-4`} role="alert">
+            {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-3 mx-1`} role="alert">
                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
             </div>}
-            {isActive && <div className="container px-0 mx-0">
+            {isActive && <div className="container mx-0">
                 {isJoinable ? <div>
                     {inGameViewActive ? <QuizManagerInGameViewComponent/> :
                         <div className="row">

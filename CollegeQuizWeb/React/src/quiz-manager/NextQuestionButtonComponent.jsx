@@ -10,7 +10,7 @@ const NextQuestionButtonComponent = () => {
     };
     
     return (
-        <button className="btn btn-color-one-short text-white w-100 btn-std" onClick={() => sendSignal()}
+        <button className="btn btn-color-one-short text-white w-100 btn-std mb-2" onClick={() => sendSignal()}
                 disabled={!nextQuestionIsActive || isEnded || allParticipants.Connected.length === 0}>
             {nextQuestionBtnText}
         </button>

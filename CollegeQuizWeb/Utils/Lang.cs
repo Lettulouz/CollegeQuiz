@@ -183,7 +183,7 @@ public static class Lang
     public const string PACKAGE_DOES_NOT_ALLOW = "Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór" +
                                                  "trybu <strong>{0}</strong> rozgrywki.";
     public const string GIVEN_VALUES_NOT_NUMBERS = "Podane wartości czasu nie są liczbami";
-    public const string WRONG_TIME_INTERVALS = "Wartość sekund nie może być mniejsza od 10 i większa od 59.";
+    public const string WRONG_TIME_INTERVALS = "Wartość sekund nie może być mniejsza od 5 i większa od 59.";
     public const string WRONG_QUESTION_TYPE = "Nie znaleziono typu pytania";
     public const string QUESTION_REPEATED = "Odpowiedzi w pytaniu <strong>{0}</strong> nie mogą być takie same.";
     public const string QUIZ_NAME_UPDATED = "Quiz o nazwie <strong>{0}</strong> został pomyślnie zaktualizowany";

@@ -7,14 +7,14 @@ const QuizManagerCenterContentComponent = () => {
     const { lobbyData, counting, countingActive, isEnded } = useContext(SessionContext);
     
     return (
-        <div className="col-lg-6 px-0 px-lg-2 mb-2 mb-lg-0 order-lg-0 order-3">
+        <div className="col-lg-6 px-0 px-lg-2 mb-2 mb-lg-0 order-lg-0 order-2">
             {!isEnded && <div className="row">
-                <div className="col-9">
+                <div className="col-9 pe-1">
                     <span className="form-control text-center" style={{fontSize: 38, fontWeight: 'bolder'}}>
                         {SESS_TOKEN}
                     </span>
                 </div>
-                <div className="col-3">
+                <div className="col-3 ps-1">
                     <a className="btn btn-lg btn-dark w-100 h-100 text-white" type="button" data-bs-toggle="tooltip"
                         data-bs-placement="left" data-bs-title="Kopiuj do schowka" onClick={copyToClipboard}>
                         <i className="bi bi-clipboard"></i>

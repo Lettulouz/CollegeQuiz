@@ -33,6 +33,9 @@ body {
     border-bottom-color: #aee5d4;
 }
 
+.dropdown-item:active {
+    background-color: #63c4ab;
+}
 .list-border {
     border-radius: 0 0 25px 25px;
 }

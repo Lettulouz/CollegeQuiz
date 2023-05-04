@@ -1,4 +1,6 @@
 .env
 _Uploads/QuizImages/*
+wwwroot/js/bundles/*
+!wwwroot/js/bundles/.gitkeep
 node_modules/
 **/jsLibraryMappings.xml

@@ -125,8 +125,7 @@ const QuizQuestionRangeTypeComponent = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
-                    }
+                    </div>}
                 </div>
                 <div className="col-lg px-0 order-0 order-lg-2 mb-3">
                     <LeaveQuizSessionButtonComponent text="Wyjdź"/>
