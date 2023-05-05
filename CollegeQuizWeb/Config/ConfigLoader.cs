@@ -37,7 +37,7 @@ public class ConfigLoader
         JwtSecret = Env.GetString("JWT_SECRET");
         JwtIssuer = Env.GetString("JWT_ISSUER");
         
-        SmtpSender = "quizazumailer@gmail.com";
+        SmtpSender = "info@quizazu.pl";
         SmtpHost = Env.GetString("SMTP_HOST");
         SmtpPassword = Env.GetString("SMTP_PASSWORD");
         
