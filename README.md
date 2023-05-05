@@ -28,21 +28,16 @@ Website that is being created for college project. It will let players to play t
 * ASP.NET C# MVC (static content, pages, authentications)
 * ASP.NET C# WebAPI (websockets concentrators and handshakers, API for mobile app)
 
-**Full-duplex websockets communication technology**: SignalR
-
-**WebAPI authentication technology**: JWT
-
-**Mail templates**: Bootstrap email, Liquid
-
-**Web animations**: anime.js animation library
-
-**Image resizer js library**: CropperJS
-
-**Range sliders**: noUiSlider
-
-**Javascript bundling technology**: Webpack + Babel
-
-**Server and SignalR broker provider**: MS Azure
+## 3rd party libraries:
+* **SignalR** - full-duplex websockets communication technology
+* **JWT** - WebAPI authentication technology
+* **Bootstrap email, Liquid** - mail templates
+* **anime.js** - web animations
+* **CropperJS** - image resizer js library
+* **noUiSlider** - range sliders
+* **RetroNotify** - javascript toasts library
+* **Webpack, Babel** - javascript bundler and transpiler
+* **MS Azure** - server and SignalR broker provider
 
 ## License
 
