@@ -112,7 +112,6 @@ public class HomeController : Controller
     /// </summary>
     /// <returns>Status code for PayU</returns>
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePaymentStatus()
     {
         await HttpContext.Session.CommitAsync();

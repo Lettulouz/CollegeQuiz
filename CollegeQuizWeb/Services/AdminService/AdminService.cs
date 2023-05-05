@@ -130,10 +130,11 @@ public class AdminService : IAdminService
             {
                 Total = _context.Quizes.Count(),
                 Public = _context.Quizes.Count(s => s.IsPublic == true),
-                Private = _context.Quizes.Count(s => s.IsPublic == false)
+                Private = _context.Quizes.Count(s => s.IsPublic == false),
+                Locked =  _context.Quizes.Count(s => s.IsHidden)
             }).FirstOrDefaultAsync();
         
-        controller.ViewBag.quizStats = quizStats ?? new { Total = 0, Public = 0, Private = 0};
+        controller.ViewBag.quizStats = quizStats ?? new { Total = 0, Public = 0, Private = 0, Locked = 0};
         
        var couponStats = await (from q in _context.Coupons
             group q by 1
@@ -693,6 +694,7 @@ public class AdminService : IAdminService
             quizModel.CreatedAt = quizData.CreatedAt;
             quizModel.UserId = quizData.UserId;
             quizModel.UserName = quizData.UserEntity.Username;
+            quizModel.IsHidden = quizData.IsHidden;
             
             DtoList.Add(quizModel);
         }
@@ -761,6 +763,40 @@ public class AdminService : IAdminService
         }
     }
 
+    public async Task LockQuiz(long id, AdminController controller)
+    {
+
+        var quiz = _context.Quizes.Find(id);
+
+            if (quiz != null)
+            {
+                String message = string.Format(Lang.QUIZ_LOCKED, quiz.Name);
+                quiz.IsHidden = true;
+                _context.Update(quiz);
+                await _context.SaveChangesAsync();
+                controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+            }
+            
+            controller.Response.Redirect("/Admin/QuizList");
+    }
+    
+    public async Task UnlockQuiz(long id, AdminController controller)
+    {
+
+        var quiz = _context.Quizes.Find(id);
+
+        if (quiz != null)
+        {
+            String message = string.Format(Lang.QUIZ_UNLOCKED, quiz.Name);
+            quiz.IsHidden = false;
+            _context.Update(quiz);
+            await _context.SaveChangesAsync();
+            controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
+        }
+            
+        controller.Response.Redirect("/Admin/QuizList");
+    }
+    
     public async Task DelCategory(long id, AdminController controller)
     {
         var category = _context.Categories.Find(id);

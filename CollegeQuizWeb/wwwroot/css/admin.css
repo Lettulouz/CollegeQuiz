@@ -198,6 +198,11 @@
     border-top-left-radius: 0;
 }
 
+.left-button{
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
 .button-link{
     max-height: 38px !important;
 }
@@ -207,4 +212,8 @@
     width: 200px;
     padding: 5px !important;
     transition: .2s;
+}
+
+.offcanvas{
+    z-index: 10 !important;
 }

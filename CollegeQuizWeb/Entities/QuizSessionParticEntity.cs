@@ -23,6 +23,10 @@ public class QuizSessionParticEntity : AbstractAuditableEntity
     [Column("is_active")]
     public bool IsActive { get; set; }
     
+    [Required]
+    [Column("is_banned")]
+    public bool IsBanned { get; set; }
+    
     [ForeignKey(nameof(QuizLobbyEntity))]
     [Column("quiz_lobby_id")]
     public long QuizLobbyId { get; set; }

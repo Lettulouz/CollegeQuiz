@@ -81,7 +81,7 @@ public class HomeService : IHomeService
             case "WAITING_FOR_CONFIRMATION":
                 subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_WAITING;
                 break;
-            case "COMPLETEDN":
+            case "COMPLETED":
                 subscriptionPaymentHistoryEntity.OrderStatus = Lang.PAYU_COMPLETED;
                 break;
             case "CANCELED":

@@ -39,9 +39,10 @@ public class QuizUserSessionHub : Hub
             .Include(p => p.UserEntity)
             .Where(p => p.QuizLobbyEntity.Code.Equals(token));
         
-        await _hubManager.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new {
-            Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
-            Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
+        await _hubManager.Clients.Group(token).SendAsync("SEEDING_PARTICIPANTS_P2P", JsonSerializer.Serialize(new {
+            Connected = restOfPartic.Where(u => u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+            Disconnected = restOfPartic.Where(u => !u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+            Banned = restOfPartic.Where(u => u.IsBanned).Select(u => u.UserEntity.Username)
         }));
     }
 }

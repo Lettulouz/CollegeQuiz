@@ -31,7 +31,7 @@ public class PublicQuizesService : IPublicQuizesService
     public async Task<List<MyQuizDto>> GetPublicQuizes()
     {
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
-            .Where(q => q.QuizEntity.IsPublic.Equals(true))
+            .Where(q => q.QuizEntity.IsPublic.Equals(true) && !q.QuizEntity.IsHidden)
             .Select(q => new MyQuizDto()
                 { Name = q.QuizEntity.Name, Author = q.QuizEntity.UserEntity.Username , Id = q.QuizEntity.Id, Token = q.Token})
             .ToListAsync();
@@ -42,7 +42,7 @@ public class PublicQuizesService : IPublicQuizesService
         PublicQuizesController controller = obj.ControllerReference;
         
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
-            .Where(q => q.QuizEntity.IsPublic.Equals(true) && q.QuizEntity.Name.Contains(obj.Dto.Name))
+            .Where(q => q.QuizEntity.IsPublic.Equals(true) && q.QuizEntity.Name.Contains(obj.Dto.Name)  && !q.QuizEntity.IsHidden)
             .Select(q => new MyQuizDto()
                 { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token})
             .ToListAsync();
@@ -71,7 +71,7 @@ public class PublicQuizesService : IPublicQuizesService
             .Include(q => q.UserEntity)
             .Include(q => q.QuizEntity.QuizCategoryEntities)
             .Where(q=>q.QuizEntity.QuizCategoryEntities
-                .Any(qk=>allCat.Contains(qk.CategoryId)))
+                .Any(qk=>allCat.Contains(qk.CategoryId)) && !q.QuizEntity.IsHidden)
                 
             .ToListAsync();
     }
@@ -79,12 +79,13 @@ public class PublicQuizesService : IPublicQuizesService
     public async Task PublicQuizInfo(long id, PublicQuizesController controller)
     {
         var quizShareInfo = await _context.Quizes
-            .Where(q => q.IsPublic.Equals(true) && q.Id.Equals(id))
+            .Where(q => q.IsPublic.Equals(true) && q.Id.Equals(id) && !q.IsHidden)
             .FirstOrDefaultAsync();
         
         if (quizShareInfo == null)
         {
             controller.Response.Redirect("/PublicQuizes/Quizes");
+            
         }
         else
         {

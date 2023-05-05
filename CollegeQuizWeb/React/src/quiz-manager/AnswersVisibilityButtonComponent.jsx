@@ -40,8 +40,7 @@ const AnswersVisibilityButtonComponent = () => {
                 onClick={isAnswersVisible ? onChangeVisibility : showModal}>
                 <div className="form-check ps-0 position-relative form-switch mb-0 d-flex justify-content-center w-100">
                     <input className="form-check-input position-absolute" type="checkbox" role="switch"
-                        onChange={isAnswersVisible ? onChangeVisibility : showModal} checked={isAnswersVisible}
-                        style={{ left: 40, cursor: 'pointer' }}/>
+                        checked={isAnswersVisible} style={{ left: 40, cursor: 'pointer' }} onChange={e => {}}/>
                     <label className="form-check-label" htmlFor="flexSwitchCheckDefault" style={{ cursor: 'pointer' }}>
                         Odpowiedzi {isAnswersVisible ? 'widoczne' : 'niewidoczne'}
                     </label>

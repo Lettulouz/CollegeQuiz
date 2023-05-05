@@ -90,7 +90,7 @@ public class SharedQuizesService : ISharedQuizesService
     {
         var quizShareInfo = await _context.Quizes
             .Include(s => s.SharedQuizesEntities)
-            .FirstOrDefaultAsync(q =>q.SharedQuizesEntities.Any(p =>p.QuizId.Equals(id)));
+            .FirstOrDefaultAsync(q =>q.SharedQuizesEntities.Any(p =>p.QuizId.Equals(id)) && !q.IsHidden);
         
         if (quizShareInfo == null)
         {

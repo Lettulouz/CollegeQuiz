@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -80,6 +81,11 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         }
         else
         {
+            if (alreadyJoinedInactive.IsBanned) return new JoinToSessionDto()
+            {
+                IsGood = false,
+                Message = Lang.HOST_BANNED_USER
+            };
             alreadyJoinedInactive.ConnectionId = connectionId;
             alreadyJoinedInactive.IsActive = true;
             computePoints.Username = alreadyJoinedInactive.UserEntity.Username;
@@ -93,10 +99,11 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             .Include(p => p.UserEntity)
             .Where(p => p.QuizLobbyEntity.Code.Equals(token));
         
-        await _hubManagerContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
+        await _hubManagerContext.Clients.Group(token).SendAsync("SEEDING_PARTICIPANTS_P2P", JsonSerializer.Serialize(new
         {
-            Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
-            Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
+            Connected = restOfPartic.Where(u => u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+            Disconnected = restOfPartic.Where(u => !u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+            Banned = restOfPartic.Where(u => u.IsBanned).Select(u => u.UserEntity.Username)
         }));
 
         await _hubManagerContext.Clients.Group(token)
@@ -132,13 +139,13 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             .Include(p => p.UserEntity)
             .Where(p => p.QuizLobbyEntity.Code.Equals(token));
         
-        await _hubManagerContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
+        await _hubManagerContext.Clients.Group(token).SendAsync("SEEDING_PARTICIPANTS_P2P", JsonSerializer.Serialize(new
         {
-            Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
-            Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
+            Connected = restOfPartic.Where(u => u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+            Disconnected = restOfPartic.Where(u => !u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+            Banned = restOfPartic.Where(u => u.IsBanned).Select(u => u.UserEntity.Username)
         }));
         
-        await _hubManagerContext.Clients.Group(token).SendAsync("USER_ON_LEAVE_ROOM_P2P", loggedUsername);
         return new SimpleResponseDto()
         {
             IsGood = true,
@@ -227,7 +234,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             CurrentGameStatusQuestions currentGameStatusQuestions = new()
             {
                 Username = connetionIdInDb.UserEntity.Username,
-                SelectedAnswer = answerRange.Replace(",", "->"),
+                SelectedAnswer = answerRange.Replace(",", " -> "),
             };
             await _hubManagerContext.Clients.Group(token.QuizLobbyEntity.Code)
                 .SendAsync("USER_SELECT_ANSWER_P2P", JsonSerializer.Serialize(currentGameStatusQuestions));
@@ -280,28 +287,136 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         await _context.SaveChangesAsync();
     }
 
-    public async Task RemoveFromSession(string loggedUsername, string token, string username)
+    public async Task<SimpleResponseDto> RemoveFromSession(string loggedUsername, string token, string username)
     {
-        var particToDelete = _context.QuizSessionPartics
-            .Include(x=>x.QuizLobbyEntity)
-            .Where(x => x.QuizLobbyEntity.Code.Equals(token))
-            .FirstOrDefault(x=> x.UserEntity.Username.Equals(username));
-        if (particToDelete != null)
+        string message;
+        bool isGood = true;
+        try
         {
-            _context.QuizSessionPartics.Remove(particToDelete);
+            var quizSessionPart = await ValidateUserLobby(token, username, loggedUsername);
+            quizSessionPart.IsActive = false;
             await _context.SaveChangesAsync();
+            await _hubUserContext.Groups.RemoveFromGroupAsync(quizSessionPart.ConnectionId, token);
+
             var restOfPartic = _context.QuizSessionPartics
                 .Include(p => p.QuizLobbyEntity)
                 .Include(p => p.UserEntity)
                 .Where(p => p.QuizLobbyEntity.Code.Equals(token));
         
-            await _hubManagerContext.Clients.Group(token).SendAsync("GetAllParticipants", JsonSerializer.Serialize(new
+            await _hubManagerContext.Clients.Group(token).SendAsync("SEEDING_PARTICIPANTS_P2P", JsonSerializer.Serialize(new
             {
-                Connected = restOfPartic.Where(u => u.IsActive).Select(u => u.UserEntity.Username),
-                Disconnected = restOfPartic.Where(u => !u.IsActive).Select(u => u.UserEntity.Username)
+                Connected = restOfPartic.Where(u => u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+                Disconnected = restOfPartic.Where(u => !u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+                Banned = restOfPartic.Where(u => u.IsBanned).Select(u => u.UserEntity.Username)
             }));
-            await _hubUserContext.Clients.Client(particToDelete.ConnectionId)
+            await _hubUserContext.Clients.Client(quizSessionPart.ConnectionId)
                 .SendAsync("OnDisconnectedSession", Lang.HOST_DISCONECT_USER);
+            message = Lang.SESSION_REMOVE_USER;
         }
+        catch (ApplicationException ex)
+        {
+            message = ex.Message;
+            isGood = false;
+        }
+        return new SimpleResponseDto()
+        {
+            IsGood = isGood,
+            Message = message
+        };
+    }
+
+    public async Task<SimpleResponseDto> BanFromSession(string loggedUsername, string token, string username)
+    {
+        string message;
+        bool isGood = true;
+        try
+        {
+            var quizSessionPart = await ValidateUserLobby(token, username, loggedUsername);
+            quizSessionPart.IsBanned = true;
+            quizSessionPart.IsActive = false;
+            
+            await _context.SaveChangesAsync();
+            await _hubUserContext.Groups.RemoveFromGroupAsync(quizSessionPart.ConnectionId, token);
+            
+            var restOfPartic = _context.QuizSessionPartics
+                .Include(p => p.QuizLobbyEntity)
+                .Include(p => p.UserEntity)
+                .Where(p => p.QuizLobbyEntity.Code.Equals(token));
+            
+            await _hubManagerContext.Clients.Group(token).SendAsync("SEEDING_PARTICIPANTS_P2P", JsonSerializer.Serialize(new
+            {
+                Connected = restOfPartic.Where(u => u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+                Disconnected = restOfPartic.Where(u => !u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+                Banned = restOfPartic.Where(u => u.IsBanned).Select(u => u.UserEntity.Username)
+            }));
+            
+            await _hubUserContext.Clients.Client(quizSessionPart.ConnectionId)
+                .SendAsync("OnDisconnectedSession", Lang.HOST_BANNED_USER);
+            
+            message = string.Format(Lang.SESSION_BAN_USER, quizSessionPart.UserEntity.Username);
+        }
+        catch (ApplicationException ex)
+        {
+            message = ex.Message;
+            isGood = false;
+        }
+        return new SimpleResponseDto()
+        {
+            IsGood = isGood,
+            Message = message
+        };
+    }
+    
+    public async Task<SimpleResponseDto> UnbanFromSession(string loggedUsername, string token, string username)
+    {
+        string message;
+        bool isGood = true;
+        try
+        {
+            var quizSessionPart = await ValidateUserLobby(token, username, loggedUsername);
+            quizSessionPart.IsBanned = false;
+            await _context.SaveChangesAsync();
+            
+            var restOfPartic = _context.QuizSessionPartics
+                .Include(p => p.QuizLobbyEntity)
+                .Include(p => p.UserEntity)
+                .Where(p => p.QuizLobbyEntity.Code.Equals(token));
+        
+            await _hubManagerContext.Clients.Group(token).SendAsync("SEEDING_PARTICIPANTS_P2P", JsonSerializer.Serialize(new
+            {
+                Connected = restOfPartic.Where(u => u.IsActive && !u.IsBanned).Select(u => u.UserEntity.Username),
+                Disconnected = new List<string>(),
+                Banned = restOfPartic.Where(u => u.IsBanned).Select(u => u.UserEntity.Username)
+            }));
+            
+            message = string.Format(Lang.SESSION_UNBAN_USER, quizSessionPart.UserEntity.Username);
+        }
+        catch (ApplicationException ex)
+        {
+            message = ex.Message;
+            isGood = false;
+        }
+        return new SimpleResponseDto()
+        {
+            IsGood = isGood,
+            Message = message
+        };
+    }
+
+    private async Task<QuizSessionParticEntity> ValidateUserLobby(string token, string username, string loggedUsername)
+    {
+        token = token.ToUpper();
+        var quizLobby = await _context.QuizLobbies
+            .Include(l => l.UserEntity)
+            .FirstOrDefaultAsync(l => l.UserEntity.Username.Equals(loggedUsername) && l.Code.Equals(token));
+        if (quizLobby == null) throw new ApplicationException(Lang.QUIZ_NOT_FOUND);
+        
+        var particEntity = await _context.QuizSessionPartics
+            .Include(q => q.UserEntity)
+            .Include(p => p.QuizLobbyEntity)
+            .FirstOrDefaultAsync(p => p.UserEntity.Username.Equals(username) && p.QuizLobbyEntity.Code.Equals(token));
+        if (particEntity == null) throw new ApplicationException(Lang.CURRNETLY_NOT_IN_GAME);
+        
+        return particEntity;
     }
 }

@@ -12,6 +12,18 @@
     <button type="submit" hidden="hidden" id="deleteButtonHidden"></button>
 </form>
 
+<form method="POST" asp-controller="Admin" asp-action="LockQuiz">
+
+    <input type="hidden" id="lockId" asp-for="@Model[0].Id"/>
+    <button type="submit" hidden="hidden" id="lockButtonHidden"></button>
+</form>
+
+<form method="POST" asp-controller="Admin" asp-action="UnlockQuiz">
+
+    <input type="hidden" id="unlockId" asp-for="@Model[0].Id"/>
+    <button type="submit" hidden="hidden" id="unlockButtonHidden"></button>
+</form>
+
 
 <h1 class="text-muted px-2">Lista quizów</h1>
 <hr class="divider mt-0">
@@ -20,15 +32,18 @@
     <div class="row">
         <div class="col">
             <nav aria-label="Buttons">
-                <ul class="pagination justify-content-start">
-                    <li class="page-item me-2">
+                <ul class="pagination justify-content-start flex-container">
+                    <li class="page-item me-2 p-1 flex-item">
                         <button class="btn btn-lg btn-dark w-100" style="font-size: 17px" id="allButton" onclick="filterButtonClick(1)" type="submit">Wszystkie</button>
                     </li>
-                    <li class="page-item me-2">
+                    <li class="page-item me-2 p-1 flex-item">
                         <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="activeButton" onclick="filterButtonClick(2)" type="submit">Publiczne</button>
                     </li>
-                    <li class="page-item me-2">
+                    <li class="page-item me-2 p-1 flex-item">
                         <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="archiveButton" onclick="filterButtonClick(3)" type="submit">Prywatne</button>
+                    </li>
+                    <li class="page-item me-2 p-1 flex-item">
+                        <button class="btn btn-lg btn-secondary w-100" style="font-size: 17px" id="lockedButton" onclick="filterButtonClick(5)" type="submit">Zablokowane</button>
                     </li>
 
                 </ul>
@@ -193,6 +208,9 @@
                  case 4:
                      searchList(res);
                      break;
+                 case 5:
+                      lockedList(res);
+                      break;
              }
          }
       
@@ -201,6 +219,7 @@
                  document.getElementById('allButton').className = "btn btn-lg btn-dark w-100";  
                  document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
                  document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                 document.getElementById('lockedButton').className = "btn btn-lg btn-secondary w-100";
                  chosenFilter = 1;
                  let filteredquizList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
                  let filteredquizList2 = [];
@@ -218,6 +237,7 @@
                      document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
                      document.getElementById('activeButton').className = "btn btn-lg btn-dark w-100";
                      document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
+                     document.getElementById('lockedButton').className = "btn btn-lg btn-secondary w-100";
                      chosenFilter = 2;
                      let prefilteredList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
                      let filteredquizList = prefilteredList.filter(obj => obj.IsPublic);
@@ -236,6 +256,7 @@
                       document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
                       document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
                       document.getElementById('archiveButton').className =  "btn btn-lg btn-dark w-100";
+                      document.getElementById('lockedButton').className = "btn btn-lg btn-secondary w-100";
                       chosenFilter = 3;
                       let prefilteredList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
                       let filteredquizList = prefilteredList.filter(obj => !obj.IsPublic);
@@ -250,6 +271,26 @@
                      generateListHTML(filteredquizList2, initialLength);
                   }
              
+                  function lockedList(val){  
+                        document.getElementById('pagination123').value = page;
+                        document.getElementById('allButton').className = "btn btn-lg btn-secondary w-100";
+                        document.getElementById('activeButton').className = "btn btn-lg btn-secondary w-100";
+                        document.getElementById('archiveButton').className =  "btn btn-lg btn-secondary w-100";
+                        document.getElementById('lockedButton').className = "btn btn-lg btn-dark w-100";
+                        chosenFilter = 5;
+                        let prefilteredList = quizList.filter(function (obj) { return obj.Name.toLowerCase().includes(val); });
+                        let filteredquizList = prefilteredList.filter(obj => obj.IsHidden);
+                       let filteredquizList2 = [];
+                       let initialLength = filteredquizList.length;
+                       for (var i=page*recordsPerPage-recordsPerPage; i<page*recordsPerPage+recordsPerPage-recordsPerPage; i++){
+                           if (filteredquizList[i] != null)
+                               filteredquizList2.push(filteredquizList[i]);
+                       }
+                       globalList=filteredquizList2
+                       
+                       generateListHTML(filteredquizList2, initialLength);
+                    }
+                  
                   function searchList(val){
                     document.getElementById('pagination123').value = page;
                     
@@ -313,8 +354,15 @@
                      <a class="btn btn-sm btn-dark" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
                         href="/Admin/QuizView/${obj.Id}" data-bs-title="Szczegóły quizu">
                          <i class="bi bi-eye-fill"></i>
-                     </a>
-                         <a type="button" val="${obj.Id}" class="btn btn-sm btn-danger right-button" onclick="deleteQuiz(this)" data-bs-toggle="tooltip"
+                     </a>`
+                     if(obj.IsHidden){
+                         html+=` <a type="button" val="${obj.Id}" class="btn btn-sm btn-dark right-button" data-bs-toggle="tooltip"
+                              data-bs-placement="top" data-bs-title="Odblokuj quiz" onclick="unlockQuiz(this)"><i class="bi bi-unlock"></i></a>`
+                     }
+                     else{
+                       html+=` <a type="button" val="${obj.Id}" class="btn btn-sm btn-danger right-button" data-bs-toggle="tooltip"
+                                 data-bs-placement="top" data-bs-title="Zablokuj quiz" onclick="lockQuiz(this)"><i class="bi bi-lock"></i></a>`}
+                         html+=`<a type="button" val="${obj.Id}" class="btn btn-sm btn-danger right-button" onclick="deleteQuiz(this)" data-bs-toggle="tooltip"
                                  data-bs-placement="top" data-bs-title="Usuń quiz"><i class="bi bi-trash"></i></a>
             
                  </div>
@@ -358,6 +406,9 @@
                          case 4:
                              searchList(res);
                              break;
+                         case 5:
+                              lockedList(res);
+                              break;
                      }
                  }
                  
@@ -382,6 +433,23 @@
                          quizId.value = value;
                          confirmFormSubmit();
                      }
+                     
+                     
+                 function lockQuiz(obj){
+                      let value = $(obj).attr("val");
+                      quizId = document.getElementById('lockId');
+                      quizId.value = value;
+                      let temp = document.getElementById('lockButtonHidden');
+                      temp.click();
+                  }
+                  
+                  function unlockQuiz(obj){
+                        let value = $(obj).attr("val");
+                        quizId = document.getElementById('unlockId');
+                        quizId.value = value;
+                        let temp = document.getElementById('unlockButtonHidden');
+                        temp.click();
+                    }
                      
                      function hideButtons(){
                               if($('main').width()<970){

@@ -133,6 +133,8 @@ public static class Lang
     public const string CATEGORY_REMOVED = "Kategoria {0} została usunięta";
     
     public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
+    public const string QUIZ_LOCKED = "Quiz {0} został zablokowany";
+    public const string QUIZ_UNLOCKED = "Quiz {0} został odblokowany";
     public const string QUIZ_NOT_EXIST = "Quiz nie istnieje";
     // subscription payment
 
@@ -194,8 +196,12 @@ public static class Lang
     public const string CURRNETLY_IN_GAME = "Na tym koncie obecnie prowadzona jest rozgrywka w sesji. Użyj innego konta.";
     public const string CURRNETLY_NOT_IN_GAME = "Obecnie nie jesteś w wybranej grze.";
     public const string SESSION_LEFT_ENTER_TOKEN = "Wyszedłeś z sesji, aby wejść ponownie wprowadź kod quizu.";
+    public const string SESSION_REMOVE_USER = "Użytkownik <strong>{0}</strong> został wyrzucony przez ciebie z sesji.";
+    public const string SESSION_BAN_USER = "Użytkownik <strong>{0}</strong> został zbanowany przez ciebie z sesji.";
+    public const string SESSION_UNBAN_USER = "Użytkownik <strong>{0}</strong> został odbanowany przez ciebie z sesji.";
     public const string HOST_NOT_FOUND = "Nie znaleziono aktywnego hosta sesji gry.";
     public const string HOST_DISCONECT_USER = "Zostałeś rozłączony przez hosta.";
+    public const string HOST_BANNED_USER = "Zostałeś zbanowany przez hosta, przez co nie możesz dołączyć już do quizu.";
     
     public const string CANNOT_DELETE_USER_IN_GAME = "Nie można usunąć użytkownika znajdującego się w rozgrywce";
 

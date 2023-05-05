@@ -17,4 +17,6 @@ public class QuizListDto
     public long UserId { get; set; }
 
     public string UserName;
+    
+    public bool IsHidden { get; set; }
 }

@@ -20,8 +20,8 @@ const QuizManagerQuestionTickComponent = () => {
     }, []);
 
     const playSound = counter => {
-        if(counter <= 5 && counter>0){
-            var audio = new Audio("/sounds/counter/" + counter + ".mp4");
+        if(counter <= 5 && counter > 0){
+            var audio = new Audio(`/sounds/counter/${counter}.mp4`);
             audio.volume = 0.8
             audio.play();
         }

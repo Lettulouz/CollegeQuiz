@@ -18,35 +18,29 @@ public class QuizSessionAPIController : AbstractAPIController
     }
 
     [HttpPost("[action]/{connectionId}/{token}")]
-    public async Task<JsonResult> JoinRoom(string connectionId, string token)
+    public async Task<IActionResult> JoinRoom(string connectionId, string token)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.JoinRoom(loggedUsername, connectionId, token));
     }
 
     [HttpPost("[action]/{connectionId}/{token}")]
-    public async Task<JsonResult> JoinRoomJwt(string connectionId, string token)
+    public async Task<IActionResult> JoinRoomJwt(string connectionId, string token)
     {
         var user = await _jwtService.ValidateToken(this);
-        if (user == null) return Json(new {});
+        if (user == null) return StatusCode(403);
         
         return Json(await _service.JoinRoom(user.Username, connectionId, token));
     }
     
     [HttpPost("[action]/{connectionId}/{token}")]
-    public async Task<JsonResult> LeaveRoom(string connectionId, string token)
+    public async Task<IActionResult> LeaveRoom(string connectionId, string token)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.LeaveRoom(loggedUsername, connectionId, token));
     }
     
@@ -54,70 +48,74 @@ public class QuizSessionAPIController : AbstractAPIController
     public async Task<IActionResult> RemoveFromSession(string token, string username)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            return StatusCode(401);
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         await _service.RemoveFromSession(loggedUsername, token, username);
         return StatusCode(200);
     }
+    
+    [HttpPost("[action]/{token}/{username}")]
+    public async Task<IActionResult> BanFromSession(string token, string username)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return StatusCode(403);
+        
+        return Json(await _service.BanFromSession(loggedUsername, token, username));
+    }
+    
+    [HttpPost("[action]/{token}/{username}")]
+    public async Task<IActionResult> UnbanFromSession(string token, string username)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return StatusCode(403);
+
+        return Json(await _service.UnbanFromSession(loggedUsername, token, username));
+    }
 
     [HttpPost("[action]/{connectionId}/{token}")]
-    public async Task<JsonResult> LeaveRoomJwt(string connectionId, string token)
+    public async Task<IActionResult> LeaveRoomJwt(string connectionId, string token)
     {
         var user = await _jwtService.ValidateToken(this);
-        if (user == null) return Json(new {});
+        if (user == null) return StatusCode(403);
         
         return Json(await _service.LeaveRoom(user.Username, connectionId, token));
     }
 
     [HttpPost("[action]/{connectionId}/{token}")]
-    public async Task<JsonResult> EstabilishedHostRoom(string connectionId, string token)
+    public async Task<IActionResult> EstabilishedHostRoom(string connectionId, string token)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.EstabilishedHostRoom(loggedUsername, connectionId, token));
     }
 
     [HttpPost("[action]/{token}")]
-    public async Task<JsonResult> GetLobbyData(string token)
+    public async Task<IActionResult> GetLobbyData(string token)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.GetLobbyData(loggedUsername, token));
     }
     
     [HttpPost("[action]/{connectionId}/{questionId}/{answerId}/{isMultiAnswer}")]
-    public async Task SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer)
+    public async Task<IActionResult> SendAnswer(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 403;
-            return;
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         await _service.SendAnswer(connectionId, questionId, answerId, isMultiAnswer);
-        Response.StatusCode = 200;
+        return StatusCode(200);
     }
 
     [HttpPost("[action]/{connectionId}/{questionId}/{answerId}/{isMultiAnswer}")]
-    public async Task SendAnswerJwt(string connectionId, string questionId, string answerId, bool isMultiAnswer)
+    public async Task<IActionResult> SendAnswerJwt(string connectionId, string questionId, string answerId, bool isMultiAnswer)
     {
         var user = await _jwtService.ValidateToken(this);
-        if (user == null)
-        {
-            Response.StatusCode = 403;
-            return;
-        }
+        if (user == null) return StatusCode(403);
+        
         await _service.SendAnswer(connectionId, questionId, answerId, isMultiAnswer);
-        Response.StatusCode = 200;
+        return StatusCode(200);
     }
 }

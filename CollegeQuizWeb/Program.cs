@@ -69,7 +69,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(ConfigLoader.GetSwaggerConfiguration());
 
 // signalR
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(o =>
+{
+    o.MaximumReceiveMessageSize = 64000; // in bytes
+});
 
 // JWT
 builder.Services.AddScoped<IJwtService, JwtService>();

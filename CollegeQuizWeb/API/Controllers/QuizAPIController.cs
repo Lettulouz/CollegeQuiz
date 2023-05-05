@@ -20,39 +20,30 @@ public class QuizAPIController : Controller
     }
 
     [HttpGet("[action]/{id}")]
-    public async Task<JsonResult> GetQuizQuestions([FromRoute] long id)
+    public async Task<IActionResult> GetQuizQuestions([FromRoute] long id)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.GetQuizQuestions(id, loggedUsername, this));
     }
     
     [HttpPost("[action]/{id}")]
-    public async Task<JsonResult> AddQuizQuestions([FromRoute] long id, [FromBody] AggregateQuestionsReqDto dto)
+    public async Task<IActionResult> AddQuizQuestions([FromRoute] long id, [FromBody] AggregateQuestionsReqDto dto)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.AddQuizQuestions(id, dto, loggedUsername));
     }
     
     [HttpPost("[action]/{id}/{newName}")]
-    public async Task<JsonResult> ChangeQuizName([FromRoute] long id, [FromRoute] string newName,
+    public async Task<IActionResult> ChangeQuizName([FromRoute] long id, [FromRoute] string newName,
         [FromBody] AggregateQuestionsReqDto dto)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.UpdateQuizName(id, newName, loggedUsername));
     }
 
@@ -70,14 +61,11 @@ public class QuizAPIController : Controller
     }
     
     [HttpPost("[action]/{id}")]
-    public async Task<JsonResult> UpdateQuizImages([FromRoute] long id, [FromForm] List<IFormFile?> uploads)
+    public async Task<IActionResult> UpdateQuizImages([FromRoute] long id, [FromForm] List<IFormFile?> uploads)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
-        if (loggedUsername == null)
-        {
-            Response.StatusCode = 401;
-            return Json(new {});
-        }
+        if (loggedUsername == null) return StatusCode(403);
+        
         return Json(await _service.UpdateQuizImages(id, uploads, loggedUsername, this));
     }
 }

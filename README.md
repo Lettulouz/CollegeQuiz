@@ -7,13 +7,16 @@ Website that is being created for college project. It will let players to play t
 ## Authors
 
 - [@Lettulouz](https://www.github.com/Lettulouz) - Leader
-- [@Milosz08](https://www.github.com/Milosz08) - Programming know-how, game session designer and websockets stuff
+- [@Milosz08](https://www.github.com/Milosz08) - Programming know-how, game session designer and websockets stuff + client side rendering
 - [@patrick012016](https://www.github.com/patrick012016) - Mostly mobile app ([github repo](https://github.com/patrick012016/CollegeQuizMobileApp))
 - [@tentegess](https://www.github.com/tentegess)
 - [@NicoMroo](https://www.github.com/NicoMroo)
 - [@kBaginskik](https://www.github.com/kBaginskik)
 - [@crucialis](https://www.github.com/crucialis)
 
+## App testers
+
+- [@Arek2017](https://github.com/Arek2017)
 
 ## Tech Stack
 
@@ -25,19 +28,17 @@ Website that is being created for college project. It will let players to play t
 * ASP.NET C# MVC (static content, pages, authentications)
 * ASP.NET C# WebAPI (websockets concentrators and handshakers, API for mobile app)
 
-**Full-duplex websockets communication technology**: SignalR
-
-**WebAPI authentication technology**: JWT
-
-**Mail templates**: Bootstrap email, Liquid
-
-**Web animations**: anime.js animation library
-
-**Image resizer js library**: CropperJS
-
-**Range sliders**: noUiSlider
-
-**Server and SignalR broker provider**: MS Azure
+## 3rd party libraries:
+* **SignalR** - full-duplex websockets communication technology
+* **JWT** - WebAPI authentication technology
+* **Boostrap** - css/js library
+* **Bootstrap email, Liquid** - mail templates
+* **anime.js** - web animations
+* **CropperJS** - image resizer js library
+* **noUiSlider** - range sliders
+* **RetroNotify** - javascript toasts library
+* **Webpack, Babel** - javascript bundler and transpiler
+* **MS Azure** - server and SignalR broker provider
 
 ## License
 

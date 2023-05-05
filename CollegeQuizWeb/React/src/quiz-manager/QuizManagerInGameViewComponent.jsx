@@ -78,15 +78,12 @@ const QuizManagerInGameViewComponent = () => {
             stateCopy[parcitipantIndex].Answer = updatedAnswer;
             setResultTable(stateCopy);
         });
-    }, []);
-    
-    useEffect(() => {
+        
         // wykona się gdy serwer obliczy punkty po każdej turze
         connection.on("COMPUTE_ALL_POINTS_P2P", usersPoints => {
             const parsedUserPoints = JSON.parse(usersPoints);
 
             const stateCopy = [ ...resultTable ];
-            console.log(stateCopy, parsedUserPoints);
             const newState = stateCopy.map(u => {
                 const user = parsedUserPoints.find(usr => usr.Username === u.Username);
                 if (!user) return u;
@@ -96,7 +93,7 @@ const QuizManagerInGameViewComponent = () => {
             });
             setResultTable(newState);
         });
-    }, [ allParticipants.Connected ]);
+    }, []);
     
     return (
         <>

@@ -29,9 +29,6 @@ const QuizSessionMainGameWindowComponent = () => {
         
         // rozpoczęcie gry
         connection.on("START_GAME_P2P", () => {});
-
-        // przeładowanie mobilnej aplikacji
-        connection.on("MOBILE_CHECKPOINT", () => {});
         
         // odbieranie pytań z koncentratora serwera
         connection.on("QUESTION_P2P", answ => {
