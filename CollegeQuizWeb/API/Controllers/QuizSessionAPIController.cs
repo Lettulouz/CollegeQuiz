@@ -53,6 +53,24 @@ public class QuizSessionAPIController : AbstractAPIController
         await _service.RemoveFromSession(loggedUsername, token, username);
         return StatusCode(200);
     }
+    
+    [HttpPost("[action]/{token}/{username}")]
+    public async Task<IActionResult> BanFromSession(string token, string username)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return StatusCode(403);
+        
+        return Json(await _service.BanFromSession(loggedUsername, token, username));
+    }
+    
+    [HttpPost("[action]/{token}/{username}")]
+    public async Task<IActionResult> UnbanFromSession(string token, string username)
+    {
+        string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
+        if (loggedUsername == null) return StatusCode(403);
+
+        return Json(await _service.UnbanFromSession(loggedUsername, token, username));
+    }
 
     [HttpPost("[action]/{connectionId}/{token}")]
     public async Task<IActionResult> LeaveRoomJwt(string connectionId, string token)

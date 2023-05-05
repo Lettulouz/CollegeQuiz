@@ -16,7 +16,7 @@ const QuizManagerRootComponent = () => {
     const [ connection, setConnection ] = useState(null);
     const [ alert, setAlert ] = useState(alertOff());
     const [ isEstabiblishedClicked, setIsEstabilishedClicked ] = useState(false);
-    const [ allParticipants, setAllParticipants ] = useState({ Connected: [], Disconnected: [] });
+    const [ allParticipants, setAllParticipants ] = useState({ Connected: [], Disconnected: [], Banned: [] });
     const [ nextQuestionIsActive, setNextQuestionIsActive ] = useState(false);
     const [ tick, setTick ] = useState(0);
     const [ nextQuestionBtnText, setNextQuestionBtnText ] = useState("Następne pytanie");
