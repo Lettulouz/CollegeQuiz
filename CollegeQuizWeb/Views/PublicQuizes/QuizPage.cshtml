@@ -46,7 +46,7 @@
                 {
                     
                     <div class="col-@(ViewBag.questions[j].type == 5 ? "12" : "6")">
-                        <div class="p-3 card">
+                        <div class="p-3 card h-100">
                             <div class="p-3 card @(ViewBag.questions[j].type == 5 ? "" : "hstack")">
                                 @if(@ViewBag.questions[j].type != 5){
                                 <span class="me-2 fs-4">@(i + 1)</span>
