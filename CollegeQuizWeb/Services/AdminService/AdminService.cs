@@ -130,10 +130,11 @@ public class AdminService : IAdminService
             {
                 Total = _context.Quizes.Count(),
                 Public = _context.Quizes.Count(s => s.IsPublic == true),
-                Private = _context.Quizes.Count(s => s.IsPublic == false)
+                Private = _context.Quizes.Count(s => s.IsPublic == false),
+                Locked =  _context.Quizes.Count(s => s.IsHidden)
             }).FirstOrDefaultAsync();
         
-        controller.ViewBag.quizStats = quizStats ?? new { Total = 0, Public = 0, Private = 0};
+        controller.ViewBag.quizStats = quizStats ?? new { Total = 0, Public = 0, Private = 0, Locked = 0};
         
        var couponStats = await (from q in _context.Coupons
             group q by 1
