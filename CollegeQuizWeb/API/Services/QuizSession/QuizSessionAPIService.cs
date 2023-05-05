@@ -227,7 +227,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             CurrentGameStatusQuestions currentGameStatusQuestions = new()
             {
                 Username = connetionIdInDb.UserEntity.Username,
-                SelectedAnswer = answerRange.Replace(",", "->"),
+                SelectedAnswer = answerRange.Replace(",", " -> "),
             };
             await _hubManagerContext.Clients.Group(token.QuizLobbyEntity.Code)
                 .SendAsync("USER_SELECT_ANSWER_P2P", JsonSerializer.Serialize(currentGameStatusQuestions));

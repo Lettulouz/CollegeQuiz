@@ -19,8 +19,7 @@ const RemoveUserFromSessionButtonComponent = ({ name }) => {
     
     return (
         <button className="border-0 bg-transparent on-hover-darker" onClick={onRemoveUser}
-            title="Usuwanie użytkownika z sesji wraz z usunięciem wszystkich zdobytych przez niego punktów"
-            disabled={countingActive}>
+            title="Usuwanie użytkownika z sesji" disabled={countingActive}>
             <i className="bi bi-x-circle-fill text-danger fs-5"></i>
         </button>
     );

@@ -11,9 +11,8 @@ const QuizManagerLeftContentComponent = () => {
     } = useContext(SessionContext);
 
     useEffect(() => {
-        
         // dołączenie użytkownika do sesji
-        connection.on('GetAllParticipants', data => {
+        connection.on('SEEDING_PARTICIPANTS_P2P', data => {
             const allParticipants = JSON.parse(data);
             
             allParticipants.Connected.sort();
@@ -33,14 +32,6 @@ const QuizManagerLeftContentComponent = () => {
             
             const { Username, Points, IsGood } = parsedJoinableUser;
             setResultTable(prevState => ([ ...prevState, { Username, Points, IsGood, Answer: '-' }]));
-        });
-        
-        // usunięcie użytkownika z sesji
-        connection.on('USER_ON_LEAVE_ROOM_P2P', leavingUsername => {
-            const copy = [ ...resultTable ];
-            const newState = copy.filter(r => r.username !== leavingUsername);
-            setResultTable(newState);
-            setRespondedUsers(prevState => prevState === 0 ? 0 : prevState - 1);
         });
         
         fetch(`/api/v1/dotnet/QuizSessionAPI/GetLobbyData/${SESS_TOKEN}`, getCommonFetchObj('POST'))
