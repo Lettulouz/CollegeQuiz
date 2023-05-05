@@ -20,8 +20,12 @@ function copyToBoard(obj, quizId)
     const row = $(obj).parent().parent();
     const valueToCopy = row.find('.copy-class').text().replaceAll(" ","").replaceAll("\n",""); // Miłosz nie patrz pls
     navigator.clipboard.writeText(valueToCopy);
-    const message = `Skopiowano token udostepniający ${valueToCopy} do schowka.`;
-    toastr.success(message);
+    new RetroNotify({
+        contentHeader: 'Informacja',
+        contentText: `Skopiowano token udostepniający ${valueToCopy} do schowka.`,
+        style: 'black',
+        animate: 'slideTopRight'
+    });
 }
 
 function onLoad() {

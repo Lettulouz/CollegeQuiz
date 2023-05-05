@@ -39,8 +39,13 @@
 <script>
 $(".copyButton").click(function() {
     var code=$(this).parent().parent().find(".cp-cell").text()
-     navigator.clipboard.writeText(code);
-    toastr.success(`Skopiowano kupon do schowka.`);
+    navigator.clipboard.writeText(code);
+    new RetroNotify({
+        contentHeader: 'Informacja',
+        contentText: `Skopiowano kupon do schowka.`,
+        style: 'black',
+        animate: 'slideTopRight'
+    });
 } );
 </script>
 

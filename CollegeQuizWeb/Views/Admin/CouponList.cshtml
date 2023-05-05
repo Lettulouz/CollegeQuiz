@@ -397,8 +397,12 @@
         let row = $(obj).parent().parent().parent().parent();
         let valueToCopy = row.find('.couponVal').text();
         navigator.clipboard.writeText(valueToCopy);
-        let message = `Skopiowano kod ${valueToCopy} do schowka.`;
-        toastr.success(message);
+        new RetroNotify({
+            contentHeader: 'Informacja',
+            contentText: `Skopiowano kod ${valueToCopy} do schowka.`,
+            style: 'black',
+            animate: 'slideTopRight'
+        });
     }
     
     function allCheckboxClicked(obj){
@@ -433,8 +437,12 @@
         let stringOfCoupons = selectedCouponsList.toString();
         stringOfCoupons = stringOfCoupons.replaceAll(",","\n");
         FileSave(stringOfCoupons, "Coupons.txt");
-        let message = `Wygenerowano plik z kuponami.`;
-        toastr.success(message);
+        new RetroNotify({
+            contentHeader: 'Informacja',
+            contentText: `Wygenerowano plik z kuponami.`,
+            style: 'black',
+            animate: 'slideTopRight'
+        });
     }
     
     function nextPage(){
