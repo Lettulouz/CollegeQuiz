@@ -2,12 +2,11 @@ import { useContext, useEffect } from "react";
 import { alertDanger, alertOff, alertWarning, getCommonFetchObj } from "../utils/common";
 import { SessionContext, SESS_TOKEN } from "../quiz-manager-renderer";
 
-import RemoveUserFromSessionButtonComponent from "./RemoveUserFromSessionButtonComponent.jsx";
+import SessionParticipantsComponent from "./SessionParticipantsComponent";
 
 const QuizManagerLeftContentComponent = () => {
     const {
-        connection, allParticipants, setAllParticipants, lobbyData, setLobbyData, setAlert, resultTable, setResultTable,
-        setRespondedUsers
+        connection, setAllParticipants, lobbyData, setLobbyData, setAlert, resultTable, setResultTable
     } = useContext(SessionContext);
 
     useEffect(() => {
@@ -17,7 +16,11 @@ const QuizManagerLeftContentComponent = () => {
             
             allParticipants.Connected.sort();
             allParticipants.Disconnected.sort();
+            allParticipants.Banned.sort();
+            
             setAllParticipants(allParticipants);
+            setResultTable(prevState => prevState.filter(u => allParticipants.Connected.includes(u.Username)));
+            
             if (allParticipants.Connected.length === 0) {
                 setAlert(alertWarning("Rozgrywka jest możliwa tylko wtedy, gdy uczestniczy w niej przynajmniej jeden gracz."));
             } else {
@@ -43,21 +46,6 @@ const QuizManagerLeftContentComponent = () => {
             });
     }, []);
     
-    const allConnected = allParticipants.Connected.map(name => (
-        <li className="h6 list-group-item bg-transparent border-0 px-1 py-1 mb-0" key={name}>
-            <div className="container p-0">
-                <div className="d-flex justify-content-between text-break">
-                    <div className="quiz-color-text d-flex align-items-center lh-1">{name}</div>
-                    <RemoveUserFromSessionButtonComponent name={name}/>
-                </div>
-            </div>
-        </li>
-    ));
-    
-    const allDisconnected = allParticipants.Disconnected.map(name => (
-        <li className="h6 list-group-item bg-transparent border-0 px-1 py-1 mb-0 quiz-color-text" key={name}>{name}</li>
-    ));
-
     return (
         <div className="col-lg-3 px-0 px-md-1 mb-2 mb-lg-0 order-lg-0 order-2">
             <div className="card trsp px-3 py-3 h-100 scrollable-container">
@@ -66,11 +54,7 @@ const QuizManagerLeftContentComponent = () => {
                 <h5 className="mb-2 lh-sm quiz-color-text">{lobbyData.name}</h5>
                 <h6 className="text-black-50 mb-0">Host</h6>
                 <h5 className="mb-4 lh-sm quiz-color-text">{lobbyData.host}</h5>
-                <h6 className="text-black-50 mb-1">Połączeni: ({allParticipants.Connected.length})</h6>
-                {allParticipants.Connected.length > 0 && 
-                    <ul className="fw-bold list-group" style={{ minHeight: 38 }}>{allConnected}</ul>}
-                <h6 className="text-black-50 mt-3 mb-1">Rozłączeni: ({allParticipants.Disconnected.length})</h6>
-                {allParticipants.Disconnected.length  > 0 && <ul className="fw-bold list-group">{allDisconnected}</ul>}
+                <SessionParticipantsComponent/>
             </div>
         </div>
     );

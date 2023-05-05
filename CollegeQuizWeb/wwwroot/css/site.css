@@ -143,6 +143,44 @@ a.navbar-brand {
     cursor: not-allowed;
 }
 
+.on-hover-good-darker i {
+    transition: .2s;
+    color: #63c4ab;
+}
+.on-hover-good-darker:hover i {
+    color: #3a8a7f !important;
+}
+.on-hover-good-darker:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.leaderboard-table-card {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.leaderboard-table-nav-container {
+    width: 50px;
+}
+.leaderboard-toggle-button {
+    background-color: #D9FFF4;
+}
+.leaderboard-toggle-button.active {
+    background-color: #63c4ab;
+}
+
+.leaderboard-table-nav-button-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    width: 250px;
+    color: #63c4ab;
+}
+.leaderboard-toggle-button.active .leaderboard-table-nav-button-text {
+    color: #f9fef8;
+}
+
 #toast-container {
     z-index: 999999;
 }
