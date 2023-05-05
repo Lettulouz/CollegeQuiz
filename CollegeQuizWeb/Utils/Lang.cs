@@ -133,6 +133,8 @@ public static class Lang
     public const string CATEGORY_REMOVED = "Kategoria {0} została usunięta";
     
     public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
+    public const string QUIZ_LOCKED = "Quiz {0} został zablokowany";
+    public const string QUIZ_UNLOCKED = "Quiz {0} został odblokowany";
     public const string QUIZ_NOT_EXIST = "Quiz nie istnieje";
     // subscription payment
 

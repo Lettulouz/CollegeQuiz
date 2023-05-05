@@ -7,13 +7,16 @@ Website that is being created for college project. It will let players to play t
 ## Authors
 
 - [@Lettulouz](https://www.github.com/Lettulouz) - Leader
-- [@Milosz08](https://www.github.com/Milosz08) - Programming know-how, game session designer and websockets stuff
+- [@Milosz08](https://www.github.com/Milosz08) - Programming know-how, game session designer and websockets stuff + client side rendering
 - [@patrick012016](https://www.github.com/patrick012016) - Mostly mobile app ([github repo](https://github.com/patrick012016/CollegeQuizMobileApp))
 - [@tentegess](https://www.github.com/tentegess)
 - [@NicoMroo](https://www.github.com/NicoMroo)
 - [@kBaginskik](https://www.github.com/kBaginskik)
 - [@crucialis](https://www.github.com/crucialis)
 
+## App testers
+
+- [@Arek2017](https://github.com/Arek2017)
 
 ## Tech Stack
 
@@ -36,6 +39,8 @@ Website that is being created for college project. It will let players to play t
 **Image resizer js library**: CropperJS
 
 **Range sliders**: noUiSlider
+
+**Javascript bundling technology**: Webpack + Babel
 
 **Server and SignalR broker provider**: MS Azure
 
