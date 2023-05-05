@@ -258,7 +258,7 @@ public class QuizManagerSessionHub : Hub
             Console.WriteLine("punkt testowy 7");
             var allUsersPoints =
                 _context.QuizSessionPartics
-                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token) && obj.IsActive)
                     .Select(obj => new
                     {
                         obj.UserEntity.Username,
@@ -272,7 +272,7 @@ public class QuizManagerSessionHub : Hub
             
             var streakLeader =
                 _context.QuizSessionPartics
-                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token) && obj.IsActive)
                     .Select(obj => new
                     {
                         obj.UserEntity.Username,
@@ -399,7 +399,7 @@ public class QuizManagerSessionHub : Hub
             Console.WriteLine("punkt testowy 7");
             var allUsersPoints =
                 _context.QuizSessionPartics
-                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token) && obj.IsActive)
                     .Select(obj => new
                     {
                         obj.UserEntity.Username,
@@ -413,7 +413,7 @@ public class QuizManagerSessionHub : Hub
             
             var streakLeader =
                 _context.QuizSessionPartics
-                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token))
+                    .Where(obj => obj.QuizLobbyEntity.Code.Equals(token) && obj.IsActive)
                     .Select(obj => new
                     {
                         obj.UserEntity.Username,
