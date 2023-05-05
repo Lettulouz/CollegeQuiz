@@ -12,7 +12,12 @@ export const QUIZ_NAME = document.getElementById('inject-quiz-name').innerText;
 
 export const copyToClipboard = () => {
     navigator.clipboard.writeText(SESS_TOKEN);
-    toastr.success(`Skopiowano kod ${SESS_TOKEN} do schowka.`);
+    new RetroNotify({
+        contentHeader: 'Informacja',
+        contentText: `Skopiowano kod ${SESS_TOKEN} do schowka.`,
+        style: 'black',
+        animate: 'slideTopRight'
+    });
 };
 
 ReactDOM
