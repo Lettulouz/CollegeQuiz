@@ -31,6 +31,7 @@ Website that is being created for college project. It will let players to play t
 ## 3rd party libraries:
 * **SignalR** - full-duplex websockets communication technology
 * **JWT** - WebAPI authentication technology
+* **Boostrap** - css/js library
 * **Bootstrap email, Liquid** - mail templates
 * **anime.js** - web animations
 * **CropperJS** - image resizer js library
