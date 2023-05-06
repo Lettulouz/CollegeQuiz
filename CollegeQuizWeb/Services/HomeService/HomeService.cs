@@ -287,6 +287,11 @@ public class HomeService : IHomeService
         return subscriptionTypesDtos;
     }
     
+    /// <summary>
+    /// Method that get ip adress
+    /// </summary>
+    /// <param name="controller">HomeController instance</param>
+    /// <returns>Ip adress</returns>
     private string GetIpAddress(HomeController controller)
     {
         string ipAddressString = controller.Request.HttpContext.Connection.RemoteIpAddress.ToString();

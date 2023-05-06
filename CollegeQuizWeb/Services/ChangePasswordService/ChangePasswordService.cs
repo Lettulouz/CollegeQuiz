@@ -36,10 +36,6 @@ public class ChangePasswordService : IChangePasswordService
         _passwordHasher = passwordHasher;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="payloadDto"></param>
     public async Task AttemptChangePassword(AttemptChangePasswordPayloadDto payloadDto)
     {
         AuthController controller = payloadDto.ControllerReference;
@@ -105,11 +101,6 @@ public class ChangePasswordService : IChangePasswordService
         controller.ModelState.SetModelValue("LoginOrEmail", new ValueProviderResult(string.Empty, CultureInfo.InvariantCulture));
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="token"></param>
-    /// <param name="controller"></param>
     public async Task CheckBeforeChangePassword(string token, AuthController controller)
     {
         DateTime now = DateTime.Now;
@@ -124,11 +115,6 @@ public class ChangePasswordService : IChangePasswordService
         controller.ViewBag.Token = token;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="token"></param>
-    /// <param name="payloadDto"></param>
     public async Task ChangePassword(string token, ChangePasswordPayloadDto payloadDto)
     {
         AuthController controller = payloadDto.ControllerReference;
