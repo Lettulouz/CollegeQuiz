@@ -135,7 +135,7 @@ public class SharedQuizesService : ISharedQuizesService
     }
     
     /// <summary>
-    /// Method that is being used to get image for question in quiz
+    /// Method that get image for question in quiz
     /// </summary>
     /// <param name="quizId">Quiz id</param>
     /// <param name="gId">Question id</param>
