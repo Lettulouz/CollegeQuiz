@@ -130,9 +130,11 @@ public class QuizManagerSessionHub : Hub
                 {
                     timer--;
                     questionTick.Remaining = timer;
-                    await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
+                    await _hubUserContext.Clients.Group(token)
+                        .SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                 }
+
                 Console.WriteLine(timer);
                 if (question.questionType != 3)
                 {
@@ -141,26 +143,34 @@ public class QuizManagerSessionHub : Hub
                         .Count();
                     var amountOfUniqueAnswers = _context.UsersQuestionsAnswers
                         .Where(x => x.QuizSessionParticEntity.QuizLobbyEntity.QuizId.Equals(quiz.QuizId) &&
-                                    x.QuizSessionParticEntity.IsActive == true && x.Question.Equals(question.questionId))
+                                    x.QuizSessionParticEntity.IsActive == true &&
+                                    x.Question.Equals(question.questionId))
                         .GroupBy(t => t.QuizSessionParticEntity.ParticipantId).Count();
                     if (amountOfUniqueAnswers >= amountOfParticipants)
                     {
                         timer = 0;
                         questionTick.Remaining = 0;
-                        await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
+                        await Clients.Group(token)
+                            .SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     }
                 }
+
                 if (timer == 0)
                 {
                     cts.Cancel();
                 }
             }
         }
-        catch (OperationCanceledException) {await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick.Remaining=0)); }
+        catch (OperationCanceledException) { }
         finally
         {
             cts.Dispose();
         }
+
+        questionTick.Remaining = 0;
+        await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
+        
+        
         if (!question.is_range)
         {
             var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
