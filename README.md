@@ -40,7 +40,10 @@ Website that is being created for college project. It will let players to play t
 * **RetroNotify** - javascript toasts library
 * **Webpack, Babel** - javascript bundler and transpiler
 
-**MS Azure** - server and SignalR broker provider
+## Decentralized servers suppliers:
+**MS Azure** - main server and SignalR broker provider
+**Google** - SMTP mail server
+**MyDevil** - MySQL database and content delivery network service
 
 ## License
 
