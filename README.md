@@ -43,7 +43,7 @@ Website that is being created for college project. It will let players to play t
 ## Decentralized servers suppliers:
 * **MS Azure** - main server and SignalR broker provider
 * **Google** - SMTP mail server
-* **MyDevil** - MySQL database and content delivery network service
+* **MyDevil** - MySQL database and static content data storage
 
 ## License
 
