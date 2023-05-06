@@ -37,6 +37,7 @@ public interface IUserService
     /// <returns>All user information</returns>
     Task<ProfileDto> UserInfo(string isLogged);
     
+    
     /// <summary>
     /// Method that get needed user infromation to edit profile
     /// </summary>
