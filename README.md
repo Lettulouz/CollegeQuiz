@@ -39,7 +39,8 @@ Website that is being created for college project. It will let players to play t
 * **noUiSlider** - range sliders
 * **RetroNotify** - javascript toasts library
 * **Webpack, Babel** - javascript bundler and transpiler
-* **MS Azure** - server and SignalR broker provider
+
+**MS Azure** - server and SignalR broker provider
 
 ## License
 
