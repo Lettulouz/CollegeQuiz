@@ -152,12 +152,11 @@ public class QuizManagerSessionHub : Hub
                 }
                 if (timer == 0)
                 {
-                    await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick.Remaining=0));
                     cts.Cancel();
                 }
             }
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException) {await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick.Remaining=0)); }
         finally
         {
             cts.Dispose();
