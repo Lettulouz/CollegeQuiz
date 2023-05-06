@@ -6,19 +6,17 @@
 
 @if (ViewBag.AlertMessage != null)
 {
-<div class="container mt-5 mb-0">
-    <div class="row d-flex justify-content-center mt-5 mb-0">
-        <div class="col-12 col-lg-6 mb-0">
-            <div class="alert @ViewBag.Type alert-dismissible fade show mb-0" role="alert">
-                @Html.Raw(ViewBag.AlertMessage)
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="container mt-5 mb-0">
+        <div class="row d-flex justify-content-center mt-5 mb-0">
+            <div class="col-12 col-lg-6 mb-0">
+                <div class="alert @ViewBag.Type alert-dismissible fade show mb-0" role="alert">
+                    @Html.Raw(ViewBag.AlertMessage)
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 }
-
-
 
 <div class="container mt-5 mb-1">
     <div class="row d-flex justify-content-center mt-5">
@@ -26,7 +24,7 @@
             <div class="card px-5 py-5 h-100">
                 <form method="post" asp-controller="Auth" asp-action="Register">
                     <div class="form-data" id="registerFields">
-                        <label id="mainName">Rejestracja</label>
+                        <label id="mainName2">Rejestracja</label>
                         <div class="forms-inputs mb-4">
                             <label>Imię</label>
                             <input type="text" asp-for="FirstName" autocomplete="on">

@@ -64,7 +64,7 @@ const LeaveQuizSessionButtonComponent = ({ text }) => {
                     </div>
                 </div>
             </div>
-            <button className="btn bg-danger text-white rounded mx-auto w-100 danger-button-fixed" onClick={showModal}>
+            <button className="btn bg-danger text-white rounded mx-auto w-100" onClick={showModal}>
                 {text}
             </button>
         </>
