@@ -10,6 +10,8 @@ namespace CollegeQuizWeb.Services.AdminService;
 
 public interface IAdminService
 {
+    //====Index page====
+    
     /// <summary>
     ///  Method that get statistics from database
     /// about users, quizzes, coupons and subscriptions
@@ -17,7 +19,9 @@ public interface IAdminService
     /// </summary>
     /// <param name="controller">AdminController instance</param>
     Task GetStats(AdminController controller);
-
+    
+    //====Accounts====
+    
     /// <summary>
     /// Method that get list of users data
     /// for UsersList
@@ -97,6 +101,8 @@ public interface IAdminService
     /// <returns>List of UserListDto</returns>
     Task<List<UserListDto>> GetAdmins();
     
+    //====Quizzes====
+    
     /// <summary>
     /// Method that get list of quizzes for QuizList view
     /// </summary>
@@ -131,6 +137,8 @@ public interface IAdminService
     /// <param name="controller">AdminController instance</param>
     Task UnlockQuiz(long id, AdminController controller);
     
+    //====Categories====
+    
     /// <summary>
     /// Method that remove category.
     /// </summary>
@@ -138,23 +146,26 @@ public interface IAdminService
     /// <param name="controller">AdminController instance</param>
     Task DelCategory(long id, AdminController controller);
     
+    //====Coupons====
+    
     /// <summary>
     /// Method that get categories list for CategoryList.
     /// </summary>
     /// <returns>Liest of CategoryListDto</returns>
     Task<List<CategoryListDto>> GetCategoryList();
     
-    /// <summary>
-    /// Method that allow to create one or more coupons.
-    /// </summary>
-    /// <param name="obj">CouponDtoPayload with coupon data</param>
-    Task CreateCoupons(CouponDtoPayload obj);
     
     /// <summary>
     /// Method that allow to add new category.
     /// </summary>
     /// <param name="obj">CategoryListDtoPayload with category data</param>
     Task CreateCategory(CategoryListDtoPayload obj);
+    
+    /// <summary>
+    /// Method that allow to create one or more coupons.
+    /// </summary>
+    /// <param name="obj">CouponDtoPayload with coupon data</param>
+    Task CreateCoupons(CouponDtoPayload obj);
     
     /// <summary>
     /// Method that get coupons data for CouponList view.
@@ -168,6 +179,8 @@ public interface IAdminService
     /// <param name="couponToDelete">coupon or lisy of coupons</param>
     /// <param name="controller">AdminController instance</param>
     Task DeleteCoupon(string couponToDelete, AdminController controller);
+    
+    //====Subscriptions====
     
     /// <summary>
     /// Method that get subscription types data for Subscription view.

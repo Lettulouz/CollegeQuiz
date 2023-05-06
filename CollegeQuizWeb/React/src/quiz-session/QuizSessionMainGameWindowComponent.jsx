@@ -115,22 +115,22 @@ const QuizSessionMainGameWindowComponent = () => {
     const renderComponentSection = () => {
         switch(screenAction) {
             case WAITING_SCREEN: return (
-                <div className="mt-5">
-                    <div className="mt-5 d-flex flex-column align-items-center">
-                        <div className="spinner-border load-spinner-circle mt-4" role="status"></div>
+                <div className="card card-glass-effect card-min-height mt-3 d-flex justify-content-center align-items-center">
+                    <div className="d-flex flex-column align-items-center">
+                        <div className="mb-4 spinner-border load-spinner-circle mt-4" role="status"></div>
                         <p className="mt-3 fs-4 text-prim-color text-center">
-                            Oczekiwanie na uruchomienie quizu "<strong>{quizName}</strong>" przez hosta...
+                            Oczekiwanie na uruchomienie quizu <strong className="custom-green-color">{quizName}</strong> przez hosta...
                         </p>
                     </div>
                 </div>
             );
             case COUNTING_SCREEN: return (
-                <div className="mt-5">
-                    <div className="mt-5 d-flex flex-column align-items-center">
+                <div className="card card-glass-effect card-min-height mt-3 d-flex justify-content-center align-items-center">
+                    <div className="d-flex flex-column align-items-center">
                         <p className="mt-3 fs-4 text-prim-color text-center">
-                            Przygotuj się! Quiz "<strong>{quizName}</strong>" uruchamia się za:
+                            Przygotuj się! Quiz <strong className="custom-green-color">{quizName}</strong> uruchamia się za:
                         </p>
-                        <h2 className="fw-bold fs-1 text-prim-color">{counting}</h2>
+                        <h2 className="fw-bold fs-1 custom-green-color">{counting}</h2>
                     </div>
                 </div>
             );

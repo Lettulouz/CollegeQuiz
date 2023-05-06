@@ -120,7 +120,11 @@ a.navbar-brand {
 .load-spinner-circle {
     width: 5rem;
     height: 5rem;
-    color: #3a8a7f;
+    color: #9acf8a;
+}
+
+.custom-green-color {
+    color: #9acf8a;
 }
 
 .time-control {
@@ -167,6 +171,14 @@ a.navbar-brand {
 }
 .leaderboard-toggle-button.active {
     background-color: #63c4ab;
+}
+
+.card-min-height {
+    min-height: 500px;
+}
+
+.card-glass-effect {
+    background-color: rgba(99, 196, 171, 0.1) !important;
 }
 
 .leaderboard-table-nav-button-text {

@@ -55,7 +55,7 @@ const JoinToQuizSessionComponent = () => {
                 <div className="col-12 col-md-6 mb-5">
                     <div className="card px-5 py-5 h-100 justify-content-center">
                         <form className="form-data mt-3" onSubmit={onSubmitJoinToSession}>
-                            <label id="mainName">Dołącz do quizu</label>
+                            <label id="mainName2">Dołącz do quizu</label>
                             {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-4`} role="alert">
                                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
                                 <button type="button" className="btn-close" onClick={() => setAlert(alertOff())}></button>

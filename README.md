@@ -30,6 +30,7 @@ Website that is being created for college project. It will let players to play t
 
 ## 3rd party libraries:
 * **SignalR** - full-duplex websockets communication technology
+* **React** - client side rendering technology
 * **JWT** - WebAPI authentication technology
 * **Boostrap** - css/js library
 * **Bootstrap email, Liquid** - mail templates
@@ -38,7 +39,11 @@ Website that is being created for college project. It will let players to play t
 * **noUiSlider** - range sliders
 * **RetroNotify** - javascript toasts library
 * **Webpack, Babel** - javascript bundler and transpiler
-* **MS Azure** - server and SignalR broker provider
+
+## Decentralized servers suppliers:
+* **MS Azure** - main server and SignalR broker provider
+* **Google** - SMTP server
+* **MyDevil** - MySQL database and static content data storage
 
 ## License
 
