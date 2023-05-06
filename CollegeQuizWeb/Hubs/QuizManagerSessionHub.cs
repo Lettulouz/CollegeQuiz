@@ -374,8 +374,8 @@ public class QuizManagerSessionHub : Hub
                         int amountOfNumbers = ((max - min) / currentAnswers[0].AnswerStep)+1;
                         int amountOfCorrectNumbers = ((currentAnswers[0].AnswerMax - currentAnswers[0].AnswerMin) 
                                                / currentAnswers[0].AnswerStep)+1;
-                        int outsideLeft = currentAnswers[0].AnswerMinCounted - min;
-                        int outsideRight = max - currentAnswers[0].AnswerMax;
+                        int outsideLeft = (currentAnswers[0].AnswerMinCounted - min)/currentAnswers[0].AnswerStep;
+                        int outsideRight = (max - currentAnswers[0].AnswerMax)/currentAnswers[0].AnswerStep;
                         int insideLeft = 0;
                         int insideRight = 0;
                         if (outsideLeft < 0) { insideLeft = -outsideLeft; outsideLeft = 0;}

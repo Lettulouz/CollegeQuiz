@@ -32,7 +32,7 @@ const QuizQuestionRangeTypeComponent = () => {
                 setAlert(alertDanger('Wystąpił błąd podczas wysyłania odpowiedzi przez użytkownika.'));
             });
         setIsAnswerSet(true);
-        stepsSlider.current.noUiSlider.disable();
+        stepsSlider.current.disable();
     };
     
     useEffect(() => {
@@ -49,17 +49,10 @@ const QuizQuestionRangeTypeComponent = () => {
             tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
         });
         stepsSlider.current.on('change', values => setAnswRange({ min: values[0], max: values[1] }));
-        
-        return () => {
-            if (stepsSlider.current) {
-                stepsSlider.current.destroy();
-                stepsSlider.current = null;
-            }
-        };
     }, [ stepsSliderContainer, answerSett ]);
 
     useEffect(() => {
-        if (!resultSliderContainer.current || !currentAnswer || !resultSlider.current) return;
+        if (!resultSliderContainer.current || !currentAnswer) return;
         
         let attributes;
         if(currentAnswer[0].AnswerMinCounted === currentAnswer[0].AnswerCorrect) {
@@ -91,7 +84,7 @@ const QuizQuestionRangeTypeComponent = () => {
                 'max': answerSett.max
             },
         });
-        Array.from({ length: 3 }).forEach((_, i) => resultSlider.current.noUiSlider.disable(i))
+        Array.from({ length: 3 }).forEach((_, i) => resultSlider.current.disable(i))
     }, [ resultSliderContainer, currentAnswer, resultSlider ]);
     
     return (
