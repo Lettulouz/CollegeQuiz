@@ -1,6 +1,4 @@
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Dto.Quiz;
@@ -8,6 +6,7 @@ using CollegeQuizWeb.Services.QuizService;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SkiaSharp;
 
 namespace CollegeQuizWeb.Controllers;
 
@@ -104,9 +103,13 @@ public class QuizController : Controller
 
         if (await _service.CreateQuizCode(this, loggedUsername, quizId)) return Redirect("/Quiz/MyQuizes");
         
-        Bitmap test = _service.GenerateQRCode(this, ViewBag.Code);
+        SKBitmap test = _service.GenerateQRCode(this, ViewBag.Code);
         MemoryStream ms = new MemoryStream();
-        test.Save(ms, ImageFormat.Jpeg);
+        using (var image = SKImage.FromBitmap(test))
+        using (var data = image.Encode(SKEncodedImageFormat.Jpeg, 100))
+        {
+            data.SaveTo(ms);
+        }
         byte[] byteImage = ms.ToArray();
         ViewBag.ImageBtm = Convert.ToBase64String(byteImage);
         ms.Close();

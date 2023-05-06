@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -18,8 +17,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using QRCoder;
-using Svg;
+using SkiaSharp;
+using SkiaSharp.QrCode;
+using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
 namespace CollegeQuizWeb.Services.QuizService;
 
@@ -202,15 +202,56 @@ public class QuizService : IQuizService
         return false;
     }
 
-    public Bitmap GenerateQRCode(QuizController controller, string code)
+    public SKBitmap GenerateQRCode(QuizController controller, string code)
     {
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
-        QRCode qrCode = new QRCode(qrCodeData);
-        var svgDocument = SvgDocument.Open(@"wwwroot/logo.svg");
-        var bitmap = svgDocument.Draw();
-        return qrCode.GetGraphic(50,Color.Black, ColorTranslator.FromHtml("#f7fef5"),
-            bitmap, 20, 1);
+        QRCodeData qrCode = qrGenerator.CreateQrCode(code, ECCLevel.Q);
+
+        int moduleCount = qrCode.ModuleMatrix.Count;
+        int qrSize = moduleCount * 40;
+        int logoSize = (int)(qrSize * 0.175f);
+        
+        var bitmap = new SKBitmap(qrSize, qrSize);
+
+        using (var surface = SKSurface.Create(new SKImageInfo(qrSize, qrSize)))
+        {
+            var canvas = surface.Canvas;
+            
+            canvas.Clear(SKColor.Parse("#f7fef5"));
+
+            var paint = new SKPaint
+            {
+                Style = SKPaintStyle.Fill,
+                Color = SKColors.Black
+            };
+
+            // rysujemy kwadraty dla każdego modułu QR kodu
+            for (int i = 0; i < moduleCount; i++)
+            {
+                for (int j = 0; j < moduleCount; j++)
+                {
+                    bool module = qrCode.ModuleMatrix[i][j];
+                    if (module)
+                    {
+                        SKRect rect = SKRect.Create(j * 40, i * 40, 40, 40);
+                        canvas.DrawRect(rect, paint);
+                    }
+                }
+            }
+            
+            // wczytujemy logo z pliku SVG i rysujemy na QR kodzie
+            var svgDocument = new SKSvg(1, new SKSize(logoSize,logoSize));
+            svgDocument.Load("wwwroot/logo.svg");
+            float x = (qrSize - logoSize) / 2.0f;
+            float y = (qrSize - logoSize) / 2.0f;
+            canvas.DrawPicture(svgDocument.Picture, x, y);
+
+            // tworzymy bitmapę na podstawie rysunku na płótnie
+            bitmap = SKBitmap.Decode(surface.Snapshot().Encode());
+        }
+
+        return bitmap;
+
     }
 
     public async Task DeleteQuiz(long quizId, string loggedUsername, Controller controller)

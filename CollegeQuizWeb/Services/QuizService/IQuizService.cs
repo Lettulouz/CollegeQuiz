@@ -5,6 +5,7 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Dto.SharedQuizes;
 using Microsoft.AspNetCore.Mvc;
+using SkiaSharp;
 
 namespace CollegeQuizWeb.Services.QuizService;
 
@@ -56,7 +57,7 @@ public interface IQuizService
     /// <param name="controller">Pass data into controller</param>
     /// <param name="code">Join code</param>
     /// <returns>QR code</returns>
-    Bitmap GenerateQRCode(QuizController controller, string code);
+    SKBitmap GenerateQRCode(QuizController controller, string code);
     
     /// <summary>
     /// Method that is being used to delete user's quiz
