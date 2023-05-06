@@ -83,7 +83,7 @@ public class UserService : IUserService
                 
                 string message = "";
                 
-                if (userEntity.CurrentStatusExpirationDate.AddDays(-7) > DateTime.Now)
+                if (userEntity.CurrentStatusExpirationDate.AddDays(-7) > DateTime.Now && coupon.TypeOfSubscription != 2)
                 {
                     controller.HttpContext.Session
                         .SetString(SessionKey.COUPON_CODE_MESSAGE_REDEEM, Lang.SUBSCRIPTION_IS_ACTIVE);
@@ -92,8 +92,11 @@ public class UserService : IUserService
                     controller.Response.Redirect("/User/AttemptCouponRedeem");
                     return;
                 }
+
+                string subscriptionName =
+                    _context.SubsciptionTypes.First(x => x.SiteId.Equals(coupon.TypeOfSubscription)).Name;
                 
-                ExtendSubscription.AddSubscriptionTime(controller, userEntity, coupon, ref message);
+                ExtendSubscription.AddSubscriptionTime(controller, userEntity, coupon, ref message, subscriptionName);
                 
                 _context.Update(coupon);
                 _context.Update(userEntity);
