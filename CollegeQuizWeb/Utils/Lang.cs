@@ -205,6 +205,13 @@ public static class Lang
     
     public const string CANNOT_DELETE_USER_IN_GAME = "Nie można usunąć użytkownika znajdującego się w rozgrywce";
 
-    
-
+    public const string RANGE_QST_MIN_INVALID =
+        "Wartość minimalna nie może być większa od wartości maksymalnej w pytaniu <strong>{0}</strong>";
+    public const string RANGE_QST_COUNTED_MIN_INVALID =
+        "Wartość minimalna punktowana nie może być więszka od wartości maksymalnego w pytaniu <strong>{0}</strong>";
+    public const string RANGE_QST_COUNTED_OUT_OF_RANGE = "Wartość punktowana w pytaniu <strong>{0}</strong> wykracza poza zakres.";
+    public const string RANGE_QST_STEP_INVALID =
+        "Wartość przejścia w pytaniu <strong>{0}</strong> musi być dzielnikiem pozostałych wartości.";
+    public const string RANGE_QST_CORRECT_QST_INVALID =
+        "Nieprawidłowa wartość prawidłowej odpowiedzi w pytaniu <strong>{0}</strong>";
 }
