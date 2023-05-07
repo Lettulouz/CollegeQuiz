@@ -39,6 +39,17 @@ Website that is being created for college project. It will let players to play t
 * **noUiSlider** - range sliders
 * **RetroNotify** - javascript toasts library
 * **Webpack, Babel** - javascript bundler and transpiler
+* **Swashbuckle AspNetCore Swagger** - C# API documentation
+* **SkiaSharp, SkiaSharp SVG** - C# image processing
+* **QRCoder** - C# QR code generator library
+* **PayU Client** - C# payments client
+* **Entity Framework** - C# ORM database system
+* **FluentFTP** - C# FTP file transfering (external S3)
+* **FluentEmail, FluentEmail Liquid** - C# mail sender
+* **DotNetEnv** - C# environments variables loader
+
+
+
 
 ## Decentralized servers suppliers:
 * **MS Azure** - main server and SignalR broker provider
