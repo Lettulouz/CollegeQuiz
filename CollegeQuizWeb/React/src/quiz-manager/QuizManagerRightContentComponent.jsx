@@ -13,7 +13,6 @@ const QuizManagerRightContentComponent = () => {
                     <div className="mb-2">
                         <StartQuizButtonComponent/>
                     </div>
-                    <NextQuestionButtonComponent/>
                     <AnswersVisibilityButtonComponent/>
                 </div>
                 <div className="w-100">
