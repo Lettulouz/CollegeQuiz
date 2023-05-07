@@ -722,7 +722,8 @@ public class AdminService : IAdminService
                 .ToListAsync();
 
             controller.ViewBag.questions = questions;
-            controller.ViewBag.images = await _asyncSftpService.GetAllQuizImagesInBase64(id, questions.Count);
+            controller.ViewBag.images = await _asyncSftpService
+                .GetAllQuizImagesPath(Utilities.GetBaseUrl(controller), id, questions.Count);
         }
     }
     

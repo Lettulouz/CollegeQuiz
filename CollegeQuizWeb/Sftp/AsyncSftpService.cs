@@ -144,6 +144,40 @@ public class AsyncSftpService : IAsyncSftpService
         return imageEndpoint;
     }
 
+    public async Task<List<string>> GetAllQuizImagesPath(string basePath, long quizId, int imagesCount)
+    {
+        List<string> imagesLinks = new List<string>();
+        if (ConfigLoader.ExternalContentServerActive)
+        {
+            AsyncFtpClient client = await _asyncSftpConnector.Connect();
+            for (int i = 1; i <= imagesCount; i++)
+            {
+                string imageFile = 
+                    $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/question{i}.jpg";
+                string imageRemoteUrl = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{i}.jpg";
+                if (!await client.FileExists(imageRemoteUrl))
+                {
+                    imagesLinks.Add(string.Empty);
+                    continue;
+                }
+                imagesLinks.Add(imageFile);
+            }
+            await _asyncSftpConnector.Disconnect();
+            return imagesLinks;
+        }
+        for (int i = 1; i <= imagesCount; i++)
+        {
+            string imagePath = $"{STATIC_UPLOADS_DIR}/{quizId}/question{i}.jpg";
+            if (!File.Exists(imagePath))
+            {
+                imagesLinks.Add(string.Empty);
+                continue;
+            }
+            imagesLinks.Add(imagePath);
+        }
+        return imagesLinks;
+    }
+
     public async Task<List<string>> GetAllQuizImagesInBase64(long quizId, int imagesCount)
     {
         List<string> imagesBase64 = new List<string>();
