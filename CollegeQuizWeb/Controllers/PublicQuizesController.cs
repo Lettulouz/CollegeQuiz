@@ -105,10 +105,10 @@ public class PublicQuizesController : Controller
         await _service.Share(token, this);
     }
     
-    public async Task Filter(string[] tags)
-    {
-        string[] board = tags;
-        Response.Redirect("/PublicQuizes/Quizes");
-        ViewBag.Quizes = await _service.Filter(this, board);
-    }
+    // public async Task Filter(string[] tags)
+    // {
+    //     string[] board = tags;
+    //     Response.Redirect("/PublicQuizes/Quizes");
+    //     ViewBag.Quizes = await _service.Filter(this, board);
+    // }
 }
