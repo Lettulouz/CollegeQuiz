@@ -77,6 +77,11 @@ public class HomeService : IHomeService
         SubscriptionPaymentHistoryEntity subscriptionPaymentHistoryEntity =
             _context.SubscriptionsPaymentsHistory
                 .FirstOrDefault(obj => obj.PayuId.Equals(orderId))!;
+
+        bool completed = false;
+        if (subscriptionPaymentHistoryEntity.OrderStatus.Equals(Lang.PAYU_COMPLETED))
+            completed = true;
+        
         switch (paymentStatus)
         {
             case "PENDING":
@@ -98,7 +103,7 @@ public class HomeService : IHomeService
         if (subscriptionName.Contains("GIFT"))
             isGift = true;
         
-        if (paymentStatus.Equals("COMPLETED") && !subscriptionPaymentHistoryEntity.OrderStatus.Equals(Lang.PAYU_COMPLETED))
+        if (paymentStatus.Equals("COMPLETED") && !completed)
         {
             var userId = 
                 _context.SubscriptionsPaymentsHistory
@@ -140,19 +145,9 @@ public class HomeService : IHomeService
                 return true;
             }
 
-            try
-            {
-                ExtendSubscription.AddSubscriptionTime(userEntity, typeOfSubscription);
-            }
-            catch (Exception e)
-            {
-                userEntity.LastName = e.Message;
-                _context.Users.Update(userEntity);
-                await _context.SaveChangesAsync();
-            }
-            
-            
-            _context.Users.Update(userEntity);
+            ExtendSubscription.AddSubscriptionTime(userEntity, typeOfSubscription);
+
+             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
             
             PaymentConfirmedSmtpViewModel emailViewModel = new()
