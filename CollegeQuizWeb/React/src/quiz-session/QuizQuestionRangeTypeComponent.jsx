@@ -22,7 +22,7 @@ const QuizQuestionRangeTypeComponent = () => {
     const handleClick = () => {
         if (isAnswerSet || currentAnswer !== "") return;
 
-        const answer = "r" + parseInt(answRange.min) + "," + parseInt(answRange.max);
+        const answer = "r" + parseInt(answRange.Min) + "," + parseInt(answRange.Max);
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
             getCommonFetchObj("POST")
@@ -39,16 +39,16 @@ const QuizQuestionRangeTypeComponent = () => {
         if (!stepsSliderContainer.current || stepsSlider.current) return;
 
         stepsSlider.current = nouislider.create(stepsSliderContainer.current, {
-            start: [ answerSett.min, answerSett.max ],
+            start: [ answerSett.Min, answerSett.Max ],
             behaviour: 'drag',
             connect: true,
             range: {
-                'min': [ answerSett.min, answerSett.step ],
-                'max': answerSett.max
+                'min': [ answerSett.Min, answerSett.Step ],
+                'max': answerSett.Max
             },
             tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
         });
-        stepsSlider.current.on('change', values => setAnswRange({ min: values[0], max: values[1] }));
+        stepsSlider.current.on('change', values => setAnswRange({ Min: values[0], Max: values[1] }));
     }, [ stepsSliderContainer, answerSett ]);
 
     useEffect(() => {
@@ -80,8 +80,8 @@ const QuizQuestionRangeTypeComponent = () => {
             tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
             handleAttributes: attributes,
             range: {
-                'min': [ answerSett.min, answerSett.step ],
-                'max': answerSett.max
+                'min': [ answerSett.Min, answerSett.Step ],
+                'max': answerSett.Max
             },
         });
         Array.from({ length: 3 }).forEach((_, i) => resultSlider.current.disable(i))

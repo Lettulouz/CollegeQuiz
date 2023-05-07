@@ -19,7 +19,7 @@ const QuizSessionRootComponent = () => {
     const [ isLeaveClicked, setIsLeaveClicked ] = useState(false);
     const [ quizStarted, setQuizStarted ] = useState(false);
     const [ answers, setAnswers ] = useState([]);
-    const [ answerSett, setAnswerSett ] = useState ({step: "", min: "", max: "", min_counted: "", max_counted: ""});
+    const [ answerSett, setAnswerSett ] = useState ({ Step: "", Min: "", Max: "", MinCounted: "", MaxCounted: ""});
     const [ question, setQuestion ] = useState('');
     const [ questionImage, setQuestionImage ] = useState('');
     const [ questionType, setQuestionType ] = useState(null);
@@ -29,7 +29,7 @@ const QuizSessionRootComponent = () => {
     const [ afterQuestionResults, setAfterQuestionResults ] = useState([]);
     const [ currentAnswer, setCurrentAnswer ] = useState([]);
     const [ isLast, setIsLast ] = useState(false);
-    const [ answRange, setAnswRange ] = useState({ min: "", max: "" });
+    const [ answRange, setAnswRange ] = useState({ Min: "", Max: "" });
     const [ progressWidth, setProgressWidth ] = useState(100);
 
     const [ isActive, setActiveCallback ] = useLoadableContent();

@@ -35,17 +35,17 @@ const QuizSessionMainGameWindowComponent = () => {
         // odbieranie pytań z koncentratora serwera
         connection.on("QUESTION_P2P", answ => {
             const parsedAnswers = JSON.parse(answ);
-            const { step, min, max, min_counted, max_counted } = parsedAnswers;
-            setAnswerSett({ step, min, max, min_counted, max_counted });
+            const { Step, Min, Max, MinCounted, MaxCounted } = parsedAnswers;
+            setAnswerSett({ Step, Min, Max, MinCounted, MaxCounted });
             setScreenAction(IN_GAME)
-            setQuestion(parsedAnswers.question);
-            setAnswRange({ min, max });
-            setAnswers(parsedAnswers.answers);
+            setQuestion(parsedAnswers.Question);
+            setAnswRange({ Min, Max });
+            setAnswers(parsedAnswers.Answers);
             
-            setQuestionType(parsedAnswers.questionType);
-            setQuestionTimer(parsedAnswers.time_sec);
-            setQuestionNumber(parsedAnswers.questionId);
-            setQuestionImage(parsedAnswers.image_url);
+            setQuestionType(parsedAnswers.QuestionType);
+            setQuestionTimer(parsedAnswers.TimeSec);
+            setQuestionNumber(parsedAnswers.QuestionId);
+            setQuestionImage(parsedAnswers.ImageUrl);
             setIsAnswerSet(false);
             setCurrentAnswer("");
         });
