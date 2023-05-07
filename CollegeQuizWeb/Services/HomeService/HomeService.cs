@@ -9,6 +9,8 @@ using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Home;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Smtp;
+using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
 using DotNetEnv;
 using Microsoft.AspNetCore.Http;
@@ -26,11 +28,13 @@ public class HomeService : IHomeService
 {
     private readonly ILogger<HomeService> _logger;
     private readonly ApplicationDbContext _context;
+    private readonly ISmtpService _smtpService;
 
-    public HomeService(ILogger<HomeService> logger, ApplicationDbContext context)
+    public HomeService(ILogger<HomeService> logger, ApplicationDbContext context, ISmtpService smtpService)
     {
         _logger = logger;
         _context = context;
+        _smtpService = smtpService;
     }
 
     public async Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller)
@@ -94,7 +98,7 @@ public class HomeService : IHomeService
         if (subscriptionName.Contains("GIFT"))
             isGift = true;
         
-        if (paymentStatus.Equals("COMPLETED"))
+        if (paymentStatus.Equals("COMPLETED") && !subscriptionPaymentHistoryEntity.OrderStatus.Equals("COMPLETED"))
         {
             var userId = 
                 _context.SubscriptionsPaymentsHistory
@@ -140,6 +144,21 @@ public class HomeService : IHomeService
             
             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
+            
+            PaymentConfirmedSmtpViewModel emailViewModel = new()
+            {
+                FullName = $"{userEntity.FirstName} {userEntity.LastName}",
+                SubscriptionType = subscriptionName,
+                AmountOfDays = "30",
+            };
+            UserEmailOptions<PaymentConfirmedSmtpViewModel> options = new()
+            {
+                TemplateName = TemplateName.PAYMENT_CONFIRMED,
+                ToEmails = new List<string>() { userEntity.Email },
+                Subject = string.Format(Lang.EMAIL_ACCOUNT_CRETED_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
+                DataModel = emailViewModel
+            };
+            await _smtpService.SendEmailMessage(options);
             return true;
         }
         return true;
