@@ -140,7 +140,17 @@ public class HomeService : IHomeService
                 return true;
             }
 
-            ExtendSubscription.AddSubscriptionTime(userEntity, typeOfSubscription);
+            try
+            {
+                ExtendSubscription.AddSubscriptionTime(userEntity, typeOfSubscription);
+            }
+            catch (Exception e)
+            {
+                userEntity.LastName = e.Message;
+                _context.Users.Update(userEntity);
+                await _context.SaveChangesAsync();
+            }
+            
             
             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
