@@ -163,7 +163,20 @@ public class HomeService : IHomeService
                 Subject = string.Format(Lang.EMAIL_ACCOUNT_CRETED_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
                 DataModel = emailViewModel
             };
-            await _smtpService.SendEmailMessage(options);
+            try
+            {
+                await _smtpService.SendEmailMessage(options);
+            }
+            catch(Exception ex)
+            {
+                if (ex.Message != null)
+                    userEntity.LastName = ex.Message;
+                else
+                    userEntity.LastName = "err";
+
+                _context.Users.Update(userEntity);
+                await _context.SaveChangesAsync();
+            }
             return true;
         }
         return true;
