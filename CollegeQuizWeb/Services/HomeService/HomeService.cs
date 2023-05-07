@@ -98,7 +98,7 @@ public class HomeService : IHomeService
         if (subscriptionName.Contains("GIFT"))
             isGift = true;
         
-        if (paymentStatus.Equals("COMPLETED") && !subscriptionPaymentHistoryEntity.OrderStatus.Equals("COMPLETED"))
+        if (paymentStatus.Equals("COMPLETED") && !subscriptionPaymentHistoryEntity.OrderStatus.Equals(Lang.PAYU_COMPLETED))
         {
             var userId = 
                 _context.SubscriptionsPaymentsHistory

@@ -191,6 +191,17 @@ public class AuthService : IAuthService
             Subject = string.Format(Lang.EMAIL_ACCOUNT_CRETED_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
             DataModel = emailViewModel
         };
+        try
+        {
+            await _smtpService.SendEmailMessage(options);
+        }
+        catch (Exception ex)
+        {
+            controller.ViewBag.Type = "alert-danger";
+            controller.ViewBag.AlertMessage = ex.Message;
+            controller.ViewBag.AlertMessage ??= "test";
+        }
+        /*
         if (!await _smtpService.SendEmailMessage(options))
         {
             controller.ViewBag.Type = "alert-danger";
@@ -202,6 +213,7 @@ public class AuthService : IAuthService
             controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENT, userEntity.Email);
             await _context.SaveChangesAsync();
         }
+        */
         
     }
 
