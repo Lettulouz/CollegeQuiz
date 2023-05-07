@@ -46,7 +46,7 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     
     return (
         <div className={`${sixAnsw} d-flex m-0 mt-3 ${incClassAns()}`}>
-            <div className={`card bg-dark text-white card-img-custom ${cssClickedClass} ${isMultiSelect && isClicked()}`}
+            <div className={`card text-white card-img-custom ${cssClickedClass} ${isMultiSelect && isClicked()}`}
                 onClick={handleClick}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${cssDisabledClickEvent}`}>
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />

@@ -238,14 +238,18 @@ public class QuizManagerSessionHub : Hub
                 .GroupBy(t => t.ConnectionId)
                 .Select(t => t.OrderByDescending(x=>x.CreatedAt).First())
                 .ToList();
-
-            var bestTime = getAllAnswersForUpdate
-                .Where(t => 
-                            corectAnswersNumber.ContainsKey(t.QuizSessionParticEntity.ConnectionId) &&
-                            corectAnswersNumber[t.QuizSessionParticEntity.ConnectionId] > 0 &&
-                            corectAnswersNumber[t.QuizSessionParticEntity.ConnectionId] <= currentAnswers.Count())
-                .Min(t => t.CreatedAt);
             
+            DateTime bestTime = DateTime.Now;
+            if (corectAnswersNumber.Any(kvp => kvp.Value > 0) && corectAnswersNumber.Any(kvp => kvp.Value <= currentAnswers.Count()))
+            {
+                bestTime = getAllAnswersForUpdate
+                    .Where(t => 
+                        corectAnswersNumber.ContainsKey(t.QuizSessionParticEntity.ConnectionId) &&
+                        corectAnswersNumber[t.QuizSessionParticEntity.ConnectionId] > 0 &&
+                        corectAnswersNumber[t.QuizSessionParticEntity.ConnectionId] <= currentAnswers.Count())
+                    .Min(t => t.CreatedAt); 
+            }
+
             IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
             var actuallTime = DateTime.Now;
             foreach (var answer in getAllAnswersForUpdate)
