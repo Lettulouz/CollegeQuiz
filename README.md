@@ -46,7 +46,7 @@ Website that is being created for college project. It will let players to play t
 * **Entity Framework** - C# ORM database system
 * **FluentFTP** - C# FTP file transfering (external S3)
 * **FluentEmail, FluentEmail Liquid** - C# mail sender
-* **DotNetEnv** - C# environments variables loader
+* **DotNetEnv** - C# environment variables loader
 
 ## Decentralized servers suppliers:
 * **MS Azure** - main server and SignalR broker provider
