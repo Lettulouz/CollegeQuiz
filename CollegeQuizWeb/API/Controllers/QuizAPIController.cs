@@ -29,7 +29,7 @@ public class QuizAPIController : Controller
     }
     
     [HttpPost("[action]/{id}")]
-    public async Task<IActionResult> AddQuizQuestions([FromRoute] long id, [FromBody] AggregateQuestionsReqDto dto)
+    public async Task<IActionResult> AddQuizQuestions([FromRoute] long id, [FromBody] AggregateQuestionReq2Dto dto)
     {
         string? loggedUsername = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (loggedUsername == null) return StatusCode(403);

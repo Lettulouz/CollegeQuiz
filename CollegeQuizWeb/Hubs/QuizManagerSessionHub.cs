@@ -330,8 +330,8 @@ public class QuizManagerSessionHub : Hub
             }
             await Clients.Group(token).SendAsync("COMPUTE_ALL_POINTS_P2P", JsonSerializer.Serialize(computePointsList));
             
-            await _hubUserContext.Clients.Group(token)
-                .SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
+            await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
+            await Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN");
             Thread.Sleep(2000);
 
             await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));

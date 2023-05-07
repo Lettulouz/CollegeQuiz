@@ -14,9 +14,13 @@ public class QuizQuestionsReqDto
     public List<AnswerDto> Answers { get; set; }
 }
 
-public class AggregateQuestionsReqDto
+public class AggregateQuestionReq2Dto
 {
     public List<QuizQuestionsReqDto> Aggregate { get; set; }
+}
+
+public class AggregateQuestionsReqDto : AggregateQuestionReq2Dto
+{
     public List<QuizMode> AvailableModes { get; set; }
     public string PermissionModesMessage { get; set; }
 }
