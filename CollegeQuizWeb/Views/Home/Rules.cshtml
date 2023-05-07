@@ -1,42 +1,59 @@
 @{
     ViewData["Title"] = "Regulamin";
 }
-
-<h1>Privacy Policy</h1>
-<p>Use this page to detail your site's privacy policy.</p>
-
-<p>
-    The Personal Information we process depends on the context of your interactions with quizazu, your quizazu! account
-    settings, the products and features you use, your location, and applicable law. However, the Personal Information
-    we collect broadly falls into the following categories:
-</p>
-
-<ul>
-    <li>
-        Such as your name, e-mail address, mailing address, telephone number and job title of the contact person of
-        Users (for example businesses or educational institutions)
-    </li>
-    <li>
-        Account log-in credentials such as your email address or username and password when you sign up for an account
-        with us;
-    </li>
-    <li>
-        Account holder information such as your location (city and country only), interests, picture, organization,
-        title/position, age, what quizazu groups you are part of and who you interact with by using the Services.
-    </li>
-    <li>
-        Troubleshooting and support data, which is data you provide, or we otherwise collect in connection with support
-        queries we receive from you. This may include contact or authentication data, the content of your chats and
-        other communications with us, and the product or service you are using related to your help inquiry; and
-    </li>
-    <li>
-        Payment information and other financial information that we/our payment processors need in order to provide
-        the Services.
-    </li>
-    <li>
-        Browser or device information which is collected through your device, such as Media Access Control (MAC)
-        address, computer type (Windows or Macintosh), screen resolution, operating system name and version, device
-        manufacturer and model, language, internet browser type and version and version of the Services
-        (such as the App) you are using.
-    </li>
-</ul>
+<div class="card">
+    <div class="m-3">
+        <div class="row" style="color: #19452e">
+            <h1>@ViewData["Title"]</h1>
+                <p> Przykładowy regulamin (źródło x-kom: https://www.x-kom.pl/regulamin)</p>
+            
+            <h3>Ogólne informacje</h3>
+            <p>
+                W regulaminie opisujemy zasady, na jakich sprzedajemy produkty, treści cyfrowe i usługi.
+            </p>
+            <p>
+                Regulamin jest częścią umowy sprzedaży produktów w naszym sklepie.
+            </p>
+            <p>
+                Zanim zrobisz zakupy w naszym sklepie, przeczytaj i zaakceptuj ten regulamin.
+            </p>
+            
+            <center><hr class="hr-mid-green"/></center>
+            
+            <h3>Płatności</h3>
+            <p>Ceny wszystkich produktów w naszym sklepie podajemy w złotych polskich. Podajemy ceny brutto,
+            czyli takie, które zawierają podatek VAT. Cena produktu nie zawiera kosztu przesyłki. </p>
+            <p></p>
+            <p>Za produkt, który kupujesz, możesz zapłacić na kilka sposobów:</p>
+            <p>• przelewem (przedpłata),</p>
+            <p>• elektronicznie przez Upay (przedpłata)</p>
+            
+            <center><hr class="hr-mid-green"/></center>
+            
+            <h3>Twoje dane</h3>
+            <p>Kiedy rejestrujesz konto w naszym sklepie lub składasz zamówienie, dobrowolnie podajesz nam
+                swoje dane osobowe. Jeśli nie podasz nam tych danych, nie będziemy mogli przyjąć Twojego
+                zamówienia. </p>
+            <p>Zawsze możesz poprosić nas o dostęp do swoich danych osobowych. Możesz je też samodzielnie
+                zmieniać w ustawieniach swojego konta. 
+            </p>
+            <p>Zasady, zgodnie z którymi przetwarzamy Twoje dane osobowe, opisaliśmy w naszej polityce
+                prywatności. Znajdziesz ją pod adresem: <a asp-action="Privacy" asp-controller="Home">politykę prywatności</a>
+            </p>
+            
+            <center><hr class="hr-mid-green"/></center>
+            
+            <h3>Zmiany regulaminu</h3>
+            <p>Jeśli zmienimy ten regulamin, udostępnimy go w naszym sklepie co najmniej 7 dni przed tym, od kiedy
+                nowy regulamin zacznie obowiązywać.</p>
+            <p>Jeśli masz konto w naszym sklepie, o zmianie regulaminu poinformujemy Cię, kiedy następnym razem
+                się zalogujesz. Poprosimy Cię wtedy o akceptację zmian w regulaminie. Zmiany w regulaminie
+                zaakceptujesz poprzez kliknięcie w polu tego komunikatu. Jeśli nie zaakceptujesz tych zmian, system
+                Cię wyloguje. W takiej sytuacji możesz kontynuować zakupy w naszym sklepie bez zalogowania,
+                zgodnie z naszym regulaminem</p>
+            <p>Zamówienia, które złożysz przed tym, jak w życie wejdzie nowy regulamin, zrealizujemy zgodnie z
+                wcześniejszymi zasadami. </p>
+            <p>Zmiana regulaminu nie narusza praw nabytych użytkowników, którzy korzystają z naszego sklepu. </p>
+        </div>
+    </div>
+</div>

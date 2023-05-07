@@ -931,3 +931,14 @@ hr.hr-mid-green{
 .session-icon2{
     font-size: 42px;
 }
+
+.buy {
+    text-decoration: none;
+    background-color: #63c4ab;
+    color: #f9fef8 !important;
+    font-size: x-large;
+}
+.buy:hover {
+    background-color: #3a8a7f;
+    color: #f9fef8;
+}

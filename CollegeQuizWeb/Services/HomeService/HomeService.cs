@@ -156,7 +156,7 @@ public class HomeService : IHomeService
             {
                 TemplateName = TemplateName.PAYMENT_CONFIRMED,
                 ToEmails = new List<string>() { userEntity.Email },
-                Subject = string.Format(Lang.EMAIL_ACCOUNT_CRETED_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
+                Subject = string.Format(Lang.EMAIL_CONFIRM_PAYMENT, userEntity.FirstName, userEntity.LastName, userEntity.Username),
                 DataModel = emailViewModel
             };
 

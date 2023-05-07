@@ -56,7 +56,7 @@
                             <input class="form-check-input" type="checkbox" value="true" asp-for="RulesAccept">
                             <label class="form-check-label d-inline" asp-for="RulesAccept">
                                 Akceptuję <a asp-action="Rules" asp-controller="Home">regulamin strony</a>
-                                oraz politykę prywatności.
+                                oraz <a asp-action="Privacy" asp-controller="Home">politykę prywatności</a>.
                             </label>
                             <span class="mx-2 mt-1 d-flex errorTextColor" asp-validation-for="RulesAccept"></span>
                         </div>
