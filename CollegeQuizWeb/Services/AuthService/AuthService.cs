@@ -170,13 +170,13 @@ public class AuthService : IAuthService
             IsUsed = false,
             UserEntity = userEntity,
         };
-        await _context.AddAsync(otaToken);
+        await _context.OtaTokens.AddAsync(otaToken);
 
         var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
             controller.Request.Host.Port ?? -1);
         if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
 
-        await _context.AddAsync(userEntity);
+        await _context.Users.AddAsync(userEntity);
 
         ConfirmAccountSmtpViewModel emailViewModel = new()
         {
@@ -202,7 +202,6 @@ public class AuthService : IAuthService
             controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENT, userEntity.Email);
             await _context.SaveChangesAsync();
         }
-        
     }
 
     public async Task<bool> EmailExistsInDb(string email) =>

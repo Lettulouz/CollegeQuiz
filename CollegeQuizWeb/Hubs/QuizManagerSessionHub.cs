@@ -239,6 +239,13 @@ public class QuizManagerSessionHub : Hub
                 .Select(t => t.OrderByDescending(x=>x.CreatedAt).First())
                 .ToList();
 
+            var bestTime = getAllAnswersForUpdate
+                .Where(t => 
+                            corectAnswersNumber.ContainsKey(t.QuizSessionParticEntity.ConnectionId) &&
+                            corectAnswersNumber[t.QuizSessionParticEntity.ConnectionId] > 0 &&
+                            corectAnswersNumber[t.QuizSessionParticEntity.ConnectionId] <= currentAnswers.Count())
+                .Min(t => t.CreatedAt);
+            
             IDictionary<string, long> newUserPoinst = new Dictionary<string, long>();
             var actuallTime = DateTime.Now;
             foreach (var answer in getAllAnswersForUpdate)
@@ -250,9 +257,7 @@ public class QuizManagerSessionHub : Hub
                         if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] <=
                             currentAnswers.Count())
                         {
-                            TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate
-                                .Where(t => question.Answers[t.Answer] == currentAnswer.AnswerName)
-                                .Min(t => t.CreatedAt);
+                            TimeSpan timeBetween = answer.CreatedAt - bestTime;
                             TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
                             var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds / restOfTime.TotalSeconds)) * 1000 *
                                                             (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02)*

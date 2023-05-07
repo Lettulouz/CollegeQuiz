@@ -6,10 +6,13 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Config;
+using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Entities;
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using FluentEmail.Liquid;
 using FluentEmail.Smtp;
+using Microsoft.AspNet.SignalR.Messaging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -36,7 +39,7 @@ public class SmtpService : ISmtpService
     {
         try
         {
-            string templateFilesPath = _hostEnvironment.ContentRootPath + Path.DirectorySeparatorChar + TEMPLATE_DIR;
+            string templateFilesPath = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + TEMPLATE_DIR;
             PhysicalFileProvider fileProvider = new PhysicalFileProvider(templateFilesPath);
             LiquidRendererOptions options = new LiquidRendererOptions()
             {
