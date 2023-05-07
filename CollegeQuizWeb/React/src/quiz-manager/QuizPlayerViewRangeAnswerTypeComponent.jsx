@@ -6,7 +6,7 @@ import wNumb from "wnumb";
 import "nouislider/dist/nouislider.min.css"
 
 const QuizPlayerViewRangeAnswerTypeComponent = () => {
-    const { tick, isAnswersVisible } = useContext(SessionContext);
+    const { tick, isAnswersVisible, answersIsSetted } = useContext(SessionContext);
     const { imageUrl, questionName, rangeData } = useContext(InGameViewContext);
 
     const stepsSlider = useRef(null);
@@ -49,7 +49,7 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                                 width="200px" height="auto" alt=""/>
                         </div>
                     </div>
-                    {isAnswersVisible && <>
+                    {(isAnswersVisible || answersIsSetted) && <>
                         <div className="row d-flex mt-6 px-3">
                             <div ref={stepsSliderContainer}></div>
                         </div>

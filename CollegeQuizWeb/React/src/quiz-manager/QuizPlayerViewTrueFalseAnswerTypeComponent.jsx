@@ -3,9 +3,9 @@ import { SessionContext } from "../quiz-manager-renderer";
 import { ANSWER_SVGS } from "../utils/common";
 
 const QuizPlayerViewTrueFalseAnswerTypeComponent = ({ number, answer }) => {
-    const { isAnswersVisible } = useContext(SessionContext);
+    const { isAnswersVisible, answersIsSetted } = useContext(SessionContext);
 
-    const isIncorrect = isAnswersVisible && !answer.IsCorrect ? 'incorrectAnswer' : '';
+    const isIncorrect = (isAnswersVisible || answersIsSetted) && !answer.IsCorrect ? 'incorrectAnswer' : '';
     
     return (
         <div className={`col-6 d-flex m-0 mt-3`}>

@@ -2,10 +2,13 @@ import { useContext } from "react";
 import { SESS_TOKEN, SessionContext } from "../quiz-manager-renderer";
 
 const NextQuestionButtonComponent = () => {
-    const { connection, nextQuestionIsActive, isEnded, nextQuestionBtnText, allParticipants } = useContext(SessionContext);
+    const {
+        connection, nextQuestionIsActive, isEnded, nextQuestionBtnText, allParticipants, setAnswersIsSetted
+    } = useContext(SessionContext);
     
     const sendSignal = () => {
         if (!nextQuestionIsActive) return;
+        setAnswersIsSetted(false);
         connection.invoke('START_GAME_P2P', SESS_TOKEN);
     };
     

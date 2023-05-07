@@ -11,7 +11,8 @@ import AnswersVisibilityButtonComponent from "./AnswersVisibilityButtonComponent
 
 const QuizManagerInGameViewComponent = () => {
     const {
-        connection, lobbyData, allParticipants, setNextQuestionIsActive, resultTable, setResultTable, setRespondedUsers, questionType, setQuestionType
+        connection, lobbyData, allParticipants, setNextQuestionIsActive, resultTable, setResultTable, setRespondedUsers,
+        questionType, setQuestionType, setAnswersIsSetted
     } = useContext(SessionContext);
     
     const [ imageUrl, setImageUrl ] = useState('');
@@ -77,6 +78,9 @@ const QuizManagerInGameViewComponent = () => {
             stateCopy[parcitipantIndex].Answer = updatedAnswer;
             setResultTable(stateCopy);
         });
+        
+        // w momencie gdy wszyscy zaznaczą odpowiedź i pojawi się ona u użytkowników
+        connection.on("CORRECT_ANSWERS_SCREEN", () => setAnswersIsSetted(true));
         
         // wykona się gdy serwer obliczy punkty po każdej turze
         connection.on("COMPUTE_ALL_POINTS_P2P", usersPoints => {

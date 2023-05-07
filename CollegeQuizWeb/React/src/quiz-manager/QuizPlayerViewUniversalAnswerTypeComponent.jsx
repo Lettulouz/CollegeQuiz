@@ -3,9 +3,9 @@ import { ANSWER_LETTERS, ANSWER_SVGS } from "../utils/common";
 import { SessionContext } from "../quiz-manager-renderer";
 
 const QuizPlayerViewUniversalAnswerTypeComponent = ({ number, answer }) => {
-    const { isAnswersVisible, questionType } = useContext(SessionContext);
+    const { isAnswersVisible, questionType, answersIsSetted } = useContext(SessionContext);
     
-    const isIncorrect = isAnswersVisible && !answer.IsCorrect ? 'incorrectAnswer' : '';
+    const isIncorrect = (isAnswersVisible || answersIsSetted) && !answer.IsCorrect ? 'incorrectAnswer' : '';
     const sixAnsw = questionType === 4 ? 'col-4' : 'col-6';
     
     return (

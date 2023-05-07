@@ -32,6 +32,7 @@ const QuizManagerRootComponent = () => {
     const [ isAnswersVisible, setIsAnswersVisible ] = useState(false);
     const [ respondedUsers, setRespondedUsers ] = useState(0);
     const [ questionType, setQuestionType ] = useState(1);
+    const [ answersIsSetted, setAnswersIsSetted ] = useState(false);
     
     const estabilishedRoomConnection = () => {
         if (isEstabiblishedClicked) return;
@@ -101,7 +102,7 @@ const QuizManagerRootComponent = () => {
             progressWidth, setProgressWidth, lobbyData, setLobbyData, setInGameViewActive, inGameViewActive,
             counting, setCounting, countingActive, setCountingActive, afterQuestionResults, setNextQuestionIsActive,
             resultTable, setResultTable, isAnswersVisible, setIsAnswersVisible, respondedUsers, setRespondedUsers,
-            questionType, setQuestionType
+            questionType, setQuestionType, answersIsSetted, setAnswersIsSetted
         }}>
             {alert.active && <div className={`alert ${alert.style} d-flex justify-content-between mb-3 mx-1`} role="alert">
                 <span dangerouslySetInnerHTML={{ __html: alert.message }}></span>
