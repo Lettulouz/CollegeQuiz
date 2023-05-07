@@ -9,10 +9,10 @@ Website that is being created for college project. It will let players to play t
 - [@Lettulouz](https://www.github.com/Lettulouz) - Leader
 - [@Milosz08](https://www.github.com/Milosz08) - Programming know-how, game session designer and websockets stuff + client side rendering
 - [@patrick012016](https://www.github.com/patrick012016) - Mostly mobile app ([github repo](https://github.com/patrick012016/CollegeQuizMobileApp))
-- [@tentegess](https://www.github.com/tentegess)
-- [@NicoMroo](https://www.github.com/NicoMroo)
-- [@kBaginskik](https://www.github.com/kBaginskik)
-- [@crucialis](https://www.github.com/crucialis)
+- [@tentegess](https://www.github.com/tentegess) - Admin panel
+- [@NicoMroo](https://www.github.com/NicoMroo) - Graphics
+- [@kBaginskik](https://www.github.com/kBaginskik) - Game session with [@Milosz08](https://www.github.com/Milosz08)
+- [@crucialis](https://www.github.com/crucialis) - Mobile app deploy
 
 ## App testers
 
