@@ -15,14 +15,15 @@ const QuizQuestionUniversalTypeComponent = ({ children }) => {
                     <p className="fw-bold time-text">
                         {questionTimer}
                     </p>
-                    <img src="/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
+                    <img src="https://quizazu.cdn.miloszgilga.pl/static/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
                 </div>
                 <div className="col-lg-10 order-2 order-lg-1">
                     <QuizQuestionProgressBarComponent/>
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3 className="quiz-color-text">{question}</h3>
                         <div className="bg-transparent">
-                            <img src={questionImage || "/gfx/def_qst.svg"} width="300px" height="auto" alt=""/>
+                            <img src={questionImage || "https://quizazu.cdn.miloszgilga.pl/static/gfx/def_qst.svg"}
+                                className="rounded" width="300px" height="auto" alt=""/>
                         </div>
                     </div>
                     <div className="row d-flex px-3">

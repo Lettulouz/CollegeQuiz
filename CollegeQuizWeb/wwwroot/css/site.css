@@ -16,7 +16,7 @@ html {
 body {
     margin-bottom: 60px;
     background-color: #f7fef5;
-    background-image: url(../home_graphic.svg);
+    background-image: url(https://quizazu.cdn.miloszgilga.pl/static/gfx/home_graphic.svg);
     background-size: 55%;
     background-repeat: no-repeat;
     background-attachment: fixed;
