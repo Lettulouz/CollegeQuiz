@@ -151,10 +151,10 @@ const QuizManagerInGameViewComponent = () => {
                             Zakończ quiz
                         </button>
                         {questionType === 3 &&
-                            <i className="bi bi-collection session-icon"></i>
+                            <i className="bi bi-collection session-icon2"></i>
                         }
                         {(questionType === 1 || questionType === 4) &&
-                            <i className="bi bi-1-square session-icon"></i>
+                            <i className="bi bi-1-square session-icon2"></i>
                         }
                     </div>
                 </div>
