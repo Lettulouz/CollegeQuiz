@@ -49,9 +49,8 @@ Website that is being created for college project. It will let players to play t
 
 ## Decentralized servers suppliers:
 * **MS Azure** - main server and SignalR broker provider
-* **Google** - SMTP server
 * **MyDevil** - MySQL database and static content data storage
-* **Forpsi** - domain provider
+* **Forpsi** - domain provider and SMTP server
 
 ## License
 
