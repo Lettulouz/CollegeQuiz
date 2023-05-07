@@ -182,7 +182,7 @@ public static class Lang
     public const string HOST_ERROR = "Host gry nie może jednocześnie być hostem i brać w niej udziału";
     public const string QUIZ_NOT_FOUND = "Nie znaleziono quizu przypisanego do Twojego konta";
     public const string QUESTIONS_REPEATED = "Pytania w edytowanym quizie nie mogą się powtarzać";
-    public const string PACKAGE_DOES_NOT_ALLOW = "Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór" +
+    public const string PACKAGE_DOES_NOT_ALLOW = "Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór " +
                                                  "trybu <strong>{0}</strong> rozgrywki.";
     public const string GIVEN_VALUES_NOT_NUMBERS = "Podane wartości czasu nie są liczbami";
     public const string WRONG_TIME_INTERVALS = "Wartość sekund nie może być mniejsza od 5 i większa od 59.";
@@ -199,7 +199,7 @@ public static class Lang
     public const string SESSION_REMOVE_USER = "Użytkownik <strong>{0}</strong> został wyrzucony przez ciebie z sesji.";
     public const string SESSION_BAN_USER = "Użytkownik <strong>{0}</strong> został zbanowany przez ciebie z sesji.";
     public const string SESSION_UNBAN_USER = "Użytkownik <strong>{0}</strong> został odbanowany przez ciebie z sesji.";
-    public const string HOST_NOT_FOUND = "Nie znaleziono aktywnego hosta sesji gry.";
+    public const string HOST_NOT_FOUND = "Nie znaleziono aktywnego hosta sesji gry. Odśwież stronę, aby ponowić wyszukiwanie.";
     public const string HOST_DISCONECT_USER = "Zostałeś rozłączony przez hosta.";
     public const string HOST_BANNED_USER = "Zostałeś zbanowany przez hosta, przez co nie możesz dołączyć już do quizu.";
     

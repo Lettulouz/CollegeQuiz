@@ -7,7 +7,7 @@ import QuizQuestionSessionIcon from "./QuizQuestionSessionIcon";
 
 const QuizQuestionUniversalTypeComponent = ({ children }) => {
     const { question, questionTimer, questionImage } = useContext(SessionContext);
-    console.log(question)
+
     return (
         <div className="container">
             <div className="row">

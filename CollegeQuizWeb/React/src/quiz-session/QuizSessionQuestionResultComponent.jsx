@@ -46,15 +46,14 @@ const QuizSessionQuestionResultComponent = () => {
                                 </div>
                             </div>
                             <div className="col-md-6 p-1">
-                                <div className="leaderboard p-3 fs-4 text-break lh-1 fw-bold"
-                                    style={{ backgroundColor: generateColor(i) }}>
+                                <div className="leaderboard p-3 fs-4 text-break lh-1 fw-bold">
                                     {result.Score} (+ {result.newPoints})
                                 </div>
                             </div>
                         </Fragment>
                     ))}
                 </div>
-                {afterQuestionResults[lastItem].CurrentStreak > 0 && <div className="row m-3 leaderboard-container">
+                {afterQuestionResults[lastItem].CurrentStreak > 0 && <div className="row mx-3 leaderboard-container">
                     <div className="col-12 px-1" ref={leaderRef}>
                         <div className="leaderboard streak p-3 fs-4 text-break lh-1 fw-bold d-flex justify-content-between">
                             <div className="icon-animation">

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,13 +16,11 @@ using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace CollegeQuizWeb.Services.AdminService;
 
 public class AdminService : IAdminService
 {
-    private readonly ILogger<AdminService> _logger;
     private readonly ApplicationDbContext _context;
     private readonly IPasswordHasher<UserEntity> _passwordHasher;
     private readonly ISmtpService _smtpService;
@@ -41,7 +37,6 @@ public class AdminService : IAdminService
     public AdminService(ILogger<AdminService> logger, ApplicationDbContext context, ISmtpService smtpService,
         IPasswordHasher<UserEntity> passwordHasher)
     {
-        _logger = logger;
         _context = context;
         _smtpService = smtpService;
         _passwordHasher = passwordHasher;
@@ -175,7 +170,7 @@ public class AdminService : IAdminService
         
         string pass="";
         
-        if (UsernameExistsInDb(obj.Dto.Username))
+        if (await UsernameExistsInDb(obj.Dto.Username))
         {
             controller.ModelState.AddModelError("Username", Lang.USERNAME_ALREADY_EXIST);
         }
@@ -223,7 +218,7 @@ public class AdminService : IAdminService
             {
                 controller.ModelState.AddModelError("Password", Lang.EMAIL_TOO_LONG_ERROR);
             }
-            if (EmailExistsInDb(obj.Dto.Email!))
+            if (await EmailExistsInDb(obj.Dto.Email!))
             {
                 controller.ModelState.AddModelError("Email", Lang.EMAIL_ALREADY_EXIST);
             }
@@ -299,7 +294,6 @@ public class AdminService : IAdminService
         {
             controller.Response.Redirect("/Admin/UsersList");
         }
-        
     }
     
     public async Task SuspendUser(SuspendUserDtoPayload obj, string loggedUser)
@@ -309,19 +303,15 @@ public class AdminService : IAdminService
         bool perm = obj.Dto.Perm;
         var id = obj.Dto.Id;
         var user=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
-
-
-
+        
         if (user != null)
         {
-
             if (loggedUser == user.Username)
             {
                 controller.HttpContext.Session.SetString(SessionKey.ADMIN_ERROR, Lang.CANNOT_SUSPEND_YOURSELF);
                 controller.Response.Redirect("/Admin/AdminList");
                 return;
             }
-
             if (perm || suspendTo != DateTime.MinValue)
             {
                 user.AccountStatus = -1;
@@ -390,8 +380,7 @@ public class AdminService : IAdminService
             controller.Response.Redirect("/Admin/UsersList");
         }
     }
-    
-    
+
     public async Task UpdateUser(AddUserDtoPayload obj, string loggedUser)
     {
         AdminController controller = obj.ControllerReference;
@@ -419,7 +408,7 @@ public class AdminService : IAdminService
         userEntity.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
-        userEntity.Email = obj.Dto.Email;
+        userEntity.Email = obj.Dto.Email!;
         
         
         if (!UsernameBelongsToUser(id,obj.Dto.Username))
@@ -497,8 +486,7 @@ public class AdminService : IAdminService
             controller.Response.Redirect("/Admin/UsersList");
         }
     }
-    
-    
+
     public async Task UserInfo(long id, AdminController controller)
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
@@ -521,7 +509,7 @@ public class AdminService : IAdminService
         }
     }
     
-     public async Task ResendEmail(long id, AdminController controller)
+    public async Task ResendEmail(long id, AdminController controller)
     {
         var userEntity=await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
         
@@ -583,10 +571,9 @@ public class AdminService : IAdminService
             String mess = string.Format(Lang.EMAIL_SENT, userEntity.Email);
             controller.HttpContext.Session.SetString(SessionKey.EMAIL_SENT, mess);
         }
-            controller.Response.Redirect("/Admin/UserProfile/"+userEntity.Id);
+        controller.Response.Redirect("/Admin/UserProfile/"+userEntity.Id);
     }
-    
-     
+
      public async Task DelUser(long id, AdminController controller, string loggedUser)
     {
         var user = _context.Users.Find(id);
@@ -652,7 +639,6 @@ public class AdminService : IAdminService
         var users = await _context.Users.Where(u=>u.IsAdmin==true).ToListAsync();
         
         List<UserListDto> DtoList = new();
-       
         foreach (var userData in users)
         {
             UserListDto userModel = new();
@@ -745,8 +731,6 @@ public class AdminService : IAdminService
     
     public async Task DelQuiz(long id, AdminController controller)
     {
-        string responseMessage;
-        
         var quiz = _context.Quizes.Find(id);
         var quizLobby = await _context.QuizLobbies
             .FirstOrDefaultAsync(q => q.QuizId.Equals(id));
@@ -762,18 +746,15 @@ public class AdminService : IAdminService
                 _context.Remove(quiz);
                 await _context.SaveChangesAsync();
                 controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
-                await DelQuizImages(id);
+                await _asyncSftpService.DeleteQuizImages(id);
             }
         }
-
         controller.Response.Redirect("/Admin/QuizList");
     }
 
     public async Task LockQuiz(long id, AdminController controller)
     {
-
         var quiz = _context.Quizes.Find(id);
-
         if (quiz != null)
         {
             String message = string.Format(Lang.QUIZ_LOCKED, quiz.Name);
@@ -782,15 +763,12 @@ public class AdminService : IAdminService
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
         }
-            
         controller.Response.Redirect("/Admin/QuizList");
     }
     
     public async Task UnlockQuiz(long id, AdminController controller)
     {
-
         var quiz = _context.Quizes.Find(id);
-
         if (quiz != null)
         {
             String message = string.Format(Lang.QUIZ_UNLOCKED, quiz.Name);
@@ -799,7 +777,6 @@ public class AdminService : IAdminService
             await _context.SaveChangesAsync();
             controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
         }
-            
         controller.Response.Redirect("/Admin/QuizList");
     }  
 
@@ -824,7 +801,6 @@ public class AdminService : IAdminService
         var categories = await _context.Categories.ToListAsync();
 
         List<CategoryListDto> DtoList2 = new();
-
         foreach (var categoryData in categories)
         {
             CategoryListDto categoryModel = new();
@@ -834,7 +810,6 @@ public class AdminService : IAdminService
             
             DtoList2.Add(categoryModel);
         }
-
         return DtoList2;
     }
     
@@ -880,7 +855,7 @@ public class AdminService : IAdminService
         DateTime expiringAt = (DateTime)obj.Dto.ExpiringAt!;
         int extensionTime = (int)obj.Dto.ExtensionTime!;
         int typeOfSubscription = obj.Dto.TypeOfSubscription;
-        string customerName = obj.Dto.CustomerName;
+        string customerName = obj.Dto.CustomerName!;
         
         List<CouponEntity> listOfGeneretedCoupons = new();
         string message;
@@ -912,8 +887,6 @@ public class AdminService : IAdminService
         controller.ViewBag.GeneratedCouponsMessage = message;
         await _context.AddRangeAsync(listOfGeneretedCoupons);
         await _context.SaveChangesAsync();
-        
-
     }
     
     public async Task<List<CouponDto>> GetCoupons()
@@ -980,13 +953,12 @@ public class AdminService : IAdminService
             dto.Id = type.Id;
             dto.Name = type.Name;
             dto.Price = type.Price.ToString("N", CultureInfo.InvariantCulture);
-            string? Discount = type.CurrentDiscount.ToString().Replace(',', '.');
+            string Discount = type.CurrentDiscount.ToString()!.Replace(',', '.');
             dto.CurrentDiscount = Discount;
-            dto.BeforeDiscountPrice = type.BeforeDiscountPrice.ToString().Replace(',', '.');
+            dto.BeforeDiscountPrice = type.BeforeDiscountPrice.ToString()!.Replace(',', '.');
             
             subTypes.Add(dto);
         }
-
         return subTypes;
     }
     
@@ -995,28 +967,24 @@ public class AdminService : IAdminService
         AdminController controller = obj.ControllerReference;
 
         var paymentEntity = await _context.SubsciptionTypes.FirstOrDefaultAsync(s=>s.Id.Equals(obj.Dto.Id));
-
-        if (paymentEntity != null)
-        {
-            paymentEntity.Name = obj.Dto.Name;
-            var Price = obj.Dto.Price.Replace('.', ',');
-            paymentEntity.Price = Convert.ToDecimal(Price);
-            string? Discount = obj.Dto.CurrentDiscount.ToString().Replace('.', ',');
-            paymentEntity.CurrentDiscount = Convert.ToDouble(Discount); 
-            string? BefDiscount = obj.Dto.BeforeDiscountPrice.ToString().Replace('.', ',');
-            paymentEntity.BeforeDiscountPrice = Convert.ToDecimal(BefDiscount);
-                
-            _context.Update(paymentEntity);
-            await _context.SaveChangesAsync();
-
-            String message = String.Format(Lang.SUB_UPDATED, obj.Dto.Name);
-            controller.HttpContext.Session.SetString(SessionKey.SUB_UPDATED,message);
-            
-            controller.Response.Redirect("/Admin/Subscriptions");
-        }
+        if (paymentEntity == null) return;
         
+        paymentEntity.Name = obj.Dto.Name;
+        var Price = obj.Dto.Price.Replace('.', ',');
+        paymentEntity.Price = Convert.ToDecimal(Price);
+        string Discount = obj.Dto.CurrentDiscount!.Replace('.', ',');
+        paymentEntity.CurrentDiscount = Convert.ToDouble(Discount); 
+        string BefDiscount = obj.Dto.BeforeDiscountPrice!.Replace('.', ',');
+        paymentEntity.BeforeDiscountPrice = Convert.ToDecimal(BefDiscount);
+                
+        _context.Update(paymentEntity);
+        await _context.SaveChangesAsync();
+
+        String message = String.Format(Lang.SUB_UPDATED, obj.Dto.Name);
+        controller.HttpContext.Session.SetString(SessionKey.SUB_UPDATED,message);
+            
+        controller.Response.Redirect("/Admin/Subscriptions");
     }
-    
     
     //====Utils in Admin service====
     
@@ -1069,12 +1037,8 @@ public class AdminService : IAdminService
     /// </summary>
     /// <param name="email">checked email</param>
     /// <returns>true if exist otherwise false</returns>
-    public bool EmailExistsInDb(string email)
-    {
-        if (_context.Users.FirstOrDefault(o => o.Email.Equals(email)) == null)
-            return false;
-        return true;
-    }
+    private async Task<bool> EmailExistsInDb(string email) =>
+        (!(await _context.Users.FirstOrDefaultAsync(o => o.Email.Equals(email)) == null));
 
     /// <summary>
     /// Method that check if Username is used.
@@ -1082,20 +1046,16 @@ public class AdminService : IAdminService
     /// </summary>
     /// <param name="username">checked username</param>
     /// <returns>true if exist otherwise false</returns>
-    public bool UsernameExistsInDb(string username)
-    {
-        if ( _context.Users.FirstOrDefault(o => o.Username.Equals(username)) == null)
-            return false;
-        return true;
-    }
-    
+    private async Task<bool> UsernameExistsInDb(string username) =>
+        (!(await _context.Users.FirstOrDefaultAsync(o => o.Username.Equals(username)) == null));
+
     /// <summary>
     /// Password generator called in AddUser if password for user
     /// is not defined.
     /// Create password that complies with security guidelines.
     /// </summary>
     /// <returns>password</returns>
-    public String GenPass()
+    private String GenPass()
     {
         Random rand = new Random(Environment.TickCount);
         int len = rand.Next(8, 25);
@@ -1108,20 +1068,17 @@ public class AdminService : IAdminService
         };
 
         List<char> chars = new List<char>();
-
         for (int i = 0; i < charSets.Length; i++)
         {
             chars.Insert(rand.Next(0, chars.Count),
                 charSets[i][rand.Next(0, charSets[i].Length)]);
         }
-
         for (int i = chars.Count; i < len; i++)
         {
             string rcs = charSets[rand.Next(0, charSets.Length)];
             chars.Insert(rand.Next(0, chars.Count), 
                 rcs[rand.Next(0, rcs.Length)]);
         }
-
         return new string(chars.ToArray());
     }
     
@@ -1132,13 +1089,12 @@ public class AdminService : IAdminService
     /// <param name="email">checked email</param>
     /// <returns>true if string is email otherwise false</returns>
     //https://stackoverflow.com/questions/1365407/c-sharp-code-to-validate-email-address
-    bool IsValidEmail(string? email)
+    private bool IsValidEmail(string? email)
     {
         if (email == null)
         {
-            return false;             
+            return false;
         }
-        
         var trimmedEmail = email.Trim();
 
         if (trimmedEmail.EndsWith(".")) {
@@ -1160,21 +1116,14 @@ public class AdminService : IAdminService
     /// <param name="id">edited user id</param>
     /// <param name="email">email from Dto</param>
     /// <returns>true if belongs to edited user otherwise not</returns>
-    bool EmailBelongsToUser(long? id, string email)
+    private bool EmailBelongsToUser(long? id, string email)
     {
         var user = _context.Users.FirstOrDefault(o => o.Email.Equals(email));
         if (user == null)
         {
             return true;
         }
-        if (user.Id == id)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return user.Id == id;
     }
     
     /// <summary>
@@ -1184,21 +1133,13 @@ public class AdminService : IAdminService
     /// <param name="id">edited user id</param>
     /// <param name="username">username from Dto</param>
     /// <returns>true if belongs to edited user otherwise not</returns>
-    bool UsernameBelongsToUser(long? id, string username)
+    private bool UsernameBelongsToUser(long? id, string username)
     {
         var user = _context.Users.FirstOrDefault(o => o.Username.Equals(username));
         if (user == null)
         {
             return true;
         }
-        if (user.Id == id)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return user.Id == id;
     }
-    
 }

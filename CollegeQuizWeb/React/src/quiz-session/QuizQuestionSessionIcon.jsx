@@ -1,11 +1,8 @@
-import { useRef, useEffect, useContext } from "react";
-import { alertDanger, alertInfo, getCommonFetchObj, WAITING_SCREEN } from "../utils/common";
+import { useContext } from "react";
 import { SessionContext } from "../quiz-session-renderer";
 
-const QuizQuestionSessionIcon = ({ text }) => {
-    const {
-        questionType
-    } = useContext(SessionContext);
+const QuizQuestionSessionIcon = () => {
+    const { questionType } = useContext(SessionContext);
     
     return (
         <>

@@ -11,9 +11,9 @@
     </div>
 }
 
-<div class="container">
-    <div class="card px-5 py-5 h-100 bg-transparent">
-        <label id="mainName2">Twoje quizy</label>
+<div class="container margin-hide-menu-top">
+    <div class="card card-glass-effect px-5 py-5 h-100 bg-transparent">
+        <label class="mainName2">Twoje quizy</label>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
             @foreach (var quiz in ViewBag.Quizes)
             {
@@ -30,7 +30,7 @@
                             </div>
                             <div class="modal-footer">
                                 <a class="btn btn-color-one bg-danger text-white" asp-action="DeleteQuiz"
-                                   asp-controller="Quiz" asp-route-id="@quiz.Id">
+                                    asp-controller="Quiz" asp-route-id="@quiz.Id">
                                     Usuń quiz
                                 </a>
                                 <button type="button" class="btn-color-one" data-bs-dismiss="modal">
@@ -87,8 +87,8 @@
 @if (ViewBag.QuizesShared.Count > 0)
 {
     <div class="container mt-5 mb-5">
-        <div class="card px-5 py-5 h-100 bg-transparent">
-            <label id="mainName2">Udostępnione quizy</label>
+        <div class="card card-glass-effect px-5 py-5 h-100 bg-transparent">
+            <label class="mainName2">Udostępnione quizy</label>
             
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
                 @foreach (var quizes in ViewBag.QuizesShared)
@@ -150,19 +150,18 @@
     </div>
 }
 <script>
-    var cards=$(".color-random")
-          let prevNm=0;
-          let nm =0
+    var cards = $(".color-random")
+    let prevNm = 0;
+    let nm = 0;
     $.each(cards, function(i,card){
-        
-        do{
-        nm = Math.floor((Math.random() * 7) + 1);
-        }while(nm===prevNm)
-        let customCard="custom-card-"+nm
-        let customButton="custom-card-d-"+nm
+        do {
+            nm = Math.floor((Math.random() * 7) + 1);
+        } while (nm === prevNm);
+        const customCard = "custom-card-" + nm;
+        const customButton = "custom-card-d-" + nm;
         $(card).addClass(customCard)
-        let btn=$(card).find(".btn-light")
-        $(btn).addClass(customButton)
-        prevNm=nm;
+        let btn = $(card).find(".btn-light");
+        $(btn).addClass(customButton);
+        prevNm = nm;
     })
 </script>

@@ -32,8 +32,8 @@ const QuizQuestionsSingleGoodAnswerComponent = ({ id, answer, isMultipleAnswers 
     
     return (
         <div className="col-6">
-            <div className="p-3 card">
-                <div className="p-3 card hstack">
+            <div className="p-3 card card-glass-effect">
+                <div className="p-1 hstack">
                     <div className="me-2 fs-4">{answer.id}</div>
                     <input type="text" className="form-control" placeholder={`Treść odpowiedzi ${id}`}
                         onChange={onSetQuestionAnswer} value={answer.text}/>

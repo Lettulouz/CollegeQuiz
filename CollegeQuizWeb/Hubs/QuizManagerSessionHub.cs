@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -45,6 +44,17 @@ public class QuizManagerSessionHub : Hub
         return counter;
     }
 
+    private string GetBasePath()
+    {
+        string basePatch = "https://dominikpiskor.pl";
+        HttpContext? context = Context.GetHttpContext();
+        if (context != null)
+        {
+            basePatch = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
+        }
+        return basePatch;
+    }
+    
     public async Task START_GAME_P2P(string token)
     {
         token = token.ToUpper();
@@ -57,20 +67,20 @@ public class QuizManagerSessionHub : Hub
             .Include(q => q.QuestionEntity)
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz!.QuizId))
             .GroupBy(q => q.QuestionEntity.Index)
-            .Select(q => new
+            .Select(q => new QuizManagerDto
             {
-                questionId = q.Key,
-                question = q.First().QuestionEntity.Name,
-                questionType = q.First().QuestionEntity.QuestionTypeEntity.TypeId,
-                answers = q.Select(a => a.Name).ToList(),
-                time_sec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).FirstOrDefault(),
-                is_range = q.First().IsRange,
-                step = q.First().Step,
-                min = q.First().Min,
-                max = q.First().Max,
-                min_counted = q.First().MinCounted,
-                max_counted = q.First().MaxCounted,
-                image_url = GetImageUrl(q.Key, GetBasePath(), quiz!.QuizId),
+                QuestionId = q.Key,
+                Question = q.First().QuestionEntity.Name,
+                QuestionType = q.First().QuestionEntity.QuestionTypeEntity.TypeId,
+                Answers = q.Select(a => a.Name).ToList(),
+                TimeSec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).FirstOrDefault(),
+                IsRange = q.First().IsRange,
+                Step = q.First().Step,
+                Min = q.First().Min,
+                Max = q.First().Max,
+                MinCounted = q.First().MinCounted,
+                MaxCounted = q.First().MaxCounted,
+                ImageUrl = string.Empty,
             })
             .ToListAsync();
         
@@ -79,7 +89,7 @@ public class QuizManagerSessionHub : Hub
 
         var question = questions[quiz.CurrentQuestion];
 
-        int timer;
+        long timer;
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
         var allAnswersWithGood = await _context.Answers.Include(t => t.QuestionEntity)
             .Where(t => t.QuestionEntity.Index.Equals(question.questionId) && t.QuestionEntity.QuizId.Equals(quiz.QuizId))
@@ -90,25 +100,25 @@ public class QuizManagerSessionHub : Hub
                 
             }).ToListAsync();
         int correctRangeAnswer = 0;
-        if (question.questionType == 5)
+        if (question.QuestionType == 5)
         {
             var rangeAnswer = await _context.Answers.Include(t => t.QuestionEntity)
-                .FirstOrDefaultAsync(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                .FirstOrDefaultAsync(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.QuestionId) &&
                                           t.QuestionEntity.QuizId.Equals(quiz.QuizId));
             correctRangeAnswer = rangeAnswer!.CorrectAnswer;
         }
         QuizLobbyQuestionData quizLobbyQuestionData = new()
         {
-            QuestionName = question.question!,
-            IsRange = question.is_range,
-            Max = question.max,
-            Min = question.min,
-            MaxCounted = question.max_counted,
-            MinCounted = question.min_counted,
-            QuestionType = question.questionType,
-            ImageUrl = question.image_url,
-            TimeSec = question.time_sec,
-            Step = question.step,
+            QuestionName = question.Question,
+            IsRange = question.IsRange,
+            Max = question.Max,
+            Min = question.Min,
+            MaxCounted = question.MaxCounted,
+            MinCounted = question.MinCounted,
+            QuestionType = question.QuestionType,
+            ImageUrl = question.ImageUrl,
+            TimeSec = question.TimeSec,
+            Step = question.Step,
             QuestionId = quiz.CurrentQuestion + 1,
             Answers = allAnswersWithGood,
             CorrectAnswerRange = correctRangeAnswer
@@ -117,11 +127,11 @@ public class QuizManagerSessionHub : Hub
         
         CancellationTokenSource cts = new CancellationTokenSource();
         CancellationToken token2 = cts.Token;
-        timer = question.time_sec;
+        timer = question.TimeSec;
         var periodicTimer= new PeriodicTimer(TimeSpan.FromSeconds(1));
-        cts.CancelAfter(TimeSpan.FromSeconds(question.time_sec));
+        cts.CancelAfter(TimeSpan.FromSeconds(question.TimeSec));
         
-        LobbyQuestionTick questionTick = new LobbyQuestionTick() { Total = question.time_sec };
+        LobbyQuestionTick questionTick = new LobbyQuestionTick() { Total = question.TimeSec };
         try
         {
             while (!cts.IsCancellationRequested)
@@ -134,27 +144,24 @@ public class QuizManagerSessionHub : Hub
                         .SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                 }
-
                 Console.WriteLine(timer);
-                if (question.questionType != 3)
+                if (question.QuestionType != 3)
                 {
                     var amountOfParticipants = _context.QuizSessionPartics.Include(q => q.QuizLobbyEntity)
                         .Where(x => x.QuizLobbyId.Equals(x.QuizLobbyEntity.Id) && x.QuizLobbyEntity.Code.Equals(token))
                         .Count();
                     var amountOfUniqueAnswers = _context.UsersQuestionsAnswers
                         .Where(x => x.QuizSessionParticEntity.QuizLobbyEntity.QuizId.Equals(quiz.QuizId) &&
-                                    x.QuizSessionParticEntity.IsActive == true &&
-                                    x.Question.Equals(question.questionId))
+                                    x.QuizSessionParticEntity.IsActive &&
+                                    x.Question.Equals(question.QuestionId))
                         .GroupBy(t => t.QuizSessionParticEntity.ParticipantId).Count();
                     if (amountOfUniqueAnswers >= amountOfParticipants)
                     {
                         timer = 0;
                         questionTick.Remaining = 0;
-                        await Clients.Group(token)
-                            .SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
+                        await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
                     }
                 }
-
                 if (timer == 0)
                 {
                     cts.Cancel();
@@ -170,11 +177,10 @@ public class QuizManagerSessionHub : Hub
         questionTick.Remaining = 0;
         await Clients.Group(token).SendAsync("QUESTION_TIMER_P2P", JsonSerializer.Serialize(questionTick));
         
-        
-        if (!question.is_range)
+        if (!question.IsRange)
         {
             var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
-                .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.QuestionId) &&
                             t.QuestionEntity.QuizId.Equals(quiz.QuizId))
                 .Select(q => new
                 {
@@ -185,7 +191,7 @@ public class QuizManagerSessionHub : Hub
                 .Include(t => t.QuizSessionParticEntity)
                 .ThenInclude(t => t.QuizLobbyEntity)
                 .ThenInclude(t => t.UserEntity)
-                .Where(t => t.Question.Equals(question.questionId) &&
+                .Where(t => t.Question.Equals(question.QuestionId) &&
                             t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
                 .OrderBy(t => t.CreatedAt).ToList();
             
@@ -193,8 +199,8 @@ public class QuizManagerSessionHub : Hub
             foreach (var answer in getAllAnswersForUpdate2)
             {
                 var currentAnswer = _context.Answers.Include(t => t.QuestionEntity)
-                    .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
-                                t.QuestionEntity.QuizId.Equals(quiz.QuizId) && t.Name.Equals(question.answers[answer.Answer])
+                    .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.QuestionId) &&
+                                t.QuestionEntity.QuizId.Equals(quiz.QuizId) && t.Name.Equals(question.Answers[answer.Answer])
                     ).Count();
                 
                 if (currentAnswer > 0)
@@ -218,7 +224,7 @@ public class QuizManagerSessionHub : Hub
                 .Include(t => t.QuizSessionParticEntity)
                 .ThenInclude(t => t.QuizLobbyEntity)
                 .ThenInclude(t => t.UserEntity)
-                .Where(t => t.Question.Equals(question.questionId) &&
+                .Where(t => t.Question.Equals(question.QuestionId) &&
                             t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
                 .GroupBy(t => t.ConnectionId)
                 .Select(t => t.OrderByDescending(x=>x.CreatedAt).First())
@@ -230,17 +236,16 @@ public class QuizManagerSessionHub : Hub
             {
                 foreach (var currentAnswer in currentAnswers)
                 {
-                    if (question.answers[answer.Answer] == currentAnswer.AnswerName)
+                    if (question.Answers[answer.Answer] == currentAnswer.AnswerName)
                     {
                         if (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId] <=
                             currentAnswers.Count())
                         {
                             TimeSpan timeBetween = answer.CreatedAt - getAllAnswersForUpdate
-                                .Where(t => question.answers[t.Answer] == currentAnswer.AnswerName)
-                                .Min(t => t.CreatedAt);;
+                                .Where(t => question.Answers[t.Answer] == currentAnswer.AnswerName)
+                                .Min(t => t.CreatedAt);
                             TimeSpan restOfTime = actuallTime - getAllAnswersForUpdate.Min(t => t.CreatedAt);
-                            var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds /
-                                                                  restOfTime.TotalSeconds)) * 1000 *
+                            var wonPoints = Convert.ToInt64((1 - (timeBetween.TotalSeconds / restOfTime.TotalSeconds)) * 1000 *
                                                             (1 + answer.QuizSessionParticEntity.CurrentStreak * 0.02)*
                                                             (corectAnswersNumber[answer.QuizSessionParticEntity.ConnectionId]/Convert.ToDouble(currentAnswers.Count())));
 
@@ -257,11 +262,11 @@ public class QuizManagerSessionHub : Hub
             
             var notAnswered = _context.QuizSessionPartics
                 .Where(qsp => !_context.UsersQuestionsAnswers
-                    .Any(uqa => uqa.ConnectionId == qsp.Id && uqa.Question.Equals(question.questionId) && uqa.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token)))
+                    .Any(uqa => uqa.ConnectionId == qsp.Id && uqa.Question.Equals(question.QuestionId) &&
+                                uqa.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token)))
                 .ToList();
             
             foreach (var user in notAnswered) user.CurrentStreak = 0;
-
             
             await _context.SaveChangesAsync();
 
@@ -317,7 +322,7 @@ public class QuizManagerSessionHub : Hub
         else
         {
             var currentAnswers = _context.Answers.Include(t => t.QuestionEntity)
-                .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.questionId) &&
+                .Where(t => t.IsGood.Equals(true) && t.QuestionEntity.Index.Equals(question.QuestionId) &&
                             t.QuestionEntity.QuizId.Equals(quiz.QuizId))
                 .Select(q => new
                 {
@@ -334,7 +339,7 @@ public class QuizManagerSessionHub : Hub
                 .Include(t => t.QuizSessionParticEntity)
                 .ThenInclude(t => t.QuizLobbyEntity)
                 .ThenInclude(t => t.UserEntity)
-                .Where(t => t.Question.Equals(question.questionId) &&
+                .Where(t => t.Question.Equals(question.QuestionId) &&
                             t.QuizSessionParticEntity.QuizLobbyEntity.Code.Equals(token))
                 .OrderBy(t => t.CreatedAt).ToList();
             
@@ -387,8 +392,8 @@ public class QuizManagerSessionHub : Hub
                         int outsideRight = (max - currentAnswers[0].AnswerMax)/currentAnswers[0].AnswerStep;
                         int insideLeft = 0;
                         int insideRight = 0;
-                        if (outsideLeft < 0) { insideLeft = -outsideLeft; outsideLeft = 0;}
-                        if (outsideRight < 0){ insideRight = -outsideRight; outsideRight = 0;}
+                        if (outsideLeft < 0) { insideLeft = -outsideLeft; }
+                        if (outsideRight < 0) { insideRight = -outsideRight; }
                         int totalCorrectInside = amountOfCorrectNumbers - insideLeft - insideRight;
                         if (totalCorrectInside < 0)
                             totalCorrectInside = 0;
@@ -447,7 +452,7 @@ public class QuizManagerSessionHub : Hub
             await Clients.Group(token).SendAsync("COMPUTE_ALL_POINTS_P2P", JsonSerializer.Serialize(computePointsList));
             await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
             
-            Thread.Sleep(question.questionType == 5 ? 4000 : 2500);
+            Thread.Sleep(question.QuestionType == 5 ? 4000 : 2500);
             
             await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
             await Clients.Group(token).SendAsync("QUESTION_RESULT_P2P", JsonSerializer.Serialize(leaderboard));
@@ -496,28 +501,5 @@ public class QuizManagerSessionHub : Hub
         
         if (entities.Count() > 0) _context.QuizSessionPartics.RemoveRange(entities);
         await _context.SaveChangesAsync();
-    }
-    
-    private string GetBasePath()
-    {
-        string basePatch = "https://dominikpiskor.pl";
-        HttpContext? context = Context.GetHttpContext();
-        if (context != null)
-        {
-            basePatch = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
-        }
-        return basePatch;
-    }
-
-    private static string GetImageUrl(int questionId, string basePatch, long quizId)
-    {
-        
-        string fullPath = $"{Directory.GetCurrentDirectory()}/_Uploads/QuizImages/{quizId}/question{questionId}.jpg";
-        string imageUrl = $"{basePatch}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{questionId}";
-        if (!File.Exists(fullPath))
-        {
-            imageUrl = string.Empty;
-        }
-        return imageUrl;
     }
 }

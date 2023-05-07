@@ -57,7 +57,7 @@ public interface IQuizService
     /// <param name="controller">QuizController instance</param>
     /// <param name="code">Join code</param>
     /// <returns>QR code</returns>
-    SKBitmap GenerateQRCode(QuizController controller, string code);
+    Task<SKBitmap> GenerateQRCode(QuizController controller, string code);
     
     /// <summary>
     /// Method that delete user's quiz

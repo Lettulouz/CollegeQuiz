@@ -59,7 +59,7 @@ public class QuizService : IQuizService
         bool isExactTheSame;
         do
         {
-            generatedToken = Utilities.GenerateOtaToken(12, 1);
+            generatedToken = Utilities.GenerateOtaToken(12);
             var token = await _context.ShareTokensEntities.FirstOrDefaultAsync(t => t.Token.Equals(generatedToken));
             isExactTheSame = (token != null);
         } while (isExactTheSame);
@@ -111,7 +111,7 @@ public class QuizService : IQuizService
         var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(userLogin));
         
         return await _context.SharedQuizes
-            .Where(x => x.UserId.Equals(userEntity.Id) && !x.QuizEntity.IsHidden)
+            .Where(x => x.UserId.Equals(userEntity!.Id) && !x.QuizEntity.IsHidden)
             .Select(q => new MyQuizSharedDto()
             {
                 Author = q.QuizEntity.UserEntity.Username,

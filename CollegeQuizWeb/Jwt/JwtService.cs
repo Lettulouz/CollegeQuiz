@@ -9,6 +9,7 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,11 +18,13 @@ namespace CollegeQuizWeb.Jwt;
 public class JwtService : IJwtService
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<JwtService> _logger;
     private readonly byte[] tokenBytesRepres = Encoding.ASCII.GetBytes(ConfigLoader.JwtSecret);
     
-    public JwtService(ApplicationDbContext context)
+    public JwtService(ApplicationDbContext context, ILogger<JwtService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<UserEntity?> ValidateToken(Controller controller)
@@ -51,9 +54,10 @@ public class JwtService : IJwtService
             
             return user;
         }
-        catch (Exception _)
+        catch (Exception ex)
         {
             controller.Response.StatusCode = 401;
+            _logger.LogError(ex.Message);
             return null;
         }
     }

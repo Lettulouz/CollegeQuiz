@@ -82,7 +82,7 @@ public class HomeController : Controller
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (username.IsNullOrEmpty())
             return Redirect("/Auth/Login");
-        var subscriptionPaymentDto = await _homeService.GetUserData(username!, this);
+        var subscriptionPaymentDto = _homeService.GetUserData(username!, this);
         ViewBag.SubscriptionMessage = HttpContext.Session.GetString(SessionKey.SUBSCRIPTION_MESSAGE)!;
         ViewBag.Type = HttpContext.Session.GetString(SessionKey.SUBSCRIPTION_MESSAGE_TYPE)!;
         HttpContext.Session.Remove(SessionKey.SUBSCRIPTION_MESSAGE);
@@ -118,24 +118,24 @@ public class HomeController : Controller
         HttpContext.Request.EnableBuffering();
 
         using (var reader = new StreamReader(Request.Body))
-       {
-           var body = await reader.ReadToEndAsync();
-           var order = JObject.Parse(body);
-           if (order["order"] == null) return StatusCode(499);
-           if (order["order"]!["orderId"] == null) return StatusCode(499);
-           if (order["order"]!["status"] == null) return StatusCode(499);
-           if (order["order"]!["products"] == null) return StatusCode(499);
-           if (order["order"]!["products"]![0] == null) return StatusCode(499);
-           if (order["order"]!["products"]![0]!["name"] == null) return StatusCode(499);
-               
-           var orderId = order["order"]!["orderId"]!.ToString();
-           var orderStatus = order["order"]!["status"]!.ToString();
-           var subscriptionName = order["order"]!["products"]![0]!["name"]!.ToString();
-           if (await _homeService.ChangePaymentStatus(orderStatus, orderId, subscriptionName))
-               return Ok();
-           else
-               return StatusCode(499);
-       }
+        {
+            var body = await reader.ReadToEndAsync();
+            var order = JObject.Parse(body);
+            if (order["order"] == null) return StatusCode(499);
+            if (order["order"]!["orderId"] == null) return StatusCode(499);
+            if (order["order"]!["status"] == null) return StatusCode(499);
+            if (order["order"]!["products"] == null) return StatusCode(499);
+            if (order["order"]!["products"]![0] == null) return StatusCode(499);
+            if (order["order"]!["products"]![0]!["name"] == null) return StatusCode(499);
+
+            var orderId = order["order"]!["orderId"]!.ToString();
+            var orderStatus = order["order"]!["status"]!.ToString();
+            var subscriptionName = order["order"]!["products"]![0]!["name"]!.ToString();
+            if (await _homeService.ChangePaymentStatus(orderStatus, orderId, subscriptionName))
+                return Ok();
+            else
+                return StatusCode(499);
+        }
     }
 
     /// <summary>
@@ -147,8 +147,7 @@ public class HomeController : Controller
         string? isUserLogged = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if(isUserLogged == null) return Redirect("/Auth/Login");
         await HttpContext.Session.CommitAsync();
-        var subscriptions = await _homeService.GetSubscriptionTypes();
-        return View(subscriptions);
+        return View(_homeService.GetSubscriptionTypes());
     }
     
 

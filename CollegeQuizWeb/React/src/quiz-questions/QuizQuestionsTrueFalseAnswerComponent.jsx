@@ -21,7 +21,7 @@ const QuizQuestionsTrueFalseAnswerComponent = ({ id, answer }) => {
     
     return (
         <div className="col-6">
-            <div className="p-3 card">
+            <div className="p-3 card card-glass-effect">
                 <div className="form-check">
                     <input type="radio" className="form-check-input form-check-input-radio" id={questionId} name={groupId}
                         checked={answer.isCorrect} onChange={onChangeCorrectAnswer}/>

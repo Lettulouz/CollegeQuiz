@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.Dto.Home;
-using CollegeQuizWeb.Entities;
-using PayU.Client.Models;
 
 namespace CollegeQuizWeb.Services.HomeService;
 
@@ -16,7 +14,7 @@ public interface IHomeService
     /// <param name="username">Current user Username</param>
     /// <param name="controller">HomeController instance</param>
     /// <returns>subscriptionPaymentDto</returns>
-    Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller);
+    SubscriptionPaymentDto GetUserData(string username, HomeController controller);
     
     /// <summary>
     /// Method that make payment for subscription
@@ -38,5 +36,5 @@ public interface IHomeService
     /// for Subscription view
     /// </summary>
     /// <returns>Subscription types</returns>
-    Task<List<SubscriptionTypesDto>> GetSubscriptionTypes();
+    List<SubscriptionTypesDto> GetSubscriptionTypes();
 }

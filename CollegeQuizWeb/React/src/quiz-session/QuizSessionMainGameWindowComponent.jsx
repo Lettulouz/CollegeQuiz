@@ -140,7 +140,7 @@ const QuizSessionMainGameWindowComponent = () => {
     };
     
     return (
-        <div className="row">
+        <div className="row px-2">
             {renderComponentSection()}
         </div>
     );

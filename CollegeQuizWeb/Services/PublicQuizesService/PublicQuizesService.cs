@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +9,6 @@ using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollegeQuizWeb.Services.PublicQuizesService;
@@ -39,8 +35,6 @@ public class PublicQuizesService : IPublicQuizesService
 
     public async Task<List<MyQuizDto>> FilterQuizes(PublicDtoPayLoad obj)
     {
-        PublicQuizesController controller = obj.ControllerReference;
-        
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
             .Where(q => q.QuizEntity.IsPublic.Equals(true) && q.QuizEntity.Name.Contains(obj.Dto.Name)  && !q.QuizEntity.IsHidden)
             .Select(q => new MyQuizDto()
@@ -51,11 +45,7 @@ public class PublicQuizesService : IPublicQuizesService
 
     public async Task Categories(PublicQuizesController controller)
     {
-        var categories = await _context.Categories
-            .ToListAsync();
-
-        controller.ViewBag.Categories = categories;
-        
+        controller.ViewBag.Categories = await _context.Categories.ToListAsync();
     }
 
     public async Task<List<SharedQuizesEntity>> Filter(PublicQuizesController controller, string[] categories)
@@ -85,33 +75,31 @@ public class PublicQuizesService : IPublicQuizesService
         if (quizShareInfo == null)
         {
             controller.Response.Redirect("/PublicQuizes/Quizes");
-            
+            return;
         }
-        else
-        {
-            controller.ViewBag.shareQuizInfo = quizShareInfo;
+        controller.ViewBag.shareQuizInfo = quizShareInfo;
             
-                var questions = await _context.Answers
-                .Include(q => q.QuestionEntity)
-                .Where(q => q.QuestionEntity.QuizId.Equals(quizShareInfo.Id))
-                .GroupBy(q=>q.QuestionEntity.Id)
-                .Select(q => new
-                    {
-                        qid = q.Key,
-                        question = q.First().QuestionEntity.Name,
-                        type = q.First().QuestionEntity.QuestionType,
-                        answers = q.Select(a => a.Name).ToList(),
-                        goodAnswers = q.Select(a=>a.IsGood).ToList(),
-                        time_sec = q.First().QuestionEntity.TimeSec,
-                        time_min = q.First().QuestionEntity.TimeMin,
-                        step = q.First().Step,
-                        min = q.First().Min,
-                        max = q.First().Max,
-                        min_counted = q.First().MinCounted,
-                        max_counted = q.First().MaxCounted,
-                        correct_answer = q.First().CorrectAnswer
-                    })
-                .ToListAsync();
+        var questions = await _context.Answers
+            .Include(q => q.QuestionEntity)
+            .Where(q => q.QuestionEntity.QuizId.Equals(quizShareInfo.Id))
+            .GroupBy(q=>q.QuestionEntity.Id)
+            .Select(q => new
+            {
+                qid = q.Key,
+                question = q.First().QuestionEntity.Name,
+                type = q.First().QuestionEntity.QuestionType,
+                answers = q.Select(a => a.Name).ToList(),
+                goodAnswers = q.Select(a=>a.IsGood).ToList(),
+                time_sec = q.First().QuestionEntity.TimeSec,
+                time_min = q.First().QuestionEntity.TimeMin,
+                step = q.First().Step,
+                min = q.First().Min,
+                max = q.First().Max,
+                min_counted = q.First().MinCounted,
+                max_counted = q.First().MaxCounted,
+                correct_answer = q.First().CorrectAnswer
+            })
+            .ToListAsync();
 
                 controller.ViewBag.questions = questions;
                 
@@ -145,7 +133,7 @@ public class PublicQuizesService : IPublicQuizesService
 
         return b64Img;
     }
-    
+
     public async Task Share(string token, PublicQuizesController controller)
     {
         string? loggedUsername = controller.HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
@@ -164,14 +152,14 @@ public class PublicQuizesService : IPublicQuizesService
 
         var checkDuplicate =
             await _context.SharedQuizes.FirstOrDefaultAsync(s =>
-                s.UserId.Equals(userEntity.Id) && s.QuizId.Equals(tokenHelper.QuizId));
+                s.UserId.Equals(userEntity.Id) && s.QuizId.Equals(tokenHelper!.QuizId));
 
 
         if (chechShareId == null && checkDuplicate == null)
         {
             SharedQuizesEntity sharedQuizesEntity = new SharedQuizesEntity()
             {
-                QuizId = tokenHelper.QuizId,
+                QuizId = tokenHelper!.QuizId,
                 UserId = userEntity.Id
             };
 

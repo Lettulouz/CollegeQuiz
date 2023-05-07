@@ -6,11 +6,7 @@ const QuizPlayerViewUniversalAnswerTypeComponent = ({ number, answer }) => {
     const { isAnswersVisible, questionType } = useContext(SessionContext);
     
     const isIncorrect = isAnswersVisible && !answer.IsCorrect ? 'incorrectAnswer' : '';
-
-    console.log(questionType);
-    const sixAnsw = questionType === 4
-        ? 'col-4'
-        : 'col-6';
+    const sixAnsw = questionType === 4 ? 'col-4' : 'col-6';
     
     return (
         <div className={`${sixAnsw} d-flex m-0 mt-3`}>

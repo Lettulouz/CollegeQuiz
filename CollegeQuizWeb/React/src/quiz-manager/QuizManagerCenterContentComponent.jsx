@@ -10,7 +10,7 @@ const QuizManagerCenterContentComponent = () => {
         <div className="col-lg-6 px-0 px-lg-2 mb-2 mb-lg-0 order-lg-0 order-2">
             {!isEnded && <div className="row">
                 <div className="col-9 pe-1">
-                    <span className="form-control text-center" style={{fontSize: 38, fontWeight: 'bolder'}}>
+                    <span className="form-control text-center" style={{ fontSize: 38, fontWeight: 'bolder' }}>
                         {SESS_TOKEN}
                     </span>
                 </div>

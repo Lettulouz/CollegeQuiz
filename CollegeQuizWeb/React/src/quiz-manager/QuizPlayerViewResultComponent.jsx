@@ -40,8 +40,7 @@ const QuizPlayerViewResultComponent = () => {
                             </div>
                         </div>
                         <div className="col-md-6 p-1">
-                            <div className="leaderboard p-3 fs-4 text-break lh-1 fw-bold"
-                                style={{ backgroundColor: generateColor(i) }}>
+                            <div className="leaderboard p-3 fs-4 text-break lh-1 fw-bold">
                                 {result.Score} (+ {result.newPoints})
                             </div>
                         </div>

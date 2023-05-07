@@ -89,9 +89,8 @@ public class UserController : Controller
         await HttpContext.Session.CommitAsync();
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (username == null) return Redirect("/Auth/Login");
-        var dtoList = _userService.GetYourCouponsList(this, username);
-        ViewBag.CouponList = dtoList.Result;
-
+        
+        ViewBag.CouponList = _userService.GetYourCouponsList(this, username);
         return View();
     }
     
@@ -104,9 +103,8 @@ public class UserController : Controller
         await HttpContext.Session.CommitAsync();
         var username = HttpContext.Session.GetString(SessionKey.IS_USER_LOGGED);
         if (username == null) return Redirect("/Auth/Login");
-        var dtoList = _userService.GetPaymentHistoryList(this, username);
-        ViewBag.PaymentHistoryList = dtoList.Result;
-
+        
+        ViewBag.PaymentHistoryList = _userService.GetPaymentHistoryList(this, username);
         return View();
     }
     

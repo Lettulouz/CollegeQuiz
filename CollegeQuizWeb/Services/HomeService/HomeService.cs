@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Config;
 using CollegeQuizWeb.Controllers;
@@ -12,15 +11,11 @@ using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Smtp;
 using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
-using DotNetEnv;
 using Microsoft.AspNetCore.Http;
-using Microsoft.ClearScript.JavaScript;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PayU.Client;
-using PayU.Client.Configurations;
 using PayU.Client.Models;
-using Sprache;
 
 namespace CollegeQuizWeb.Services.HomeService;
 
@@ -37,10 +32,14 @@ public class HomeService : IHomeService
         _smtpService = smtpService;
     }
 
-    public async Task<SubscriptionPaymentDto> GetUserData(string username, HomeController controller)
+    public SubscriptionPaymentDto GetUserData(string username, HomeController controller)
     {
         UserEntity? userEntity = _context.Users.FirstOrDefault(obj => obj.Username.Equals(username));
-        if(userEntity == null){controller.Response.Redirect("/Home");return new SubscriptionPaymentDto();}
+        if (userEntity == null)
+        {
+            controller.Response.Redirect("/Home");
+            return new SubscriptionPaymentDto();
+        }
 
         ClientAddressEntity? clientAddressEntity =
             _context.ClientsAddresses.FirstOrDefault(x => x.UserEntity.Username.Equals(username));
@@ -105,7 +104,7 @@ public class HomeService : IHomeService
                     .FirstOrDefault(o => o.PayuId.Equals(orderId))!.UserId;
 
             var userEntity = _context.Users.FirstOrDefault(obj => obj.Id.Equals(userId));
-            var username = userEntity.Username;
+            var username = userEntity!.Username;
             
             int typeOfSubscription = _context.SubsciptionTypes
                 .FirstOrDefault(obj => subscriptionName.Contains(obj.Name))!.SiteId;
@@ -173,7 +172,7 @@ public class HomeService : IHomeService
         }
         
         var subscriptionPaymentDto = subscriptionPaymentDtoPayload.Dto;
-        UserEntity? userEntity = new();
+        UserEntity? userEntity;
         userEntity =  _context.Users.FirstOrDefault(obj=> obj.Username.Equals(subscriptionPaymentDto.Username));
         if (userEntity == null)
         {
@@ -183,7 +182,7 @@ public class HomeService : IHomeService
 
         if (subscriptionPaymentDto.RememberAddressForLater)
         {
-            ClientAddressEntity clientAddressEntity =
+            ClientAddressEntity? clientAddressEntity =
                 _context.ClientsAddresses.FirstOrDefault(obj => obj.UserEntity.Equals(userEntity));
             bool isAddressNull = true;
             if (clientAddressEntity != null)
@@ -203,7 +202,7 @@ public class HomeService : IHomeService
                 _context.ClientsAddresses.Add(clientAddressEntity);
         }
 
-        SubscriptionTypesEntity? subscriptionTypesEntity = new SubscriptionTypesEntity();
+        SubscriptionTypesEntity? subscriptionTypesEntity;
         subscriptionTypesEntity = _context.SubsciptionTypes
             .FirstOrDefault(obj => obj.SiteId.Equals(subscriptionPaymentDto.SubscriptionType));
         if (subscriptionTypesEntity == null)
@@ -264,16 +263,15 @@ public class HomeService : IHomeService
             request.ContinueUrl = "https://dominikpiskor.pl/User/SubscriptionAfterPaymentSelf";
         else
             request.ContinueUrl = "https://dominikpiskor.pl/User/SubscriptionAfterPaymentGift";
-        OrderResponse orderResponse = new();
+        OrderResponse orderResponse;
         try
         {
-            orderResponse = await client.PostOrderAsync(request, default(CancellationToken));
-
-           var status= orderResponse.Status.StatusCode;
+            orderResponse = await client.PostOrderAsync(request);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
             controller.Response.Redirect("/Home");
+            _logger.LogError(ex.Message);
             return;
         }
 
@@ -289,7 +287,7 @@ public class HomeService : IHomeService
         controller.Response.Redirect(orderResponse.RedirectUri);
     }
 
-    public async Task<List<SubscriptionTypesDto>> GetSubscriptionTypes()
+    public List<SubscriptionTypesDto> GetSubscriptionTypes()
     {
         var subsciptionTypes = _context.SubsciptionTypes.ToList();
         List<SubscriptionTypesDto> subscriptionTypesDtos = new();
@@ -311,19 +309,19 @@ public class HomeService : IHomeService
     /// </summary>
     /// <param name="controller">HomeController instance</param>
     /// <returns>Ip adress</returns>
-    private string GetIpAddress(HomeController controller)
+    private string? GetIpAddress(HomeController controller)
     {
-        string ipAddressString = controller.Request.HttpContext.Connection.RemoteIpAddress.ToString();
+        var ipAddressString = controller.Request.HttpContext.Connection.RemoteIpAddress;
 
         if (ipAddressString == null)
             return null;
 
-        IPAddress ipAddress;
-        IPAddress.TryParse(ipAddressString, out ipAddress);
+        IPAddress? ipAddress;
+        IPAddress.TryParse(ipAddressString.ToString(), out ipAddress);
 
-        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+        if (ipAddress!.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
         {
-            ipAddress = System.Net.Dns.GetHostEntry(ipAddress).AddressList
+            ipAddress = Dns.GetHostEntry(ipAddress).AddressList
                 .First(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
         }
 

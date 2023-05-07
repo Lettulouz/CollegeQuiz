@@ -27,3 +27,19 @@ public class BannedDetailsDto
     public List<string> BannedUsers { get; set; }
     public List<string> UnbannedUsers { get; set; }
 }
+
+public class QuizManagerDto
+{
+    public int QuestionId { get; set; }
+    public string Question { get; set; }
+    public int QuestionType { get; set; }
+    public List<string> Answers { get; set; }
+    public long TimeSec { get; set; }
+    public bool IsRange { get; set; }
+    public int Step { get; set; }
+    public int Min { get; set; }
+    public int MinCounted { get; set; }
+    public int Max { get; set; }
+    public int MaxCounted { get; set; }
+    public string ImageUrl { get; set; }
+}

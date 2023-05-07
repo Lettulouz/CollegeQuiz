@@ -18,25 +18,18 @@ using CollegeQuizWeb.Services.QuizService;
 using CollegeQuizWeb.Services.SharedQuizesService;
 using CollegeQuizWeb.Services.UserService;
 using CollegeQuizWeb.Smtp;
-using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
-using JavaScriptEngineSwitcher.V8;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using React.AspNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(120));
 
-// react
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddReact();
-builder.Services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName).AddV8();
-
 builder.Services.AddControllersWithViews();
 
 ConfigLoader.InsertEnvProperties(builder.Configuration);
@@ -88,8 +81,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
-
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -104,18 +95,11 @@ else
 }
 
 app.UseHttpsRedirection();
-
-app.UseReact(config =>
-{
-    config.BabelConfig.Presets = new HashSet<string> { "react", "es2017" };
-});
 app.UseStaticFiles();
-
 app.UseSession();
+app.UseAuthorization();
 app.UseCors();
 app.UseRouting();
-
-app.UseAuthorization();
 
 // signalR
 app.MapHub<QuizUserSessionHub>("/quizUserSessionHub");

@@ -43,8 +43,8 @@ const QuizQuestionsRangeAnswerComponent = () => {
 
     return (
         <div className="col-12">
-            <div className="p-3 card">
-                <div className="p-3 card">
+            <div className="p-3 card card-glass-effect">
+                <div className="p-1">
                     <div className="row">
                         <div className="col-md-4 mb-2">
                             <label htmlFor="minId" className="form-label">Min</label>

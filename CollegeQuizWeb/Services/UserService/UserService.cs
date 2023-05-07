@@ -5,16 +5,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
-using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Entities;
-using CollegeQuizWeb.Smtp;
-using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using CouponListDto = CollegeQuizWeb.Dto.User.CouponListDto;
 
@@ -22,21 +18,15 @@ namespace CollegeQuizWeb.Services.UserService;
 
 public class UserService : IUserService
 {
-    private readonly ILogger<UserService> _logger;
-    
     private readonly ApplicationDbContext _context;
     private readonly IPasswordHasher<UserEntity> _passwordHasher;
 
-    public UserService(ILogger<UserService> logger, ApplicationDbContext context,
-        IPasswordHasher<UserEntity> passwordHasher)
+    public UserService(ApplicationDbContext context, IPasswordHasher<UserEntity> passwordHasher)
     {
-        _logger = logger;
         _context = context;
         _passwordHasher = passwordHasher;
     }
-
-
-
+    
     public async Task AttemptCouponRedeem(AttemptCouponRedeemPayloadDto obj)
     {
         UserController controller = obj.ControllerReference;
@@ -115,7 +105,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<List<CouponListDto>> GetYourCouponsList(UserController userController, string username)
+    public List<CouponListDto> GetYourCouponsList(UserController userController, string username)
     {
         var coupons =
             _context.GiftCouponsEntities
@@ -142,7 +132,7 @@ public class UserService : IUserService
     {
         var userInfo = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(isLogged));
 
-        var subStatus = await _context.SubsciptionTypes.FirstOrDefaultAsync(s => s.SiteId.Equals(userInfo.AccountStatus));
+        var subStatus = await _context.SubsciptionTypes.FirstOrDefaultAsync(s => s.SiteId.Equals(userInfo!.AccountStatus));
 
         string userStatus;
         
@@ -157,7 +147,7 @@ public class UserService : IUserService
         
         ProfileDto UserDto = new ProfileDto()
         {
-            FirstName = userInfo.FirstName,
+            FirstName = userInfo!.FirstName,
             LastName = userInfo.LastName,
             CreatedAt = userInfo.CreatedAt,
             Email = userInfo.Email,
@@ -175,7 +165,7 @@ public class UserService : IUserService
         
         EditProfileDto UserDto = new EditProfileDto()
         {
-            FirstName = userData.FirstName,
+            FirstName = userData!.FirstName,
             LastName = userData.LastName,
             Username = userData.Username
         };
@@ -187,9 +177,9 @@ public class UserService : IUserService
     {
         UserController controller = obj.ControllerReference;
         
-        var userEntity=await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUser));
+        var userEntity = await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(loggedUser));
 
-        userEntity.FirstName = obj.Dto.FirstName;
+        userEntity!.FirstName = obj.Dto.FirstName;
         userEntity.LastName = obj.Dto.LastName;
         userEntity.Username = obj.Dto.Username;
 
@@ -234,9 +224,6 @@ public class UserService : IUserService
                 controller.ModelState.AddModelError("ConfirmPassword", Lang.PASSWORD_REGEX_ERROR);
             }
         }
-
-        
-
         if (!controller.ModelState.IsValid) return;
         
         _context.Update(userEntity);
@@ -246,9 +233,9 @@ public class UserService : IUserService
         controller.Response.Redirect("/User/Profile");
     }
     
-    public async Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username)
+    public List<PaymentHistoryDto> GetPaymentHistoryList(UserController userController, string username)
     {
-        var userId = _context.Users.FirstOrDefault(o => o.Username.Equals(username)).Id;
+        var userId = _context.Users.FirstOrDefault(o => o.Username.Equals(username))!.Id;
         var paymentHistoryList =
             _context.SubscriptionsPaymentsHistory
                 .Where(o => o.UserId.Equals(userId))
@@ -284,13 +271,6 @@ public class UserService : IUserService
         {
             return true;
         }
-        if (user.Id == id)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return user.Id == id;
     }
 }

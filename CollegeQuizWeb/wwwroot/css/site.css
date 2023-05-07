@@ -19,7 +19,12 @@ body {
     background-image: url(../home_graphic.svg);
     background-size: 55%;
     background-repeat: no-repeat;
-    background-position: left 0 bottom 63px;
+    background-attachment: fixed;
+    background-position: left 0 bottom 0;
+}
+
+.margin-hide-menu-top {
+    margin-top: 150px;
 }
 
 /*
@@ -178,7 +183,7 @@ a.navbar-brand {
 }
 
 .card-glass-effect {
-    background-color: rgba(99, 196, 171, 0.1) !important;
+    background-color: rgba(249, 254, 248, .8) !important;
 }
 
 .leaderboard-table-nav-button-text {
@@ -544,7 +549,7 @@ select{
     background-color: #63c4ab;
 }
 
-#mainName {
+.mainName {
     position: absolute;
     top: -23px;
     left: 25px;
@@ -555,7 +560,7 @@ select{
     border-radius: 15px 25px 25px 25px;
 }
 
-#mainName2 {
+.mainName2 {
     position: absolute;
     top: -23px;
     left: 25px;
@@ -881,8 +886,6 @@ hr.hr-mid-green{
     -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
 }
-
-
 
 .vtimeline-point {
     position: relative;

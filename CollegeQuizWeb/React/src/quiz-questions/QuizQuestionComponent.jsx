@@ -127,10 +127,10 @@ const QuizQuestionComponent = () => {
             />
             <div className="row g-2 mb-4">
                 <div className="col-12">
-                    <div className="p-3 card">
+                    <div className="p-3 card card-glass-effect">
                         {mainImageVisible && <div className="d-flex justify-content-center mb-3">
-                            <button onClick={showModal} className="bg-transparent border-image">
-                                <img src={imagePreview} alt="loadedImage" className="align-middle" width="100%" height="100%"/>
+                            <button onClick={showModal} className="bg-transparent border-image rounded">
+                                <img src={imagePreview} alt="loadedImage" className="align-middle rounded" width="100%" height="100%"/>
                             </button>
                         </div>}
                         <div className="mb-2 hstack gap-3">

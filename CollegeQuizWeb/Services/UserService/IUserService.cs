@@ -20,7 +20,7 @@ public interface IUserService
     /// <param name="userController">UserController instance</param>
     /// <param name="username">Current user Username</param>
     /// <returns>Coupons list</returns>
-    Task<List<CouponListDto>> GetYourCouponsList(UserController userController, string username);
+    List<CouponListDto> GetYourCouponsList(UserController userController, string username);
     
     /// <summary>
     /// Method that get user's payment history list
@@ -28,7 +28,7 @@ public interface IUserService
     /// <param name="userController">UserController instance</param>
     /// <param name="username">Current user Username</param>
     /// <returns>Payment history list</returns>
-    Task<List<PaymentHistoryDto>> GetPaymentHistoryList(UserController userController, string username);
+    List<PaymentHistoryDto> GetPaymentHistoryList(UserController userController, string username);
     
     /// <summary>
     /// Method that get all user information

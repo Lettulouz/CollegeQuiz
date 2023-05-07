@@ -103,7 +103,7 @@ public class QuizController : Controller
 
         if (await _service.CreateQuizCode(this, loggedUsername, quizId)) return Redirect("/Quiz/MyQuizes");
         
-        SKBitmap test = _service.GenerateQRCode(this, ViewBag.Code);
+        SKBitmap test = await _service.GenerateQRCode(this, ViewBag.Code);
         MemoryStream ms = new MemoryStream();
         using (var image = SKImage.FromBitmap(test))
         using (var data = image.Encode(SKEncodedImageFormat.Jpeg, 100))

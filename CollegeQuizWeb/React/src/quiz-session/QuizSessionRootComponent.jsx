@@ -47,7 +47,7 @@ const QuizSessionRootComponent = () => {
         }}>
             {isActive && <>
                 {isConnect ? <>
-                    {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && <div className="row">
+                    {(screenAction === "COUNTING_SCREEN" || screenAction === "WAITING_SCREEN") && <div className="row px-2">
                         <LeaveSessionButtonComponent text="Opuść pokój"/>
                     </div>}
                     <QuizSessionMainGameWindowComponent/>
