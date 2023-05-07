@@ -10,11 +10,12 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
     const { imageUrl, questionName, rangeData } = useContext(InGameViewContext);
 
     const stepsSlider = useRef(null);
+    const stepsSliderContainer = useRef(null);
 
     useEffect(() => {
         if (!isAnswersVisible) return;
-        
-        nouislider.create(stepsSlider.current, {
+
+        stepsSlider.current = nouislider.create(stepsSliderContainer.current, {
             start: [ rangeData.MinCounted, rangeData.CorrectAnswerRange, rangeData.MaxCounted ],
             connect: true,
             tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
@@ -28,6 +29,7 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                 'max' :rangeData.Max
             },
         });
+        stepsSlider.current.disable();
     }, [ isAnswersVisible ]);
     
     return (
@@ -49,7 +51,7 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                     </div>
                     {isAnswersVisible && <>
                         <div className="row d-flex mt-6 px-3">
-                            <div ref={stepsSlider}></div>
+                            <div ref={stepsSliderContainer}></div>
                         </div>
                         <div className="row mt-4">
                             <div className="col-md-6 mb-2">
