@@ -1,5 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import { alertWarning, COUNTING_SCREEN, IN_GAME, QUESTION_RESULT_SCREEN, WAITING_SCREEN } from "../utils/common";
+import {
+    alertWarning, COUNTING_SCREEN, IN_GAME, playSound, QUESTION_RESULT_SCREEN, WAITING_SCREEN
+} from "../utils/common";
 import { SessionContext } from "../quiz-session-renderer";
 
 import QuizQuestionAnswerComponent from "./QuizQuestionAnswerComponent";
@@ -77,14 +79,6 @@ const QuizSessionMainGameWindowComponent = () => {
             });
         });
     }, []);
-    
-    const playSound = counter => {
-        if(counter <= 5 && counter>0){
-            var audio = new Audio("/sounds/counter/" + counter + ".mp4");
-            audio.volume = 0.8
-            audio.play();
-        }
-    }
     
     const generateUniversalAnswers = (count, multiSelect) => (
         <QuizQuestionUniversalTypeComponent>

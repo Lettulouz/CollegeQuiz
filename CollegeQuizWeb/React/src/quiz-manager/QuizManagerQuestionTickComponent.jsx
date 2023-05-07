@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import { SessionContext } from "../quiz-manager-renderer";
+import { convertSecondsToTime, playSound } from "../utils/common";
 
 const QuizManagerQuestionTickComponent = () => {
     const {
@@ -18,14 +19,6 @@ const QuizManagerQuestionTickComponent = () => {
             playSound(parsedTickObject.Remaining);
         });
     }, []);
-
-    const playSound = counter => {
-        if(counter <= 5 && counter > 0){
-            var audio = new Audio(`/sounds/counter/${counter}.mp4`);
-            audio.volume = 0.8
-            audio.play();
-        }
-    }
     
     return (
         <div className="row px-1 mb-3">

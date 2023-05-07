@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { SESS_TOKEN, SessionContext } from "../quiz-manager-renderer";
-import { alertInfo, alertOff } from "../utils/common";
+import { alertInfo, alertOff, playSound } from "../utils/common";
 
 const StartQuizButtonComponent = () => {
     const {
@@ -33,14 +33,6 @@ const StartQuizButtonComponent = () => {
             --i;
         }, 1000);
     };
-
-    const playSound = counter => {
-        if(counter <= 5 && counter>0){
-            var audio = new Audio("/sounds/counter/" + counter + ".mp4");
-            audio.volume = 0.8
-            audio.play();
-        }
-    }
     
     return (
         <button className="btn btn-color-second-short w-100 btn-std" onClick={startQuiz}
