@@ -136,15 +136,8 @@ public class HomeService : IHomeService
                 return true;
             }
 
-            int daysToAdd = 0;
-            var calculateRemainingTime =
-                (userEntity.CurrentStatusExpirationDate - DateTime.Today).TotalDays;
-            if (calculateRemainingTime % 2 == 0)
-                daysToAdd = (int) (calculateRemainingTime / 2);
-            else
-                daysToAdd = (int) (calculateRemainingTime / 2) + 1;
-            userEntity.CurrentStatusExpirationDate = DateTime.Now.AddDays(30+daysToAdd);
-            userEntity.AccountStatus = typeOfSubscription;
+            ExtendSubscription.AddSubscriptionTime(userEntity, typeOfSubscription);
+            
             _context.Users.Update(userEntity);
             await _context.SaveChangesAsync();
             return true;
@@ -294,6 +287,11 @@ public class HomeService : IHomeService
         return subscriptionTypesDtos;
     }
     
+    /// <summary>
+    /// Method that get ip adress
+    /// </summary>
+    /// <param name="controller">HomeController instance</param>
+    /// <returns>Ip adress</returns>
     private string GetIpAddress(HomeController controller)
     {
         string ipAddressString = controller.Request.HttpContext.Connection.RemoteIpAddress.ToString();

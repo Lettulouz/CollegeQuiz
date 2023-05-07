@@ -39,7 +39,7 @@ const AnswersVisibilityButtonComponent = () => {
             <button className={`btn ${btnColor()} w-100 btn-std d-flex align-items-center`}
                 onClick={isAnswersVisible ? onChangeVisibility : showModal}>
                 <div className="form-check ps-0 position-relative form-switch mb-0 d-flex justify-content-center w-100">
-                    <input className="form-check-input position-absolute" type="checkbox" role="switch"
+                    <input className="form-check-input position-absolute d-none d-xxl-flex" type="checkbox" role="switch"
                         checked={isAnswersVisible} style={{ left: 40, cursor: 'pointer' }} onChange={e => {}}/>
                     <label className="form-check-label" htmlFor="flexSwitchCheckDefault" style={{ cursor: 'pointer' }}>
                         Odpowiedzi {isAnswersVisible ? 'widoczne' : 'niewidoczne'}
