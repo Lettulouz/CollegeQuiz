@@ -23,6 +23,13 @@ public class ConfigLoader
     public static string JwtSecret { get; set; }
     public static int JwtExpiredDays { get; set; }
     public static string JwtIssuer { get; set; }
+    public static string SftpHost { get; set; }
+    public static string SftpUsername { get; set; }
+    public static string SftpPassword { get; set; }
+    public static string SftpHref { get; set; }
+    public static bool ExternalContentServerActive { get; set; }
+    public static string ExternalContentServerBaseDir { get; set; }
+    public static string ExternalContentServerUploadDir { get; set; }
 
     public static string PayuClientId { get; set; }
     public static PayUClientSettings PayUClientSettings { get; set; }
@@ -40,6 +47,11 @@ public class ConfigLoader
         SmtpSender = "info@quizazu.pl";
         SmtpHost = Env.GetString("SMTP_HOST");
         SmtpPassword = Env.GetString("SMTP_PASSWORD");
+        
+        SftpHost = Env.GetString("SFTP_HOST");
+        SftpUsername = Env.GetString("SFTP_USERNAME");
+        SftpPassword = Env.GetString("SFTP_PASSWORD");
+        SftpHref = Env.GetString("SFTP_HREF");
         
         PayuClientId = Env.GetString("CLIENT_ID");
         PayUClientSettings = new PayUClientSettings(

@@ -8,6 +8,7 @@ using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Sftp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,14 @@ public class QuizManagerSessionHub : Hub
 {
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<QuizUserSessionHub> _hubUserContext;
+    private readonly IAsyncSftpService _asyncSftpService;
 
-    public QuizManagerSessionHub(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubUserContext)
+    public QuizManagerSessionHub(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubUserContext,
+        IAsyncSftpService asyncSftpService)
     {
         _context = context;
         _hubUserContext = hubUserContext;
+        _asyncSftpService = asyncSftpService;
     }
     
     public string GetConnectionId() => Context.ConnectionId;
@@ -83,6 +87,11 @@ public class QuizManagerSessionHub : Hub
                 ImageUrl = string.Empty,
             })
             .ToListAsync();
+
+        foreach (var qst in questions)
+        {
+            qst.ImageUrl = await _asyncSftpService.GetImagePath(GetBasePath(), quiz!.QuizId, qst.QuestionId);
+        }
         
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
         if(quiz!.CurrentQuestion >= questions.Count) return;
@@ -92,7 +101,7 @@ public class QuizManagerSessionHub : Hub
         long timer;
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
         var allAnswersWithGood = await _context.Answers.Include(t => t.QuestionEntity)
-            .Where(t => t.QuestionEntity.Index.Equals(question.questionId) && t.QuestionEntity.QuizId.Equals(quiz.QuizId))
+            .Where(t => t.QuestionEntity.Index.Equals(question.QuestionId) && t.QuestionEntity.QuizId.Equals(quiz.QuizId))
             .Select(q => new QuizLobbyAnswerData()
             {
                 Text = q.Name,

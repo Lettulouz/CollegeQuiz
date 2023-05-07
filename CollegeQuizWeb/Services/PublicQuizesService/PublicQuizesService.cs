@@ -7,6 +7,7 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.PublicQuizes;
 using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Sftp;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,15 @@ namespace CollegeQuizWeb.Services.PublicQuizesService;
 public class PublicQuizesService : IPublicQuizesService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAsyncSftpService _asyncSftpService;
+    
     public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
     public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
     
-    public PublicQuizesService(ApplicationDbContext context)
+    public PublicQuizesService(ApplicationDbContext context, IAsyncSftpService asyncSftpService)
     {
         _context = context;
+        _asyncSftpService = asyncSftpService;
     }
 
     public async Task<List<MyQuizDto>> GetPublicQuizes()
@@ -101,37 +105,8 @@ public class PublicQuizesService : IPublicQuizesService
             })
             .ToListAsync();
 
-                controller.ViewBag.questions = questions;
-                
-                List<string> images = new();
-                for (int i = 1; i <= questions.Count; i++)
-                {
-                    images.Add(await GetQuestionImage(id,i));
-                }
-                
-                controller.ViewBag.images = images;
-        }
-    }
-
-    /// <summary>
-    /// Method that get image for question in quiz
-    /// </summary>
-    /// <param name="quizId">Quiz id</param>
-    /// <param name="gId">Question id</param>
-    /// <returns>Image</returns>
-    async Task<string> GetQuestionImage(long quizId, int qId)
-    {
-        string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
-        if (!File.Exists(dir)) return "";
-        Image image = Image.FromFile(dir);
-        image = new Bitmap(image, new Size(500, 500));
-        MemoryStream ms = new MemoryStream();
-        image.Save(ms, ImageFormat.Jpeg);
-        byte[] byteImg = ms.ToArray();
-        string b64Img = Convert.ToBase64String(byteImg);
-        ms.Close();
-
-        return b64Img;
+        controller.ViewBag.questions = questions;
+        controller.ViewBag.images = await _asyncSftpService.GetAllQuizImagesInBase64(id, questions.Count);
     }
 
     public async Task Share(string token, PublicQuizesController controller)

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,6 +7,7 @@ using System.Threading.Tasks;
 using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Sftp;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +18,16 @@ namespace CollegeQuizWeb.API.Services.Quiz;
 public class QuizAPIService : IQuizAPIService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAsyncSftpService _asyncSftpService;
     
     public readonly static string[] ACCEPTABLE_IMAGE_TYPES = { "image/jpeg", "image/png", "image/jpg" };
     public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
     public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
     
-    public QuizAPIService(ApplicationDbContext context)
+    public QuizAPIService(ApplicationDbContext context, IAsyncSftpService asyncSftpService)
     {
         _context = context;
+        _asyncSftpService = asyncSftpService;
     }
     
     public async Task<SimpleResponseDto> AddQuizQuestions(long quizId, AggregateQuestionsReqDto dto, string loggedUsername)
@@ -195,12 +196,7 @@ public class QuizAPIService : IQuizAPIService
                 answerDtos.Add(answerDto);
             }
             string imageUrl =
-                $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{question.Index}";
-            string fullPath = $"{FOLDER_PATH}/{quizId}/question{question.Index}.jpg";
-            if (!File.Exists(fullPath))
-            {
-                imageUrl = string.Empty;
-            }
+                await _asyncSftpService.GetImagePath(Utilities.GetBaseUrl(controller), quizId, question.Index);
             QuizQuestionsReqDto questionsReqDto = new QuizQuestionsReqDto()
             {
                 Id = question.Index,
@@ -258,17 +254,10 @@ public class QuizAPIService : IQuizAPIService
             IsGood = false,
             Message = Lang.QUIZ_NOT_FOUND
         };
-        string dir = $"{FOLDER_PATH}/{quizId}";
-        DirectoryInfo directoryInfo = new DirectoryInfo(dir);
-        if (!Directory.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
-        foreach (var file in directoryInfo.GetFiles())
-        {
-            file.Delete();
-        }
+
+        await _asyncSftpService.PrepareDirectory(uploads.Count, quizId);
         List<QuizImage> quizImages = new List<QuizImage>();
+        
         foreach (var upload in uploads)
         {
             if (upload == null || upload.Length == 0) return new QuizImagesResDto()
@@ -282,22 +271,8 @@ public class QuizAPIService : IQuizAPIService
                 Message = String.Format(Lang.IMAGE_ACCEPTED_EXTENSIONS, string.Join(", ", ACCEPTABLE_IMAGE_TYPES))
             };
             string index = Regex.Match(upload.FileName, @"\d+").Value;
-            string fullPath = $"{FOLDER_PATH}/{quizId}/question{index}.jpg";
-            
-            MemoryStream memoryStream = new MemoryStream();
-            await upload.CopyToAsync(memoryStream);
-            Image image = Image.FromStream(memoryStream);
-            image = new Bitmap(image, new Size(500, 500));
-            image.Save(fullPath, ImageFormat.Jpeg);
-            image.Dispose();
-            memoryStream.Close();
-            
-            string url = $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{index}";
+            string url = await _asyncSftpService.UpdateQuizQuestionImage(upload, quizId, index, controller);
             quizImages.Add(new QuizImage(){ Id = int.Parse(index), Url = url });
-        }
-        if (uploads.Count == 0 && Directory.Exists(dir))
-        {
-            Directory.Delete(dir, true);
         }
         return new QuizImagesResDto()
         {

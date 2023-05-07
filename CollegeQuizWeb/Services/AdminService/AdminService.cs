@@ -10,6 +10,7 @@ using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto.Admin;
 using CollegeQuizWeb.Dto.User;
 using CollegeQuizWeb.Entities;
+using CollegeQuizWeb.Sftp;
 using CollegeQuizWeb.Smtp;
 using CollegeQuizWeb.SmtpViewModels;
 using CollegeQuizWeb.Utils;
@@ -24,6 +25,7 @@ public class AdminService : IAdminService
     private readonly ApplicationDbContext _context;
     private readonly IPasswordHasher<UserEntity> _passwordHasher;
     private readonly ISmtpService _smtpService;
+    private readonly IAsyncSftpService _asyncSftpService;
     
     /// <summary>
     /// Quizazu main directory.
@@ -34,12 +36,13 @@ public class AdminService : IAdminService
     /// </summary>
     public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
 
-    public AdminService(ILogger<AdminService> logger, ApplicationDbContext context, ISmtpService smtpService,
-        IPasswordHasher<UserEntity> passwordHasher)
+    public AdminService(ApplicationDbContext context, ISmtpService smtpService, IPasswordHasher<UserEntity> passwordHasher,
+        IAsyncSftpService asyncSftpService)
     {
         _context = context;
         _smtpService = smtpService;
         _passwordHasher = passwordHasher;
+        _asyncSftpService = asyncSftpService;
     }
 
     //====Index page====
@@ -609,7 +612,7 @@ public class AdminService : IAdminService
 
                 foreach (var quiz in quizesIds)
                 {
-                    await DelQuizImages(quiz.Id);
+                    await _asyncSftpService.DeleteQuizImages(quiz.Id);
                 }
 
                 String message = string.Format(Lang.USER_DELETED, user.Username);
@@ -719,13 +722,7 @@ public class AdminService : IAdminService
                 .ToListAsync();
 
             controller.ViewBag.questions = questions;
-            List<string> images = new();
-            for (int i = 1; i <= questions.Count; i++)
-            {
-                images.Add(await GetQuestionImage(id,i));
-            }
-
-            controller.ViewBag.images = images;
+            controller.ViewBag.images = await _asyncSftpService.GetAllQuizImagesInBase64(id, questions.Count);
         }
     }
     
@@ -987,49 +984,6 @@ public class AdminService : IAdminService
     }
     
     //====Utils in Admin service====
-    
-    /// <summary>
-    ///  Method that delete image of quiz.
-    ///  Method is called in DelQuiz and DelUser methods
-    /// </summary>
-    /// <param name="quizId">Quiz id</param>
-    async Task DelQuizImages(long quizId)
-    {
-        string dir = $"{FOLDER_PATH}/{quizId}";
-        DirectoryInfo directoryInfo = new DirectoryInfo(dir);
-        if (Directory.Exists(dir))
-        {
-            foreach (var file in directoryInfo.GetFiles())
-            {
-                file.Delete();
-            }
-            Directory.Delete(dir);
-        }
-    }
-
-    /// <summary>
-    /// Method that get images of quiz's questions
-    /// and convert them to base64 String.
-    /// If questions doesn't have an image return "".
-    /// Called in QuizInfo.
-    /// </summary>
-    /// <param name="quizId">Quiz id</param>
-    /// <param name="qId">questions index</param>
-    /// <returns>Image as base64 string</returns>
-    async Task<string> GetQuestionImage(long quizId, int qId)
-    {
-        string dir = $"{FOLDER_PATH}/{quizId}/question{qId}.jpg";
-        if (!File.Exists(dir)) return "";
-            Image image = Image.FromFile(dir);
-            image = new Bitmap(image, new Size(500, 500));
-            MemoryStream ms = new MemoryStream();
-            image.Save(ms, ImageFormat.Jpeg);
-            byte[] byteImg = ms.ToArray();
-            string b64Img = Convert.ToBase64String(byteImg);
-            ms.Close();
-            
-            return b64Img;
-    }
     
     /// <summary>
     /// Method that check if Email is used.

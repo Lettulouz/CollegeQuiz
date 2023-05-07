@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CollegeQuizWeb.API.Services.Quiz;
 using CollegeQuizWeb.Controllers;
 using CollegeQuizWeb.DbConfig;
 using CollegeQuizWeb.Dto;
@@ -12,13 +13,14 @@ using CollegeQuizWeb.Dto.Quiz;
 using CollegeQuizWeb.Dto.SharedQuizes;
 using CollegeQuizWeb.Entities;
 using CollegeQuizWeb.Hubs;
+using CollegeQuizWeb.Sftp;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 using SkiaSharp;
-using SkiaSharp.QrCode;
 using SKSvg = SkiaSharp.Extended.Svg.SKSvg;
 
 namespace CollegeQuizWeb.Services.QuizService;
@@ -27,12 +29,13 @@ public class QuizService : IQuizService
 {
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<QuizUserSessionHub> _hubContext;
+    private readonly IAsyncSftpService _asyncSftpService;
 
-
-    public QuizService(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubContext)
+    public QuizService(ApplicationDbContext context, IHubContext<QuizUserSessionHub> hubContext, IAsyncSftpService asyncSftpService)
     {
         _context = context;
         _hubContext = hubContext;
+        _asyncSftpService = asyncSftpService;
     }
     
     public async Task CreateNewQuiz(string loggedUsername, AddQuizDtoPayloader dtoPayloader)
@@ -161,8 +164,12 @@ public class QuizService : IQuizService
 
         var quiz = await _context.Quizes.FirstOrDefaultAsync(q => q.Id.Equals(quizId) && !q.IsHidden);
         if (quiz == null) return true;
-        
-            int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
+
+        var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l =>
+            l.QuizId.Equals(quizId) && l.UserEntity.Id.Equals(userId) && l.IsEstabilished);
+        if (lobby != null) return true;
+
+        int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
         if (countOfQuestions == 0) return true;
         
         string generatedCode;
@@ -202,10 +209,10 @@ public class QuizService : IQuizService
         return false;
     }
 
-    public SKBitmap GenerateQRCode(QuizController controller, string code)
+    public async Task<SKBitmap> GenerateQRCode(QuizController controller, string code)
     {
         QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCode = qrGenerator.CreateQrCode(code, ECCLevel.Q);
+        QRCodeData qrCode = qrGenerator.CreateQrCode(code, QRCodeGenerator.ECCLevel.Q);
 
         int moduleCount = qrCode.ModuleMatrix.Count;
         int qrSize = moduleCount * 40;
@@ -238,16 +245,24 @@ public class QuizService : IQuizService
                     }
                 }
             }
+
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync("https://quizazu.cdn.miloszgilga.pl/static/gfx/logo.svg");
+            var content = await response.Content.ReadAsStringAsync();
+            MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
             
             // wczytujemy logo z pliku SVG i rysujemy na QR kodzie
             var svgDocument = new SKSvg(1, new SKSize(logoSize,logoSize));
-            svgDocument.Load("wwwroot/logo.svg");
+            svgDocument.Load(memoryStream);
             float x = (qrSize - logoSize) / 2.0f;
             float y = (qrSize - logoSize) / 2.0f;
             canvas.DrawPicture(svgDocument.Picture, x, y);
 
             // tworzymy bitmapę na podstawie rysunku na płótnie
             bitmap = SKBitmap.Decode(surface.Snapshot().Encode());
+            
+            memoryStream.Close();
+            httpClient.Dispose();
         }
 
         return bitmap;
@@ -283,11 +298,7 @@ public class QuizService : IQuizService
                 await _context.SaveChangesAsync();
             }   
         }
-        string dirName = $"{QuizAPIService.FOLDER_PATH}/{quizId}";
-        if (Directory.Exists(dirName))
-        {
-            Directory.Delete(dirName, true);
-        }
+        await _asyncSftpService.DeleteQuizImages(quizId);
         AlertDto alertDto2 = new AlertDto()
         {
             Type = viewBagType,

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using CollegeQuizWeb.API.Services.Auth;
 using CollegeQuizWeb.API.Services.Quiz;
 using CollegeQuizWeb.API.Services.QuizSession;
@@ -17,6 +16,7 @@ using CollegeQuizWeb.Services.PublicQuizesService;
 using CollegeQuizWeb.Services.QuizService;
 using CollegeQuizWeb.Services.SharedQuizesService;
 using CollegeQuizWeb.Services.UserService;
+using CollegeQuizWeb.Sftp;
 using CollegeQuizWeb.Smtp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -69,6 +69,10 @@ builder.Services.AddSignalR(o =>
 
 // JWT
 builder.Services.AddScoped<IJwtService, JwtService>();
+
+// SFTP
+builder.Services.AddScoped<IAsyncSftpConnector, AsyncSftpConnector>();
+builder.Services.AddScoped<IAsyncSftpService, AsyncSftpService>();
 
 builder.Services.AddCors(options =>
 {
