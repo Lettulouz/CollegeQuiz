@@ -87,16 +87,12 @@ public class QuizManagerSessionHub : Hub
                 ImageUrl = string.Empty,
             })
             .ToListAsync();
-
-        foreach (var qst in questions)
-        {
-            qst.ImageUrl = await _asyncSftpService.GetImagePath(GetBasePath(), quiz!.QuizId, qst.QuestionId);
-        }
         
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
         if(quiz!.CurrentQuestion >= questions.Count) return;
 
         var question = questions[quiz.CurrentQuestion];
+        question.ImageUrl = await _asyncSftpService.GetImagePath(GetBasePath(), quiz.QuizId, question.QuestionId);
 
         long timer;
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
@@ -471,6 +467,7 @@ public class QuizManagerSessionHub : Hub
             }
             await Clients.Group(token).SendAsync("COMPUTE_ALL_POINTS_P2P", JsonSerializer.Serialize(computePointsList));
             await _hubUserContext.Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN", JsonSerializer.Serialize(currentAnswers));
+            await Clients.Group(token).SendAsync("CORRECT_ANSWERS_SCREEN");
             
             Thread.Sleep(question.QuestionType == 5 ? 4000 : 2500);
             

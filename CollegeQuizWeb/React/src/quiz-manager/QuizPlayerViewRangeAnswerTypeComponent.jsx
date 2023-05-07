@@ -15,13 +15,14 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
     const stepsSliderContainer = useRef(null);
 
     useEffect(() => {
-        if (!isAnswersVisible){
-            stepsSliderVisual.current = nouislider.create(stepsSliderVisualContainer.current, {
-                start: [ rangeData.Min, rangeData.Max ],
+        if (isAnswersVisible || answersIsSetted) {
+            stepsSlider.current = nouislider.create(stepsSliderContainer.current, {
+                start: [ rangeData.MinCounted, rangeData.CorrectAnswerRange, rangeData.MaxCounted ],
                 connect: true,
-                tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
+                tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
                 handleAttributes: [
                     { 'style': 'background:#9acf8a' },
+                    { 'aria-label': 'upper' },
                     { 'style': 'background:#9acf8a' },
                 ],
                 range: {
@@ -29,17 +30,15 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                     'max' :rangeData.Max
                 },
             });
-            stepsSliderVisual.current.disable();
+            stepsSlider.current.disable();
             return; 
-        } 
-
-        stepsSlider.current = nouislider.create(stepsSliderContainer.current, {
-            start: [ rangeData.MinCounted, rangeData.CorrectAnswerRange, rangeData.MaxCounted ],
+        }
+        stepsSliderVisual.current = nouislider.create(stepsSliderVisualContainer.current, {
+            start: [ rangeData.Min, rangeData.Max ],
             connect: true,
-            tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
+            tooltips: [ wNumb({ decimals: 0 }), wNumb({ decimals: 0 })],
             handleAttributes: [
                 { 'style': 'background:#9acf8a' },
-                { 'aria-label': 'upper' },
                 { 'style': 'background:#9acf8a' },
             ],
             range: {
@@ -47,8 +46,8 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                 'max' :rangeData.Max
             },
         });
-        stepsSlider.current.disable();
-    }, [ isAnswersVisible ]);
+        stepsSliderVisual.current.disable();
+    }, [ isAnswersVisible, answersIsSetted ]);
     
     return (
         <div className="container">
@@ -99,7 +98,7 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                             </div>
                         </div>
                     </>}
-                    {!isAnswersVisible && <>
+                    {(!isAnswersVisible && !answersIsSetted) && <>
                         <div className="row d-flex mt-6 px-3">
                             <div ref={stepsSliderVisualContainer}></div>
                         </div>
