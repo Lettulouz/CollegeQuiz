@@ -48,13 +48,11 @@ Website that is being created for college project. It will let players to play t
 * **FluentEmail, FluentEmail Liquid** - C# mail sender
 * **DotNetEnv** - C# environments variables loader
 
-
-
-
 ## Decentralized servers suppliers:
 * **MS Azure** - main server and SignalR broker provider
 * **Google** - SMTP server
 * **MyDevil** - MySQL database and static content data storage
+* **Forpsi** - Domain provider
 
 ## License
 
