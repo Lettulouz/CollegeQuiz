@@ -3,17 +3,18 @@ import { MainContext, QuestionsContext } from "../quiz-questions-renderer";
 
 const QuizQuestionTextContentComponent = () => {
     const { q } = useContext(QuestionsContext);
-    const { questions, setQuestions, onSetQuestionProperty } = useContext(MainContext);
+    const { setQuestions, onSetQuestionProperty, setUploadedImages } = useContext(MainContext);
 
     const setTimeMin = e => onSetQuestionProperty(q.id, "timeMin", e.target.value);
     const setTimeSec = e => onSetQuestionProperty(q.id, "timeSec", e.target.value);
     
     const onRemoveQuestion = () => {
-        const qst = [ ...questions ];
-        const withoutRemoved = qst
+        setQuestions(prevState => prevState
             .filter(qstData => qstData.id !== q.id)
-            .map((qstData, i) => ({ ...qstData, id: i + 1 }));
-        setQuestions(withoutRemoved);
+            .map((qstData, i) => ({ ...qstData, id: i + 1 })));
+        setUploadedImages(prevState => prevState
+            .filter(qstData => qstData.id !== q.id)
+            .map((qstData, i) => ({ ...qstData, id: i + 1 })));
     };
     
     useEffect(() => {

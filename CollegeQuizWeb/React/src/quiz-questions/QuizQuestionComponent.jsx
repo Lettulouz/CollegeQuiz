@@ -119,6 +119,14 @@ const QuizQuestionComponent = () => {
         setMainImageVisible(true);
     }, [ q.imageUrl ]);
     
+    useEffect(() => {
+        return () => {
+            setImageSrc("");
+            setImagePreview("");
+            setMainImageVisible(false);
+        };
+    }, [ q.imageUrl ]);
+    
     return (
         <>
             <QuizQuestionsImageManipulatorComponent
