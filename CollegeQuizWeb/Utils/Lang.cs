@@ -149,6 +149,7 @@ public static class Lang
     public const string ADDRESS1_TOO_LONG = "*Pole Adres 1 nie może przekraczać 40 znaków.";
     public const string ADDRESS1_TOO_SHORT = "*Pole Adres 1 nie może być krótsze niż 3 znaki.";
     
+    public const string EMAIL_CONFIRM_PAYMENT = "Potwierdzenie płatności dla {0} {1} {2}.";
     public const string SUBSCRIPTION_IS_ACTIVE = "Wygląda na to, że posiadasz już aktywną subskrypcję, " +
                                                  "dokonanie przedłużenia ważności konta premium jest możliwe na 7 dni " +
                                                  "przed zakończeniem ważności poprzedniej.";
