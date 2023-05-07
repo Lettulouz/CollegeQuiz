@@ -146,9 +146,17 @@ const QuizManagerInGameViewComponent = () => {
                             <i className="bi bi-clipboard"></i>
                         </a>
                     </div>
-                    <button className="btn btn-danger text-white w-100 btn-std flex-fill" onClick={() => window.location.reload()}>
-                        Zakończ quiz
-                    </button>
+                    <div className="hstack gap-2 mb-2">
+                        <button className="btn btn-danger text-white w-100 btn-std flex-fill" onClick={() => window.location.reload()}>
+                            Zakończ quiz
+                        </button>
+                        {questionType === 3 &&
+                            <i className="bi bi-collection session-icon"></i>
+                        }
+                        {(questionType === 1 || questionType === 4) &&
+                            <i className="bi bi-1-square session-icon"></i>
+                        }
+                    </div>
                 </div>
             </div>
             <InGameViewContext.Provider value={{

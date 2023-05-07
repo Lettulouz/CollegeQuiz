@@ -1,8 +1,11 @@
 import StartQuizButtonComponent from "./StartQuizButtonComponent";
 import NextQuestionButtonComponent from "./NextQuestionButtonComponent";
 import AnswersVisibilityButtonComponent from "./AnswersVisibilityButtonComponent";
+import {useContext} from "react";
+import {SessionContext} from "../quiz-manager-renderer";
 
 const QuizManagerRightContentComponent = () => {
+    
     return (
         <div className="col-lg-3 px-0 px-md-1 mb-2 mb-lg-0 order-lg-0 order-0">
             <div className="card trsp px-3 py-3 h-100 d-flex flex-column justify-content-between">
