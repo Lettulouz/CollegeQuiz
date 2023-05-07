@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import { useContext, useState } from "react";
 import { SessionContext, InGameViewContext } from "../quiz-manager-renderer";
 import { ANSWER_LETTERS } from "../utils/common";
 
@@ -77,7 +77,9 @@ const QuizManagerInGameTableComponent = () => {
                             <h4 className="mb-2 quiz-color-text">Tabela wyników</h4>
                             <p className="my-1">
                                 Udzieliło odpowiedzi
-                                <strong className="mx-2">{respondedUsers}/{allParticipants.Connected.length}</strong>
+                                {allParticipants.Connected.length > 0
+                                    ? <strong className="mx-2">{respondedUsers}/{allParticipants.Connected.length}</strong>
+                                    : <strong className="mx-2">-</strong>}
                                 graczy
                             </p>
                             <table className="table">

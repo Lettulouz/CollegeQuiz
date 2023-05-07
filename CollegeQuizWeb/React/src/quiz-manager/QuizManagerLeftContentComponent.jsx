@@ -6,7 +6,8 @@ import SessionParticipantsComponent from "./SessionParticipantsComponent";
 
 const QuizManagerLeftContentComponent = () => {
     const {
-        connection, setAllParticipants, lobbyData, setLobbyData, setAlert, resultTable, setResultTable
+        connection, setAllParticipants, lobbyData, setLobbyData, setAlert, resultTable, setResultTable, setRespondedUsers,
+        respondedUsers
     } = useContext(SessionContext);
 
     useEffect(() => {
@@ -19,6 +20,7 @@ const QuizManagerLeftContentComponent = () => {
             allParticipants.Banned.sort();
             
             setAllParticipants(allParticipants);
+            setRespondedUsers(respondedUsers - allParticipants.Disconnected.length);
             setResultTable(prevState => prevState.filter(u => allParticipants.Connected.includes(u.Username)));
             
             if (allParticipants.Connected.length === 0) {
