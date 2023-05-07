@@ -77,7 +77,7 @@ builder.Services.AddScoped<IAsyncSftpService, AsyncSftpService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(corsPolicyBuilder => corsPolicyBuilder
-        .AllowAnyOrigin()
+        .WithOrigins("https://dominikpiskor.pl", "https://quizazu.cdn.miloszgilga.pl")
         .AllowAnyHeader()
         .AllowAnyMethod()
     );
