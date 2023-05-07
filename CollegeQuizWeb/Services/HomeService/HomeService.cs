@@ -146,9 +146,6 @@ public class HomeService : IHomeService
             }
 
             ExtendSubscription.AddSubscriptionTime(userEntity, typeOfSubscription);
-
-             _context.Users.Update(userEntity);
-            await _context.SaveChangesAsync();
             
             PaymentConfirmedSmtpViewModel emailViewModel = new()
             {
@@ -164,7 +161,13 @@ public class HomeService : IHomeService
                 DataModel = emailViewModel
             };
 
-            await _smtpService.SendEmailMessage(options);
+            if(!await _smtpService.SendEmailMessage(options))
+            {
+                return false;
+            }
+            
+            _context.Users.Update(userEntity);
+            await _context.SaveChangesAsync();
             
             return true;
         }
