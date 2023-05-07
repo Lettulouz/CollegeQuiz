@@ -4,11 +4,11 @@ import { alertDanger, ANSWER_LETTERS, ANSWER_SVGS, getCommonFetchObj } from "../
 
 const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     const {
-        answers, connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer
+        answers, connectionId, questionNumber, isAnswerSet, setIsAnswerSet, currentAnswer, questionType
     } = useContext(SessionContext);
     
     const [ clickedIndex, setClickedIndex ] = useState([]);
-
+    
     const handleClick = () => {
         if (isMultiSelect && clickedIndex.includes(number)) return;
         if (!isMultiSelect && (isAnswerSet || currentAnswer !== "")) return;
@@ -39,9 +39,13 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     const cssClickedClass = isMultiSelect
         ? clickedIndex.includes(number) && 'clicked'
         : clickedIndex === number && 'clicked';
+
+    const sixAnsw = questionType === 4
+        ? 'col-4'
+        : 'col-6';
     
     return (
-        <div className={`col-6 d-flex m-0 mt-3 ${incClassAns()}`}>
+        <div className={`${sixAnsw} d-flex m-0 mt-3 ${incClassAns()}`}>
             <div className={`card bg-dark text-white card-img-custom ${cssClickedClass} ${isMultiSelect && isClicked()}`}
                 onClick={handleClick}>
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${cssDisabledClickEvent}`}>

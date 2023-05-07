@@ -3,12 +3,17 @@ import { ANSWER_LETTERS, ANSWER_SVGS } from "../utils/common";
 import { SessionContext } from "../quiz-manager-renderer";
 
 const QuizPlayerViewUniversalAnswerTypeComponent = ({ number, answer }) => {
-    const { isAnswersVisible } = useContext(SessionContext);
+    const { isAnswersVisible, questionType } = useContext(SessionContext);
     
     const isIncorrect = isAnswersVisible && !answer.IsCorrect ? 'incorrectAnswer' : '';
+
+    console.log(questionType);
+    const sixAnsw = questionType === 4
+        ? 'col-4'
+        : 'col-6';
     
     return (
-        <div className={`col-6 d-flex m-0 mt-3`}>
+        <div className={`${sixAnsw} d-flex m-0 mt-3`}>
             <div className={`card bg-dark text-white card-img-custom-noanim ${isIncorrect}`}>
                 <div className="bg-transparent border-0 p-0 m-0 cursor-default">
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />

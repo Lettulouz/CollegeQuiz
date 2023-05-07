@@ -11,10 +11,9 @@ import AnswersVisibilityButtonComponent from "./AnswersVisibilityButtonComponent
 
 const QuizManagerInGameViewComponent = () => {
     const {
-        connection, lobbyData, allParticipants, setNextQuestionIsActive, resultTable, setResultTable, setRespondedUsers
+        connection, lobbyData, allParticipants, setNextQuestionIsActive, resultTable, setResultTable, setRespondedUsers, questionType, setQuestionType
     } = useContext(SessionContext);
-
-    const [ questionType, setQuestionType ] = useState(1);
+    
     const [ imageUrl, setImageUrl ] = useState('');
     const [ questionName, setQuestionName ] = useState('');
     const [ answers, setAnswers ] = useState([]);
