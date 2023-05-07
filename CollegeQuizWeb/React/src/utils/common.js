@@ -51,8 +51,12 @@ export const getCropperConfig = () => ({
 
 export const ANSWER_LETTERS = [ "A", "B", "C", "D", "E", "F" ];
 export const ANSWER_SVGS = [
-    "/gfx/blueCard.svg", "/gfx/greenCard.svg", "/gfx/darkblueCard.svg",
-    "/gfx/tealCard.svg", "/gfx/oliveCard.svg", "/gfx/darkgreenCard.svg"
+    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/blueCard.svg",
+    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/greenCard.svg",
+    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/darkblueCard.svg",
+    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/tealCard.svg",
+    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/oliveCard.svg",
+    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/darkgreenCard.svg"
 ];
 
 export const RESULT_CARD_COLORS = [
@@ -66,4 +70,19 @@ export const RESULT_CARD_COLORS = [
 export const generateColor = i => {
     const { r, g, b } = RESULT_CARD_COLORS[i];
     return `rgba(${r}, ${g}, ${b}, .8)`
+};
+
+export const convertSecondsToTime = seconds => {
+    const secondsNr = Number(seconds);
+    const minutesT = Math.floor(secondsNr % 3600 / 60);
+    const secondsT = Math.floor(secondsNr % 3600 % 60);
+    return ('0' + minutesT).slice(-2) + ":" + ('0' + secondsT).slice(-2);
+};
+
+export const playSound = counter => {
+    if(counter <= 5 && counter > 0){
+        var audio = new Audio(`https://quizazu.cdn.miloszgilga.pl/static/sfx/${counter}.mp3`);
+        audio.volume = 0.8
+        audio.play();
+    }
 };
