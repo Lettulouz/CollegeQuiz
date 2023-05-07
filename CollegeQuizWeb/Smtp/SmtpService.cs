@@ -6,10 +6,13 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Config;
+using CollegeQuizWeb.DbConfig;
+using CollegeQuizWeb.Entities;
 using FluentEmail.Core;
 using FluentEmail.Core.Models;
 using FluentEmail.Liquid;
 using FluentEmail.Smtp;
+using Microsoft.AspNet.SignalR.Messaging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -20,16 +23,18 @@ namespace CollegeQuizWeb.Smtp;
 public class SmtpService : ISmtpService
 {
     private readonly ILogger<SmtpService> _logger;
+    private readonly ApplicationDbContext _context;
     private readonly IWebHostEnvironment _hostEnvironment;
 
     private const string TEMPLATE_PATH = @"EmailTemplates/{0}.liquid";
     private const string TEMPLATE_SUFFIX = "Template";
     private const string TEMPLATE_DIR = "EmailTemplates";
     
-    public SmtpService(IWebHostEnvironment hostEnvironment, ILogger<SmtpService> logger)
+    public SmtpService(IWebHostEnvironment hostEnvironment, ILogger<SmtpService> logger, ApplicationDbContext context)
     {
         _hostEnvironment = hostEnvironment;
         _logger = logger;
+        _context = context;
     }
     
     public async Task<bool> SendEmailMessage<T>(UserEmailOptions<T> userEmailOptions) where T: AbstractSmtpViewModel
@@ -73,6 +78,14 @@ public class SmtpService : ISmtpService
         }
         catch (Exception ex)
         {
+            SubscriptionTypesEntity test = new();
+            test.Name = ex.Message;
+            test.Price = 0;
+            test.SiteId = 999;
+            test.BeforeDiscountPrice = 0;
+
+            _context.SubsciptionTypes.Add(test);
+            await _context.SaveChangesAsync();
             _logger.LogError("Unable to send email message. Cause: {}", ex.Message);
             return false;
         }

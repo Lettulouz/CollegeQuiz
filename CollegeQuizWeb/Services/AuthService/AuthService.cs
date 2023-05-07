@@ -199,6 +199,7 @@ public class AuthService : IAuthService
         {
             controller.ViewBag.Type = "alert-danger";
             controller.ViewBag.AlertMessage = ex.Message;
+            controller.ViewBag.AlertMessage ??= "test";
         }
         /*
         if (!await _smtpService.SendEmailMessage(options))
