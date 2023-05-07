@@ -137,27 +137,27 @@ public interface IAdminService
     
     //====Categories====
     
-    /// <summary>
-    /// Method that remove category.
-    /// </summary>
-    /// <param name="id">Category id</param>
-    /// <param name="controller">AdminController instance</param>
-    Task DelCategory(long id, AdminController controller);
-    
-    //====Coupons====
-    
-    /// <summary>
-    /// Method that get categories list for CategoryList.
-    /// </summary>
-    /// <returns>Liest of CategoryListDto</returns>
-    Task<List<CategoryListDto>> GetCategoryList();
-    
-    
-    /// <summary>
-    /// Method that allow to add new category.
-    /// </summary>
-    /// <param name="obj">CategoryListDtoPayload with category data</param>
-    Task CreateCategory(CategoryListDtoPayload obj);
+    // /// <summary>
+    // /// Method that remove category.
+    // /// </summary>
+    // /// <param name="id">Category id</param>
+    // /// <param name="controller">AdminController instance</param>
+    // Task DelCategory(long id, AdminController controller);
+    //
+    // //====Coupons====
+    //
+    // /// <summary>
+    // /// Method that get categories list for CategoryList.
+    // /// </summary>
+    // /// <returns>Liest of CategoryListDto</returns>
+    // Task<List<CategoryListDto>> GetCategoryList();
+    //
+    //
+    // /// <summary>
+    // /// Method that allow to add new category.
+    // /// </summary>
+    // /// <param name="obj">CategoryListDtoPayload with category data</param>
+    // Task CreateCategory(CategoryListDtoPayload obj);
     
     /// <summary>
     /// Method that allow to create one or more coupons.

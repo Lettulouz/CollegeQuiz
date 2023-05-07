@@ -589,78 +589,78 @@ public class AdminController : Controller
     
     //====Categories====
     
-    /// <summary>
-    /// Method that is being used to render add category view
-    /// </summary>
-    /// <returns>Category add View</returns>
-    [HttpGet]
-    public IActionResult AddCategory()
-    {
-        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
-        if (isUserAdmin != "True") return Redirect("/Home");
-        
-        return View();
-    }
+    // /// <summary>
+    // /// Method that is being used to render add category view
+    // /// </summary>
+    // /// <returns>Category add View</returns>
+    // [HttpGet]
+    // public IActionResult AddCategory()
+    // {
+    //     string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+    //     if (isUserAdmin != "True") return Redirect("/Home");
+    //     
+    //     return View();
+    // }
     
-    /// <summary>
-    /// Method that is being used to add category
-    /// </summary>
-    /// <param name="categoryListDto">Dto with category data</param>
-    /// <returns>Category add View</returns>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddCategory(CategoryListDto categoryListDto)
-    {
-        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
-        if (isUserAdmin != "True") return Redirect("/Home");
-        await HttpContext.Session.CommitAsync();
-        var payloadDto = new CategoryListDtoPayload(this) {Dto = categoryListDto};
-
-        if (ModelState.IsValid)
-        {
-            await _adminService.CreateCategory(payloadDto);
-        }
-
-        return View(payloadDto.Dto);
-    }
-    
-    /// <summary>
-    /// Method that is being used to delete category by admin
-    /// </summary>
-    /// <param name="list">List of categories, always first id is going to be deleted</param>
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task DelCategory(List<CategoryListDto> list)
-    {
-        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
-        if (isUserAdmin != "True")
-        {
-            HttpContext.Response.Redirect("/Home");
-            return;
-        }
-        await HttpContext.Session.CommitAsync();
-        var id = list[0].CategoryId;
-        await _adminService.DelCategory(id, this);
-    }
-    
-    /// <summary>
-    /// Method that is being used to render category list View
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    public async Task<IActionResult> CategoryList()
-    {
-        await HttpContext.Session.CommitAsync();
-        string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
-        if (isUserAdmin != "True") return Redirect("/Home");
-        
-        string? categoryRemoved = HttpContext.Session.GetString(SessionKey.CATEGORY_REMOVED);
-        HttpContext.Session.Remove(SessionKey.CATEGORY_REMOVED);
-        ViewBag.categoryRemoved = categoryRemoved!;
-        
-        var categoryList = await _adminService.GetCategoryList();
-        return View(categoryList);
-    }
+    // /// <summary>
+    // /// Method that is being used to add category
+    // /// </summary>
+    // /// <param name="categoryListDto">Dto with category data</param>
+    // /// <returns>Category add View</returns>
+    // [HttpPost]
+    // [ValidateAntiForgeryToken]
+    // public async Task<IActionResult> AddCategory(CategoryListDto categoryListDto)
+    // {
+    //     string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+    //     if (isUserAdmin != "True") return Redirect("/Home");
+    //     await HttpContext.Session.CommitAsync();
+    //     var payloadDto = new CategoryListDtoPayload(this) {Dto = categoryListDto};
+    //
+    //     if (ModelState.IsValid)
+    //     {
+    //         await _adminService.CreateCategory(payloadDto);
+    //     }
+    //
+    //     return View(payloadDto.Dto);
+    // }
+    //
+    // /// <summary>
+    // /// Method that is being used to delete category by admin
+    // /// </summary>
+    // /// <param name="list">List of categories, always first id is going to be deleted</param>
+    // [HttpPost]
+    // [ValidateAntiForgeryToken]
+    // public async Task DelCategory(List<CategoryListDto> list)
+    // {
+    //     string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+    //     if (isUserAdmin != "True")
+    //     {
+    //         HttpContext.Response.Redirect("/Home");
+    //         return;
+    //     }
+    //     await HttpContext.Session.CommitAsync();
+    //     var id = list[0].CategoryId;
+    //     await _adminService.DelCategory(id, this);
+    // }
+    //
+    // /// <summary>
+    // /// Method that is being used to render category list View
+    // /// </summary>
+    // /// <returns></returns>
+    // [HttpGet]
+    // public async Task<IActionResult> CategoryList()
+    // {
+    //     await HttpContext.Session.CommitAsync();
+    //     string? isUserAdmin = HttpContext.Session.GetString(SessionKey.IS_USER_ADMIN);
+    //     if (isUserAdmin != "True") return Redirect("/Home");
+    //     
+    //     string? categoryRemoved = HttpContext.Session.GetString(SessionKey.CATEGORY_REMOVED);
+    //     HttpContext.Session.Remove(SessionKey.CATEGORY_REMOVED);
+    //     ViewBag.categoryRemoved = categoryRemoved!;
+    //     
+    //     var categoryList = await _adminService.GetCategoryList();
+    //     return View(categoryList);
+    // }
     
     //=======================
     
