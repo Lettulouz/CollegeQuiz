@@ -1,171 +1,238 @@
 @{
     ViewData["Title"] = "Pomoc";
 }
-<div class="card" >
-    <div class="m-3" style="color: #0c4128">
-        <div class="m-2">
-            <div class="row">
-                <h2>Jak się zarejestrować?</h2>
+<div class="container mb80">
+    <div class="page-timeline">
+        <div class="vtimeline-point">
+            <div class="vtimeline-icon">
+                <i class="bi bi-person-fill-add"></i>
             </div>
-            <div class="mt-2">
-                <div class="row">
-                    <h5>Rejestracja</h5>
-                    <div class="row">
-                        <p>• Kliknij przycisk "Rejestracja" w prawym górnym rogu, wypełnij puste pola oraz zaznacz okienko z akceptacją regulaminu strony.</p>
+            <div class="vtimeline-block">
+                <div class="vtimeline-content">
+                    <h2>Jak się zarejestrować?</h2>
+                    <div class="row d-flex justify-content-center">
+                        <img src="~/gfx/help/registration.jpg" alt="" class="img-fluid timeline-image" >
                     </div>
-                </div>
-                <div class="row">
-                    <h5>Potwierdzenie e-mail</h5>
                     <div class="row">
-                        <p>• Po wpisaniu danych na podany adres email zostanie wysłana wiadomość, którą należy potwierdzić w czasie 48 godzin aby otrzymać konto.</p>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <hr class="mx-auto my-4 hr-mid-green">
-        
-        <div class="m-2">
-            <div class="row">
-                <h2>Jak stworzyć quiz?</h2>
-            </div>
-            <div class="mt-2">
-            <div class="row">
-                <h5>Tworzenie quizu</h5>
-                <div class="row">
-                    <p>• Kliknij przycisk "Stwórz quiz" w prawym górnym rogu.</p>
-                    <p>• Wpisz nazwę quizu i opcjonalnie zaznaczając że quiz jest prywatny(dostęp będą miały jedynie osoby z wygenerownym kodem).</p>
-                    <p>• Wyświetli się lista z wszystkimi quizami stworzonymi przez ciebie i udostępnionymi dla ciebie.</p>
-                </div>
-            </div>
-            <div class="row">
-                <h5>Edycja quizu</h5>
-                <div class="row">
-                    <p>• W "Moje quizy" kliknij swój quiz, który chcesz edytować.</p>
-                    <p>• Wybierz rodzaj pytania.</p> 
-                    <p>• Wypełnij pola treści pytania i odpowiedzi ewentualnie dodając zdjęcie.</p>    
-                    <p>• Wybierz czas trwania pytania.</p>    
-                    <p>• Kliknij przycisk "Dodaj nowe pytanie" aby dodać kolejne pytanie i ponownie wypełnij puste pola oraz czas.</p>
-                </div>
-            </div>
-            </div>
-        </div>
-
-        <hr class="mx-auto my-4 hr-mid-green">
-        
-        <div class="m-2">
-            <div class="row">
-                <h2>Jak rozpocząć quiz?</h2>
-            </div>
-            <div class="mt-2">
-                    <div class="row">
-                        <h5>Tworzenie pokoju</h5>
+                    <div class="mt-2">
                         <div class="row">
-                            <p>• W "Moje quizy" kliknij ikonkę plusa dla quizu, którego pokój chcesz stworzyć.</p>
+                            <h5>Rejestracja</h5>
+                            <div class="row">
+                                <p class="card-text">• Kliknij przycisk "Rejestracja" w prawym górnym rogu, wypełnij puste pola oraz zaznacz okienko z akceptacją regulaminu strony.</p>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <h5>Potwierdzenie e-mail</h5>
+                            <div class="row">
+                                <p>• Po wpisaniu danych na podany adres email zostanie wysłana wiadomość, którą należy potwierdzić w czasie 48 godzin aby otrzymać konto.</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <h5>Rozpoczęcie</h5>
-                        <div class="row">
-                            <p>• Gdy wszystkie osoby wejdą do pokoju kliknij przycisk "Następne pytanie".</p>
+                </div>
+            </div>
+        </div>
+        
+         <div class="vtimeline-point">
+                    <div class="vtimeline-icon">
+                        <i class="bi bi-plus-square-dotted"></i>
+                    </div>
+                    <div class="vtimeline-block">
+                        <div class="vtimeline-content">
+                            <h2>Jak stworzyć quiz?</h2>
+                            <div class="mt-2">
+                                <div class="row">
+                                    <h5>Tworzenie quizu</h5>
+                                    <div class="row d-flex justify-content-center">
+                                        <img src="~/gfx/help/create-quiz.png" alt="" class="img-fluid timeline-image" style="width: 500px">
+                                    </div>
+                                    <div class="row">
+                                        <p>• Kliknij przycisk "Stwórz quiz" w prawym górnym rogu.</p>
+                                        <p>• Wpisz nazwę quizu i opcjonalnie zaznaczając że quiz jest prywatny(dostęp będą miały jedynie osoby z wygenerownym kodem).</p>
+                                        <p>• Wyświetli się lista z wszystkimi quizami stworzonymi przez ciebie i udostępnionymi dla ciebie.</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h5>Edycja quizu</h5>
+                                    <div class="row d-flex justify-content-center">
+                                        <img src="~/gfx/help/edit-quiz.png" alt="" class="img-fluid timeline-image" >
+                                    </div>
+                                    <div class="row">
+                                        <p>• W "Moje quizy" kliknij swój quiz, który chcesz edytować.</p>
+                                        <p>• Wybierz rodzaj pytania.</p> 
+                                        <p>• Wypełnij pola treści pytania i odpowiedzi ewentualnie dodając zdjęcie.</p>    
+                                        <p>• Wybierz czas trwania pytania.</p>    
+                                        <p>• Kliknij przycisk "Dodaj nowe pytanie" aby dodać kolejne pytanie i ponownie wypełnij puste pola oraz czas.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                         <h5>Zakończenie</h5>
-                         <div class="row">
-                             <p>• Quiz kończy sie automatycznie po skończeniu się pytań.</p>
-                             <p>• Kliknij "Zakończ quiz", aby zakończyć go wcześniej.</p>
-                         </div>
-                    </div>
+                </div>
 
+        <div class="vtimeline-point">
+            <div class="vtimeline-icon">
+                <i class="bi bi-controller"></i>
             </div>
-        </div>
+            <div class="vtimeline-block">
+                <div class="vtimeline-content">
+                    <div class="row">
+                        <h2>Jak rozpocząć quiz?</h2>
+                                
+                    </div>
+                    <div class="mt-2">
+                        <div class="row">
+                            <h5>Tworzenie pokoju</h5>
+                            <div class="row d-flex justify-content-center">
+                                <img src="~/gfx/help/start-quiz.png" alt="" class="img-fluid timeline-image" >
+                            </div>
+                            <div class="row">
+                                <p>• W "Moje quizy" kliknij ikonkę plusa dla quizu, którego pokój chcesz stworzyć.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5>Rozpoczęcie</h5>
+                            <div class="row d-flex justify-content-center">
+                                <img src="~/gfx/help/start-game.png" alt="" class="img-fluid timeline-image" >
+                            </div>
+                            <div class="row">
+                                <p>• Gdy wszystkie osoby wejdą do pokoju kliknij przycisk "Następne pytanie".</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5>Zakończenie</h5>
+                            <div class="row d-flex justify-content-center">
+                                <img src="~/gfx/help/end-game.png" alt="" class="img-fluid timeline-image" >
+                            </div>
+                            <div class="row">
+                                <p>• Quiz kończy sie automatycznie po skończeniu się pytań.</p>
+                                <p>• Kliknij "Zakończ quiz", aby zakończyć go wcześniej.</p>
+                            </div>
+                        </div>
                 
-        <hr class="mx-auto my-4 hr-mid-green">
-        
-        <div class="m-2">
-            <div class="row">
-                <h2>Jak dołączyć do quizu?</h2>
-            </div>
-            <div class="mt-2">
-                <div class="row">
-                    <h5>Uzyskanie kodu do pokoju</h5>
-                    <div class="row">
-                        <p>• Kod oraz kod QR jest pokazany dla tworzącego pokój, który można skopiować przez kliknięcie ikony obok kodu.</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <h5>Użycie kodu</h5>
-                    <div class="row">
-                        <p style="color: red">!!!Osoby otrzymujące kod do pokoju muszą posiadać konto!!!</p>
-                        <p>• Kliknij "Dołącz" w prawym górnym rogu.</p>
-                        <p>• Wpisz kod.</p>
                     </div>
                 </div>
             </div>
         </div>
         
-        <hr class="mx-auto my-4 hr-mid-green">
-        
-        <div class="m-2">
-            <div class="row">
-                <h2>Jak udostępnić quiz znajomym?</h2>
+        <div class="vtimeline-point">
+            <div class="vtimeline-icon">
+                <i class="bi bi-person-plus-fill"></i>
             </div>
-            <div class="mt-2">
-                <div class="row">
-                    <h5>Uzyskanie kodu do quizu</h5>
-                    <div class="row">
-                        <p>• W "Moje quizy" kliknij ikonkę udostępnienia na quizie, który chcesz udostępnić.</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <h5>Użycie kodu</h5>
-                    <div class="row">
-                        <p style="color: red">!!!Osoby otrzymujące quiz muszą posiadać konto!!!</p>
-                        <p>• W "Odbierz udostępniony quiz" osoba, której udostępnia się kod, wpisuje wcześniej uzyskany kod.</p>
+            <div class="vtimeline-block">
+                <div class="vtimeline-content">
+                    <h2>Jak dołączyć do quizu?</h2>
+                    <div class="mt-2">
+                        <div class="row">
+                            <h5>Uzyskanie kodu do pokoju</h5>
+                            <div class="row d-flex justify-content-center">
+                                <img src="~/gfx/help/create-code.png" alt="" class="img-fluid timeline-image">
+                            </div>
+                            <div class="row">
+                                <p>• Kod oraz kod QR jest pokazany dla tworzącego pokój, który można skopiować przez kliknięcie ikony obok kodu.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5>Użycie kodu</h5>
+                            <div class="row d-flex justify-content-center">
+                                <img src="~/gfx/help/join-quiz.png" alt="" class="img-fluid timeline-image" style="width: 500px">
+                            </div>
+                            <div class="row">
+                                <p style="color: red">!!!Osoby otrzymujące kod do pokoju muszą posiadać konto!!!</p>
+                                <p>• Kliknij "Dołącz" w prawym górnym rogu.</p>
+                                <p>• Wpisz kod.</p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
         
-        <hr class="mx-auto my-4 hr-mid-green">
-                
-        <div class="m-2">
-            <div class="row">
+        <div class="vtimeline-point">
+            <div class="vtimeline-icon">
+                <i class="bi bi-share-fill"></i>
+            </div>
+            <div class="vtimeline-block">
+                <div class="vtimeline-content">
+                    <h2>Jak udostępnić quiz znajomym?</h2>
+                    <div class="mt-2">
+                        <div class="row d-flex justify-content-center">
+                            <img src="~/gfx/help/share-quiz.png" alt="" class="img-fluid timeline-image" >
+                        </div>
+                        <div class="row">
+                            <h5>Uzyskanie kodu do quizu</h5>
+                            <div class="row">
+                                <p>• W "Moje quizy" kliknij ikonkę udostępnienia na quizie, który chcesz udostępnić.</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h5>Użycie kodu</h5>
+                            <div class="row d-flex justify-content-center">
+                                <img src="~/gfx/help/get-quiz.png" alt="" class="img-fluid timeline-image" style="width: 500px">
+                            </div>
+                            <div class="row">
+                                <p style="color: red">!!!Osoby otrzymujące quiz muszą posiadać konto!!!</p>
+                                <p>• W "Odbierz udostępniony quiz" osoba, której udostępnia się kod, wpisuje wcześniej uzyskany kod.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    <div class="vtimeline-point">
+        <div class="vtimeline-icon">
+            <i class="bi bi-ticket-perforated-fill"></i>
+        </div>
+        <div class="vtimeline-block">
+            <div class="vtimeline-content">
                 <h2>Jak zrealizować kupon?</h2>
-            </div>
-            <div class="mt-2">
-                <div class="row">
-                    <h5>Użycie kuponu</h5>
+                            
+                <div class="mt-2">
                     <div class="row">
-                        <p>• W "Zrealizuj kupon" wpisz kod kuponu.</p>
+                        <h5>Użycie kuponu</h5>
+                        <div class="row d-flex justify-content-center">
+                            <img src="~/gfx/help/use-coupon.png" alt="" class="img-fluid timeline-image" style="width: 500px">
+                        </div>
+                        <div class="row">
+                            <p>• W "Zrealizuj kupon" wpisz kod kuponu.</p>
+                        </div>
                     </div>
                 </div>
+                            
             </div>
         </div>
-        
-        <hr class="mx-auto my-4 hr-mid-green">
-                        
-        <div class="m-2">
-            <div class="row">
-                <h2>Jak kupić pakiet?</h2>
-            </div>
-            <div class="mt-2">
-                <div class="row">
-                    <h5>Kupienie pakietu</h5>
-                    <div class="row">
-                        <p>• Kliknij "Pakiety" u góry.</p>
-                        <p>• Wybierz pakiet, który chcesz kupić.</p>
-                        <p>• Wpisz dane w puste pola.</p>
-                        <p>• Kliknij "Prześlij".</p>
-                        <p>• Wybierz metodę płatności i ją wykonaj.</p>
-                        <p>• Po poprawnie wykonanej płatności wyświetli się na stronie komunikat "Mamy nadzieję, że Twoja transakcja przebiegła pomyślnie!".</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
     </div>
     
+    <div class="vtimeline-point">
+        <div class="vtimeline-icon">
+          <i class="bi bi-bag-plus-fill"></i>
+        </div>
+        <div class="vtimeline-block">
+            <div class="vtimeline-content">
+                <h2>Jak kupić pakiet?</h2>
+                <div class="mt-2">
+                    <div class="row">
+                        <h5>Kupienie pakietu</h5>
+                        <div class="row d-flex justify-content-center">
+                            <img src="~/gfx/help/buy.png" alt="" class="img-fluid timeline-image" >
+                        </div>
+                        <div class="row">
+                            <p>• Kliknij "Pakiety" u góry.</p>
+                            <p>• Wybierz pakiet, który chcesz kupić.</p>
+                            <p>• Wpisz dane w puste pola.</p>
+                            <p>• Kliknij "Prześlij".</p>
+                            <p>• Wybierz metodę płatności i ją wykonaj.</p>
+                            <p>• Po poprawnie wykonanej płatności wyświetli się na stronie komunikat "Mamy nadzieję, że Twoja transakcja przebiegła pomyślnie!".</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+       
+    </div>
 </div>
 

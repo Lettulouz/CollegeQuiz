@@ -198,7 +198,7 @@ public class UserService : IUserService
         
         if (subStatus == null)
         {
-            userStatus = "STANDARD";
+            userStatus = "Standard";
         }
         else
         {
