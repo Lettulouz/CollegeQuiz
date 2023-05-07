@@ -235,7 +235,7 @@
         document.getElementById('archiveButton').className = "btn btn-lg btn-secondary w-100";
         chosenFilter = 2;
         let filteredCouponList4 = couponList.filter(function (obj) { return obj.CustomerName.toLowerCase().includes(val); });
-        let filteredCouponList = filteredCouponList4.filter(obj => obj.IsUsed == 0);
+        let filteredCouponList = filteredCouponList4.filter(obj => obj.IsUsed === 0);
         let filteredCouponList2 = [];
         let filteredCouponList3 = [];
         let currentDate = new Date();
@@ -301,6 +301,7 @@
         let innerTextVal =`z ${numberOfPages}`;
         maxPage = numberOfPages;
         document.getElementById('pagination321').innerText = innerTextVal;
+        console.log(couponListLoc);
         let currentDate = new Date();                 
         let html = `<table class="table text-center">
             <thead>
@@ -324,7 +325,7 @@
             <td>${temp}</td>
             <td>${obj.ExtensionTime}</td>
             <td class="couponVal d-none d-xl-table-cell">${obj.Coupon}</td>`
-            if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime()){
+            if (currentDate.getTime()<=new Date(obj.ExpiringAt).getTime() && obj.IsUsed===false){
                 html+= `<td class="fit">
                         <div class='listBtn mb-1'>
                             <button type='button' data-toggle='collapse' class='btn btn-dark d-inline btn-sm' 
