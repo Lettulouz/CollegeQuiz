@@ -52,7 +52,7 @@ Website that is being created for college project. It will let players to play t
 * **MS Azure** - main server and SignalR broker provider
 * **Google** - SMTP server
 * **MyDevil** - MySQL database and static content data storage
-* **Forpsi** - Domain provider
+* **Forpsi** - domain provider
 
 ## License
 
