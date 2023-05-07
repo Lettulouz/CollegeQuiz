@@ -422,6 +422,8 @@ public class QuizManagerSessionHub : Hub
                             correctMultiplier = 0.00;
                         else
                             correctMultiplier = totalCorrectInside / (double)amountOfCorrectNumbers;
+                        if(max<currentAnswers[0].AnswerMinCounted || min > currentAnswers[0].AnswerMaxCounted)
+                            correctMultiplier = 0.00;  
                         double multiplier = (basicMultiplier + (basicMultiplier * rangeMultiplier)) * correctMultiplier;
                         AddPoinstsCorrect(answer, newUserPoinst, getAllAnswersForUpdate,actuallTime,multiplier, false, 0);
                     }

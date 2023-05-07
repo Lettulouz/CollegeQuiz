@@ -19,6 +19,18 @@ const QuizQuestionRangeTypeComponent = () => {
     const stepsSlider = useRef(null);
     const resultSlider = useRef(null);
 
+    const leftToRight = () => {
+        var values = stepsSlider.current.get();
+        answRange.Min = values[1];
+        stepsSlider.current.set([values[1], null]);
+    }
+    
+    const rightToLeft = () => {
+        var values = stepsSlider.current.get();
+        answRange.Max = values[0];
+        stepsSlider.current.set([null, values[0]]);
+    }
+    
     const handleClick = () => {
         if (isAnswerSet || currentAnswer !== "") return;
 
@@ -112,13 +124,11 @@ const QuizQuestionRangeTypeComponent = () => {
                         <div ref={resultSliderContainer}></div>
                     </div>
                     {!isAnswerSet &&
-                    <div className="row d-flex mt-3 px-3">
-                        <div className="col-12 d-flex m-0 justify-content-center text-center">
-                            <div onClick={() => handleClick()}>
-                                <button className={`btn btn-success border-0 w-100 m-0 text-white rounded cursor-default `}>
-                                    Zatwierdź
-                                </button>
-                            </div>
+                    <div>
+                        <div className="row d-flex mt-3 px-3 justify-content-between">
+                            <div className="col-3 btn btn-color-one text-white" onClick={() => leftToRight()}>Do prawej</div>
+                            <div className="col-3 btn btn-color-one text-white" onClick={() => handleClick()}>Zatwierdź</div>
+                            <div className="col-3 btn btn-color-one text-white" onClick={() => rightToLeft()}>Do lewej</div>
                         </div>
                     </div>}
                 </div>
