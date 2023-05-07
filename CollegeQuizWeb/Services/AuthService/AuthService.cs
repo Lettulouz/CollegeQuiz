@@ -170,13 +170,13 @@ public class AuthService : IAuthService
             IsUsed = false,
             UserEntity = userEntity,
         };
-        await _context.AddAsync(otaToken);
+        await _context.OtaTokens.AddAsync(otaToken);
 
         var uriBuilder = new UriBuilder(controller.Request.Scheme, controller.Request.Host.Host,
             controller.Request.Host.Port ?? -1);
         if (uriBuilder.Uri.IsDefaultPort) uriBuilder.Port = -1;
 
-        await _context.AddAsync(userEntity);
+        await _context.Users.AddAsync(userEntity);
 
         ConfirmAccountSmtpViewModel emailViewModel = new()
         {
@@ -191,17 +191,6 @@ public class AuthService : IAuthService
             Subject = string.Format(Lang.EMAIL_ACCOUNT_CRETED_INFROMATION, userEntity.FirstName, userEntity.LastName, userEntity.Username),
             DataModel = emailViewModel
         };
-        try
-        {
-            await _smtpService.SendEmailMessage(options);
-        }
-        catch (Exception ex)
-        {
-            controller.ViewBag.Type = "alert-danger";
-            controller.ViewBag.AlertMessage = ex.Message;
-            controller.ViewBag.AlertMessage ??= "test";
-        }
-        /*
         if (!await _smtpService.SendEmailMessage(options))
         {
             controller.ViewBag.Type = "alert-danger";
@@ -213,8 +202,6 @@ public class AuthService : IAuthService
             controller.ViewBag.AlertMessage = string.Format(Lang.EMAIL_SENT, userEntity.Email);
             await _context.SaveChangesAsync();
         }
-        */
-        
     }
 
     public async Task<bool> EmailExistsInDb(string email) =>
