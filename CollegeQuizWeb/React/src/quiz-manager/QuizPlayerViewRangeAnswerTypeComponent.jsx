@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef } from "react";
 import { SessionContext, InGameViewContext } from "../quiz-manager-renderer";
+import { convertSecondsToTime } from "../utils/common";
 import nouislider from "nouislider";
 import wNumb from "wnumb";
 import "nouislider/dist/nouislider.min.css"
@@ -34,7 +35,7 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
             <div className="row">
                 <div className="col-lg px-0 order-1 order-lg-0 time-image position-relative mx-auto">
                     <p className="fw-bold time-text">
-                        {tick}
+                        {convertSecondsToTime(tick)}
                     </p>
                     <img src="https://quizazu.cdn.miloszgilga.pl/static/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
                 </div>

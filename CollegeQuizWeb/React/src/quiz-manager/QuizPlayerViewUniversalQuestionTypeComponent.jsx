@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { convertSecondsToTime } from "../utils/common";
 import { SessionContext, InGameViewContext } from "../quiz-manager-renderer";
 
 const QuizPlayerViewUniversalQuestionTypeComponent = ({ children }) => {
@@ -10,7 +11,7 @@ const QuizPlayerViewUniversalQuestionTypeComponent = ({ children }) => {
             <div className="row">
                 <div className="col-lg px-0 order-1 order-lg-0 time-image position-relative mx-auto">
                     <p className="fw-bold time-text">
-                        {tick}
+                        {convertSecondsToTime(tick)}
                     </p>
                     <img src="https://quizazu.cdn.miloszgilga.pl/static/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
                 </div>

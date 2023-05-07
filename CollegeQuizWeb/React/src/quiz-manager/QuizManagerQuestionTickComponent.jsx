@@ -13,7 +13,7 @@ const QuizManagerQuestionTickComponent = () => {
             const parsedTickObject = JSON.parse(tickObject);
             
             setTick(parsedTickObject.Remaining);
-            setNextQuestionBtnText(`Do następnego pytania: ${parsedTickObject.Remaining}...`);
+            setNextQuestionBtnText(`Do następnego pytania: ${convertSecondsToTime(parsedTickObject.Remaining)}...`);
             
             setProgressWidth((parsedTickObject.Remaining / parsedTickObject.Total) * 100);
             playSound(parsedTickObject.Remaining);

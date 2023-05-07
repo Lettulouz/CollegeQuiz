@@ -1,6 +1,6 @@
 import { useContext, useRef, useEffect } from "react";
 import { SessionContext } from "../quiz-session-renderer";
-import { alertDanger, getCommonFetchObj } from "../utils/common";
+import { alertDanger, convertSecondsToTime, getCommonFetchObj } from "../utils/common";
 import wNumb from "wnumb";
 import nouislider from "nouislider";
 import "nouislider/dist/nouislider.css";
@@ -92,7 +92,7 @@ const QuizQuestionRangeTypeComponent = () => {
             <div className="row">
                 <div className="col-lg px-0 order-1 order-lg-0 time-image position-relative mx-auto">
                     <p className="fw-bold time-text">
-                        {questionTimer}
+                        {convertSecondsToTime(questionTimer)}
                     </p>
                     <img src="https://quizazu.cdn.miloszgilga.pl/static/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
                 </div>
