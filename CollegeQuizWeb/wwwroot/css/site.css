@@ -832,3 +832,90 @@ hr.hr-mid-green{
     -webkit-transition: transform 1600ms;
     transition: transform 1600ms;
 }
+
+.page-timeline {
+    margin: 30px auto 0 auto;
+    position: relative;
+    max-width: 1000px;
+}
+
+.page-timeline:before {
+    position: absolute;
+    content: '';
+    top: 0;
+    bottom: 0;
+    left: 24px;
+    right: auto;
+    height: 100%;
+    width: 3px;
+    background: #63c4ab;
+    z-index: 0;
+
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+}
+
+.page-timeline:after {
+    position: absolute;
+    content: '';
+    width: 3px;
+    height: 40px;
+    background: #63c4ab;
+    background: -webkit-linear-gradient(top, #63c4ab, rgba(52, 152, 219, 0));
+    background: linear-gradient(to bottom, #63c4ab, rgba(52, 152, 219, 0));
+    top: 100%;
+    left: 24px;
+
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+}
+
+.vtimeline-content {
+    margin-left: 60px;
+    background: #f7fef5;
+    border: 1px solid #e6e6e6;
+    padding: 35px 20px;
+    border-radius: 3px;
+    text-align: left;
+
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+}
+
+
+
+.vtimeline-point {
+    position: relative;
+    display: block;
+    vertical-align: top;
+    margin-bottom: 30px;
+}
+
+.vtimeline-icon {
+    position: relative;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    background: #63c4ab;
+    border-radius: 50%;
+    float: left;
+    text-align: center;
+    line-height: 50px;
+    z-index: 99;
+
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2),0 6px 10px 0 rgba(0,0,0,0.3);
+}
+
+.vtimeline-icon i {
+    display: block;
+    font-size: 1.5em;
+    line-height: 50px;
+
+}
+
+.timeline-image{
+    max-height: 500px;
+    width: auto;
+    height: auto;
+}
