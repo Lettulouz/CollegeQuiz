@@ -919,3 +919,8 @@ hr.hr-mid-green{
     width: auto;
     height: auto;
 }
+
+.session-icon{
+    font-size: 50px;
+    margin-top : 10px;
+}

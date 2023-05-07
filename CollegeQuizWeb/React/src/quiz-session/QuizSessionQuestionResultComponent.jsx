@@ -54,8 +54,8 @@ const QuizSessionQuestionResultComponent = () => {
                         </Fragment>
                     ))}
                 </div>
-                {afterQuestionResults[lastItem].CurrentStreak > 0 && <div className="row gx-5 leaderboard-container">
-                    <div className="col-12 p-1" ref={leaderRef}>
+                {afterQuestionResults[lastItem].CurrentStreak > 0 && <div className="row m-3 leaderboard-container">
+                    <div className="col-12 px-1" ref={leaderRef}>
                         <div className="leaderboard streak p-3 fs-4 text-break lh-1 fw-bold d-flex justify-content-between">
                             <div className="icon-animation">
                                 <i className="bi bi-lightning-charge-fill text-warning fs-3 icon-animation"></i>
