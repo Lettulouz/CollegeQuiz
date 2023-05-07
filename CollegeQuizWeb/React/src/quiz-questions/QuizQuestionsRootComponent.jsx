@@ -64,8 +64,8 @@ const QuizQuestionsRootComponent = () => {
             {isActive && <>
                 <div className="alert alert-warning">
                     Aby zaktualizowac nazwę quizu, musi się składać ono z przynajmniej 3 znaków. Aby poprawnie
-                    dodać/zaktualizować pytania, każde pole musi zostać wypełnione przynajmniej dwoma znakami
-                    a w przypadku odpowiedzi, musi być przynajmniej jedna zaznaczona.
+                    dodać/zaktualizować pytania, każda treść pytania musi posiadać przynajmniej dwa znaki, a sama odpowiedź
+                    może mieć jeden. Dodatkowo w przypadku odpowiedzi, musi być przynajmniej jedna zaznaczona.
                 </div>
                 <div className="alert alert-info">
                     <span dangerouslySetInnerHTML={{ __html: infoModesAlert }}></span>

@@ -775,7 +775,7 @@ public class AdminService : IAdminService
             controller.HttpContext.Session.SetString(SessionKey.QUIZ_REMOVED, message);
         }
         controller.Response.Redirect("/Admin/QuizList");
-    }  
+    }
 
     //====Categories====
     

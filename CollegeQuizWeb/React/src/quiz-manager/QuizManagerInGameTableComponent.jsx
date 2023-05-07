@@ -45,6 +45,10 @@ const QuizManagerInGameTableComponent = () => {
     };
     
     const generateAnswer = r => {
+        if (!isAnswersVisible) {
+            if (r.Answer === "-") return r.Answer;
+            return '<i class="bi bi-check2"></i>';
+        }
         if (r.Answer === "-") return r.Answer;
         switch (questionType) {
             case 1: case 4:         return ANSWER_LETTERS[Number(r.Answer)];        // 4 odpowiedzi, 6 odpowidzi
@@ -94,7 +98,9 @@ const QuizManagerInGameTableComponent = () => {
                                 {resultTable.map(r => (
                                     <tr key={r.Username}>
                                         <td>{r.Username}</td>
-                                        <td className={`fw-bold ${answerColor(r)}`}>{generateAnswer(r)}</td>
+                                        <td className={`fw-bold ${answerColor(r)}`}>
+                                            <span dangerouslySetInnerHTML={{ __html: generateAnswer(r) }}></span>
+                                        </td>
                                         <td>{r.Points}</td>
                                     </tr>
                                 ))}

@@ -165,10 +165,6 @@ public class QuizService : IQuizService
         var quiz = await _context.Quizes.FirstOrDefaultAsync(q => q.Id.Equals(quizId) && !q.IsHidden);
         if (quiz == null) return true;
 
-        var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l =>
-            l.QuizId.Equals(quizId) && l.UserEntity.Id.Equals(userId) && l.IsEstabilished);
-        if (lobby != null) return true;
-
         int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
         if (countOfQuestions == 0) return true;
         

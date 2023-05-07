@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,8 +20,6 @@ public class QuizAPIService : IQuizAPIService
     private readonly IAsyncSftpService _asyncSftpService;
     
     public readonly static string[] ACCEPTABLE_IMAGE_TYPES = { "image/jpeg", "image/png", "image/jpg" };
-    public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
-    public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
     
     public QuizAPIService(ApplicationDbContext context, IAsyncSftpService asyncSftpService)
     {
@@ -30,7 +27,7 @@ public class QuizAPIService : IQuizAPIService
         _asyncSftpService = asyncSftpService;
     }
     
-    public async Task<SimpleResponseDto> AddQuizQuestions(long quizId, AggregateQuestionsReqDto dto, string loggedUsername)
+    public async Task<SimpleResponseDto> AddQuizQuestions(long quizId, AggregateQuestionReq2Dto dto, string loggedUsername)
     {
         var quizEntity = await _context.Quizes.Include(q => q.UserEntity)
             .FirstOrDefaultAsync(q => q.Id == quizId && q.UserEntity.Username.Equals(loggedUsername));

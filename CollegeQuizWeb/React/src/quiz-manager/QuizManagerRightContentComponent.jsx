@@ -1,8 +1,5 @@
 import StartQuizButtonComponent from "./StartQuizButtonComponent";
-import NextQuestionButtonComponent from "./NextQuestionButtonComponent";
 import AnswersVisibilityButtonComponent from "./AnswersVisibilityButtonComponent";
-import {useContext} from "react";
-import {SessionContext} from "../quiz-manager-renderer";
 
 const QuizManagerRightContentComponent = () => {
     
@@ -13,7 +10,6 @@ const QuizManagerRightContentComponent = () => {
                     <div className="mb-2">
                         <StartQuizButtonComponent/>
                     </div>
-                    <NextQuestionButtonComponent/>
                     <AnswersVisibilityButtonComponent/>
                 </div>
                 <div className="w-100">

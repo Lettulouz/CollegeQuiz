@@ -113,7 +113,10 @@ public class AsyncSftpService : IAsyncSftpService
         }
         string dirName = $"{REMOTE_UPLOADS_DIR}/{quizId}";
         AsyncFtpClient client = await _asyncSftpConnector.Connect();
-        await client.DeleteDirectory(dirName);
+        if (await client.DirectoryExists(dirName))
+        {
+            await client.DeleteDirectory(dirName);
+        }
         await _asyncSftpConnector.Disconnect();
     }
 
