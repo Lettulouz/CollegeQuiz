@@ -437,6 +437,10 @@ namespace CollegeQuizWeb.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("in_game_screen");
 
+                    b.Property<bool>("IsCreated")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_created");
+
                     b.Property<bool>("IsEstabilished")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_estabilished");

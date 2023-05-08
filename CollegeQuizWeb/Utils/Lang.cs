@@ -215,4 +215,6 @@ public static class Lang
         "Wartość przejścia w pytaniu <strong>{0}</strong> musi być dzielnikiem pozostałych wartości.";
     public const string RANGE_QST_CORRECT_QST_INVALID =
         "Nieprawidłowa wartość prawidłowej odpowiedzi w pytaniu <strong>{0}</strong>.";
+    
+    public const string SELECTED_QUIZ_IS_ALREADY_HOSTED = "Wybrany quiz <strong>{0}</strong> jest już hostowany na tym koncie.";
 }

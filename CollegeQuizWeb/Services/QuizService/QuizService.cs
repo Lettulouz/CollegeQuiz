@@ -165,6 +165,19 @@ public class QuizService : IQuizService
         var quiz = await _context.Quizes.FirstOrDefaultAsync(q => q.Id.Equals(quizId) && !q.IsHidden);
         if (quiz == null) return true;
 
+        var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l =>
+            l.QuizId.Equals(quizId) && l.UserEntity.Id.Equals(userId) && l.IsCreated);
+        if (lobby != null)
+        {
+            AlertDto alertDto2 = new AlertDto()
+            {
+                Type = "alert-danger",
+                Content = string.Format(Lang.SELECTED_QUIZ_IS_ALREADY_HOSTED, quiz.Name),
+            };
+            controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
+            return true;
+        }
+        
         int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
         if (countOfQuestions == 0) return true;
         
@@ -182,6 +195,7 @@ public class QuizService : IQuizService
             test.InGameScreen = "WAITING_SCREEN";
             test.Code = generatedCode;
             test.IsEstabilished = false;
+            test.IsCreated = true;
             test.HostConnId = string.Empty;
             _context.QuizLobbies.Update(test);
             await _context.SaveChangesAsync();
@@ -195,6 +209,7 @@ public class QuizService : IQuizService
             InGameScreen = "WAITING_SCREEN",
             UserHostId = userId,
             QuizId = quizId,
+            IsCreated = true,
             HostConnId = string.Empty,
             IsEstabilished = false
         };

@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CollegeQuizWeb.DbConfig;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CollegeQuizWeb.Entities;
 
@@ -17,6 +16,10 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     [Required]
     [Column("is_estabilished")]
     public bool IsEstabilished { get; set; }
+    
+    [Required]
+    [Column("is_created")]
+    public bool IsCreated { get; set; }
     
     [Required]
     [Column("host_conn_id")]
