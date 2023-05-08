@@ -47,24 +47,24 @@
                                 Ilość pytań: @quiz.CountOfQuestions
                             </p>
                             <div class="hstack gap-2">
-                                <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteQuiz-@quiz.Id">
+                                <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteQuiz-@quiz.Id" style="z-index: 99">
                                     <i class="bi bi-trash3 btn-danger-glass-icon"></i>
                                 </button>
                                 @if (quiz.CountOfQuestions != 0)
                                 {
-                                    <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quiz.Id">
+                                    <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quiz.Id" style="z-index: 99">
                                         <i class="bi bi-plus-circle"></i>
                                     </a>
                                 }
                             </div>
                         </div>
-                        <a class="btn text-decoration-none" asp-action="QuizPage" asp-controller="Quiz" asp-route-id="@quiz.Id">
-                            <div class="card-body">
-                                <h5 class="card-title">@quiz.Name</h5>
-                            </div>
-                        </a>
-                        <div class="d-flex justify-content-center clip-clas">
-                            <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)">
+                        
+                        <div class="card-body d-flex justify-content-center align-items-center">
+                            <h5 class="card-title">@quiz.Name</h5>
+                        </div>
+                        <a class="stretched-link text-decoration-none" asp-action="QuizPage" asp-controller="Quiz" asp-route-id="@quiz.Id"></a>
+                        <div class="d-flex mb-3 justify-content-center clip-clas">
+                            <a class="btn btn-light text-center copy-class" onclick="copyToBoard(this, @quiz.Id)" style="z-index: 99">
                                 <p class="m-0 p-0" style="display: none" id="@quiz.Id">@quiz.Token</p><i class="bi bi-share mx-1"></i>
                             </a>
                         </div>
@@ -106,7 +106,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <a class="btn btn-color-one bg-danger text-white" asp-action="DeleteSharedQuiz"
-                                       asp-controller="Quiz" asp-route-id="@quizes.Id">
+                                       asp-controller="Quiz" asp-route-id="@quizes.Id" style="z-index: 99">
                                         Usuń udostępniony quiz
                                     </a>
                                     <button type="button" class="btn-color-one" data-bs-dismiss="modal">
@@ -123,22 +123,21 @@
                                     Ilość pytań: @quizes.CountOfQuestions
                                 </p>
                                 <div class="hstack gap-2">
-                                    <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteSharedQuiz-@quizes.Id">
+                                    <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteSharedQuiz-@quizes.Id" style="z-index: 99">
                                         <i class="bi bi-trash3 btn-danger-glass-icon"></i>
                                     </button>
                                     @if (@quizes.CountOfQuestions != 0)
                                     {
-                                        <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quizes.Id">
+                                        <a class="btn button-card btn-light" asp-action="QuizLobby" asp-controller="Quiz" asp-route-id="@quizes.Id" style="z-index: 99">
                                             <i class="bi bi-plus-circle"></i>
                                         </a>
                                     }
                                 </div>
                             </div>
-                            <a class="btn text-decoration-none" asp-action="SharePage" asp-controller="SharedQuizes" asp-route-id="@quizes.Id">
-                                <div class="card-body">
-                                    <h5 class="card-title">@quizes.Name</h5>
-                                </div>
-                            </a>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <h5 class="card-title">@quizes.Name</h5>
+                            </div>
+                            <a class="stretched-link text-decoration-none" asp-action="SharePage" asp-controller="SharedQuizes" asp-route-id="@quizes.Id"></a>
                             <p class="card-text text-end mt-auto mx-3 mb-3">
                                 Autor: @quizes.Author
                             </p>
