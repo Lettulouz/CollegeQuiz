@@ -118,7 +118,7 @@ public class QuizManagerSessionHub : Hub
         string tempVal = question.ImageUrl;
         
         string keyName = questionPre.UpdatedAt.ToString("yyyyMMddHHmmss");
-        string imageUrlMobile = $"{GetBasePath()}/api/v1/dotnet/quizapi/GetQuizImage/{quiz.Id}/{question.QuestionId}/{keyName}";
+        string imageUrlMobile = $"{GetBasePath()}/api/v1/dotnet/quizapi/GetQuizImage/{quiz.QuizId}/{question.QuestionId}/{keyName}";
         if (question.ImageUrl != string.Empty)
         {
             question.ImageUrl = imageUrlMobile;
