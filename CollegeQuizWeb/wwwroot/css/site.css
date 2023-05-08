@@ -316,7 +316,7 @@ input:-webkit-autofill {
     transform: translateY(-7px);
 }
 
-@media screen and (max-width: 576px) {
+@media screen and (max-width: 768px) {
     .card-resize {
         min-height: 150px;
         min-width: 100%;
@@ -946,4 +946,9 @@ hr.hr-mid-green{
 .buy:hover {
     background-color: #3a8a7f;
     color: #f9fef8;
+}
+
+.btn:focus {
+    outline: none;
+    box-shadow: none;
 }
