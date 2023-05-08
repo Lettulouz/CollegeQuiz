@@ -412,6 +412,13 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         };
     }
 
+    /// <summary>
+    /// Method that validate user lobby
+    /// </summary>
+    /// <param name="token">Join code</param>
+    /// <param name="username">User username</param>
+    /// <param name="loggedUsername">Current user</param>
+    /// <returns>particEntity</returns>
     private async Task<QuizSessionParticEntity> ValidateUserLobby(string token, string username, string loggedUsername)
     {
         token = token.ToUpper();
