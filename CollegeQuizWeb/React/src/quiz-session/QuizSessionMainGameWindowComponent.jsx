@@ -42,7 +42,8 @@ const QuizSessionMainGameWindowComponent = () => {
             setQuestion(parsedAnswers.Question);
             setAnswRange({ Min, Max });
             setAnswers(parsedAnswers.Answers);
-            
+
+            setProgressWidth(100);
             setQuestionType(parsedAnswers.QuestionType);
             setQuestionTimer(parsedAnswers.TimeSec);
             setQuestionNumber(parsedAnswers.QuestionId);
