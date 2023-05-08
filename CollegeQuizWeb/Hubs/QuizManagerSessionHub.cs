@@ -148,6 +148,17 @@ public class QuizManagerSessionHub : Hub
             CorrectAnswerRange = correctRangeAnswer
         };
         await Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(quizLobbyQuestionData));
+        string keyName = questionPre.UpdatedAt.ToString("yyyyMMddHHmmss");
+        string imageUrlMobile = $"{GetBasePath()}/api/v1/dotnet/quizapi/GetQuizImage/{quiz.Id}/{question.QuestionId}/{keyName}";
+        if (question.ImageUrl != string.Empty)
+        {
+            quizLobbyQuestionData.ImageUrl = imageUrlMobile;
+        }
+        else
+        {
+            quizLobbyQuestionData.ImageUrl = string.Empty;
+        }
+        await Clients.Group(token).SendAsync("QUESTION_MOBILE_P2P",  JsonSerializer.Serialize(quizLobbyQuestionData));
         
         CancellationTokenSource cts = new CancellationTokenSource();
         CancellationToken token2 = cts.Token;
