@@ -67,33 +67,52 @@ public class QuizManagerSessionHub : Hub
             .Include(q => q.QuizEntity)
             .FirstOrDefaultAsync(q => q.Code.Equals(token));
         
-        var questions = await _context.Answers
+        var quizPreQuestions = await _context.Answers
             .Include(q => q.QuestionEntity)
             .Where(q => q.QuestionEntity.QuizId.Equals(quiz!.QuizId))
             .GroupBy(q => q.QuestionEntity.Index)
-            .Select(q => new QuizManagerDto
+            .Select(q => new
             {
                 QuestionId = q.Key,
                 Question = q.First().QuestionEntity.Name,
                 QuestionType = q.First().QuestionEntity.QuestionTypeEntity.TypeId,
                 Answers = q.Select(a => a.Name).ToList(),
                 TimeSec = q.Select(a => a.QuestionEntity.TimeMin * 60 + a.QuestionEntity.TimeSec).FirstOrDefault(),
-                IsRange = q.First().IsRange,
-                Step = q.First().Step,
-                Min = q.First().Min,
-                Max = q.First().Max,
-                MinCounted = q.First().MinCounted,
-                MaxCounted = q.First().MaxCounted,
+                q.First().IsRange,
+                q.First().Step,
+                q.First().Min,
+                q.First().Max,
+                q.First().MinCounted,
+                q.First().MaxCounted,
                 ImageUrl = string.Empty,
+                q.First().UpdatedAt,
             })
             .ToListAsync();
         
         await _hubUserContext.Clients.Group(token).SendAsync("START_GAME_P2P");
-        if(quiz!.CurrentQuestion >= questions.Count) return;
 
-        var question = questions[quiz.CurrentQuestion];
-        question.ImageUrl = await _asyncSftpService.GetImagePath(GetBasePath(), quiz.QuizId, question.QuestionId);
-
+        if(quiz!.CurrentQuestion >= quizPreQuestions.Count) return;
+        var questionPre = quizPreQuestions[quiz.CurrentQuestion];
+        
+        var question = new QuizManagerDto
+        {
+            QuestionId = questionPre.QuestionId,
+            Question = questionPre.Question,
+            QuestionType = questionPre.QuestionType,
+            Answers = questionPre.Answers,
+            TimeSec = questionPre.TimeSec,
+            IsRange = questionPre.IsRange,
+            Step = questionPre.Step,
+            Min = questionPre.Min,
+            Max = questionPre.Max,
+            MinCounted = questionPre.MinCounted,
+            MaxCounted = questionPre.MaxCounted,
+            ImageUrl = string.Empty,
+        };
+        
+        question.ImageUrl = await _asyncSftpService.GetImagePath(GetBasePath(), quiz.QuizId, question.QuestionId,
+            questionPre.UpdatedAt);
+        
         long timer;
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
         var allAnswersWithGood = await _context.Answers.Include(t => t.QuestionEntity)
@@ -292,7 +311,7 @@ public class QuizManagerSessionHub : Hub
                     {
                         obj.UserEntity.Username,
                         obj.Score,
-                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        isLast = (quiz.CurrentQuestion + 1 == quizPreQuestions.Count()),
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
                         obj.CurrentStreak
                     }).OrderByDescending(obj => obj.Score);
@@ -306,7 +325,7 @@ public class QuizManagerSessionHub : Hub
                     {
                         obj.UserEntity.Username,
                         obj.Score,
-                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        isLast = (quiz.CurrentQuestion + 1 == quizPreQuestions.Count()),
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
                         obj.CurrentStreak
                     }).OrderByDescending(obj => obj.CurrentStreak).Take(1).ToList();
@@ -435,7 +454,7 @@ public class QuizManagerSessionHub : Hub
                     {
                         obj.UserEntity.Username,
                         obj.Score,
-                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        isLast = (quiz.CurrentQuestion + 1 == quizPreQuestions.Count()),
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
                         obj.CurrentStreak
                     }).OrderByDescending(obj => obj.Score);
@@ -449,7 +468,7 @@ public class QuizManagerSessionHub : Hub
                     {
                         obj.UserEntity.Username,
                         obj.Score,
-                        isLast = (quiz.CurrentQuestion + 1 == questions.Count()),
+                        isLast = (quiz.CurrentQuestion + 1 == quizPreQuestions.Count()),
                         newPoints = newUserPoinst.ContainsKey(obj.ConnectionId) ? newUserPoinst[obj.ConnectionId] : 0,
                         obj.CurrentStreak
                     }).OrderByDescending(obj => obj.CurrentStreak).Take(1).ToList();
@@ -513,6 +532,7 @@ public class QuizManagerSessionHub : Hub
             .Where(q => q.QuizLobbyEntity.Code.Equals(hostUser.Code));
 
         hostUser.IsEstabilished = false;
+        hostUser.IsCreated = false;
         hostUser.HostConnId = string.Empty;
         _context.QuizLobbies.Update(hostUser);
         

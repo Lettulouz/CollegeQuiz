@@ -30,13 +30,13 @@ const QuizQuestionsRangeAnswerComponent = () => {
                 (answerR.max - answerR.correctAns) % answerR.step !== 0 ||
                 (answerR.minCounted - answerR.correctAns) % answerR.step !== 0 ||
                 (answerR.maxCounted - answerR.correctAns) % answerR.step !== 0) && answerR.step !== 1;
-        const correctAnsIsInvalid = answerR.correctAns > answerR.max || answerR.correctAns < answerR.min;
+        const correctAnsIsInvalid = answerR.correctAns > answerR.maxCounted || answerR.correctAns < answerR.minCounted;
 
         setMinInvalid(minMax ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setMinCountedInvalid(minMaxCounted ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setCountedOutOfRange(countedOutOfRange ? "Wartość punktowana wykracza poza zakres" : "");
         setStepIsInvalid(stepIsInvalid ? "Wartość przejścia musi być dzielnikiem pozostałych wartości" : "");
-        setIsCorrectInvalid(correctAnsIsInvalid ? "Nieprawidłowa wartość prawidłowej odpowiedzi" : "");
+        setIsCorrectInvalid(correctAnsIsInvalid ? "Wartość prawidłowej odpowiedzi wykracza poza zakres" : "");
 
         setIsNotValid(minMax || minMaxCounted || countedOutOfRange || stepIsInvalid || correctAnsIsInvalid);
     }, [ answerR.max, answerR.min, answerR.step, answerR.minCounted, answerR.maxCounted, answerR.correctAns ]);

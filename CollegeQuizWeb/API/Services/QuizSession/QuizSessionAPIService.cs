@@ -164,6 +164,15 @@ public class QuizSessionAPIService : IQuizSessionAPIService
             IsGood = false,
             Message = Lang.HOST_NOT_FOUND
         };
+        var lobby = await _context.QuizLobbies
+            .Include(p => p.UserEntity)
+            .FirstOrDefaultAsync(l => l.HostConnId.Equals(connectionId) && l.UserEntity.Username.Equals(loggedUsername) 
+                                                                        && l.IsCreated);
+        if (lobby != null) return new JoinToSessionDto()
+        {
+            IsGood = false,
+            Message = Lang.SELECTED_QUIZ_IS_ALREADY_HOSTED,
+        };
         isHost.IsEstabilished = true;
         isHost.InGameScreen = "WAITING_SCREEN";
         isHost.HostConnId = connectionId;

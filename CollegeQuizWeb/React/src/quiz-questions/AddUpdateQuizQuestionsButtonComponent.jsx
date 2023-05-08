@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
 import { id, MainContext } from "../quiz-questions-renderer";
-import { alertDanger, alertInfo, getCommonFetchObjWithBody, getCommonFetchObjWithFormData } from "../utils/common";
+import {
+    alertDanger, alertInfo, generateErrorMessage, getCommonFetchObjWithBody, getCommonFetchObjWithFormData
+} from "../utils/common";
 
 const AddUpdateQuizQuestionsButtonComponent = () => {
     const {
@@ -17,9 +19,12 @@ const AddUpdateQuizQuestionsButtonComponent = () => {
         }
         fetch(`/api/v1/dotnet/QuizAPI/UpdateQuizImages/${id}`, getCommonFetchObjWithFormData('POST', formData))
             .then(r => {
-                setIsSended(false);
-                window.scrollTo(0, 0);
-                return r.json();
+                if (r.ok) {
+                    setIsSended(false);
+                    window.scrollTo(0, 0);
+                    return r.json();
+                }
+                throw new Error(r.status);
             })
             .then(r => {
                 if (r.isGood) {
@@ -38,7 +43,7 @@ const AddUpdateQuizQuestionsButtonComponent = () => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
                 setActiveCallback();
             });
     };
@@ -49,8 +54,11 @@ const AddUpdateQuizQuestionsButtonComponent = () => {
         setIsSended(true);
         fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
             .then(r => {
-                setIsSended(false);
-                return r.json()
+                if (r.ok) {
+                    setIsSended(false);
+                    return r.json();
+                }
+                throw new Error(r.status);
             })
             .then(r => {
                 if (r.isGood) {
@@ -62,7 +70,7 @@ const AddUpdateQuizQuestionsButtonComponent = () => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
                 setActiveCallback();
             });
     };

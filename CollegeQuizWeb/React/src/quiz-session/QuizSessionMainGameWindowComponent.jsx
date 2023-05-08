@@ -19,6 +19,7 @@ const QuizSessionMainGameWindowComponent = () => {
     } = useContext(SessionContext);
 
     const [ counting, setCounting ] = useState(5);
+    const [ endGameAlert, setEndGameAlert ] = useState(false);
     
     useEffect(() => {
         
@@ -41,7 +42,8 @@ const QuizSessionMainGameWindowComponent = () => {
             setQuestion(parsedAnswers.Question);
             setAnswRange({ Min, Max });
             setAnswers(parsedAnswers.Answers);
-            
+
+            setProgressWidth(100);
             setQuestionType(parsedAnswers.QuestionType);
             setQuestionTimer(parsedAnswers.TimeSec);
             setQuestionNumber(parsedAnswers.QuestionId);
@@ -67,6 +69,12 @@ const QuizSessionMainGameWindowComponent = () => {
             const parsedAnswers = JSON.parse(questionAnsw);
             setAfterQuestionResults(parsedAnswers);
             setIsLast(parsedAnswers.isLast);
+
+            // jeśli to jest ostatnia odpowiedź
+            if (!parsedAnswers[0].isLast) return;
+
+            setEndGameAlert(true);
+            setTimeout(() => setEndGameAlert(false), 3000);
         });
         
         // rozłączenie hosta
@@ -135,6 +143,9 @@ const QuizSessionMainGameWindowComponent = () => {
     
     return (
         <div className="row px-2">
+            {endGameAlert && <div className="alert alert-success" role="alert">
+                Quiz <strong>{quizName}</strong> został zakończony.
+            </div>}
             {renderComponentSection()}
         </div>
     );

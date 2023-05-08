@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { MainContext, QUIZ_NAME, QUIZ_ID, setQuizOriginalName } from "../quiz-questions-renderer";
-import { alertDanger, alertInfo, getCommonFetchObj } from "../utils/common";
+import { alertDanger, alertInfo, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 
 const QuizQuestionsChangeNameComponent = () => {
     const { setAlert } = useContext(MainContext);
@@ -10,7 +10,12 @@ const QuizQuestionsChangeNameComponent = () => {
     const changeQuizName = e => {
         e.preventDefault();
         fetch(`/api/v1/dotnet/QuizAPI/ChangeQuizName/${QUIZ_ID}/${quizName}`, getCommonFetchObj('POST'))
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                throw new Error(r.status);
+            })
             .then(r => {
                 if (r.isGood) {
                     setAlert(alertInfo(r.message));
@@ -21,7 +26,7 @@ const QuizQuestionsChangeNameComponent = () => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             });
     };
 

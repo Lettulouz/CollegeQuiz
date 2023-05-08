@@ -74,6 +74,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAsyncSftpConnector, AsyncSftpConnector>();
 builder.Services.AddScoped<IAsyncSftpService, AsyncSftpService>();
 
+builder.Services.AddHostedService<OnStartInitializer>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(corsPolicyBuilder => corsPolicyBuilder

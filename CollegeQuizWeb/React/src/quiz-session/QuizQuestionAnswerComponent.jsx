@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { SessionContext } from "../quiz-session-renderer";
-import { alertDanger, ANSWER_LETTERS, ANSWER_SVGS, getCommonFetchObj } from "../utils/common";
+import { alertDanger, ANSWER_LETTERS, ANSWER_SVGS, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 
 const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
     const {
@@ -17,11 +17,15 @@ const QuizQuestionAnswerComponent = ({ number, isMultiSelect }) => {
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${number}/${multi}`,
             getCommonFetchObj("POST")
-        ).then(r => r)
-            .catch(e => {
-                if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił błąd podczas wysyłania odpowiedzi przez użytkownika.'));
-            });
+        ).then(r => {
+            if (r.ok) {
+                return r;
+            }
+            throw new Error(r.status);
+        }).catch(e => {
+            if (e === undefined) return;
+            setAlert(alertDanger(generateErrorMessage(e.message)));
+        });
         setIsAnswerSet(true);
         if (isMultiSelect) {
             setClickedIndex([ ...clickedIndex, number ]);

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CollegeQuizWeb.Controllers;
@@ -18,9 +17,6 @@ public class PublicQuizesService : IPublicQuizesService
 {
     private readonly ApplicationDbContext _context;
     private readonly IAsyncSftpService _asyncSftpService;
-    
-    public readonly static string ROOT_PATH = Directory.GetCurrentDirectory();
-    public readonly static string FOLDER_PATH = $"{ROOT_PATH}/_Uploads/QuizImages";
     
     public PublicQuizesService(ApplicationDbContext context, IAsyncSftpService asyncSftpService)
     {
@@ -101,13 +97,14 @@ public class PublicQuizesService : IPublicQuizesService
                 max = q.First().Max,
                 min_counted = q.First().MinCounted,
                 max_counted = q.First().MaxCounted,
-                correct_answer = q.First().CorrectAnswer
+                correct_answer = q.First().CorrectAnswer,
+                updated_at = q.First().UpdatedAt,
             })
             .ToListAsync();
 
         controller.ViewBag.questions = questions;
         controller.ViewBag.images = await _asyncSftpService
-            .GetAllQuizImagesPath(Utilities.GetBaseUrl(controller), id, questions.Count);
+            .GetAllQuizImagesPath(Utilities.GetBaseUrl(controller), id, questions.Select(q => q.updated_at).ToList());
     }
 
     public async Task Share(string token, PublicQuizesController controller)

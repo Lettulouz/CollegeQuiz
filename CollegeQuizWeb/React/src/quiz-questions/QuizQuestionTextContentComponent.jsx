@@ -23,7 +23,7 @@ const QuizQuestionTextContentComponent = () => {
 
     useEffect(() => {
         if (q.timeSec.length > 2) onSetQuestionProperty(q.id, "timeSec",  q.timeSec.slice(0, 2));
-        if (q.timeSec > 59) onSetQuestionProperty(q.id, "timeSec", 59);
+        if (Number(q.timeSec) > 59) onSetQuestionProperty(q.id, "timeSec", "59");
     }, [ q.timeSec ]);
     
     return (
