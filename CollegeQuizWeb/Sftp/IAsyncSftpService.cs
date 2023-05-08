@@ -13,4 +13,5 @@ public interface IAsyncSftpService
     Task DeleteQuizImages(long quizId);
     Task<string> GetImagePath(string basePath, long quizId, int qstId, DateTime qDt);
     Task<List<string>> GetAllQuizImagesPath(string basePath, long quizId, List<DateTime> questionsDateTime);
+    Task<byte[]> GetQuizQuestionImageAsBytesArray(long quizId, int questionId, string qDt);
 }

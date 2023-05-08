@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using CollegeQuizWeb.API.Dto;
 using CollegeQuizWeb.API.Services.Quiz;
+using CollegeQuizWeb.Sftp;
 using CollegeQuizWeb.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +13,12 @@ namespace CollegeQuizWeb.API.Controllers;
 public class QuizAPIController : Controller
 {
     private readonly IQuizAPIService _service;
+    private readonly IAsyncSftpService _asyncSftpService;
 
-    public QuizAPIController(IQuizAPIService service)
+    public QuizAPIController(IQuizAPIService service, IAsyncSftpService asyncSftpService)
     {
         _service = service;
+        _asyncSftpService = asyncSftpService;
     }
 
     [HttpGet("[action]/{id}")]
@@ -47,17 +49,13 @@ public class QuizAPIController : Controller
         return Json(await _service.UpdateQuizName(id, newName, loggedUsername));
     }
 
-    [HttpGet("[action]/{quizId}/{imgId}")]
-    public ActionResult GetQuizImage([FromRoute(Name = "quizId")] long quizId, [FromRoute(Name = "imgId")] int imgId)
+    [HttpGet("[action]/{quizId}/{imgId}/{updatedAt}")]
+    public async Task<ActionResult> GetQuizImage([FromRoute(Name = "quizId")] long quizId,
+        [FromRoute(Name = "imgId")] int imgId, [FromRoute(Name = "updatedAt")] string updatedAt)
     {
-        string ROOT_PATH = Directory.GetCurrentDirectory();
-        string filePath = $"{ROOT_PATH}/_Uploads/QuizImages/{quizId}/question{imgId}.jpg";
-        if (!System.IO.File.Exists(filePath))
-        {
-            return NotFound();
-        }
-        byte[] file = System.IO.File.ReadAllBytes(filePath);
-        return File(file, "image/jpeg");
+        byte[] image = await _asyncSftpService.GetQuizQuestionImageAsBytesArray(quizId, imgId, updatedAt);
+        if (image.Length == 0) return NotFound();
+        return File(image, "image/jpeg");
     }
     
     [HttpPost("[action]/{id}")]

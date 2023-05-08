@@ -115,6 +115,20 @@ public class QuizManagerSessionHub : Hub
         
         long timer;
         await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(question));
+        string tempVal = question.ImageUrl;
+        
+        string keyName = questionPre.UpdatedAt.ToString("yyyyMMddHHmmss");
+        string imageUrlMobile = $"{GetBasePath()}/api/v1/dotnet/quizapi/GetQuizImage/{quiz.QuizId}/{question.QuestionId}/{keyName}";
+        if (question.ImageUrl != string.Empty)
+        {
+            question.ImageUrl = imageUrlMobile;
+        }
+        else
+        {
+            question.ImageUrl = string.Empty;
+        }
+        await _hubUserContext.Clients.Group(token).SendAsync("QUESTION_MOBILE_P2P", JsonSerializer.Serialize(question));
+        
         var allAnswersWithGood = await _context.Answers.Include(t => t.QuestionEntity)
             .Where(t => t.QuestionEntity.Index.Equals(question.QuestionId) && t.QuestionEntity.QuizId.Equals(quiz.QuizId))
             .Select(q => new QuizLobbyAnswerData()
@@ -140,15 +154,15 @@ public class QuizManagerSessionHub : Hub
             MaxCounted = question.MaxCounted,
             MinCounted = question.MinCounted,
             QuestionType = question.QuestionType,
-            ImageUrl = question.ImageUrl,
+            ImageUrl = tempVal,
             TimeSec = question.TimeSec,
             Step = question.Step,
             QuestionId = quiz.CurrentQuestion + 1,
             Answers = allAnswersWithGood,
             CorrectAnswerRange = correctRangeAnswer
         };
-        await Clients.Group(token).SendAsync("QUESTION_P2P",  JsonSerializer.Serialize(quizLobbyQuestionData));
-        
+        await Clients.Group(token).SendAsync("QUESTION_P2P", JsonSerializer.Serialize(quizLobbyQuestionData));
+
         CancellationTokenSource cts = new CancellationTokenSource();
         CancellationToken token2 = cts.Token;
         timer = question.TimeSec;
@@ -532,7 +546,6 @@ public class QuizManagerSessionHub : Hub
             .Where(q => q.QuizLobbyEntity.Code.Equals(hostUser.Code));
 
         hostUser.IsEstabilished = false;
-        hostUser.IsCreated = false;
         hostUser.HostConnId = string.Empty;
         _context.QuizLobbies.Update(hostUser);
         
