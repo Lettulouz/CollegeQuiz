@@ -55,9 +55,9 @@ public static class Lang
     public const string QUIZ_NAME_TOO_LONG_ERROR = "*Podana nazwa quizu jest zbyt długa.";
     
     public const string QUIZ_SHARED_TOKEN_ERROR = "Niepoprawny token.";
-    public const string QUIZ_SHARED_TOKEN_BAD_ERROR = "Podany token nie istnieje lub jest nie prawidłowy";
-    public const string QUIZ_SHARED_TOKEN_DUPLICATE_ERROR = "Podany quiz należy już do Ciebie lub został już udostepniony";
-    public const string QUIZ_SHARED_TOKEN_SUCCESS= "Quiz został dodany do twojej listy quizów";
+    public const string QUIZ_SHARED_TOKEN_BAD_ERROR = "Podany token nie istnieje lub jest nie prawidłowy.";
+    public const string QUIZ_SHARED_TOKEN_DUPLICATE_ERROR = "Podany quiz należy już do Ciebie lub został już udostepniony.";
+    public const string QUIZ_SHARED_TOKEN_SUCCESS= "Quiz został dodany do twojej listy quizów.";
 
     public const string INVALID_COUPON_CODE_ERROR = "Należy podać prawidłowy kupon.";
     public const string INACTIVE_COUPON_CODE_ERROR = "Podany kupon jest już nieaktywny.";
@@ -89,7 +89,7 @@ public static class Lang
         "Nie można aktywować kuponu z subskrypcją niższą niż obecnie posiadana!";
 
     public const string COUPON_CODE_FILL_CREATE_ERROR =
-        "Należy wypełnić wszystkie wymagane pola";
+        "Należy wypełnić wszystkie wymagane pola.";
 
     public const string COUPON_CODE_CREATE_AMOUNT_ERROR = "*Niepoprawnie wypełniono pole Ilość kuponów.";
     public const string COUPON_CODE_CREATE_TILL_ERROR = "*Niepoprawnie wypełniono pole Ważne do.";
@@ -103,19 +103,19 @@ public static class Lang
     public const string USER_NOT_EXIST = "*Wybrany użytkownik nie istnieje.";
     public const string USER_DELETED = "*Użytkownik {0} został usunięty.";
     public const string BAN_ERROR = "*Należy zawiesić użytkownika permanentnie lub wybrać datę wygaśnięcia bana.";
-    public const string CANNOT_SUSPEND_YOURSELF = "*Nie możesz zawiesić swojego konta";
-    public const string CANNOT_DELETE_YOURSELF = "*Nie możesz usunąć swojego konta";
+    public const string CANNOT_SUSPEND_YOURSELF = "*Nie możesz zawiesić swojego konta.";
+    public const string CANNOT_DELETE_YOURSELF = "*Nie możesz usunąć swojego konta.";
     public const string ACCOUNT_SUSPENDED = "*Twoje konto zostało zawieszone {0}";
     
     public const string USER_SUSPENDED = "*Użytkownik {0} został zawieszony {1}.";
     public const string USER_UNBAN = "*Użytkownik {0} został odblokowany.";
     public const string USER_ADDED = "*Pomyślnie utworzono użytkownika {0}";
-    public const string PASS_REQUIRED = "*Aktywowane konto wymaga podania hasła";
-    public const string PASS_LEN_ERROR = "*Hasło powinno mieć pomiędzy 8 a 25 znaków";
+    public const string PASS_REQUIRED = "*Aktywowane konto wymaga podania hasła.";
+    public const string PASS_LEN_ERROR = "*Hasło powinno mieć pomiędzy 8 a 25 znaków.";
     public const string USER_UPDATED = "Użytkownik {0} został zaktualizowany.";
     
     public const string EMAIL_SENDING_ERROR = "Nieudane wysłanie wiadomości email na adres {0}. Spróbuj ponownie później.";
-    public const string EMAIL_SENT = "Wysłano wiadomość email na adres {0}";
+    public const string EMAIL_SENT = "Wysłano wiadomość email na adres {0}.";
     public const string EMAIL_ACCOUNT_CRETED_INFROMATION = "Tworzenie konta dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_INFROMATION = "Reset hasła dla {0} {1} {2}.";
     public const string EMAIL_PASSWORD_RESET_SENT = 
@@ -130,12 +130,12 @@ public static class Lang
     public const string QUIZ_ALREADY_EXISTS_NAME = "Quiz o nazwie <strong>{0}</strong> został pomyślnie utworzony.";
     public const string ACCOUNT_UPDATE_FOR = "Aktualizacja konta dla {0} {1} ({2})";
 
-    public const string CATEGORY_REMOVED = "Kategoria {0} została usunięta";
+    public const string CATEGORY_REMOVED = "Kategoria {0} została usunięta.";
     
-    public const string QUIZ_REMOVED = "Quiz {0} został usunięty";
-    public const string QUIZ_LOCKED = "Quiz {0} został zablokowany";
-    public const string QUIZ_UNLOCKED = "Quiz {0} został odblokowany";
-    public const string QUIZ_NOT_EXIST = "Quiz nie istnieje";
+    public const string QUIZ_REMOVED = "Quiz {0} został usunięty.";
+    public const string QUIZ_LOCKED = "Quiz {0} został zablokowany.";
+    public const string QUIZ_UNLOCKED = "Quiz {0} został odblokowany.";
+    public const string QUIZ_NOT_EXIST = "Quiz nie istnieje.";
     // subscription payment
 
     public const string INVALID_PHONE_NUMBER = "*Podano nieprawidłowy numer telefonu.";
@@ -156,8 +156,8 @@ public static class Lang
     
     public const string SUBSCRIPTION_IS_LOWER = "Nie można kupić subskrypcji typu niższego niż aktualnie posiadany.";
 
-    public const string PROFILE_UPDATED = "Pomyślnie zaktualizowano twój profil";
-    public const string DIFFERENT_PASSWORDS = "*Podano różne hasła";
+    public const string PROFILE_UPDATED = "Pomyślnie zaktualizowano twój profil.";
+    public const string DIFFERENT_PASSWORDS = "*Podano różne hasła.";
     
     public const string DELETE_QUIZ_NOT_FOUND = 
         "Quiz nie istnieje lub nie jest przypisany do Twojego konta. Możesz usunąc tylko quizy, które są przypisane do Twojego konta.";
@@ -176,23 +176,23 @@ public static class Lang
     public const string PAYU_COMPLETED = "Zakończona";
     public const string PAYU_CANCELED = "Anulowana";
     
-    public const string SUB_UPDATED = "Pakiet {0} został zaktualizowamy";
-    public const string SUB_ERROR = "Pola nazwa i cena nie mogą być puste";
+    public const string SUB_UPDATED = "Pakiet {0} został zaktualizowamy.";
+    public const string SUB_ERROR = "Pola nazwa i cena nie mogą być puste.";
     
-    public const string HOST_DISCONECTED = "Host zakończył sesję";
-    public const string HOST_ERROR = "Host gry nie może jednocześnie być hostem i brać w niej udziału";
-    public const string QUIZ_NOT_FOUND = "Nie znaleziono quizu przypisanego do Twojego konta";
-    public const string QUESTIONS_REPEATED = "Pytania w edytowanym quizie nie mogą się powtarzać";
+    public const string HOST_DISCONECTED = "Host zakończył sesję.";
+    public const string HOST_ERROR = "Host gry nie może jednocześnie być hostem i brać w niej udziału.";
+    public const string QUIZ_NOT_FOUND = "Nie znaleziono quizu przypisanego do Twojego konta.";
+    public const string QUESTIONS_REPEATED = "Pytania w edytowanym quizie nie mogą się powtarzać.";
     public const string PACKAGE_DOES_NOT_ALLOW = "Twoje konto nie posiada wykupionego pakietu umożliwiającego wybór " +
                                                  "trybu <strong>{0}</strong> rozgrywki.";
-    public const string GIVEN_VALUES_NOT_NUMBERS = "Podane wartości czasu nie są liczbami";
+    public const string GIVEN_VALUES_NOT_NUMBERS = "Podane wartości czasu nie są liczbami.";
     public const string WRONG_TIME_INTERVALS = "Wartość sekund nie może być mniejsza od 5 i większa od 59.";
-    public const string WRONG_QUESTION_TYPE = "Nie znaleziono typu pytania";
+    public const string WRONG_QUESTION_TYPE = "Nie znaleziono typu pytania.";
     public const string QUESTION_REPEATED = "Odpowiedzi w pytaniu <strong>{0}</strong> nie mogą być takie same.";
-    public const string QUIZ_NAME_UPDATED = "Quiz o nazwie <strong>{0}</strong> został pomyślnie zaktualizowany";
+    public const string QUIZ_NAME_UPDATED = "Quiz o nazwie <strong>{0}</strong> został pomyślnie zaktualizowany.";
     public const string QUIZ_NAME_REPEATED = "Quiz o nazwie <strong>{0}</strong> istnieje już na Twoim koncie. Podaj inną nazwę.";
-    public const string QUIZ_NAME_UPDATED2 = "Nazwa quizu o nazwie <strong>{0}</strong> została pomyślnie zmieniona na <strong>{1}</strong>";
-    public const string IMAGE_ERROR = "Wystąpił problem z załadowaniem grafiki";
+    public const string QUIZ_NAME_UPDATED2 = "Nazwa quizu o nazwie <strong>{0}</strong> została pomyślnie zmieniona na <strong>{1}</strong>.";
+    public const string IMAGE_ERROR = "Wystąpił problem z załadowaniem grafiki.";
     public const string IMAGE_ACCEPTED_EXTENSIONS = "Akceptowane rozszerzenia pliku to <strong>{0}</strong>.";
     public const string CURRNETLY_IN_GAME = "Na tym koncie obecnie prowadzona jest rozgrywka w sesji. Użyj innego konta.";
     public const string CURRNETLY_NOT_IN_GAME = "Obecnie nie jesteś w wybranej grze.";
@@ -204,15 +204,15 @@ public static class Lang
     public const string HOST_DISCONECT_USER = "Zostałeś rozłączony przez hosta.";
     public const string HOST_BANNED_USER = "Zostałeś zbanowany przez hosta, przez co nie możesz dołączyć już do quizu.";
     
-    public const string CANNOT_DELETE_USER_IN_GAME = "Nie można usunąć użytkownika znajdującego się w rozgrywce";
+    public const string CANNOT_DELETE_USER_IN_GAME = "Nie można usunąć użytkownika znajdującego się w rozgrywce.";
 
     public const string RANGE_QST_MIN_INVALID =
-        "Wartość minimalna nie może być większa od wartości maksymalnej w pytaniu <strong>{0}</strong>";
+        "Wartość minimalna nie może być większa od wartości maksymalnej w pytaniu <strong>{0}</strong>.";
     public const string RANGE_QST_COUNTED_MIN_INVALID =
-        "Wartość minimalna punktowana nie może być więszka od wartości maksymalnego w pytaniu <strong>{0}</strong>";
+        "Wartość minimalna punktowana nie może być więszka od wartości maksymalnego w pytaniu <strong>{0}</strong>.";
     public const string RANGE_QST_COUNTED_OUT_OF_RANGE = "Wartość punktowana w pytaniu <strong>{0}</strong> wykracza poza zakres.";
     public const string RANGE_QST_STEP_INVALID =
         "Wartość przejścia w pytaniu <strong>{0}</strong> musi być dzielnikiem pozostałych wartości.";
     public const string RANGE_QST_CORRECT_QST_INVALID =
-        "Nieprawidłowa wartość prawidłowej odpowiedzi w pytaniu <strong>{0}</strong>";
+        "Nieprawidłowa wartość prawidłowej odpowiedzi w pytaniu <strong>{0}</strong>.";
 }
