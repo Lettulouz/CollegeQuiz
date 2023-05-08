@@ -106,14 +106,15 @@ public class QuizAPIService : IQuizAPIService
             }
             foreach (var answer in question.Answers)
             {
-                if (((answer.Max-answer.Min)/answer.Step)>20) return new SimpleResponseDto()
-                {
-                    IsGood = false,
-                    Message = Lang.MIN_MAX_DIFFERENCE
-                };
+
                 AnswerEntity answerEntity;
                 if (question.Type.Equals("RANGE"))
                 {
+                    if (((answer.Max-answer.Min)/answer.Step)>20) return new SimpleResponseDto()
+                    {
+                        IsGood = false,
+                        Message = Lang.MIN_MAX_DIFFERENCE
+                    };
                     answerEntity = new AnswerEntity()
                     {
                         Name = "RANGE",
