@@ -111,13 +111,14 @@ public class SharedQuizesService : ISharedQuizesService
                     max = q.First().Max,
                     min_counted = q.First().MinCounted,
                     max_counted = q.First().MaxCounted,
-                    correct_answer = q.First().CorrectAnswer
+                    correct_answer = q.First().CorrectAnswer,
+                    updated_at = q.First().UpdatedAt,
                 })
                 .ToListAsync();
 
             controller.ViewBag.questions = questions;
             controller.ViewBag.images = await _asyncSftpService
-                .GetAllQuizImagesPath(Utilities.GetBaseUrl(controller), id, questions.Count);
+                .GetAllQuizImagesPath(Utilities.GetBaseUrl(controller), id, questions.Select(q => q.updated_at).ToList());
         }
     }
 }

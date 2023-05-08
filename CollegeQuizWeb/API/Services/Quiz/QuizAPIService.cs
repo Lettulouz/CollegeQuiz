@@ -192,8 +192,8 @@ public class QuizAPIService : IQuizAPIService
                 }
                 answerDtos.Add(answerDto);
             }
-            string imageUrl =
-                await _asyncSftpService.GetImagePath(Utilities.GetBaseUrl(controller), quizId, question.Index);
+            string imageUrl = await _asyncSftpService
+                    .GetImagePath(Utilities.GetBaseUrl(controller), quizId, question.Index, question.UpdatedAt);
             QuizQuestionsReqDto questionsReqDto = new QuizQuestionsReqDto()
             {
                 Id = question.Index,
@@ -268,7 +268,13 @@ public class QuizAPIService : IQuizAPIService
                 Message = String.Format(Lang.IMAGE_ACCEPTED_EXTENSIONS, string.Join(", ", ACCEPTABLE_IMAGE_TYPES))
             };
             string index = Regex.Match(upload.FileName, @"\d+").Value;
-            string url = await _asyncSftpService.UpdateQuizQuestionImage(upload, quizId, index, controller);
+            var question =
+                await _context.Questions.FirstOrDefaultAsync(q => q.QuizId.Equals(quizId) && q.Index == int.Parse(index));
+            string url = string.Empty;
+            if (question != null)
+            {
+                url = await _asyncSftpService.UpdateQuizQuestionImage(upload, quizId, index, question.UpdatedAt, controller);
+            }
             quizImages.Add(new QuizImage(){ Id = int.Parse(index), Url = url });
         }
         return new QuizImagesResDto()

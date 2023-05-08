@@ -60,8 +60,10 @@ public class AsyncSftpService : IAsyncSftpService
         }
     }
 
-    public async Task<string> UpdateQuizQuestionImage(IFormFile formFile, long quizId, string qstId, Controller controller)
+    public async Task<string> UpdateQuizQuestionImage(IFormFile formFile, long quizId, string qstId, DateTime qDt, Controller controller)
     {
+        string preHash = qDt.ToString("yyyyMMddHHmmss");
+        
         MemoryStream inputMemoryStream = new MemoryStream();
         MemoryStream outputMemoryStream = new MemoryStream();
 
@@ -83,9 +85,9 @@ public class AsyncSftpService : IAsyncSftpService
         skBitmap.Dispose();
         inputMemoryStream.Close();
 
-        string fileName = $"question{qstId}.jpg";
+        string fileName = $"question{qstId}_{preHash}.jpg";
         string imageCndEndpoint = 
-            $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/question{qstId}.jpg";
+            $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/{fileName}";
         
         if (!ConfigLoader.ExternalContentServerActive)
         {
@@ -120,14 +122,15 @@ public class AsyncSftpService : IAsyncSftpService
         await _asyncSftpConnector.Disconnect();
     }
 
-    public async Task<string> GetImagePath(string basePath, long quizId, int qstId)
+    public async Task<string> GetImagePath(string basePath, long quizId, int qstId, DateTime qDt)
     {
+        string fileName = $"question{qstId}_{qDt.ToString("yyyyMMddHHmmss")}.jpg";
         if (ConfigLoader.ExternalContentServerActive)
         {
-            string imageCndEndpoint = 
-                $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/question{qstId}.jpg";
+            string imageCndEndpoint =
+                $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/{fileName}";
             AsyncFtpClient client = await _asyncSftpConnector.Connect();
-            string imageRemoteUrl = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{qstId}.jpg";
+            string imageRemoteUrl = $"{REMOTE_UPLOADS_DIR}/{quizId}/{fileName}";
             if (!await client.FileExists(imageRemoteUrl))
             {
                 imageCndEndpoint = string.Empty;
@@ -136,7 +139,7 @@ public class AsyncSftpService : IAsyncSftpService
             return imageCndEndpoint;
         }
         string imageEndpoint = $"{basePath}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{qstId}";
-        string imageUrl = $"{STATIC_UPLOADS_DIR}/{quizId}/question{qstId}.jpg";
+        string imageUrl = $"{STATIC_UPLOADS_DIR}/{quizId}/{fileName}";
         if (!File.Exists(imageUrl))
         {
             imageEndpoint = string.Empty;
@@ -144,17 +147,18 @@ public class AsyncSftpService : IAsyncSftpService
         return imageEndpoint;
     }
 
-    public async Task<List<string>> GetAllQuizImagesPath(string basePath, long quizId, int imagesCount)
+    public async Task<List<string>> GetAllQuizImagesPath(string basePath, long quizId, List<DateTime> questionsDateTime)
     {
         List<string> imagesLinks = new List<string>();
         if (ConfigLoader.ExternalContentServerActive)
         {
             AsyncFtpClient client = await _asyncSftpConnector.Connect();
-            for (int i = 1; i <= imagesCount; i++)
+            for (int i = 1; i <= questionsDateTime.Count; i++)
             {
+                string preHash = questionsDateTime[i - 1].ToString("yyyyMMddHHmmss");
                 string imageFile = 
-                    $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/question{i}.jpg";
-                string imageRemoteUrl = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{i}.jpg";
+                    $"{ConfigLoader.SftpHref}{ConfigLoader.ExternalContentServerUploadDir}/{quizId}/question{i}_{preHash}.jpg";
+                string imageRemoteUrl = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{i}_{preHash}.jpg";
                 if (!await client.FileExists(imageRemoteUrl))
                 {
                     imagesLinks.Add(string.Empty);
@@ -165,91 +169,18 @@ public class AsyncSftpService : IAsyncSftpService
             await _asyncSftpConnector.Disconnect();
             return imagesLinks;
         }
-        for (int i = 1; i <= imagesCount; i++)
+        for (int i = 1; i <= questionsDateTime.Count; i++)
         {
-            string imagePath = $"{STATIC_UPLOADS_DIR}/{quizId}/question{i}.jpg";
+            string preHash = questionsDateTime[i].ToString("yyyyMMddHHmmss");
+            string imagePath = $"{STATIC_UPLOADS_DIR}/{quizId}/question{i}_{preHash}.jpg";
+            string imageEndpoint = $"{basePath}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{i}";
             if (!File.Exists(imagePath))
             {
                 imagesLinks.Add(string.Empty);
                 continue;
             }
-            imagesLinks.Add(imagePath);
+            imagesLinks.Add(imageEndpoint);
         }
         return imagesLinks;
-    }
-
-    public async Task<List<string>> GetAllQuizImagesInBase64(long quizId, int imagesCount)
-    {
-        List<string> imagesBase64 = new List<string>();
-        if (ConfigLoader.ExternalContentServerActive)
-        {
-            AsyncFtpClient client = await _asyncSftpConnector.Connect();
-            for (int i = 1; i <= imagesCount; i++)
-            {
-                string imageFile = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{i}.jpg";
-                if (!await client.FileExists(imageFile))
-                {
-                    imagesBase64.Add(string.Empty);
-                    continue;
-                }
-                byte[] fileInBytes = await client.DownloadBytes(imageFile, 0);
-
-                MemoryStream inputStream = new MemoryStream(fileInBytes);
-                imagesBase64.Add(ConvertStreamImageToBase64(SKBitmap.Decode(inputStream)));
-                inputStream.Close();
-            }
-            await _asyncSftpConnector.Disconnect();
-            return imagesBase64;
-        }
-        for (int i = 1; i <= imagesCount; i++)
-        {
-            string imagePath = $"{STATIC_UPLOADS_DIR}/{quizId}/question{i}.jpg";
-            if (!File.Exists(imagePath))
-            {
-                imagesBase64.Add(string.Empty);
-                continue;
-            }
-            var inputStream = new SKFileStream(imagePath);
-            imagesBase64.Add(ConvertStreamImageToBase64(SKBitmap.Decode(inputStream)));
-            inputStream.Dispose();
-        }
-        return imagesBase64;
-    }
-
-    public async Task<byte[]> GetQuizQuestionImageAsBytesArray(long quizId, int questionId)
-    {
-        if (ConfigLoader.ExternalContentServerActive)
-        {
-            string imageFile = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{questionId}.jpg";
-            AsyncFtpClient client = await _asyncSftpConnector.Connect();
-            if (!await client.FileExists(imageFile))
-            {
-                await _asyncSftpConnector.Disconnect();
-                return new byte[0];
-            }
-            byte[] fileInBytes = await client.DownloadBytes(imageFile, 0);
-            await _asyncSftpConnector.Disconnect();
-            return fileInBytes;
-        }
-        string imageFileStatic = $"{STATIC_UPLOADS_DIR}/{quizId}/question{questionId}.jpg";
-        if (!File.Exists(imageFileStatic))
-        {
-            return new byte[0];
-        }
-        return File.ReadAllBytes(imageFileStatic);
-    }
-    
-    private string ConvertStreamImageToBase64(SKBitmap bitmap)
-    {
-        MemoryStream outputStream = new MemoryStream();
-        
-        var skImage = SKImage.FromBitmap(bitmap);
-        var imageData = skImage.Encode(SKEncodedImageFormat.Jpeg, 100);
-        imageData.SaveTo(outputStream);
-
-        imageData.Dispose();
-        skImage.Dispose();
-        outputStream.Close();
-        return Convert.ToBase64String(outputStream.ToArray());
     }
 }
