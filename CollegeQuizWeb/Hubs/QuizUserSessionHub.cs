@@ -19,8 +19,16 @@ public class QuizUserSessionHub : Hub
         _hubManager = hubManager;
     }
 
+    /// <summary>
+    /// Function that return connection id
+    /// </summary>
+    /// <returns>connection id</returns>
     public string GetConnectionId() => Context.ConnectionId;
 
+    /// <summary>
+    /// Method handling disconecting user from game
+    /// </summary>
+    /// <param name="exception">exception</param>
     public async override Task OnDisconnectedAsync(Exception? exception)
     {
         var discUser = await _context.QuizSessionPartics

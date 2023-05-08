@@ -17,6 +17,7 @@ public static class QuizModes
     public const string SINGLE_SIX_ANSWERS = "SINGLE_SIX_ANSWERS";
     public const string RANGE = "RANGE";
     
+    
     private static List<QuizMode> AllQuizModes { get; set; } = new List<QuizMode>()
     {
         new QuizMode() { Title = "4 odpowiedzi (jedna prawidłowa)", Slug = "SINGLE_FOUR_ANSWERS" },
