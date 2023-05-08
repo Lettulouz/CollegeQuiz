@@ -183,4 +183,27 @@ public class AsyncSftpService : IAsyncSftpService
         }
         return imagesLinks;
     }
+    
+    public async Task<byte[]> GetQuizQuestionImageAsBytesArray(long quizId, int questionId, string qDt)
+    {
+        if (ConfigLoader.ExternalContentServerActive)
+        {
+            string imageFile = $"{REMOTE_UPLOADS_DIR}/{quizId}/question{questionId}_{qDt}.jpg";
+            AsyncFtpClient client = await _asyncSftpConnector.Connect();
+            if (!await client.FileExists(imageFile))
+            {
+                await _asyncSftpConnector.Disconnect();
+                return new byte[0];
+            }
+            byte[] fileInBytes = await client.DownloadBytes(imageFile, 0);
+            await _asyncSftpConnector.Disconnect();
+            return fileInBytes;
+        }
+        string imageFileStatic = $"{STATIC_UPLOADS_DIR}/{quizId}/question{questionId}_{qDt}.jpg";
+        if (!File.Exists(imageFileStatic))
+        {
+            return new byte[0];
+        }
+        return File.ReadAllBytes(imageFileStatic);
+    }
 }
