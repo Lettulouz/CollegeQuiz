@@ -167,17 +167,8 @@ public class QuizService : IQuizService
 
         var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l =>
             l.QuizId.Equals(quizId) && l.UserEntity.Id.Equals(userId) && l.IsCreated);
-        if (lobby != null)
-        {
-            AlertDto alertDto2 = new AlertDto()
-            {
-                Type = "alert-danger",
-                Content = string.Format(Lang.SELECTED_QUIZ_IS_ALREADY_HOSTED, quiz.Name),
-            };
-            controller.HttpContext.Session.SetString(SessionKey.MY_QUIZES_ALERT, JsonSerializer.Serialize(alertDto2));
-            return true;
-        }
-        
+        if (lobby != null) return true;
+
         int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
         if (countOfQuestions == 0) return true;
         
