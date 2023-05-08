@@ -412,12 +412,17 @@ select{
     border: none;
 }
 
-
 .btn-color-one {
     height: 50px;
     color: #19452e;
     background-color: #63c4ab;
     border: none;
+}
+
+.btn-error-danger {
+    height: 50px;
+    pointer-events: none;
+    background-color: transparent !important;
 }
 
 .btn-color-second {
@@ -944,6 +949,17 @@ hr.hr-mid-green{
 }
 
 .btn:focus {
-    outline: none;
-    box-shadow: none;
+    outline: none !important;
+    box-shadow: none !important;
 }
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+a:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
