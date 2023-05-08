@@ -79,7 +79,7 @@ a.navbar-brand {
     }
 }
 
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 1200px) {
     .navbar-collapse {
         max-height: calc(100vh - 100px);
         overflow-y: auto;
