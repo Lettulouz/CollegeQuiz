@@ -41,7 +41,7 @@ const SessionParticipantsComponent = () => {
         <>
             <h6 className="text-black-50 mb-1">Połączeni: ({allParticipants.Connected.length})</h6>
             {allParticipants.Connected.length > 0 &&
-                <ul className="fw-bold list-group" style={{ minHeight: 38 }}>{allConnected}</ul>}
+                <ul className="fw-bold list-group">{allConnected}</ul>}
             <h6 className="text-black-50 mt-3 mb-1">Rozłączeni: ({allParticipants.Disconnected.length})</h6>
             {allParticipants.Disconnected.length > 0 && <ul className="fw-bold list-group">{allDisconnected}</ul>}
             <h6 className="text-black-50 mt-3 mb-1">Zbanowani: ({allParticipants.Banned.length})</h6>
