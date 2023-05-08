@@ -217,3 +217,8 @@
 .offcanvas{
     z-index: 10 !important;
 }
+
+.btn:focus {
+    outline: none;
+    box-shadow: none;
+}
