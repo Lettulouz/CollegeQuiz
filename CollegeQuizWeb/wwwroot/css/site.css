@@ -949,6 +949,17 @@ hr.hr-mid-green{
 }
 
 .btn:focus {
-    outline: none;
-    box-shadow: none;
+    outline: none !important;
+    box-shadow: none !important;
 }
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+a:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+

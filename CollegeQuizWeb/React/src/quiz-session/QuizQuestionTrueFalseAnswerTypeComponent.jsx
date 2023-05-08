@@ -40,7 +40,7 @@ const QuizQuestionTrueFalseAnswerTypeComponent = ({ number }) => {
                 <button className={`bg-transparent border-0 p-0 m-0 cursor-default ${cssDisabledClickEvent}`}>
                     <img src={ANSWER_SVGS[number]} className="card-img" alt="image_answer_D" />
                     <div className="card-body card-img-overlay d-flex flex-column align-items-center justify-content-center">
-                        <h5 className="card-title text-center">{number === 0 ? 'Prawda' : 'Fałsz'}</h5>
+                        <h5 className="card-title text-center text-white">{number === 0 ? 'Prawda' : 'Fałsz'}</h5>
                     </div>
                 </button>
             </div>
