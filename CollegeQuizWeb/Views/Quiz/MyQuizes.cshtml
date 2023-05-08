@@ -14,7 +14,7 @@
 <div class="containertop">
     <div class="card card-glass-effect px-5 py-5 h-100 bg-transparent">
         <label class="mainName2">Twoje quizy</label>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
             @foreach (var quiz in ViewBag.Quizes)
             {
                 <div class="modal fade" id="deleteQuiz-@quiz.Id" tabIndex="-1" aria-hidden="false" data-bs-backdrop="static">
@@ -47,7 +47,7 @@
                                 Ilość pytań: @quiz.CountOfQuestions
                             </p>
                             <div class="hstack gap-2">
-                                <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteQuiz-@quiz.Id" style="z-index: 99">
+                                <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteQuiz-@quiz.Id" style="z-index: 99; height: 40px; width: 40px;">
                                     <i class="bi bi-trash3 btn-danger-glass-icon"></i>
                                 </button>
                                 @if (quiz.CountOfQuestions != 0)
@@ -86,11 +86,11 @@
 </div>
 @if (ViewBag.QuizesShared.Count > 0)
 {
-    <div class="container mt-5 mb-5">
+    <div class="container mt-5 mb-5 px-0">
         <div class="card card-glass-effect px-5 py-5 h-100 bg-transparent">
             <label class="mainName2">Udostępnione quizy</label>
             
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
                 @foreach (var quizes in ViewBag.QuizesShared)
                 {
                     <div class="modal fade" id="deleteSharedQuiz-@quizes.Id" tabIndex="-1" aria-hidden="false" data-bs-backdrop="static">
@@ -106,7 +106,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <a class="btn btn-color-one bg-danger text-white" asp-action="DeleteSharedQuiz"
-                                       asp-controller="Quiz" asp-route-id="@quizes.Id" style="z-index: 99">
+                                       asp-controller="Quiz" asp-route-id="@quizes.Id">
                                         Usuń udostępniony quiz
                                     </a>
                                     <button type="button" class="btn-color-one" data-bs-dismiss="modal">
@@ -123,7 +123,7 @@
                                     Ilość pytań: @quizes.CountOfQuestions
                                 </p>
                                 <div class="hstack gap-2">
-                                    <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteSharedQuiz-@quizes.Id" style="z-index: 99">
+                                    <button type="button" class="btn btn-danger-glass" data-bs-toggle="modal" data-bs-target="#deleteSharedQuiz-@quizes.Id" style="z-index: 99;height: 40px; width: 40px;">
                                         <i class="bi bi-trash3 btn-danger-glass-icon"></i>
                                     </button>
                                     @if (@quizes.CountOfQuestions != 0)
