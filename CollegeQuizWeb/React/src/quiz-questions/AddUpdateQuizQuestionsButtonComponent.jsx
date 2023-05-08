@@ -77,9 +77,11 @@ const AddUpdateQuizQuestionsButtonComponent = () => {
     
     return (
         <>
-            {allGood && <button className="btn btn-color-one mt-2 btn-light w-100" onClick={appendQuestionsTooQuiz}>
+            {allGood ? <button className="btn btn-color-one mt-2 btn-light w-100" onClick={appendQuestionsTooQuiz}>
                 Zaktualizuj pytania quizu
-            </button>}
+            </button> : <div className="btn btn-outline-danger btn-error-danger text-danger mt-2 w-100">
+                Przed zaktualizowaniem quizu popraw błędy.
+            </div>}
         </>
     );
 };
