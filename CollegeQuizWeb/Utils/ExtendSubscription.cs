@@ -7,6 +7,14 @@ namespace CollegeQuizWeb.Utils;
 
 public static class ExtendSubscription
 {
+    /// <summary>
+    /// Method that add subscription to user account after making payment
+    /// </summary>
+    /// <param name="controller">User controller instance</param>
+    /// <param name="userEntity">User entity</param>
+    /// <param name="coupon">Coupon entity</param>
+    /// <param name="message">message</param>
+    /// <param name="subscriptionName">Sybscription type</param>
     public static void AddSubscriptionTime(UserController controller, UserEntity userEntity, CouponEntity coupon, ref string message, string subscriptionName)
     {
         DateTime endDate = DateTime.Today.AddDays(coupon.ExtensionTime);
@@ -45,6 +53,11 @@ public static class ExtendSubscription
         userEntity.CurrentStatusExpirationDate = endDate;
     }
     
+    /// <summary>
+    /// Method that extend subscription for user if already has subscription 
+    /// </summary>
+    /// <param name="userEntity">User entity</param>
+    /// <param name="boughtSubscriptionType">Sybscription type id</param>
     public static void AddSubscriptionTime(UserEntity userEntity, int boughtSubscriptionType)
     {
         DateTime endDate = DateTime.Today.AddDays(30);

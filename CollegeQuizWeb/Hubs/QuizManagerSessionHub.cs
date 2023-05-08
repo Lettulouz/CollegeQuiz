@@ -29,8 +29,18 @@ public class QuizManagerSessionHub : Hub
         _asyncSftpService = asyncSftpService;
     }
     
+    /// <summary>
+    /// Function that return connection id
+    /// </summary>
+    /// <returns>connection id</returns>
     public string GetConnectionId() => Context.ConnectionId;
 
+    /// <summary>
+    ///  Game sequencer
+    /// </summary>
+    /// <param name="counter">conter</param>
+    /// <param name="token">game token</param>
+    /// <returns>game counter</returns>
     public async Task<int> INIT_GAME_SEQUENCER_P2P(int counter, string token)
     {
         token = token.ToUpper();
@@ -47,7 +57,11 @@ public class QuizManagerSessionHub : Hub
         await _context.SaveChangesAsync();
         return counter;
     }
-
+    
+    /// <summary>
+    /// Method that return base path
+    /// </summary>
+    /// <returns>Return base path</returns>
     private string GetBasePath()
     {
         string basePatch = "https://dominikpiskor.pl";
@@ -59,6 +73,10 @@ public class QuizManagerSessionHub : Hub
         return basePatch;
     }
     
+    /// <summary>
+    /// Method that initializing new game
+    /// </summary>
+    /// <param name="token">join token</param>
     public async Task START_GAME_P2P(string token)
     {
         token = token.ToUpper();
@@ -513,6 +531,16 @@ public class QuizManagerSessionHub : Hub
         await _context.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Point counter
+    /// </summary>
+    /// <param name="answer">anzwe entity</param>
+    /// <param name="newUserPoinst">disctionary with user points</param>
+    /// <param name="getAllAnswersForUpdate">list of user answers</param>
+    /// <param name="actuallTime">answer time</param>
+    /// <param name="multiplier">score multiplier</param>
+    /// <param name="continueStreak">should streak be continues</param>
+    /// <param name="additionalPoints">additional points</param>
     private void AddPoinstsCorrect(UsersQuestionsAnswersEntity answer, IDictionary<string,long> newUserPoinst,
         List<UsersQuestionsAnswersEntity> getAllAnswersForUpdate, DateTime actuallTime, double multiplier,
         bool continueStreak, int additionalPoints)
@@ -532,6 +560,10 @@ public class QuizManagerSessionHub : Hub
             answer.QuizSessionParticEntity.CurrentStreak = 0;
     }
     
+    /// <summary>
+    /// Handling disconection
+    /// </summary>
+    /// <param name="exception">exception</param>
     public async override Task OnDisconnectedAsync(Exception? exception)
     {
         var hostUser = await _context.QuizLobbies
