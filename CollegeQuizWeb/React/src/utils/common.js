@@ -86,3 +86,15 @@ export const playSound = counter => {
         audio.play();
     }
 };
+
+export const generateErrorMessage = code => {
+    switch (code) {
+        case "404":
+            return "Podany zasób którego szukasz nie istnieje bądź został usunięty.";
+        case "403":
+        case "401":
+            return "Sesja wygasła. Zaloguj się ponownie, aby uzyskać dostęp do zasobu.";
+        default:
+            return "Wystąpił bład po stronie serwera. Spróbuj ponownie później.";
+    }
+};

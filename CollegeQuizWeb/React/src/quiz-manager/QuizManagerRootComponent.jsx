@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import useLoadableContent from "../hooks/useLoadableContent";
-import { alertDanger, alertInfo, alertOff, alertWarning, getCommonFetchObj } from "../utils/common";
+import { alertDanger, alertInfo, alertOff, alertWarning, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 import { SessionContext, SESS_TOKEN, QUIZ_NAME } from "../quiz-manager-renderer";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
@@ -38,7 +38,12 @@ const QuizManagerRootComponent = () => {
         if (isEstabiblishedClicked) return;
         setIsEstabilishedClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/EstabilishedHostRoom/${connectionId}/${SESS_TOKEN}`, getCommonFetchObj('POST'))
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                throw new Error(r.status);
+            })
             .then(r => {
                 if (r.isGood) {
                     setIsJoinable(true);
@@ -48,7 +53,7 @@ const QuizManagerRootComponent = () => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             });
     };
 

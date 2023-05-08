@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { alertDanger, alertOff, getCommonFetchObj, WAITING_SCREEN } from "../utils/common";
+import { alertDanger, alertOff, generateErrorMessage, getCommonFetchObj, WAITING_SCREEN } from "../utils/common";
 import { SessionContext } from "../quiz-session-renderer";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
@@ -16,7 +16,12 @@ const JoinToQuizSessionComponent = () => {
         if (isJoinClicked) return;
         setIsJoinClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/JoinRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                throw new Error(r.status);
+            })
             .then(r => {
                 if (r.isGood) {
                     setQuizName(r.quizName);
@@ -30,7 +35,7 @@ const JoinToQuizSessionComponent = () => {
             .catch(e => {
                 setIsJoinClicked(false);
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             });
     };
 

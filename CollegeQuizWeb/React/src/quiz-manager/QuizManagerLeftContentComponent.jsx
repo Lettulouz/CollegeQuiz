@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { alertDanger, alertOff, alertWarning, getCommonFetchObj } from "../utils/common";
+import { alertDanger, alertOff, alertWarning, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 import { SessionContext, SESS_TOKEN } from "../quiz-manager-renderer";
 
 import SessionParticipantsComponent from "./SessionParticipantsComponent";
@@ -40,11 +40,16 @@ const QuizManagerLeftContentComponent = () => {
         });
         
         fetch(`/api/v1/dotnet/QuizSessionAPI/GetLobbyData/${SESS_TOKEN}`, getCommonFetchObj('POST'))
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                throw new Error(r.status);
+            })
             .then(({ name, host, questionsCount }) => setLobbyData({ name, host, questionsCount }))
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             });
     }, []);
     

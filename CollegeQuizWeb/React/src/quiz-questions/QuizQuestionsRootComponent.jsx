@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { id, initialQuestions, QuestionsContext, MainContext } from "../quiz-questions-renderer";
 import useLoadableContent from "../hooks/useLoadableContent";
-import { alertOff, getCommonFetchObj } from "../utils/common";
+import { alertDanger, alertOff, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 
 import QuizQuestionComponent from "./QuizQuestionComponent";
 import AddNewMemoryQuestionComponent from "./AddNewMemoryQuestionComponent";
@@ -27,15 +27,18 @@ const QuizQuestionsRootComponent = () => {
     
     useEffect(() => {
         fetch(`/api/v1/dotnet/QuizAPI/GetQuizQuestions/${id}`, getCommonFetchObj('GET')).then(r => {
-            setActiveCallback();
-            return r.json()
+            if (r.ok) {
+                setActiveCallback();
+                return r.json();
+            }
+            throw new Error(r.status);
         }).then(r => {
             if (r.aggregate.length !== 0) setQuestions(r.aggregate);
             setAvailableModes(r.availableModes);
             setInfoModesAlert(r.permissionModesMessage);
         }).catch(e => {
             if (e === undefined) return;
-            setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił nieznany błąd' });
+            setAlert(alertDanger(generateErrorMessage(e.message)));
         });
     }, []);
 

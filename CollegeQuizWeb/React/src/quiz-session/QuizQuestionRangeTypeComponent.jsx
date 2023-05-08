@@ -1,6 +1,6 @@
 import { useContext, useRef, useEffect } from "react";
 import { SessionContext } from "../quiz-session-renderer";
-import { alertDanger, convertSecondsToTime, getCommonFetchObj } from "../utils/common";
+import { alertDanger, convertSecondsToTime, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 import wNumb from "wnumb";
 import nouislider from "nouislider";
 import "nouislider/dist/nouislider.css";
@@ -38,11 +38,15 @@ const QuizQuestionRangeTypeComponent = () => {
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${answer}/false`,
             getCommonFetchObj("POST")
-        ).then(r => r)
-            .catch(e => {
-                if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił błąd podczas wysyłania odpowiedzi przez użytkownika.'));
-            });
+        ).then(r => {
+            if (r.ok) {
+                return r;
+            }
+            throw new Error(r.status);
+        }).catch(e => {
+            if (e === undefined) return;
+            setAlert(alertDanger(generateErrorMessage(e.message)));
+        });
         setIsAnswerSet(true);
         stepsSlider.current.disable();
     };

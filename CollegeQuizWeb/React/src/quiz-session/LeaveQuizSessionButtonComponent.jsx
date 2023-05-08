@@ -1,5 +1,5 @@
 import { useRef, useEffect, useContext } from "react";
-import { alertDanger, alertInfo, getCommonFetchObj, WAITING_SCREEN } from "../utils/common";
+import { alertDanger, alertInfo, generateErrorMessage, getCommonFetchObj, WAITING_SCREEN } from "../utils/common";
 import { SessionContext } from "../quiz-session-renderer";
 
 const LeaveQuizSessionButtonComponent = ({ text }) => {
@@ -14,7 +14,12 @@ const LeaveQuizSessionButtonComponent = ({ text }) => {
         if (isLeaveClicked) return;
         setIsLeaveClicked(true);
         fetch(`/api/v1/dotnet/QuizSessionAPI/LeaveRoom/${connectionId}/${token.toUpperCase()}`, getCommonFetchObj('POST'))
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                throw new Error(r.status);
+            })
             .then(r => {
                 if (r.isGood) {
                     setIsConnect(false);
@@ -28,7 +33,7 @@ const LeaveQuizSessionButtonComponent = ({ text }) => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił nieznany błąd'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             });
     };
 

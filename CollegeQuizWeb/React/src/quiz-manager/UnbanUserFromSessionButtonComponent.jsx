@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { SESS_TOKEN, SessionContext } from "../quiz-manager-renderer";
-import { alertDanger, getCommonFetchObj } from "../utils/common";
+import { alertDanger, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 
 const UnbanUserFromSessionButtonComponent = ({ name }) => {
     const { setAlert, countingActive } = useContext(SessionContext);
@@ -9,7 +9,12 @@ const UnbanUserFromSessionButtonComponent = ({ name }) => {
         if (countingActive) return;
         
         fetch(`/api/v1/dotnet/QuizSessionAPI/UnbanFromSession/${SESS_TOKEN}/${name}`, getCommonFetchObj("POST"))
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                throw new Error(r.status);
+            })
             .then(({ isGood, message }) => {
                 if (isGood) {
                     new RetroNotify({
@@ -24,7 +29,7 @@ const UnbanUserFromSessionButtonComponent = ({ name }) => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił błąd podczas odbanowywania użytkownika z sesji.'));
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             });
     };
     

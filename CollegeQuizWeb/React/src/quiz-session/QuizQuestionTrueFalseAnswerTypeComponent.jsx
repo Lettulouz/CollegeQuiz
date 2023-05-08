@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { alertDanger, ANSWER_SVGS, getCommonFetchObj } from "../utils/common";
+import { alertDanger, ANSWER_SVGS, generateErrorMessage, getCommonFetchObj } from "../utils/common";
 import { SessionContext } from "../quiz-session-renderer";
 
 const QuizQuestionTrueFalseAnswerTypeComponent = ({ number }) => {
@@ -14,11 +14,15 @@ const QuizQuestionTrueFalseAnswerTypeComponent = ({ number }) => {
         fetch(
             `/api/v1/dotnet/QuizSessionAPI/SendAnswer/${connectionId}/${questionNumber}/${number}/false`,
             getCommonFetchObj("POST")
-        ).then(r => r)
-            .catch(e => {
-                if (e === undefined) return;
-                setAlert(alertDanger('Wystąpił błąd podczas wysyłania odpowiedzi przez użytkownika.'));
-            });
+        ).then(r => {
+            if (r.ok) {
+                return r;
+            }
+            throw new Error(r.status);
+        }).catch(e => {
+            if (e === undefined) return;
+            setAlert(alertDanger(generateErrorMessage(e.message)));
+        });
         setIsAnswerSet(true);
         setClickedIndex(number);
     };
