@@ -219,6 +219,36 @@
 }
 
 .btn:focus {
-    outline: none;
-    box-shadow: none;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.page-link:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+li:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+a:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+select:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+li:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
