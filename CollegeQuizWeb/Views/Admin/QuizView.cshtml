@@ -15,7 +15,7 @@
                 {
                     @using (Html.BeginForm("UnlockQuizView", "Admin", new { id = ViewBag.quizInfo.Id }, FormMethod.Post))
                     {
-                        <button type="submit" class="btn btn-dark left-button" data-bs-toggle="tooltip"
+                        <button type="submit" class="btn btn-dark left-button button-link" data-bs-toggle="tooltip"
                                 data-bs-placement="top" data-bs-title="Odblokuj quiz">
                             <i class="bi bi-unlock"></i>
                         </button>
@@ -25,7 +25,7 @@
                 {
                     @using (Html.BeginForm("LockQuizView", "Admin", new { id = ViewBag.quizInfo.Id }, FormMethod.Post))
                         {
-                            <button type="submit" class="btn btn-danger left-button" data-bs-toggle="tooltip"
+                            <button type="submit" class="btn btn-danger left-button button-link" data-bs-toggle="tooltip"
                                     data-bs-placement="top" data-bs-title="Zablokuj quiz">
                                 <i class="bi bi-lock"></i>
                             </button>
@@ -34,7 +34,7 @@
 
                 @using (Html.BeginForm("DelQuizView", "Admin", new { id = ViewBag.quizInfo.Id }, FormMethod.Post))
                 {
-                    <button type="submit" class="btn btn-danger right-button" data-bs-toggle="tooltip"
+                    <button type="submit" class="btn btn-danger right-button button-link" data-bs-toggle="tooltip"
                             data-bs-placement="top" data-bs-title="Usuń quiz">
                         <i class="bi bi-trash"></i>
                     </button>

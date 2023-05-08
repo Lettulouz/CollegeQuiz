@@ -23,7 +23,7 @@
                 {
                     @using (Html.BeginForm("UnbanUserProf", "Admin", new {id = ViewBag.UserInfo.Id}, FormMethod.Post))
                     {
-                        <button type="submit" class="btn btn-dark mid-button" data-bs-toggle="tooltip"
+                        <button type="submit" class="btn btn-dark mid-button button-link" data-bs-toggle="tooltip"
                                 data-bs-placement="top" data-bs-title="Odblokuj użytkownika">
                             <i class="bi bi-unlock"></i>
                         </button>
@@ -38,7 +38,7 @@
                 }
                 @using (Html.BeginForm("DelUserProf", "Admin", new {id = ViewBag.UserInfo.Id}, FormMethod.Post))
                 {
-                    <button type="submit" class="btn btn-danger right-button" data-bs-toggle="tooltip"
+                    <button type="submit" class="btn btn-danger right-button button-link" data-bs-toggle="tooltip"
                             data-bs-placement="top" data-bs-title="Usuń użytkownika">
                         <i class="bi bi-trash"></i>
                     </button>
