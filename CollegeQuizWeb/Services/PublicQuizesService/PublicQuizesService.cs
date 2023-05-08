@@ -29,7 +29,12 @@ public class PublicQuizesService : IPublicQuizesService
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
             .Where(q => q.QuizEntity.IsPublic.Equals(true) && !q.QuizEntity.IsHidden)
             .Select(q => new MyQuizDto()
-                { Name = q.QuizEntity.Name, Author = q.QuizEntity.UserEntity.Username , Id = q.QuizEntity.Id, Token = q.Token})
+                { Name = q.QuizEntity.Name,
+                    Author = q.QuizEntity.UserEntity.Username ,
+                    Id = q.QuizEntity.Id,
+                    Token = q.Token,
+                    CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
+                })
             .ToListAsync();
     }
 
@@ -38,7 +43,12 @@ public class PublicQuizesService : IPublicQuizesService
         return await _context.ShareTokensEntities.Include(t => t.QuizEntity)
             .Where(q => q.QuizEntity.IsPublic.Equals(true) && q.QuizEntity.Name.Contains(obj.Dto.Name)  && !q.QuizEntity.IsHidden)
             .Select(q => new MyQuizDto()
-                { Name = q.QuizEntity.Name, Id = q.QuizEntity.Id, Token = q.Token, Author = q.QuizEntity.UserEntity.Username})
+                { Name = q.QuizEntity.Name,
+                    Author = q.QuizEntity.UserEntity.Username ,
+                    Id = q.QuizEntity.Id,
+                    Token = q.Token,
+                    CountOfQuestions = _context.Questions.Where(d => d.QuizId.Equals(q.QuizId)).Count()
+                })
             .ToListAsync();
         
     }
