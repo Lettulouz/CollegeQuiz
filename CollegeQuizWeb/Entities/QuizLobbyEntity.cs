@@ -16,11 +16,7 @@ public class QuizLobbyEntity : AbstractAuditableEntity
     [Required]
     [Column("is_estabilished")]
     public bool IsEstabilished { get; set; }
-    
-    [Required]
-    [Column("is_created")]
-    public bool IsCreated { get; set; }
-    
+
     [Required]
     [Column("host_conn_id")]
     public string HostConnId { get; set; }

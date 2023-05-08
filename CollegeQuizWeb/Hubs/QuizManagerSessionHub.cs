@@ -546,7 +546,6 @@ public class QuizManagerSessionHub : Hub
             .Where(q => q.QuizLobbyEntity.Code.Equals(hostUser.Code));
 
         hostUser.IsEstabilished = false;
-        hostUser.IsCreated = false;
         hostUser.HostConnId = string.Empty;
         _context.QuizLobbies.Update(hostUser);
         

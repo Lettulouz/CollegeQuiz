@@ -166,7 +166,7 @@ public class QuizService : IQuizService
         if (quiz == null) return true;
 
         var lobby = await _context.QuizLobbies.FirstOrDefaultAsync(l =>
-            l.QuizId.Equals(quizId) && l.UserEntity.Id.Equals(userId) && l.IsCreated);
+            l.QuizId.Equals(quizId) && l.UserEntity.Id.Equals(userId) && !l.HostConnId.Equals(string.Empty));
         if (lobby != null) return true;
 
         int countOfQuestions = _context.Questions.Where(q => q.QuizId.Equals(quizId)).Count();
@@ -186,7 +186,6 @@ public class QuizService : IQuizService
             test.InGameScreen = "WAITING_SCREEN";
             test.Code = generatedCode;
             test.IsEstabilished = false;
-            test.IsCreated = true;
             test.HostConnId = string.Empty;
             _context.QuizLobbies.Update(test);
             await _context.SaveChangesAsync();
@@ -200,7 +199,6 @@ public class QuizService : IQuizService
             InGameScreen = "WAITING_SCREEN",
             UserHostId = userId,
             QuizId = quizId,
-            IsCreated = true,
             HostConnId = string.Empty,
             IsEstabilished = false
         };

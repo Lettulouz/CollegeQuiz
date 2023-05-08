@@ -167,7 +167,7 @@ public class QuizSessionAPIService : IQuizSessionAPIService
         var lobby = await _context.QuizLobbies
             .Include(p => p.UserEntity)
             .FirstOrDefaultAsync(l => l.HostConnId.Equals(connectionId) && l.UserEntity.Username.Equals(loggedUsername) 
-                                                                        && l.IsCreated);
+                                                                        && !l.HostConnId.Equals(string.Empty));
         if (lobby != null) return new JoinToSessionDto()
         {
             IsGood = false,
