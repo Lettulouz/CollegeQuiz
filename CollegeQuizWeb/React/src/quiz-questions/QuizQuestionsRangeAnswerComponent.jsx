@@ -12,6 +12,7 @@ const QuizQuestionsRangeAnswerComponent = () => {
     const [ countedOutOfRange, setCountedOutOfRange ] = useState('');
     const [ stepIsInvalid, setStepIsInvalid ] = useState('');
     const [ isInvalidCorrectAns, setIsCorrectInvalid ] = useState('');
+    const [ differenceInvalid, setDifferenceInvalid ] = useState('');
 
     const onSetRangeProp = (e, propType) => {
         const qst = [ ...questions ];
@@ -31,14 +32,16 @@ const QuizQuestionsRangeAnswerComponent = () => {
                 (answerR.minCounted - answerR.correctAns) % answerR.step !== 0 ||
                 (answerR.maxCounted - answerR.correctAns) % answerR.step !== 0) && answerR.step !== 1;
         const correctAnsIsInvalid = answerR.correctAns > answerR.maxCounted || answerR.correctAns < answerR.minCounted;
+        const differenceIsInvalid = ((answerR.max-answerR.min)/answerR.step)>20;
 
         setMinInvalid(minMax ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setMinCountedInvalid(minMaxCounted ? "Wartość minimalna nie może być większa od wartości maksymalnej" : "");
         setCountedOutOfRange(countedOutOfRange ? "Wartość punktowana wykracza poza zakres" : "");
         setStepIsInvalid(stepIsInvalid ? "Wartość przejścia musi być dzielnikiem pozostałych wartości" : "");
         setIsCorrectInvalid(correctAnsIsInvalid ? "Wartość prawidłowej odpowiedzi wykracza poza zakres" : "");
+        setDifferenceInvalid(differenceIsInvalid ? "Odpowiedź min i max może dzielić do 20 wartości przejścia" : "");
 
-        setIsNotValid(minMax || minMaxCounted || countedOutOfRange || stepIsInvalid || correctAnsIsInvalid);
+        setIsNotValid(minMax || minMaxCounted || countedOutOfRange || stepIsInvalid || correctAnsIsInvalid || differenceIsInvalid);
     }, [ answerR.max, answerR.min, answerR.step, answerR.minCounted, answerR.maxCounted, answerR.correctAns ]);
 
     return (
@@ -60,15 +63,16 @@ const QuizQuestionsRangeAnswerComponent = () => {
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="maxId" className="form-label">Maks</label>
-                            <input value={answerR.max} type="number" className="form-control" id="maxId"
+                            <input value={answerR.max} type="number" className={`form-control ${differenceInvalid && 'is-invalid'}`} id="maxId"
                                 onChange={e => onSetRangeProp(e, "max")}/>
+                            <div className="invalid-feedback">{differenceInvalid}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="minCountedId" className="form-label">Min punktowane</label>
                             <input value={answerR.minCounted} type="number"
                                 className={`form-control ${(countedOutOfRange || minCountedInvalid) && 'is-invalid'}`}
                                 id="minCountedId" onChange={e => onSetRangeProp(e, "minCounted")}/>
-                            <div className="invalid-feedback">{minCountedInvalid}</div>
+                            <div className="invalid-feedback">{minCountedInvalid || countedOutOfRange}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="correctAnsId" className="form-label">Prawidłowa odpowiedź</label>

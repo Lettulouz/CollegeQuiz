@@ -72,6 +72,13 @@ public class QuizAPIService : IQuizAPIService
                 Message = Lang.WRONG_TIME_INTERVALS
             };
             if (min < 0) min = 0;
+            
+            if (sec < 5 || sec > 59) return new SimpleResponseDto()
+            {
+                IsGood = false,
+                Message = Lang.WRONG_TIME_INTERVALS
+            };
+            
             var questionType = await _context.QuestionTypeEntities.FirstOrDefaultAsync(t => t.Name.Equals(question.Type));
             if (questionType == null) return new SimpleResponseDto()
             {
@@ -99,6 +106,11 @@ public class QuizAPIService : IQuizAPIService
             }
             foreach (var answer in question.Answers)
             {
+                if (((answer.Max-answer.Min)/answer.Step)>20) return new SimpleResponseDto()
+                {
+                    IsGood = false,
+                    Message = Lang.MIN_MAX_DIFFERENCE
+                };
                 AnswerEntity answerEntity;
                 if (question.Type.Equals("RANGE"))
                 {
