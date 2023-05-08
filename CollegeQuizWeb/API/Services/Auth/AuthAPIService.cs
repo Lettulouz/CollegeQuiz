@@ -45,6 +45,7 @@ public class AuthAPIService : IAuthAPIService
         };
     }
 
+    
     public async Task<object> TestAuthenticated(Controller controller)
     {
         var user = await _jwtService.ValidateToken(controller);
