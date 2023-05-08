@@ -67,7 +67,7 @@ a.navbar-brand {
     border-top: 2px solid #63c4ab;
 }
 
-@media screen and (min-width: 992px) {
+@media screen and (min-width: 1200px) {
     .nav-link:not(:hover) {
         border-radius: 25px 25px 25px 25px;
     }
