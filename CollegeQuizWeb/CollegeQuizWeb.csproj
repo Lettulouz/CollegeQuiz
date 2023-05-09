@@ -7,6 +7,10 @@
         <LangVersion>10</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\CollegeQuizWeb.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="DotNetEnv" Version="2.5.0" />
         <PackageReference Include="FluentEmail.Core" Version="3.0.2" />

@@ -20,6 +20,25 @@ const QuizQuestionsRangeAnswerComponent = () => {
         qst[idx].answers[0][propType] = Number(e.target.value);
         setQuestions(qst);
     };
+
+    function handleKeyPress(e) {
+        let a = [];
+        let k = e.which;
+
+        for (let i = 48; i < 58; i++) {
+            a.push(i);
+        }
+        
+        a.push(8);
+
+        if (!(a.indexOf(k) >= 0)) {
+            e.preventDefault();
+        }
+    }
+
+    function handleCutCopyPaste(e) {
+        e.preventDefault();
+    }
     
     useEffect(() => {
         const minMax = answerR.min > answerR.max;
@@ -51,40 +70,58 @@ const QuizQuestionsRangeAnswerComponent = () => {
                     <div className="row">
                         <div className="col-md-4 mb-2">
                             <label htmlFor="minId" className="form-label">Min</label>
-                            <input value={answerR.min} type="number" className={`form-control ${minInvalid && 'is-invalid'}`}
-                                id="minId" onChange={e => onSetRangeProp(e, "min")}/>
+                            <input value={answerR.min} type="text" className={`form-control ${minInvalid && 'is-invalid'}`}
+                                id="minId" onChange={e => onSetRangeProp(e, "min")} onKeyDownCapture={handleKeyPress}
+                                   onCut={handleCutCopyPaste}
+                                   onCopy={handleCutCopyPaste}
+                                   onPaste={handleCutCopyPaste}/>
                             <div className="invalid-feedback">{minInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="stepId" className="form-label">Wartość przejścia</label>
-                            <input value={answerR.step} type="number" className={`form-control ${stepIsInvalid && 'is-invalid'}`}
-                                id="stepId" onChange={e => onSetRangeProp(e, "step")}/>
+                            <input value={answerR.step} type="text" className={`form-control ${stepIsInvalid && 'is-invalid'}`}
+                                id="stepId" onChange={e => onSetRangeProp(e, "step")} onKeyDownCapture={handleKeyPress}
+                                   onCut={handleCutCopyPaste}
+                                   onCopy={handleCutCopyPaste}
+                                   onPaste={handleCutCopyPaste}/>
                             <div className="invalid-feedback">{stepIsInvalid}</div>
                         </div>
                         <div className="col-md-4 mb-2">
                             <label htmlFor="maxId" className="form-label">Maks</label>
-                            <input value={answerR.max} type="number" className={`form-control ${differenceInvalid && 'is-invalid'}`} id="maxId"
-                                onChange={e => onSetRangeProp(e, "max")}/>
+                            <input value={answerR.max} type="text" className={`form-control ${differenceInvalid && 'is-invalid'}`} id="maxId"
+                                onChange={e => onSetRangeProp(e, "max")} onKeyDownCapture={handleKeyPress}
+                                   onCut={handleCutCopyPaste}
+                                   onCopy={handleCutCopyPaste}
+                                   onPaste={handleCutCopyPaste}/>
                             <div className="invalid-feedback">{differenceInvalid}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="minCountedId" className="form-label">Min punktowane</label>
-                            <input value={answerR.minCounted} type="number"
+                            <input value={answerR.minCounted} type="text"
                                 className={`form-control ${(countedOutOfRange || minCountedInvalid) && 'is-invalid'}`}
-                                id="minCountedId" onChange={e => onSetRangeProp(e, "minCounted")}/>
+                                id="minCountedId" onChange={e => onSetRangeProp(e, "minCounted")} onKeyDownCapture={handleKeyPress}
+                                   onCut={handleCutCopyPaste}
+                                   onCopy={handleCutCopyPaste}
+                                   onPaste={handleCutCopyPaste}/>
                             <div className="invalid-feedback">{minCountedInvalid || countedOutOfRange}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="correctAnsId" className="form-label">Prawidłowa odpowiedź</label>
-                            <input value={answerR.correctAns} type="number"
+                            <input value={answerR.correctAns} type="text"
                                 className={`form-control ${(isInvalidCorrectAns) && 'is-invalid'}`}
-                                id="correctAnsId" onChange={e => onSetRangeProp(e, "correctAns")}/>
+                                id="correctAnsId" onChange={e => onSetRangeProp(e, "correctAns")} onKeyDownCapture={handleKeyPress}
+                                   onCut={handleCutCopyPaste}
+                                   onCopy={handleCutCopyPaste}
+                                   onPaste={handleCutCopyPaste}/>
                             <div className="invalid-feedback">{isInvalidCorrectAns}</div>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="maxCounterId" className="form-label">Maks punktowane</label>
-                            <input value={answerR.maxCounted} type="number" className={`form-control ${countedOutOfRange && 'is-invalid'}`}
-                                id="maxCounterId" onChange={e => onSetRangeProp(e, "maxCounted")}/>
+                            <input value={answerR.maxCounted} type="text" className={`form-control ${countedOutOfRange && 'is-invalid'}`}
+                                id="maxCounterId" onChange={e => onSetRangeProp(e, "maxCounted")} onKeyDownCapture={handleKeyPress}
+                                   onCut={handleCutCopyPaste}
+                                   onCopy={handleCutCopyPaste}
+                                   onPaste={handleCutCopyPaste}/>
                             <div className="invalid-feedback">{countedOutOfRange}</div>
                         </div>
                     </div>
