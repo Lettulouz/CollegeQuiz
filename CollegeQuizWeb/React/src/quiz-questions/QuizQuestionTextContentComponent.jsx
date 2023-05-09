@@ -3,20 +3,14 @@ import { MainContext, QuestionsContext } from "../quiz-questions-renderer";
 
 const QuizQuestionTextContentComponent = () => {
     const { q } = useContext(QuestionsContext);
-    const { setQuestions, onSetQuestionProperty, questions, uploadedImages } = useContext(MainContext);
+    const { setQuestions, onSetQuestionProperty, questions } = useContext(MainContext);
 
     const setTimeMin = e => onSetQuestionProperty(q.id, "timeMin", e.target.value);
     const setTimeSec = e => onSetQuestionProperty(q.id, "timeSec", e.target.value);
     
-    const isUploaded = !!uploadedImages.find(i => i.id === q.id);
-    
     const onRemoveQuestion = () => {
-        if (isUploaded) return;
-        let copyQuestions = [ ...questions ];
-        copyQuestions = copyQuestions
-            .filter(qst => qst.id !== q.id)
-            .map((d, idx) => ({ ...d, id: idx + 1 }));
-        setQuestions(copyQuestions);
+        const questionsCopy = [ ...questions ];
+        setQuestions(questionsCopy.filter(qst => qst.id !== q.id).map((qst, idx) => ({ ...qst, id: idx + 1 })));
     };
     
     useEffect(() => {
@@ -43,8 +37,7 @@ const QuizQuestionTextContentComponent = () => {
                         maxLength="2" value={q.timeSec} onChange={setTimeSec}/>
                 </div>
             </div>
-            <button className={`btn btn-danger text-white ms-2 ${isUploaded && 'disabled'}`}
-                onClick={onRemoveQuestion}>X</button>
+            <button className="btn btn-danger text-white ms-2" onClick={onRemoveQuestion}>X</button>
         </div>
     );
 };

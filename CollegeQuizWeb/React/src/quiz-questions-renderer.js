@@ -32,6 +32,7 @@ export const initialQuestions = [
         timeMin: '0',
         timeSec: '',
         imageUrl: '',
+        blobImage: null,
         type: 'SINGLE_FOUR_ANSWERS',
         answers: generateAnswers(4),
     },

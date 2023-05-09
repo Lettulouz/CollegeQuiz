@@ -6,16 +6,18 @@ import {
 
 const AddUpdateQuizQuestionsButtonComponent = () => {
     const {
-        questions, setQuestions, setInactiveCallback, setActiveCallback, setAlert, allGood, uploadedImages
+        questions, setQuestions, setInactiveCallback, setActiveCallback, setAlert, allGood
     } = useContext(MainContext);
 
     const [ isSended, setIsSended ] = useState(false);
 
     const appendQuizImages = () => {
         const formData = new FormData();
-        for (const uploadedImage of uploadedImages) {
-            const type = uploadedImage.image.type.substring(uploadedImage.image.type.indexOf('/') + 1);
-            formData.append("uploads", uploadedImage.image, `question${uploadedImage.id}.${type}`);
+        const onlyBlobs = questions.map(e => ({ id: e.id, blobImage: e.blobImage }));
+        for (const uploadedImage of onlyBlobs) {
+            if (!uploadedImage.blobImage) continue;
+            const type = uploadedImage.blobImage.type.substring(uploadedImage.blobImage.type.indexOf('/') + 1);
+            formData.append("uploads", uploadedImage.blobImage, `question${uploadedImage.id}.${type}`);
         }
         fetch(`/api/v1/dotnet/QuizAPI/UpdateQuizImages/${id}`, getCommonFetchObjWithFormData('POST', formData))
             .then(r => {
@@ -52,7 +54,10 @@ const AddUpdateQuizQuestionsButtonComponent = () => {
         setInactiveCallback();
         if (isSended) return;
         setIsSended(true);
-        fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questions }))
+        const questionsWithoutBlob = questions.map(({ id, text, timeMin, timeSec, imageUrl, type, answers }) => ({
+            id, text, timeMin, timeSec, imageUrl, type, answers
+        }));
+        fetch(`/api/v1/dotnet/QuizAPI/AddQuizQuestions/${id}`, getCommonFetchObjWithBody('POST', { aggregate: questionsWithoutBlob }))
             .then(r => {
                 if (r.ok) {
                     setIsSended(false);

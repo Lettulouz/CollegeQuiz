@@ -12,6 +12,7 @@ const AddNewMemoryQuestionComponent = () => {
             timeSec: '',
             imageUrl: '',
             type: 'SINGLE_FOUR_ANSWERS',
+            blobImage: null,
             answers: generateAnswers(4)
         }]);
     };

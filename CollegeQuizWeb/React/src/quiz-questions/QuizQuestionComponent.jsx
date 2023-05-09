@@ -1,4 +1,5 @@
 import { useContext, useRef, useState, useEffect } from "react";
+import { alertDanger, generateErrorMessage } from "../utils/common";
 import {
     generateAnswers, generateMultAnswers, generateRangeAnswer, generateTrueFalse, MainContext, QuestionsContext
 } from "../quiz-questions-renderer";
@@ -10,10 +11,7 @@ import QuizQuestionsImageManipulatorComponent from "./QuizQuestionsImageManipula
 import QuizQuestionsSingleGoodAnswerComponent from "./QuizQuestionsSingleGoodAnswerComponent";
 
 const QuizQuestionComponent = () => {
-    const {
-        setAlert, setQuestions, uploadedImages, setUploadedImages, onSetQuestionProperty, questions
-    } = useContext(MainContext);
-    
+    const { setAlert, setQuestions, onSetQuestionProperty, questions } = useContext(MainContext);
     const { q, availableModes } = useContext(QuestionsContext);
 
     const modalRef = useRef(null);
@@ -38,9 +36,12 @@ const QuizQuestionComponent = () => {
     ));
     
     const onRemoveImage = () => {
-        const images = [ ...uploadedImages ];
-        const withoutImage = images.filter(i => i.id !== q.id);
-        setUploadedImages(withoutImage);
+        const questionsCopy = [ ...questions ];
+        const withoutImage = questionsCopy.findIndex(i => i.id === q.id);
+        if (withoutImage !== -1) {
+            questionsCopy[withoutImage].blobImage = null;
+            setQuestions(questionsCopy);
+        }
         setMainImageVisible(false);
         URL.revokeObjectURL(imageSrc);
         onSetQuestionProperty(q.id, "urlImage", "");
@@ -53,13 +54,11 @@ const QuizQuestionComponent = () => {
         const canvas = cropperRef.current.getCroppedCanvas({ width: 500, height: 500 });
         setImagePreview(canvas.toDataURL());
         canvas.toBlob(function (blob) {
-            const images = [ ...uploadedImages ];
-            let updatedImage = images.findIndex(i => i.id === q.id);
+            const questionsCopy = [ ...questions ];
+            let updatedImage = questionsCopy.findIndex(i => i.id === q.id);
             if (updatedImage !== -1) {
-                images[updatedImage] = { id: q.id, image: blob };
-                setUploadedImages(images);
-            } else {
-                setUploadedImages(prevState => [ ...prevState, { id: q.id, image: blob } ]);
+                questionsCopy[updatedImage].blobImage = blob;
+                setQuestions(questionsCopy);
             }
         });
         setMainImageVisible(true);
@@ -113,8 +112,11 @@ const QuizQuestionComponent = () => {
                 throw new Error(r.status);
             })
             .then(b => {
-                if (uploadedImages.length === 0) {
-                    setUploadedImages(prevState => ([ ...prevState, { id: q.id, image: b } ]));
+                const questionsCopy = [ ...questions ];
+                let updatedImage = questionsCopy.findIndex(i => i.id === q.id);
+                if (updatedImage !== -1) {
+                    questionsCopy[updatedImage].blobImage = b;
+                    setQuestions(questionsCopy);
                 }
             })
             .catch(e => {

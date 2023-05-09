@@ -9,14 +9,13 @@ import QuizQuestionsChangeNameComponent from "./QuizQuestionsChangeNameComponent
 import AddUpdateQuizQuestionsButtonComponent from "./AddUpdateQuizQuestionsButtonComponent";
 
 const QuizQuestionsRootComponent = () => {
-    const [ questions, setQuestions ] = useState(initialQuestions);
+    const [ questions, setQuestions ] = useState([]);
     const [ allGood, setAllGood ] = useState(true);
     const [ alert, setAlert ] = useState(alertOff());
     const [ isActive, setActiveCallback, setInactiveCallback ] = useLoadableContent();
     const [ isNotValid, setIsNotValid ] = useState(false);
     const [ availableModes, setAvailableModes ] = useState([]);
     const [ infoModesAlert, setInfoModesAlert ] = useState('');
-    const [ uploadedImages, setUploadedImages ] = useState([]);
     
     const onSetQuestionProperty = (questionId, property, data) => {
         const qst = [ ...questions ];
@@ -33,7 +32,11 @@ const QuizQuestionsRootComponent = () => {
             }
             throw new Error(r.status);
         }).then(r => {
-            if (r.aggregate.length !== 0) setQuestions(r.aggregate);
+            if (r.aggregate.length !== 0) {
+                const updatedWithBlob = r.aggregate.map(e => ({ ...e, blobImage: null }));
+                setQuestions(updatedWithBlob);
+            }
+            else setQuestions(initialQuestions);
             setAvailableModes(r.availableModes);
             setInfoModesAlert(r.permissionModesMessage);
         }).catch(e => {
@@ -60,8 +63,8 @@ const QuizQuestionsRootComponent = () => {
 
     return (
         <MainContext.Provider value={{
-            setAlert, questions, setQuestions, setActiveCallback, setInactiveCallback, allGood, uploadedImages,
-            setUploadedImages, onSetQuestionProperty, setIsNotValid
+            setAlert, questions, setQuestions, setActiveCallback, setInactiveCallback, allGood, onSetQuestionProperty,
+            setIsNotValid
         }}>
             {isActive && <>
                 <div className="alert alert-warning">
