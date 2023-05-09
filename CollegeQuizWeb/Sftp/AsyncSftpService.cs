@@ -91,7 +91,7 @@ public class AsyncSftpService : IAsyncSftpService
         
         if (!ConfigLoader.ExternalContentServerActive)
         {
-            string url = $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{qstId}";
+            string url = $"{Utilities.GetBaseUrl(controller)}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{qstId}/{preHash}";
             var stream = new FileStream($"{STATIC_UPLOADS_DIR}/{quizId}/{fileName}", FileMode.Create);
             encodedData.SaveTo(stream);
             stream.Close();
@@ -124,7 +124,8 @@ public class AsyncSftpService : IAsyncSftpService
 
     public async Task<string> GetImagePath(string basePath, long quizId, int qstId, DateTime qDt)
     {
-        string fileName = $"question{qstId}_{qDt.ToString("yyyyMMddHHmmss")}.jpg";
+        string rawToken = qDt.ToString("yyyyMMddHHmmss");
+        string fileName = $"question{qstId}_{rawToken}.jpg";
         if (ConfigLoader.ExternalContentServerActive)
         {
             string imageCndEndpoint =
@@ -138,7 +139,7 @@ public class AsyncSftpService : IAsyncSftpService
             await _asyncSftpConnector.Disconnect();
             return imageCndEndpoint;
         }
-        string imageEndpoint = $"{basePath}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{qstId}";
+        string imageEndpoint = $"{basePath}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{qstId}/{rawToken}";
         string imageUrl = $"{STATIC_UPLOADS_DIR}/{quizId}/{fileName}";
         if (!File.Exists(imageUrl))
         {
@@ -173,7 +174,7 @@ public class AsyncSftpService : IAsyncSftpService
         {
             string preHash = questionsDateTime[i].ToString("yyyyMMddHHmmss");
             string imagePath = $"{STATIC_UPLOADS_DIR}/{quizId}/question{i}_{preHash}.jpg";
-            string imageEndpoint = $"{basePath}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{i}";
+            string imageEndpoint = $"{basePath}/api/v1/dotnet/quizapi/GetQuizImage/{quizId}/{i}/{preHash}";
             if (!File.Exists(imagePath))
             {
                 imagesLinks.Add(string.Empty);

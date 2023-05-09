@@ -301,7 +301,6 @@
         let innerTextVal =`z ${numberOfPages}`;
         maxPage = numberOfPages;
         document.getElementById('pagination321').innerText = innerTextVal;
-        console.log(couponListLoc);
         let currentDate = new Date();                 
         let html = `<table class="table text-center">
             <thead>
@@ -378,7 +377,6 @@
     
     function showMore(obj){
         let row = $(obj).parent().parent();
-        console.log(obj);
         if(row.attr('aria-expanded')=='true'){
         }
         else if(row.attr('aria-expanded')=='false'){

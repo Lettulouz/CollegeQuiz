@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/subscription-cards.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"/>
-        <link rel="stylesheet" href="https://quizazu.cdn.miloszgilga.pl/static/lib/retro-notify/retronotify.css"/>
+    <link rel="stylesheet" href="https://quizazu.cdn.miloszgilga.pl/static/lib/retro-notify/retronotify.css"/>
 </head>
 <body>
 <header>
@@ -36,9 +36,11 @@
     </main>
 </div>
 <footer class="footer">
-    <div class="container-fluid text-center">
-        &copy; 2023 - QUIZAZU - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        <a href="https://play.google.com/store/games?pli=1"><i class="bi bi-google-play"></i></a>
+    <div class="container-fluid text-center d-flex justify-content-center align-items-center">
+        &copy; 2023 - QUIZAZU - <a class="footer-text" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <a href="https://quizazu.cdn.miloszgilga.pl/static/Quizazu.apk" target="_blank">
+            <i class="bi bi-google-play fs-4 ms-3 footer-text"></i>
+        </a>
     </div>
 </footer>
 <script src="https://quizazu.cdn.miloszgilga.pl/static/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

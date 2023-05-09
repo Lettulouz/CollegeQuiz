@@ -106,7 +106,12 @@ const QuizQuestionComponent = () => {
         setImageSrc(q.imageUrl);
         setImagePreview(q.imageUrl);
         fetch(q.imageUrl)
-            .then(r => r.blob())
+            .then(r => {
+                if (r.ok) {
+                    return r.blob();
+                }
+                throw new Error(r.status);
+            })
             .then(b => {
                 if (uploadedImages.length === 0) {
                     setUploadedImages(prevState => ([ ...prevState, { id: q.id, image: b } ]));
@@ -114,7 +119,7 @@ const QuizQuestionComponent = () => {
             })
             .catch(e => {
                 if (e === undefined) return;
-                setAlert({ active: true, style: 'alert-danger', message: 'Wystąpił problem z załadowaniem grafiki' });
+                setAlert(alertDanger(generateErrorMessage(e.message)));
             })
         setMainImageVisible(true);
     }, [ q.imageUrl ]);
