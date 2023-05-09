@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"pl.dominikpiskor.quizapp"},{"l":"pl.dominikpiskor.quizapp.dto"},{"l":"pl.dominikpiskor.quizapp.Fragments"},{"l":"pl.dominikpiskor.quizapp.GameFragments"},{"l":"pl.dominikpiskor.quizapp.hubs"},{"l":"pl.dominikpiskor.quizapp.LocalDataBase"},{"l":"pl.dominikpiskor.quizapp.Utils"}];updateSearchResults();

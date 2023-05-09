@@ -1,0 +1,5 @@
+var namespace_college_quiz_web_1_1_services_1_1_change_password_service =
+[
+    [ "ChangePasswordService", "class_college_quiz_web_1_1_services_1_1_change_password_service_1_1_change_password_service.html", "class_college_quiz_web_1_1_services_1_1_change_password_service_1_1_change_password_service" ],
+    [ "IChangePasswordService", "interface_college_quiz_web_1_1_services_1_1_change_password_service_1_1_i_change_password_service.html", "interface_college_quiz_web_1_1_services_1_1_change_password_service_1_1_i_change_password_service" ]
+];

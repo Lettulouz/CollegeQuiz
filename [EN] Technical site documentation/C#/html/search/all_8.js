@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['iadminservice_0',['IAdminService',['../interface_college_quiz_web_1_1_services_1_1_admin_service_1_1_i_admin_service.html',1,'CollegeQuizWeb::Services::AdminService']]],
+  ['iasyncsftpconnector_1',['IAsyncSftpConnector',['../interface_college_quiz_web_1_1_sftp_1_1_i_async_sftp_connector.html',1,'CollegeQuizWeb::Sftp']]],
+  ['iasyncsftpservice_2',['IAsyncSftpService',['../interface_college_quiz_web_1_1_sftp_1_1_i_async_sftp_service.html',1,'CollegeQuizWeb::Sftp']]],
+  ['iauthapiservice_3',['IAuthAPIService',['../interface_college_quiz_web_1_1_a_p_i_1_1_services_1_1_auth_1_1_i_auth_a_p_i_service.html',1,'CollegeQuizWeb::API::Services::Auth']]],
+  ['iauthservice_4',['IAuthService',['../interface_college_quiz_web_1_1_services_1_1_auth_service_1_1_i_auth_service.html',1,'CollegeQuizWeb::Services::AuthService']]],
+  ['ichangepasswordservice_5',['IChangePasswordService',['../interface_college_quiz_web_1_1_services_1_1_change_password_service_1_1_i_change_password_service.html',1,'CollegeQuizWeb::Services::ChangePasswordService']]],
+  ['ihomeservice_6',['IHomeService',['../interface_college_quiz_web_1_1_services_1_1_home_service_1_1_i_home_service.html',1,'CollegeQuizWeb::Services::HomeService']]],
+  ['ijwtservice_7',['IJwtService',['../interface_college_quiz_web_1_1_jwt_1_1_i_jwt_service.html',1,'CollegeQuizWeb::Jwt']]],
+  ['index_8',['Index',['../class_college_quiz_web_1_1_controllers_1_1_admin_controller.html#a4a7a911d659cf8b017c2976862717860',1,'CollegeQuizWeb.Controllers.AdminController.Index()'],['../class_college_quiz_web_1_1_controllers_1_1_home_controller.html#a0c2c9754195492aeb13b5880bc1f8935',1,'CollegeQuizWeb.Controllers.HomeController.Index()']]],
+  ['init_5fgame_5fsequencer_5fp2p_9',['INIT_GAME_SEQUENCER_P2P',['../class_college_quiz_web_1_1_hubs_1_1_quiz_manager_session_hub.html#a5ba7a11023b43c8896548900f321de40',1,'CollegeQuizWeb::Hubs::QuizManagerSessionHub']]],
+  ['ipublicquizesservice_10',['IPublicQuizesService',['../interface_college_quiz_web_1_1_services_1_1_public_quizes_service_1_1_i_public_quizes_service.html',1,'CollegeQuizWeb::Services::PublicQuizesService']]],
+  ['iquizapiservice_11',['IQuizAPIService',['../interface_college_quiz_web_1_1_a_p_i_1_1_services_1_1_quiz_1_1_i_quiz_a_p_i_service.html',1,'CollegeQuizWeb::API::Services::Quiz']]],
+  ['iquizservice_12',['IQuizService',['../interface_college_quiz_web_1_1_services_1_1_quiz_service_1_1_i_quiz_service.html',1,'CollegeQuizWeb::Services::QuizService']]],
+  ['iquizsessionapiservice_13',['IQuizSessionAPIService',['../interface_college_quiz_web_1_1_a_p_i_1_1_services_1_1_quiz_session_1_1_i_quiz_session_a_p_i_service.html',1,'CollegeQuizWeb::API::Services::QuizSession']]],
+  ['isharedquizesservice_14',['ISharedQuizesService',['../interface_college_quiz_web_1_1_services_1_1_shared_quizes_service_1_1_i_shared_quizes_service.html',1,'CollegeQuizWeb::Services::SharedQuizesService']]],
+  ['ismtpservice_15',['ISmtpService',['../interface_college_quiz_web_1_1_smtp_1_1_i_smtp_service.html',1,'CollegeQuizWeb::Smtp']]],
+  ['iuserapiservice_16',['IUserAPIService',['../interface_college_quiz_web_1_1_a_p_i_1_1_services_1_1_user_1_1_i_user_a_p_i_service.html',1,'CollegeQuizWeb::API::Services::User']]],
+  ['iuserservice_17',['IUserService',['../interface_college_quiz_web_1_1_services_1_1_user_service_1_1_i_user_service.html',1,'CollegeQuizWeb::Services::UserService']]]
+];

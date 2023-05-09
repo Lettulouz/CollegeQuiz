@@ -1,0 +1,13 @@
+var searchData=
+[
+  ['quizapicontroller_0',['QuizAPIController',['../class_college_quiz_web_1_1_a_p_i_1_1_controllers_1_1_quiz_a_p_i_controller.html#ab5fdae839b1eedad2d3b9a8812e78454',1,'CollegeQuizWeb::API::Controllers::QuizAPIController']]],
+  ['quizcontroller_1',['QuizController',['../class_college_quiz_web_1_1_controllers_1_1_quiz_controller.html#a9f1e06a270182a0e1dccf12d0acee341',1,'CollegeQuizWeb::Controllers::QuizController']]],
+  ['quizes_2',['Quizes',['../class_college_quiz_web_1_1_controllers_1_1_public_quizes_controller.html#a95d65e24095f98c17128242e05454c25',1,'CollegeQuizWeb.Controllers.PublicQuizesController.Quizes()'],['../class_college_quiz_web_1_1_controllers_1_1_public_quizes_controller.html#a253cebc1efe79b58d998752758d95adc',1,'CollegeQuizWeb.Controllers.PublicQuizesController.Quizes(PublicQuizesDto obj)']]],
+  ['quizinfo_3',['QuizInfo',['../class_college_quiz_web_1_1_services_1_1_admin_service_1_1_admin_service.html#af323a66c3b204df8f4fcbb36a60964fc',1,'CollegeQuizWeb.Services.AdminService.AdminService.QuizInfo()'],['../interface_college_quiz_web_1_1_services_1_1_admin_service_1_1_i_admin_service.html#a3d14ee457c07b70e542d02161f87f24a',1,'CollegeQuizWeb.Services.AdminService.IAdminService.QuizInfo()']]],
+  ['quizlist_4',['QuizList',['../class_college_quiz_web_1_1_controllers_1_1_admin_controller.html#af33b57aba9a7c3896939d79e17087dd5',1,'CollegeQuizWeb::Controllers::AdminController']]],
+  ['quizlobby_5',['QuizLobby',['../class_college_quiz_web_1_1_controllers_1_1_quiz_controller.html#a286286f49f3a7c749b2b457b8e389391',1,'CollegeQuizWeb::Controllers::QuizController']]],
+  ['quizpage_6',['QuizPage',['../class_college_quiz_web_1_1_controllers_1_1_public_quizes_controller.html#a34de970e2638effdd089e3de774f2de9',1,'CollegeQuizWeb.Controllers.PublicQuizesController.QuizPage()'],['../class_college_quiz_web_1_1_controllers_1_1_quiz_controller.html#a5213547ff104a5ba9ea9a6bcc0fd888f',1,'CollegeQuizWeb.Controllers.QuizController.QuizPage([FromRoute(Name=&quot;id&quot;)] long id)']]],
+  ['quizsession_7',['QuizSession',['../class_college_quiz_web_1_1_controllers_1_1_quiz_controller.html#ad1e446498047134582824f3b41d7f873',1,'CollegeQuizWeb::Controllers::QuizController']]],
+  ['quizsessionapicontroller_8',['QuizSessionAPIController',['../class_college_quiz_web_1_1_a_p_i_1_1_controllers_1_1_quiz_session_a_p_i_controller.html#a710dca7a805453cc9de6632aef819387',1,'CollegeQuizWeb::API::Controllers::QuizSessionAPIController']]],
+  ['quizview_9',['QuizView',['../class_college_quiz_web_1_1_controllers_1_1_admin_controller.html#a64f4f5e84398ba04151e225714dd5fe3',1,'CollegeQuizWeb::Controllers::AdminController']]]
+];
