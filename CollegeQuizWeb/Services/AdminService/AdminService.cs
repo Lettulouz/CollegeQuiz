@@ -100,7 +100,7 @@ public class AdminService : IAdminService
        
        controller.ViewBag.couponStats = couponStats ?? new { Total = 0, Archive = 0, Active = 0};
        
-       var subStats = await (from q in _context.SubsciptionTypes
+       var subStats = await (from q in _context.Coupons
            group q by 1
            into g
            select new
