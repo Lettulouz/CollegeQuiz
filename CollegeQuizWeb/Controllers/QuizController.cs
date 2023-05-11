@@ -22,7 +22,7 @@ public class QuizController : Controller
     {
         _service = service;
     }
-
+    
     /// <summary>
     /// Method that is being used to render quizes (both created by user that invokes and shared)
     /// </summary>
