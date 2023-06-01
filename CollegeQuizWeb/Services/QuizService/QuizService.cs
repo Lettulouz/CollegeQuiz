@@ -247,7 +247,7 @@ public class QuizService : IQuizService
             }
 
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync("https://quizazu.cdn.miloszgilga.pl/static/gfx/logo.svg");
+            var response = await httpClient.GetAsync("https://cdn.quizazu.com/static/gfx/logo.svg");
             var content = await response.Content.ReadAsStringAsync();
             MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
             

@@ -4,18 +4,18 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - CollegeQuizWeb</title>
-    <link rel="stylesheet" href="https://quizazu.cdn.miloszgilga.pl/static/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.quizazu.com/static/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/subscription-cards.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"/>
-    <link rel="stylesheet" href="https://quizazu.cdn.miloszgilga.pl/static/lib/retro-notify/retronotify.css"/>
+    <link rel="stylesheet" href="https://cdn.quizazu.com/static/lib/retro-notify/retronotify.css"/>
 </head>
 <body>
 <header>
     <nav class="navbar fixed-top navbar-expand-xl navbar-toggleable-sm list-border">
         <div class="container-fluid">
             <a class="navbar-brand me-0" asp-area="" asp-controller="Home" asp-action="Index">
-                <img src="https://quizazu.cdn.miloszgilga.pl/static/gfx/logo.svg" height="50px" width="50px" alt="">
+                <img src="https://cdn.quizazu.com/static/gfx/logo.svg" height="50px" width="50px" alt="">
             </a>
             <a class="navbar-brand ms-1" asp-area="" asp-controller="Home" asp-action="Index">QUIZAZU</a>
             <button class="navbar-toggler navbar-light" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -30,20 +30,20 @@
 </header>
 <div class="container" style="margin-top: 125px">
     <main role="main" class="pb-3">
-        <script src="https://quizazu.cdn.miloszgilga.pl/static/lib/jquery/dist/jquery.min.js"></script>
-        <script src="https://quizazu.cdn.miloszgilga.pl/static/lib/retro-notify/retronotify.js"></script>
+        <script src="https://cdn.quizazu.com/static/lib/jquery/dist/jquery.min.js"></script>
+        <script src="https://cdn.quizazu.com/static/lib/retro-notify/retronotify.js"></script>
         @RenderBody()
     </main>
 </div>
 <footer class="footer">
     <div class="container-fluid text-center d-flex justify-content-center align-items-center">
         &copy; 2023 - QUIZAZU -&nbsp<a class="footer-text" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        <a href="https://quizazu.cdn.miloszgilga.pl/static/Quizazu.apk" target="_blank">
+        <a href="https://cdn.quizazu.com/static/Quizazu.apk" target="_blank">
             <i class="bi bi-google-play fs-4 ms-3 footer-text"></i>
         </a>
     </div>
 </footer>
-<script src="https://quizazu.cdn.miloszgilga.pl/static/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.quizazu.com/static/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>

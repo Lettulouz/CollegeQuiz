@@ -56,13 +56,13 @@ const QuizPlayerViewRangeAnswerTypeComponent = () => {
                     <p className="fw-bold time-text">
                         {convertSecondsToTime(tick)}
                     </p>
-                    <img src="https://quizazu.cdn.miloszgilga.pl/static/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
+                    <img src="https://cdn.quizazu.com/static/gfx/timer.svg" alt="image_answer_D" className="img-fluid"/>
                 </div>
                 <div className="col-lg-9 order-2 order-lg-1">
                     <div className="card px-3 py-3 d-flex align-items-center text-break">
                         <h3 className="quiz-color-text">{questionName}</h3>
                         <div className="bg-transparent">
-                            <img src={imageUrl || "https://quizazu.cdn.miloszgilga.pl/static/gfx/def_qst.svg"}
+                            <img src={imageUrl || "https://cdn.quizazu.com/static/gfx/def_qst.svg"}
                                 width="200px" height="auto" alt=""/>
                         </div>
                     </div>

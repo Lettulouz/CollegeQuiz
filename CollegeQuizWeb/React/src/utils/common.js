@@ -51,12 +51,12 @@ export const getCropperConfig = () => ({
 
 export const ANSWER_LETTERS = [ "A", "B", "C", "D", "E", "F" ];
 export const ANSWER_SVGS = [
-    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/blueCard.svg",
-    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/greenCard.svg",
-    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/darkblueCard.svg",
-    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/tealCard.svg",
-    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/oliveCard.svg",
-    "https://quizazu.cdn.miloszgilga.pl/static/gfx/card/darkgreenCard.svg"
+    "https://cdn.quizazu.com/static/gfx/card/blueCard.svg",
+    "https://cdn.quizazu.com/static/gfx/card/greenCard.svg",
+    "https://cdn.quizazu.com/static/gfx/card/darkblueCard.svg",
+    "https://cdn.quizazu.com/static/gfx/card/tealCard.svg",
+    "https://cdn.quizazu.com/static/gfx/card/oliveCard.svg",
+    "https://cdn.quizazu.com/static/gfx/card/darkgreenCard.svg"
 ];
 
 export const RESULT_CARD_COLORS = [
@@ -81,7 +81,7 @@ export const convertSecondsToTime = seconds => {
 
 export const playSound = counter => {
     if(counter <= 5 && counter > 0){
-        var audio = new Audio(`https://quizazu.cdn.miloszgilga.pl/static/sfx/${counter}.mp3`);
+        var audio = new Audio(`https://cdn.quizazu.com/static/sfx/${counter}.mp3`);
         audio.volume = 0.8
         audio.play();
     }
