@@ -1,5 +1,0 @@
-var namespace_college_quiz_web_1_1_services_1_1_public_quizes_service =
-[
-    [ "IPublicQuizesService", "interface_college_quiz_web_1_1_services_1_1_public_quizes_service_1_1_i_public_quizes_service.html", "interface_college_quiz_web_1_1_services_1_1_public_quizes_service_1_1_i_public_quizes_service" ],
-    [ "PublicQuizesService", "class_college_quiz_web_1_1_services_1_1_public_quizes_service_1_1_public_quizes_service.html", "class_college_quiz_web_1_1_services_1_1_public_quizes_service_1_1_public_quizes_service" ]
-];
