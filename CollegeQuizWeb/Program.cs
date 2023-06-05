@@ -78,7 +78,7 @@ builder.Services.AddHostedService<OnStartInitializer>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(corsPolicyBuilder => corsPolicyBuilder
-        .WithOrigins("https://dominikpiskor.pl", "https://cdn.quizazu.com")
+        .WithOrigins("https://quizazu.com", "https://cdn.quizazu.com")
         .AllowAnyHeader()
         .AllowAnyMethod()
     );

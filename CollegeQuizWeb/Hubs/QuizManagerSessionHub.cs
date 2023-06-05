@@ -64,13 +64,13 @@ public class QuizManagerSessionHub : Hub
     /// <returns>Return base path</returns>
     private string GetBasePath()
     {
-        string basePatch = "https://dominikpiskor.pl";
+        string basePath = "https://quizazu.com";
         HttpContext? context = Context.GetHttpContext();
         if (context != null)
         {
-            basePatch = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
+            basePath = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}";
         }
-        return basePatch;
+        return basePath;
     }
     
     /// <summary>

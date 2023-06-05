@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CollegeQuizWeb.API.Controllers;
 
-[Route("api/v1/dotnet/[controller]")]
+[Route("/api/v1/dotnet/[controller]")]
 public class QuizSessionAPIController : AbstractAPIController
 {
     private readonly IQuizSessionAPIService _service;

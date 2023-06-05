@@ -268,11 +268,11 @@ public class HomeService : IHomeService
             price.ToString(), products);
         request.ValidityTime = "1800";
         request.Buyer = buyer;
-        request.NotifyUrl = "https://dominikpiskor.pl/Home/ChangePaymentStatus";
+        request.NotifyUrl = "https://quizazu.com/Home/ChangePaymentStatus";
         if(forWhoStr.Contains("SELF"))
-            request.ContinueUrl = "https://dominikpiskor.pl/User/SubscriptionAfterPaymentSelf";
+            request.ContinueUrl = "https://quizazu.com/User/SubscriptionAfterPaymentSelf";
         else
-            request.ContinueUrl = "https://dominikpiskor.pl/User/SubscriptionAfterPaymentGift";
+            request.ContinueUrl = "https://quizazu.com/User/SubscriptionAfterPaymentGift";
         OrderResponse orderResponse;
         try
         {
